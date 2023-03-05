@@ -1,3 +1,5 @@
+import { applicationLogger } from './helpers';
+
 const {
   APPLICATION_NAME = 'PNT',
   APPLICATION_TIMEZONE = 'Asia/Ho_Chi_Minh',
@@ -5,13 +7,13 @@ const {
   LOGGER_FOLDER_PATH = './',
 } = process.env;
 
-console.log('---------------------------------------------------');
-console.log('Application configures:');
-console.log('Name: %s', APPLICATION_NAME);
-console.log('Timezone: %s', APPLICATION_TIMEZONE);
-console.log('LogPath: %s', LOGGER_FOLDER_PATH);
-console.log('MigrationDS: %s', DS_MIGRATION);
-console.log('---------------------------------------------------');
+applicationLogger.info('------------------------------------');
+applicationLogger.info('Application configures:');
+applicationLogger.info('- Name: %s', APPLICATION_NAME);
+applicationLogger.info('- Timezone: %s', APPLICATION_TIMEZONE);
+applicationLogger.info('- LogPath: %s', LOGGER_FOLDER_PATH);
+applicationLogger.info('- MigrationDS: %s', DS_MIGRATION);
+applicationLogger.info('------------------------------------');
 
 export * from './base';
 export * from './helpers';
