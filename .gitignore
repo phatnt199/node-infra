@@ -61,8 +61,5 @@ node_modules.zip
 # dotenv environment variables file
 .env
 
-# Transpiled JavaScript files from Typescript
-/dist
-
 # Cache used by TypeScript's incremental build
 *.tsbuildinfo

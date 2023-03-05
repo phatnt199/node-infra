@@ -10,7 +10,7 @@ import { MigrationStatuses } from '@/common';
     },
     strict: true,
     indexes: {
-      uniqueName: {
+      INDEX_UNIQUE_NAME: {
         keys: { name: 1 },
         options: { unique: true },
       },
