@@ -1,0 +1,82 @@
+{
+  "name": "lb-infra",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Loopback Infrastructure",
+  "keywords": [
+    "loopback",
+    "loopback-application",
+    "infrastructure"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": "14 || 16 || 17 || 18"
+  },
+  "scripts": {
+    "build": "lb-tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
+    "build:watch": "lb-tsc --watch",
+    "lint": "npm run eslint && npm run prettier:check",
+    "lint:fix": "npm run eslint --fix && npm run prettier:fix",
+    "prettier:cli": "lb-prettier \"**/*.ts\" \"**/*.js\"",
+    "prettier:check": "npm run prettier:cli -l",
+    "prettier:fix": "npm run prettier:cli --write",
+    "eslint": "lb-eslint --report-unused-disable-directives .",
+    "pretest": "npm run rebuild",
+    "posttest": "npm run lint",
+    "premigrate": "npm run rebuild",
+    "migrate": "ts-node -r dotenv-flow/config ./dist/migrate",
+    "preopenapi-spec": "npm run build",
+    "openapi-spec": "node ./dist/openapi-spec",
+    "clean": "sh clean.sh",
+    "rebuild": "npm run clean && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:phatnt199/lb-infra.git"
+  },
+  "author": "Phat Nguyen <tanphat199@gmail.com>",
+  "license": "ISC",
+  "files": [
+    "README_DEV.md",
+    "dist",
+    "src",
+    "!*/__tests__"
+  ],
+  "dependencies": {
+    "@loopback/boot": "^5.0.8",
+    "@loopback/core": "^4.0.5",
+    "@loopback/repository": "^5.1.0",
+    "@loopback/rest": "^12.0.5",
+    "@loopback/rest-crud": "^0.15.7",
+    "@loopback/rest-explorer": "^5.0.8",
+    "@loopback/service-proxy": "^5.0.8",
+    "axios": "^1.3.4",
+    "crypto-js": "^4.1.1",
+    "dayjs": "^1.11.3",
+    "dotenv-flow": "^3.2.0",
+    "ioredis": "^5.2.2",
+    "multer": "^1.4.5-lts.1",
+    "voca": "^1.4.0",
+    "winston": "^3.8.1",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "@loopback/build": "^9.0.8",
+    "@loopback/eslint-config": "^13.0.8",
+    "@loopback/testlab": "^5.0.8",
+    "@types/crypto-js": "^4.1.1",
+    "@types/lodash": "^4.14.182",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^16.18.12",
+    "@types/voca": "^1.4.2",
+    "eslint": "^8.33.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.4",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.1",
+    "tsc-alias": "^1.7.0",
+    "tsconfig-paths": "^4.1.0",
+    "typescript": "^4.9.5"
+  }
+}
