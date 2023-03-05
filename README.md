@@ -1,2 +1,18 @@
-# lb-infra
-Loopback Infrastructure
+## Loopback 4 Infrastructure
+Require to pre-setup ENV:
+```env
+APPLICATION_NAME
+APPLICATION_TIMEZONE
+APPLICATION_SECRET
+DS_MAIN_DATABASE
+LOGGER_FOLDER_PATH
+```
+
+By default:
+```env
+APPLICATION_NAME=PNT
+APPLICATION_TIMEZONE=Asia/Ho_Chi_Minh
+APPLICATION_SECRET=Qmmc3sfBYMd2x8wQBnm
+DS_MAIN_DATABASE=postgres
+LOGGER_FOLDER_PATH=./
+```
