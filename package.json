@@ -1,7 +1,7 @@
 {
   "name": "@tanphat199/lb4-infra",
   "private": true,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Loopback 4 Infrastructure",
   "keywords": [
     "loopback",

@@ -1,5 +1,5 @@
 import { Entity } from '@loopback/repository';
-import { IdType, IEntity, IPersistableEntity } from '@/common/types';
+import { IdType, IEntity, IPersistableEntity } from '../common/types';
 export declare class BaseEntity extends Entity {
 }
 export declare class BaseIdEntity extends Entity implements IEntity {
