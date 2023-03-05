@@ -14,6 +14,8 @@ export type EntityClassType<T extends Entity> = typeof Entity & {
     };
 };
 export type EntityRelation = {};
+export type NumberIdType = number;
+export type StringIdType = string;
 export type IdType = string | number;
 export type AnyType = any;
 export type NullableType = undefined | null;
