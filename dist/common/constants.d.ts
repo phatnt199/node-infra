@@ -1,8 +1,6 @@
 export declare class App {
     static readonly APPLICATION_NAME: string;
-    static readonly TIMEZONE: string;
     static readonly TIME_OFFSET = "+07:00";
-    static readonly SECRET: string;
     static readonly DEFAULT_LOCALE = "en.UTF-8";
     static readonly DEFAULT_EXPLORER_PATH = "/explorer";
 }
@@ -41,9 +39,6 @@ export declare class MigrationStatuses {
     static readonly UNKNOWN = "000_UNKNOWN";
     static readonly SUCCESS = "105_SUCCESS";
     static readonly FAIL = "106_FAIL";
-}
-export declare class ApplicationKeys {
-    static readonly DS_MAIN_DATABASE: string;
 }
 export declare class ApplicationRunModes {
     static readonly MODE_START_UP = "startup";

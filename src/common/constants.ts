@@ -1,8 +1,6 @@
 export class App {
   static readonly APPLICATION_NAME = process.env.APPLICATION_NAME ?? 'PNT';
-  static readonly TIMEZONE = process.env.APPLICATION_TIMEZONE ?? 'Asia/Ho_Chi_Minh';
   static readonly TIME_OFFSET = '+07:00';
-  static readonly SECRET = process.env.APPLICATION_SECRET ?? 'Qmmc3sfBYMd2x8wQBnm';
   static readonly DEFAULT_LOCALE = 'en.UTF-8';
   static readonly DEFAULT_EXPLORER_PATH = '/explorer';
 }
@@ -47,10 +45,6 @@ export class MigrationStatuses {
   static readonly UNKNOWN = Statuses.UNKNOWN;
   static readonly SUCCESS = Statuses.SUCCESS;
   static readonly FAIL = Statuses.FAIL;
-}
-
-export class ApplicationKeys {
-  static readonly DS_MAIN_DATABASE = process.env.DS_MAIN_DATABASE ?? 'postgres';
 }
 
 export class ApplicationRunModes {

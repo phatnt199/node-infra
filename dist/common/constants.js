@@ -1,14 +1,12 @@
 "use strict";
-var _a, _b, _c, _d;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EntityRelations = exports.ApplicationRunModes = exports.ApplicationKeys = exports.MigrationStatuses = exports.Statuses = exports.Sorts = exports.ResultCodes = exports.ApplicationRoles = exports.Formatters = exports.App = void 0;
+exports.EntityRelations = exports.ApplicationRunModes = exports.MigrationStatuses = exports.Statuses = exports.Sorts = exports.ResultCodes = exports.ApplicationRoles = exports.Formatters = exports.App = void 0;
 class App {
 }
 exports.App = App;
 App.APPLICATION_NAME = (_a = process.env.APPLICATION_NAME) !== null && _a !== void 0 ? _a : 'PNT';
-App.TIMEZONE = (_b = process.env.APPLICATION_TIMEZONE) !== null && _b !== void 0 ? _b : 'Asia/Ho_Chi_Minh';
 App.TIME_OFFSET = '+07:00';
-App.SECRET = (_c = process.env.APPLICATION_SECRET) !== null && _c !== void 0 ? _c : 'Qmmc3sfBYMd2x8wQBnm';
 App.DEFAULT_LOCALE = 'en.UTF-8';
 App.DEFAULT_EXPLORER_PATH = '/explorer';
 class Formatters {
@@ -53,10 +51,6 @@ exports.MigrationStatuses = MigrationStatuses;
 MigrationStatuses.UNKNOWN = Statuses.UNKNOWN;
 MigrationStatuses.SUCCESS = Statuses.SUCCESS;
 MigrationStatuses.FAIL = Statuses.FAIL;
-class ApplicationKeys {
-}
-exports.ApplicationKeys = ApplicationKeys;
-ApplicationKeys.DS_MAIN_DATABASE = (_d = process.env.DS_MAIN_DATABASE) !== null && _d !== void 0 ? _d : 'postgres';
 class ApplicationRunModes {
 }
 exports.ApplicationRunModes = ApplicationRunModes;
