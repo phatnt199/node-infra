@@ -17,10 +17,9 @@ const core_1 = require("@loopback/core");
 const models_1 = require("../models");
 const base_1 = require("../base");
 const lodash_1 = require("lodash");
-const __1 = require("..");
 const migrationDs = process.env.DS_MIGRATION;
 if (!migrationDs || (0, lodash_1.isEmpty)(migrationDs)) {
-    throw (0, __1.getError)({ message: `[DANGER] INVALID MIGRATION DATASOURCE | Check again env DS_MIGRATION` });
+    throw new Error('[DANGER] INVALID MIGRATION DATASOURCE | Check again env DS_MIGRATION');
 }
 let MigrationRepository = class MigrationRepository extends base_1.TimestampCrudRepository {
     constructor(dataSource) {
