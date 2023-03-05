@@ -12,7 +12,6 @@ const timezone_1 = __importDefault(require("dayjs/plugin/timezone"));
 dayjs_1.default.extend(customParseFormat_1.default);
 dayjs_1.default.extend(timezone_1.default);
 const tz = (_a = process.env.APPLICATION_TIMEZONE) !== null && _a !== void 0 ? _a : 'Asia/Ho_Chi_Minh';
-console.log('==> Set application timezone to %s', tz);
 dayjs_1.default.tz.setDefault(tz);
 const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
