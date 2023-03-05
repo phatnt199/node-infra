@@ -10,7 +10,7 @@ export declare class BaseController implements IController {
         scope: string;
     });
 }
-export interface CrudControllerOptions<E extends BaseIdEntity> {
+export interface CrudControllerOptions<E extends BaseIdEntity<IdType>> {
     entity: typeof BaseIdEntity & {
         prototype: E;
     };
@@ -21,7 +21,7 @@ export interface CrudControllerOptions<E extends BaseIdEntity> {
         extends: [];
     };
 }
-export declare function defineCrudController<E extends BaseIdEntity>(options: CrudControllerOptions<E>): import("@loopback/rest-crud").CrudRestControllerCtor<E, IdType, "id", {}>;
+export declare function defineCrudController<E extends BaseIdEntity<IdType>>(options: CrudControllerOptions<E>): import("@loopback/rest-crud").CrudRestControllerCtor<E, IdType, "id", {}>;
 export interface RelationCrudControllerOptions {
     association: {
         source: string;
@@ -38,4 +38,4 @@ export interface RelationCrudControllerOptions {
         controlTarget: boolean;
     };
 }
-export declare function defineRelationCrudController<S extends BaseTzEntity, T extends BaseTzEntity, R extends BaseTzEntity>(controllerOptions: RelationCrudControllerOptions): ControllerClass;
+export declare function defineRelationCrudController<S extends BaseTzEntity<IdType>, T extends BaseTzEntity<IdType>, R extends BaseTzEntity<IdType>>(controllerOptions: RelationCrudControllerOptions): ControllerClass;

@@ -19,14 +19,14 @@ export class BaseController implements IController {
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export interface CrudControllerOptions<E extends BaseIdEntity> {
+export interface CrudControllerOptions<E extends BaseIdEntity<IdType>> {
   entity: typeof BaseIdEntity & { prototype: E };
   repository: { name: string };
   controller: CrudRestControllerOptions & { extends: [] };
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export function defineCrudController<E extends BaseIdEntity>(options: CrudControllerOptions<E>) {
+export function defineCrudController<E extends BaseIdEntity<IdType>>(options: CrudControllerOptions<E>) {
   const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = options;
   const controller = defineCrudRestController<E, IdType, 'id'>(entityOptions, controllerOptions);
 
@@ -56,9 +56,11 @@ export interface RelationCrudControllerOptions {
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export function defineRelationCrudController<S extends BaseTzEntity, T extends BaseTzEntity, R extends BaseTzEntity>(
-  controllerOptions: RelationCrudControllerOptions,
-): ControllerClass {
+export function defineRelationCrudController<
+  S extends BaseTzEntity<IdType>,
+  T extends BaseTzEntity<IdType>,
+  R extends BaseTzEntity<IdType>,
+>(controllerOptions: RelationCrudControllerOptions): ControllerClass {
   const { association, schema, options = { controlTarget: false } } = controllerOptions;
 
   const { relationName, relationType } = association;

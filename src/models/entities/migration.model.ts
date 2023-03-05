@@ -1,6 +1,7 @@
 import { model, property } from '@loopback/repository';
 import { BaseTzEntity } from '@/base';
 import { MigrationStatuses } from '@/common';
+import { NumberIdType } from '@/common/types';
 
 @model({
   settings: {
@@ -17,7 +18,7 @@ import { MigrationStatuses } from '@/common';
     },
   },
 })
-export class Migration extends BaseTzEntity {
+export class Migration extends BaseTzEntity<NumberIdType> {
   @property({
     type: 'string',
     required: true,

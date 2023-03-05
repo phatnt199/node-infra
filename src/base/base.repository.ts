@@ -3,7 +3,7 @@ import { EntityClassType, EntityRelation, IdType, IPersistableTimestampRepositor
 import { BaseTzEntity, BaseEntity } from './base.model';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class AbstractTimestampRepository<E extends BaseTzEntity, R extends EntityRelation>
+export abstract class AbstractTimestampRepository<E extends BaseTzEntity<IdType>, R extends EntityRelation>
   extends DefaultCrudRepository<E, IdType, R>
   implements IPersistableTimestampRepository<E>
 {
@@ -20,7 +20,7 @@ export abstract class AbstractTimestampRepository<E extends BaseTzEntity, R exte
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export class TimestampCrudRepository<E extends BaseTzEntity> extends AbstractTimestampRepository<E, any> {
+export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends AbstractTimestampRepository<E, any> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }

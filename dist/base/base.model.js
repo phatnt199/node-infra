@@ -17,7 +17,7 @@ class BaseEntity extends repository_1.Entity {
 }
 exports.BaseEntity = BaseEntity;
 // ---------------------------------------------------------------------
-class BaseIdEntity extends repository_1.Entity {
+class BaseIdEntity extends BaseEntity {
 }
 __decorate([
     (0, repository_1.property)({
@@ -29,27 +29,27 @@ __decorate([
 ], BaseIdEntity.prototype, "id", void 0);
 exports.BaseIdEntity = BaseIdEntity;
 // ---------------------------------------------------------------------
-class BaseTzEntity extends (0, mixins_1.TimestampMixin)(BaseIdEntity) {
+class BaseTzEntity extends (0, mixins_1.TimestampMixin)((BaseIdEntity)) {
 }
 exports.BaseTzEntity = BaseTzEntity;
 // ---------------------------------------------------------------------
-class BaseUserAuditTzEntity extends (0, mixins_1.UserAuditMixin)(BaseTzEntity) {
+class BaseUserAuditTzEntity extends (0, mixins_1.UserAuditMixin)((BaseTzEntity)) {
 }
 exports.BaseUserAuditTzEntity = BaseUserAuditTzEntity;
 // ---------------------------------------------------------------------
-class BasePrincipalTzEntity extends (0, mixins_1.PrincipalMixin)(BaseTzEntity) {
+class BasePrincipalTzEntity extends (0, mixins_1.PrincipalMixin)((BaseTzEntity)) {
 }
 exports.BasePrincipalTzEntity = BasePrincipalTzEntity;
 // ---------------------------------------------------------------------
-class BaseDataTypeTzEntity extends (0, mixins_1.DataTypeMixin)(BaseTzEntity) {
+class BaseDataTypeTzEntity extends (0, mixins_1.DataTypeMixin)((BaseTzEntity)) {
 }
 exports.BaseDataTypeTzEntity = BaseDataTypeTzEntity;
 // ---------------------------------------------------------------------
-class BaseTextSearchTzEntity extends (0, mixins_1.TextSearchMixin)(BaseTzEntity) {
+class BaseTextSearchTzEntity extends (0, mixins_1.TextSearchMixin)((BaseTzEntity)) {
 }
 exports.BaseTextSearchTzEntity = BaseTextSearchTzEntity;
 // ---------------------------------------------------------------------
-class BasePrincipalDataTypeTzEntity extends (0, mixins_1.DataTypeMixin)((0, mixins_1.PrincipalMixin)(BaseTzEntity)) {
+class BasePrincipalDataTypeTzEntity extends (0, mixins_1.DataTypeMixin)((0, mixins_1.PrincipalMixin)((BaseTzEntity))) {
 }
 exports.BasePrincipalDataTypeTzEntity = BasePrincipalDataTypeTzEntity;
 // ---------------------------------------------------------------------

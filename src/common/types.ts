@@ -21,8 +21,8 @@ export type AnyType = any;
 export type NullableType = undefined | null;
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IEntity {
-  id: IdType;
+export interface IEntity<T> {
+  id: T;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -32,13 +32,13 @@ export interface ITimestamp {
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IPersistableEntity extends IEntity, ITimestamp {}
+export interface IPersistableEntity<T> extends IEntity<T>, ITimestamp {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IPersistableRepository {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IPersistableTimestampRepository<E extends BaseTzEntity> extends IPersistableRepository {
+export interface IPersistableTimestampRepository<E extends BaseTzEntity<any>> extends IPersistableRepository {
   mixTimestamp(entity: DataObject<E>, options?: { newInstance: boolean }): DataObject<E>;
   existsWith(where?: Where<E>, options?: Options): Promise<boolean>;
 
