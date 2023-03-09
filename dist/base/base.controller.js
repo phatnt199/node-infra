@@ -59,7 +59,19 @@ const defineRelationViewController = (opts) => {
     class ViewController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
             super({ scope: `ViewController.${relationName}` });
+            if (!sourceRepository) {
+                throw (0, utilities_1.getError)({
+                    statusCode: 500,
+                    message: '[defineRelationViewController] Invalid source repository!',
+                });
+            }
             this.sourceRepository = sourceRepository;
+            if (!targetRepository) {
+                throw (0, utilities_1.getError)({
+                    statusCode: 500,
+                    message: '[defineRelationViewController] Invalid target repository!',
+                });
+            }
             this.targetRepository = targetRepository;
         }
         // -----------------------------------------------------------------------------------------------
@@ -110,7 +122,19 @@ const defineAssociateController = (opts) => {
     class AssociationController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
             super({ scope: `AssociationController.${relationName}` });
+            if (!sourceRepository) {
+                throw (0, utilities_1.getError)({
+                    statusCode: 500,
+                    message: '[defineAssociateController] Invalid source repository!',
+                });
+            }
             this.sourceRepository = sourceRepository;
+            if (!targetRepository) {
+                throw (0, utilities_1.getError)({
+                    statusCode: 500,
+                    message: '[defineAssociateController] Invalid target repository!',
+                });
+            }
             this.targetRepository = targetRepository;
         }
         // -----------------------------------------------------------------------------------------------
@@ -198,6 +222,18 @@ const defineRelationCrudController = (controllerOptions) => {
     // -----------------------------------------------------------------------------------------------
     class Controller extends ExtendsableClass {
         constructor(sourceRepository, targetRepository) {
+            if (!sourceRepository) {
+                throw (0, utilities_1.getError)({
+                    statusCode: 500,
+                    message: '[defineRelationCrudController] Invalid source repository!',
+                });
+            }
+            if (!targetRepository) {
+                throw (0, utilities_1.getError)({
+                    statusCode: 500,
+                    message: '[defineRelationCrudController] Invalid target repository!',
+                });
+            }
             super(sourceRepository, targetRepository);
         }
         // -----------------------------------------------------------------------------------------------

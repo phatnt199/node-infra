@@ -77,7 +77,21 @@ export const defineRelationViewController = <S extends BaseTzEntity<IdType>, T e
       targetRepository: AbstractTimestampRepository<T, EntityRelation>,
     ) {
       super({ scope: `ViewController.${relationName}` });
+      if (!sourceRepository) {
+        throw getError({
+          statusCode: 500,
+          message: '[defineRelationViewController] Invalid source repository!',
+        });
+      }
+
       this.sourceRepository = sourceRepository;
+
+      if (!targetRepository) {
+        throw getError({
+          statusCode: 500,
+          message: '[defineRelationViewController] Invalid target repository!',
+        });
+      }
       this.targetRepository = targetRepository;
     }
 
@@ -137,7 +151,22 @@ export const defineAssociateController = <
       targetRepository: AbstractTimestampRepository<T, EntityRelation>,
     ) {
       super({ scope: `AssociationController.${relationName}` });
+
+      if (!sourceRepository) {
+        throw getError({
+          statusCode: 500,
+          message: '[defineAssociateController] Invalid source repository!',
+        });
+      }
+
       this.sourceRepository = sourceRepository;
+
+      if (!targetRepository) {
+        throw getError({
+          statusCode: 500,
+          message: '[defineAssociateController] Invalid target repository!',
+        });
+      }
       this.targetRepository = targetRepository;
     }
 
@@ -228,6 +257,20 @@ export const defineRelationCrudController = <
       sourceRepository: AbstractTimestampRepository<S, any>,
       targetRepository: AbstractTimestampRepository<T, any>,
     ) {
+      if (!sourceRepository) {
+        throw getError({
+          statusCode: 500,
+          message: '[defineRelationCrudController] Invalid source repository!',
+        });
+      }
+
+      if (!targetRepository) {
+        throw getError({
+          statusCode: 500,
+          message: '[defineRelationCrudController] Invalid target repository!',
+        });
+      }
+
       super(sourceRepository, targetRepository);
     }
 
