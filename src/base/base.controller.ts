@@ -5,16 +5,17 @@ import { del, get, param, patch, post, requestBody, SchemaObject } from '@loopba
 import getProp from 'lodash/get';
 
 import { BaseIdEntity, BaseTzEntity, AbstractTimestampRepository } from './';
-import { EntityRelation, IController, IdType, RelationType } from '@/common/types';
+import { EntityRelation, IController, IdType, NullableType, RelationType } from '@/common/types';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import { EntityRelations } from '@/common';
+import { Class } from '@loopback/service-proxy';
 
 // --------------------------------------------------------------------------------------------------------------
 export class BaseController implements IController {
   protected logger: ApplicationLogger;
 
-  constructor(opts: { scope: string }) {
+  constructor(opts: { scope?: string }) {
     this.logger = LoggerFactory.getLogger([opts?.scope ?? BaseController.name]);
   }
 }
@@ -57,26 +58,17 @@ export interface RelationCrudControllerOptions {
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export function defineRelationCrudController<
-  S extends BaseTzEntity<IdType>,
-  T extends BaseTzEntity<IdType>,
-  R extends BaseTzEntity<IdType>,
->(controllerOptions: RelationCrudControllerOptions): ControllerClass {
-  const { association, schema, options = { controlTarget: false } } = controllerOptions;
-  const { relationName, relationType } = association;
+export const defineRelationViewController = <S extends BaseTzEntity<IdType>, T extends BaseTzEntity<IdType>>(opts: {
+  baseClass?: Class<BaseController>;
+  relationType: RelationType;
+  relationName: string;
+}): ControllerClass => {
+  const { baseClass, relationType, relationName } = opts;
+  const restPath = `/{id}/${relationName}`;
 
-  if (!EntityRelations.isValid(relationType)) {
-    throw getError({
-      statusCode: 500,
-      message: `[defineRelationCrudController] Invalid relationType! Valids: ${[...EntityRelations.TYPE_SET]}`,
-    });
-  }
+  const BaseClass = baseClass ?? BaseController;
 
-  const { target: targetSchema } = schema;
-  const { controlTarget = true } = options;
-
-  const restPath = `{id}/${relationName}`;
-  class ViewController implements IController {
+  class ViewController extends BaseClass implements IController {
     sourceRepository: AbstractTimestampRepository<S, EntityRelation>;
     targetRepository: AbstractTimestampRepository<T, EntityRelation>;
 
@@ -84,6 +76,7 @@ export function defineRelationCrudController<
       sourceRepository: AbstractTimestampRepository<S, EntityRelation>,
       targetRepository: AbstractTimestampRepository<T, EntityRelation>,
     ) {
+      super({ scope: `ViewController.${relationName}` });
       this.sourceRepository = sourceRepository;
       this.targetRepository = targetRepository;
     }
@@ -118,13 +111,34 @@ export function defineRelationCrudController<
     }
   }
 
-  // -----------------------------------------------------------------------------------------------
-  class AssociationController extends ViewController {
+  return ViewController;
+};
+
+// --------------------------------------------------------------------------------------------------------------
+export const defineAssociateController = <
+  S extends BaseTzEntity<IdType>,
+  T extends BaseTzEntity<IdType>,
+  R extends BaseTzEntity<IdType> | NullableType,
+>(opts: {
+  baseClass?: Class<BaseController>;
+  relationName: string;
+}): ControllerClass => {
+  const { baseClass, relationName } = opts;
+  const restPath = `/{id}/${relationName}`;
+
+  const BaseClass = baseClass ?? BaseController;
+
+  class AssociationController extends BaseClass implements IController {
+    sourceRepository: AbstractTimestampRepository<S, EntityRelation>;
+    targetRepository: AbstractTimestampRepository<T, EntityRelation>;
+
     constructor(
       sourceRepository: AbstractTimestampRepository<S, EntityRelation>,
       targetRepository: AbstractTimestampRepository<T, EntityRelation>,
     ) {
-      super(sourceRepository, targetRepository);
+      super({ scope: `AssociationController.${relationName}` });
+      this.sourceRepository = sourceRepository;
+      this.targetRepository = targetRepository;
     }
 
     // -----------------------------------------------------------------------------------------------
@@ -171,6 +185,36 @@ export function defineRelationCrudController<
       return ref.unlink(linkId);
     }
   }
+
+  return AssociationController;
+};
+
+// --------------------------------------------------------------------------------------------------------------
+export const defineRelationCrudController = <
+  S extends BaseTzEntity<IdType>,
+  T extends BaseTzEntity<IdType>,
+  R extends BaseTzEntity<IdType> | NullableType,
+>(
+  controllerOptions: RelationCrudControllerOptions,
+): ControllerClass => {
+  const { association, schema, options = { controlTarget: false } } = controllerOptions;
+  const { relationName, relationType } = association;
+
+  if (!EntityRelations.isValid(relationType)) {
+    throw getError({
+      statusCode: 500,
+      message: `[defineRelationCrudController] Invalid relationType! Valids: ${[...EntityRelations.TYPE_SET]}`,
+    });
+  }
+
+  const { target: targetSchema } = schema;
+  const { controlTarget = true } = options;
+
+  const restPath = `{id}/${relationName}`;
+  const ViewController = defineRelationViewController<S, T>({ baseClass: BaseController, relationType, relationName });
+  const AssociationController = defineAssociateController<S, T, R>({ baseClass: ViewController, relationName });
+
+  // -----------------------------------------------------------------------------------------------
 
   const ExtendsableClass = relationType === EntityRelations.HAS_MANY_THROUGH ? AssociationController : ViewController;
 
@@ -250,4 +294,4 @@ export function defineRelationCrudController<
   }
 
   return Controller;
-}
+};

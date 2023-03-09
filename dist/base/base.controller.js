@@ -24,7 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineRelationCrudController = exports.defineCrudController = exports.BaseController = void 0;
+exports.defineRelationCrudController = exports.defineAssociateController = exports.defineRelationViewController = exports.defineCrudController = exports.BaseController = void 0;
 const core_1 = require("@loopback/core");
 const rest_crud_1 = require("@loopback/rest-crud");
 const repository_1 = require("@loopback/repository");
@@ -52,20 +52,13 @@ function defineCrudController(options) {
 }
 exports.defineCrudController = defineCrudController;
 // --------------------------------------------------------------------------------------------------------------
-function defineRelationCrudController(controllerOptions) {
-    const { association, schema, options = { controlTarget: false } } = controllerOptions;
-    const { relationName, relationType } = association;
-    if (!common_1.EntityRelations.isValid(relationType)) {
-        throw (0, utilities_1.getError)({
-            statusCode: 500,
-            message: `[defineRelationCrudController] Invalid relationType! Valids: ${[...common_1.EntityRelations.TYPE_SET]}`,
-        });
-    }
-    const { target: targetSchema } = schema;
-    const { controlTarget = true } = options;
-    const restPath = `{id}/${relationName}`;
-    class ViewController {
+const defineRelationViewController = (opts) => {
+    const { baseClass, relationType, relationName } = opts;
+    const restPath = `/{id}/${relationName}`;
+    const BaseClass = baseClass !== null && baseClass !== void 0 ? baseClass : BaseController;
+    class ViewController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
+            super({ scope: `ViewController.${relationName}` });
             this.sourceRepository = sourceRepository;
             this.targetRepository = targetRepository;
         }
@@ -106,10 +99,19 @@ function defineRelationCrudController(controllerOptions) {
         __metadata("design:paramtypes", [Number, Object]),
         __metadata("design:returntype", Promise)
     ], ViewController.prototype, "find", null);
-    // -----------------------------------------------------------------------------------------------
-    class AssociationController extends ViewController {
+    return ViewController;
+};
+exports.defineRelationViewController = defineRelationViewController;
+// --------------------------------------------------------------------------------------------------------------
+const defineAssociateController = (opts) => {
+    const { baseClass, relationName } = opts;
+    const restPath = `/{id}/${relationName}`;
+    const BaseClass = baseClass !== null && baseClass !== void 0 ? baseClass : BaseController;
+    class AssociationController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
-            super(sourceRepository, targetRepository);
+            super({ scope: `AssociationController.${relationName}` });
+            this.sourceRepository = sourceRepository;
+            this.targetRepository = targetRepository;
         }
         // -----------------------------------------------------------------------------------------------
         link(id, linkId) {
@@ -170,6 +172,25 @@ function defineRelationCrudController(controllerOptions) {
         __metadata("design:paramtypes", [Number, Number]),
         __metadata("design:returntype", Promise)
     ], AssociationController.prototype, "unlink", null);
+    return AssociationController;
+};
+exports.defineAssociateController = defineAssociateController;
+// --------------------------------------------------------------------------------------------------------------
+const defineRelationCrudController = (controllerOptions) => {
+    const { association, schema, options = { controlTarget: false } } = controllerOptions;
+    const { relationName, relationType } = association;
+    if (!common_1.EntityRelations.isValid(relationType)) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: `[defineRelationCrudController] Invalid relationType! Valids: ${[...common_1.EntityRelations.TYPE_SET]}`,
+        });
+    }
+    const { target: targetSchema } = schema;
+    const { controlTarget = true } = options;
+    const restPath = `{id}/${relationName}`;
+    const ViewController = (0, exports.defineRelationViewController)({ baseClass: BaseController, relationType, relationName });
+    const AssociationController = (0, exports.defineAssociateController)({ baseClass: ViewController, relationName });
+    // -----------------------------------------------------------------------------------------------
     const ExtendsableClass = relationType === common_1.EntityRelations.HAS_MANY_THROUGH ? AssociationController : ViewController;
     if (!controlTarget) {
         return ExtendsableClass;
@@ -258,6 +279,6 @@ function defineRelationCrudController(controllerOptions) {
         __metadata("design:returntype", Promise)
     ], Controller.prototype, "delete", null);
     return Controller;
-}
+};
 exports.defineRelationCrudController = defineRelationCrudController;
 //# sourceMappingURL=base.controller.js.map

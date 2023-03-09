@@ -18,7 +18,7 @@ export type NumberIdType = number;
 export type StringIdType = string;
 export type IdType = string | number;
 export type AnyType = any;
-export type NullableType = undefined | null;
+export type NullableType = undefined | null | void;
 export type RelationType = 'belongsTo' | 'hasOne' | 'hasMany' | 'hasManyThrough';
 export interface IEntity<T> {
     id: T;

@@ -2,12 +2,13 @@ import { ControllerClass } from '@loopback/core';
 import { CrudRestControllerOptions } from '@loopback/rest-crud';
 import { SchemaObject } from '@loopback/rest';
 import { BaseIdEntity, BaseTzEntity } from './';
-import { IController, IdType, RelationType } from '../common/types';
+import { IController, IdType, NullableType, RelationType } from '../common/types';
 import { ApplicationLogger } from '../helpers';
+import { Class } from '@loopback/service-proxy';
 export declare class BaseController implements IController {
     protected logger: ApplicationLogger;
     constructor(opts: {
-        scope: string;
+        scope?: string;
     });
 }
 export interface CrudControllerOptions<E extends BaseIdEntity<IdType>> {
@@ -38,4 +39,13 @@ export interface RelationCrudControllerOptions {
         controlTarget: boolean;
     };
 }
-export declare function defineRelationCrudController<S extends BaseTzEntity<IdType>, T extends BaseTzEntity<IdType>, R extends BaseTzEntity<IdType>>(controllerOptions: RelationCrudControllerOptions): ControllerClass;
+export declare const defineRelationViewController: <S extends BaseTzEntity<IdType>, T extends BaseTzEntity<IdType>>(opts: {
+    baseClass?: Class<BaseController>;
+    relationType: RelationType;
+    relationName: string;
+}) => ControllerClass;
+export declare const defineAssociateController: <S extends BaseTzEntity<IdType>, T extends BaseTzEntity<IdType>, R extends BaseTzEntity<IdType> | NullableType>(opts: {
+    baseClass?: Class<BaseController>;
+    relationName: string;
+}) => ControllerClass;
+export declare const defineRelationCrudController: <S extends BaseTzEntity<IdType>, T extends BaseTzEntity<IdType>, R extends BaseTzEntity<IdType> | NullableType>(controllerOptions: RelationCrudControllerOptions) => ControllerClass;
