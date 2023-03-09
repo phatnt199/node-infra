@@ -1,6 +1,7 @@
 import { Count, DataObject, DefaultCrudRepository, juggler, Options, Where } from '@loopback/repository';
 import { EntityClassType, EntityRelation, IdType, IPersistableTimestampRepository } from '@/common/types';
-import { BaseTzEntity, BaseEntity } from './base.model';
+import { BaseIdEntity, BaseTzEntity } from './base.model';
+import { getError } from '@/utilities';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export abstract class AbstractTimestampRepository<E extends BaseTzEntity<IdType>, R extends EntityRelation>
@@ -15,8 +16,92 @@ export abstract class AbstractTimestampRepository<E extends BaseTzEntity<IdType>
   abstract existsWith(where?: any, options?: any): Promise<boolean>;
   abstract createWithReturn(data: DataObject<E>, options?: any): Promise<E>;
   abstract updateWithReturn(id: IdType, data: DataObject<E>, options?: any): Promise<E>;
-  abstract updateWith(data: DataObject<E>, where: Where<any>): Promise<Count>;
   abstract upsertWith(data: DataObject<E>, where: Where<E>): Promise<E | null>;
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export abstract class AbstractViewRepository<
+  E extends BaseIdEntity<IdType>,
+  R extends EntityRelation,
+> extends DefaultCrudRepository<E, IdType, R> {
+  constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
+    super(entityClass, dataSource);
+  }
+
+  async existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
+    const rs = await this.findOne({ where }, options);
+    return rs !== null && rs !== undefined;
+  }
+
+  create(_data: DataObject<E>, _options?: Options): Promise<E> {
+    throw getError({
+      statusCode: 500,
+      message: 'Cannot manipulate entity with view repository!',
+    });
+  }
+
+  createAll(_datum: DataObject<E>[], _options?: Options): Promise<E[]> {
+    throw getError({
+      statusCode: 500,
+      message: 'Cannot manipulate entity with view repository!',
+    });
+  }
+
+  save(_entity: E, _options?: Options): Promise<E> {
+    throw getError({
+      statusCode: 500,
+      message: 'Cannot manipulate entity with view repository!',
+    });
+  }
+
+  update(_entity: E, _options?: Options): Promise<void> {
+    throw getError({
+      statusCode: 500,
+      message: 'Cannot manipulate entity with view repository!',
+    });
+  }
+
+  delete(_entity: E, _options?: Options): Promise<void> {
+    throw getError({
+      statusCode: 500,
+      message: 'Cannot manipulate entity with view repository!',
+    });
+  }
+
+  updateAll(_data: DataObject<E>, _where?: Where<E>, _options?: Options): Promise<Count> {
+    throw getError({
+      statusCode: 500,
+      message: 'Cannot manipulate entity with view repository!',
+    });
+  }
+
+  updateById(_id: IdType, _data: DataObject<E>, _options?: Options): Promise<void> {
+    throw getError({
+      statusCode: 500,
+      message: 'Cannot manipulate entity with view repository!',
+    });
+  }
+
+  replaceById(_id: IdType, _data: DataObject<E>, _options?: Options): Promise<void> {
+    throw getError({
+      statusCode: 500,
+      message: 'Cannot manipulate entity with view repository!',
+    });
+  }
+
+  deleteAll(_where?: Where<E>, _options?: Options): Promise<Count> {
+    throw getError({
+      statusCode: 500,
+      message: 'Cannot manipulate entity with view repository!',
+    });
+  }
+
+  deleteById(_id: IdType, _options?: Options): Promise<void> {
+    throw getError({
+      statusCode: 500,
+      message: 'Cannot manipulate entity with view repository!',
+    });
+  }
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -63,10 +148,6 @@ export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends Abs
     return super.updateAll(enriched, where, options);
   }
 
-  updateWith(data: DataObject<E>, where: Where<any>): Promise<Count> {
-    return this.updateAll(data, where);
-  }
-
   async upsertWith(data: DataObject<E>, where: Where<E>): Promise<E | null> {
     const isExisted = await this.existsWith(where);
     if (isExisted) {
@@ -94,13 +175,8 @@ export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends Abs
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export class ViewCrudRepository<E extends BaseEntity> extends DefaultCrudRepository<E, IdType, object> {
+export class ViewRepository<E extends BaseTzEntity<IdType>> extends AbstractViewRepository<E, any> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
-  }
-
-  async existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
-    const rs = await this.findOne({ where }, options);
-    return rs !== null && rs !== undefined;
   }
 }

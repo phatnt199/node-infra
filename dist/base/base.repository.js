@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ViewCrudRepository = exports.TimestampCrudRepository = exports.AbstractTimestampRepository = void 0;
+exports.ViewRepository = exports.TimestampCrudRepository = exports.AbstractViewRepository = exports.AbstractTimestampRepository = void 0;
 const repository_1 = require("@loopback/repository");
+const utilities_1 = require("../utilities");
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractTimestampRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource) {
@@ -18,6 +19,79 @@ class AbstractTimestampRepository extends repository_1.DefaultCrudRepository {
     }
 }
 exports.AbstractTimestampRepository = AbstractTimestampRepository;
+// ----------------------------------------------------------------------------------------------------------------------------------------
+class AbstractViewRepository extends repository_1.DefaultCrudRepository {
+    constructor(entityClass, dataSource) {
+        super(entityClass, dataSource);
+    }
+    existsWith(where, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rs = yield this.findOne({ where }, options);
+            return rs !== null && rs !== undefined;
+        });
+    }
+    create(_data, _options) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: 'Cannot manipulate entity with view repository!',
+        });
+    }
+    createAll(_datum, _options) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: 'Cannot manipulate entity with view repository!',
+        });
+    }
+    save(_entity, _options) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: 'Cannot manipulate entity with view repository!',
+        });
+    }
+    update(_entity, _options) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: 'Cannot manipulate entity with view repository!',
+        });
+    }
+    delete(_entity, _options) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: 'Cannot manipulate entity with view repository!',
+        });
+    }
+    updateAll(_data, _where, _options) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: 'Cannot manipulate entity with view repository!',
+        });
+    }
+    updateById(_id, _data, _options) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: 'Cannot manipulate entity with view repository!',
+        });
+    }
+    replaceById(_id, _data, _options) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: 'Cannot manipulate entity with view repository!',
+        });
+    }
+    deleteAll(_where, _options) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: 'Cannot manipulate entity with view repository!',
+        });
+    }
+    deleteById(_id, _options) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: 'Cannot manipulate entity with view repository!',
+        });
+    }
+}
+exports.AbstractViewRepository = AbstractViewRepository;
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class TimestampCrudRepository extends AbstractTimestampRepository {
     constructor(entityClass, dataSource) {
@@ -65,9 +139,6 @@ class TimestampCrudRepository extends AbstractTimestampRepository {
         const enriched = this.mixTimestamp(data);
         return super.updateAll(enriched, where, options);
     }
-    updateWith(data, where) {
-        return this.updateAll(data, where);
-    }
     upsertWith(data, where) {
         return __awaiter(this, void 0, void 0, function* () {
             const isExisted = yield this.existsWith(where);
@@ -93,16 +164,10 @@ class TimestampCrudRepository extends AbstractTimestampRepository {
 }
 exports.TimestampCrudRepository = TimestampCrudRepository;
 // ----------------------------------------------------------------------------------------------------------------------------------------
-class ViewCrudRepository extends repository_1.DefaultCrudRepository {
+class ViewRepository extends AbstractViewRepository {
     constructor(entityClass, dataSource) {
         super(entityClass, dataSource);
     }
-    existsWith(where, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rs = yield this.findOne({ where }, options);
-            return rs !== null && rs !== undefined;
-        });
-    }
 }
-exports.ViewCrudRepository = ViewCrudRepository;
+exports.ViewRepository = ViewRepository;
 //# sourceMappingURL=base.repository.js.map
