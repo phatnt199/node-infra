@@ -20,6 +20,7 @@ export type IdType = string | number;
 export type AnyType = any;
 export type NullableType = undefined | null | void;
 export type RelationType = 'belongsTo' | 'hasOne' | 'hasMany' | 'hasManyThrough';
+export type BullQueueRole = 'queue' | 'worker';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IEntity<T> {
