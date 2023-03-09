@@ -32,6 +32,7 @@ const rest_1 = require("@loopback/rest");
 const get_1 = __importDefault(require("lodash/get"));
 const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
+const common_1 = require("../common");
 // --------------------------------------------------------------------------------------------------------------
 class BaseController {
     constructor(opts) {
@@ -54,14 +55,61 @@ exports.defineCrudController = defineCrudController;
 function defineRelationCrudController(controllerOptions) {
     const { association, schema, options = { controlTarget: false } } = controllerOptions;
     const { relationName, relationType } = association;
+    if (!common_1.EntityRelations.isValid(relationType)) {
+        throw (0, utilities_1.getError)({
+            statusCode: 500,
+            message: `[defineRelationCrudController] Invalid relationType! Valids: ${[...common_1.EntityRelations.TYPE_SET]}`,
+        });
+    }
     const { target: targetSchema } = schema;
     const { controlTarget = true } = options;
     const restPath = `{id}/${relationName}`;
-    // -----------------------------------------------------------------------------------------------
-    class AssociationController {
+    class ViewController {
         constructor(sourceRepository, targetRepository) {
             this.sourceRepository = sourceRepository;
             this.targetRepository = targetRepository;
+        }
+        // -----------------------------------------------------------------------------------------------
+        find(id, filter) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const ref = (0, get_1.default)(this.sourceRepository, relationName)(id);
+                switch (relationType) {
+                    case common_1.EntityRelations.BELONGS_TO: {
+                        return ref;
+                    }
+                    case common_1.EntityRelations.HAS_ONE: {
+                        return ref.get(filter);
+                    }
+                    case common_1.EntityRelations.HAS_MANY:
+                    case common_1.EntityRelations.HAS_MANY_THROUGH: {
+                        return ref.find(filter);
+                    }
+                    default: {
+                        return [];
+                    }
+                }
+            });
+        }
+    }
+    __decorate([
+        (0, rest_1.get)(restPath, {
+            responses: {
+                '200': {
+                    description: `Array of target model in relation ${relationName}`,
+                    content: { 'application/json': {} },
+                },
+            },
+        }),
+        __param(0, rest_1.param.path.number('id')),
+        __param(1, rest_1.param.query.object('filter')),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Number, Object]),
+        __metadata("design:returntype", Promise)
+    ], ViewController.prototype, "find", null);
+    // -----------------------------------------------------------------------------------------------
+    class AssociationController extends ViewController {
+        constructor(sourceRepository, targetRepository) {
+            super(sourceRepository, targetRepository);
         }
         // -----------------------------------------------------------------------------------------------
         link(id, linkId) {
@@ -89,26 +137,6 @@ function defineRelationCrudController(controllerOptions) {
             return __awaiter(this, void 0, void 0, function* () {
                 const ref = (0, get_1.default)(this.sourceRepository, relationName)(id);
                 return ref.unlink(linkId);
-            });
-        }
-        // -----------------------------------------------------------------------------------------------
-        find(id, filter) {
-            return __awaiter(this, void 0, void 0, function* () {
-                const ref = (0, get_1.default)(this.sourceRepository, relationName)(id);
-                switch (relationType.toLowerCase()) {
-                    case 'belongsto': {
-                        return ref;
-                    }
-                    case 'hasone': {
-                        return ref.get(filter);
-                    }
-                    case 'hasmany': {
-                        return ref.find(filter);
-                    }
-                    default: {
-                        return [];
-                    }
-                }
             });
         }
     }
@@ -142,26 +170,12 @@ function defineRelationCrudController(controllerOptions) {
         __metadata("design:paramtypes", [Number, Number]),
         __metadata("design:returntype", Promise)
     ], AssociationController.prototype, "unlink", null);
-    __decorate([
-        (0, rest_1.get)(restPath, {
-            responses: {
-                '200': {
-                    description: `Array of target model in relation ${relationName}`,
-                    content: { 'application/json': {} },
-                },
-            },
-        }),
-        __param(0, rest_1.param.path.number('id')),
-        __param(1, rest_1.param.query.object('filter')),
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", [Number, Object]),
-        __metadata("design:returntype", Promise)
-    ], AssociationController.prototype, "find", null);
+    const ExtendsableClass = relationType === common_1.EntityRelations.HAS_MANY_THROUGH ? AssociationController : ViewController;
     if (!controlTarget) {
-        return AssociationController;
+        return ExtendsableClass;
     }
     // -----------------------------------------------------------------------------------------------
-    class Controller extends AssociationController {
+    class Controller extends ExtendsableClass {
         constructor(sourceRepository, targetRepository) {
             super(sourceRepository, targetRepository);
         }

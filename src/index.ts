@@ -23,3 +23,4 @@ export * from './models';
 export * from './repositories';
 export * from './utilities';
 export * from './common/types';
+export { EntityRelations } from './common/constants';

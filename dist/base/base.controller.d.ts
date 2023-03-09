@@ -2,7 +2,7 @@ import { ControllerClass } from '@loopback/core';
 import { CrudRestControllerOptions } from '@loopback/rest-crud';
 import { SchemaObject } from '@loopback/rest';
 import { BaseIdEntity, BaseTzEntity } from './';
-import { IController, IdType } from '../common/types';
+import { IController, IdType, RelationType } from '../common/types';
 import { ApplicationLogger } from '../helpers';
 export declare class BaseController implements IController {
     protected logger: ApplicationLogger;
@@ -26,7 +26,7 @@ export interface RelationCrudControllerOptions {
     association: {
         source: string;
         relationName: string;
-        relationType: 'belongsTo' | 'hasOne' | 'hasMany';
+        relationType: RelationType;
         target: string;
     };
     schema: {

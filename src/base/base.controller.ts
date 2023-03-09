@@ -5,9 +5,10 @@ import { del, get, param, patch, post, requestBody, SchemaObject } from '@loopba
 import getProp from 'lodash/get';
 
 import { BaseIdEntity, BaseTzEntity, AbstractTimestampRepository } from './';
-import { EntityRelation, IController, IdType } from '@/common/types';
+import { EntityRelation, IController, IdType, RelationType } from '@/common/types';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
+import { EntityRelations } from '@/common';
 
 // --------------------------------------------------------------------------------------------------------------
 export class BaseController implements IController {
@@ -42,7 +43,7 @@ export interface RelationCrudControllerOptions {
   association: {
     source: string;
     relationName: string;
-    relationType: 'belongsTo' | 'hasOne' | 'hasMany';
+    relationType: RelationType;
     target: string;
   };
   schema: {
@@ -62,15 +63,20 @@ export function defineRelationCrudController<
   R extends BaseTzEntity<IdType>,
 >(controllerOptions: RelationCrudControllerOptions): ControllerClass {
   const { association, schema, options = { controlTarget: false } } = controllerOptions;
-
   const { relationName, relationType } = association;
+
+  if (!EntityRelations.isValid(relationType)) {
+    throw getError({
+      statusCode: 500,
+      message: `[defineRelationCrudController] Invalid relationType! Valids: ${[...EntityRelations.TYPE_SET]}`,
+    });
+  }
+
   const { target: targetSchema } = schema;
   const { controlTarget = true } = options;
 
   const restPath = `{id}/${relationName}`;
-
-  // -----------------------------------------------------------------------------------------------
-  class AssociationController implements IController {
+  class ViewController implements IController {
     sourceRepository: AbstractTimestampRepository<S, EntityRelation>;
     targetRepository: AbstractTimestampRepository<T, EntityRelation>;
 
@@ -80,6 +86,45 @@ export function defineRelationCrudController<
     ) {
       this.sourceRepository = sourceRepository;
       this.targetRepository = targetRepository;
+    }
+
+    // -----------------------------------------------------------------------------------------------
+    @get(restPath, {
+      responses: {
+        '200': {
+          description: `Array of target model in relation ${relationName}`,
+          content: { 'application/json': {} },
+        },
+      },
+    })
+    async find(@param.path.number('id') id: number, @param.query.object('filter') filter?: Filter<T>): Promise<T[]> {
+      const ref = getProp(this.sourceRepository, relationName)(id);
+
+      switch (relationType) {
+        case EntityRelations.BELONGS_TO: {
+          return ref;
+        }
+        case EntityRelations.HAS_ONE: {
+          return ref.get(filter);
+        }
+        case EntityRelations.HAS_MANY:
+        case EntityRelations.HAS_MANY_THROUGH: {
+          return ref.find(filter);
+        }
+        default: {
+          return [];
+        }
+      }
+    }
+  }
+
+  // -----------------------------------------------------------------------------------------------
+  class AssociationController extends ViewController {
+    constructor(
+      sourceRepository: AbstractTimestampRepository<S, EntityRelation>,
+      targetRepository: AbstractTimestampRepository<T, EntityRelation>,
+    ) {
+      super(sourceRepository, targetRepository);
     }
 
     // -----------------------------------------------------------------------------------------------
@@ -125,42 +170,16 @@ export function defineRelationCrudController<
       const ref = getProp(this.sourceRepository, relationName)(id);
       return ref.unlink(linkId);
     }
-
-    // -----------------------------------------------------------------------------------------------
-    @get(restPath, {
-      responses: {
-        '200': {
-          description: `Array of target model in relation ${relationName}`,
-          content: { 'application/json': {} },
-        },
-      },
-    })
-    async find(@param.path.number('id') id: number, @param.query.object('filter') filter?: Filter<T>): Promise<T[]> {
-      const ref = getProp(this.sourceRepository, relationName)(id);
-
-      switch (relationType.toLowerCase()) {
-        case 'belongsto': {
-          return ref;
-        }
-        case 'hasone': {
-          return ref.get(filter);
-        }
-        case 'hasmany': {
-          return ref.find(filter);
-        }
-        default: {
-          return [];
-        }
-      }
-    }
   }
 
+  const ExtendsableClass = relationType === EntityRelations.HAS_MANY_THROUGH ? AssociationController : ViewController;
+
   if (!controlTarget) {
-    return AssociationController;
+    return ExtendsableClass;
   }
 
   // -----------------------------------------------------------------------------------------------
-  class Controller extends AssociationController {
+  class Controller extends ExtendsableClass {
     constructor(
       sourceRepository: AbstractTimestampRepository<S, any>,
       targetRepository: AbstractTimestampRepository<T, any>,

@@ -1,5 +1,6 @@
 "use strict";
 var _a;
+var _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EntityRelations = exports.ApplicationRunModes = exports.MigrationStatuses = exports.Statuses = exports.Sorts = exports.ResultCodes = exports.ApplicationRoles = exports.Formatters = exports.App = void 0;
 class App {
@@ -58,9 +59,15 @@ ApplicationRunModes.MODE_START_UP = 'startup';
 ApplicationRunModes.MODE_MIGRATE = 'migrate';
 ApplicationRunModes.MODE_SEED = 'seed';
 class EntityRelations {
+    static isValid(type) {
+        return this.TYPE_SET.has(type);
+    }
 }
 exports.EntityRelations = EntityRelations;
+_b = EntityRelations;
 EntityRelations.BELONGS_TO = 'belongsTo';
 EntityRelations.HAS_ONE = 'hasOne';
 EntityRelations.HAS_MANY = 'hasMany';
+EntityRelations.HAS_MANY_THROUGH = 'hasManyThrough';
+EntityRelations.TYPE_SET = new Set([_b.BELONGS_TO, _b.HAS_ONE, _b.HAS_MANY, _b.HAS_MANY_THROUGH]);
 //# sourceMappingURL=constants.js.map

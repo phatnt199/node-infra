@@ -57,4 +57,10 @@ export class EntityRelations {
   static readonly BELONGS_TO = 'belongsTo';
   static readonly HAS_ONE = 'hasOne';
   static readonly HAS_MANY = 'hasMany';
+  static readonly HAS_MANY_THROUGH = 'hasManyThrough';
+  static readonly TYPE_SET = new Set([this.BELONGS_TO, this.HAS_ONE, this.HAS_MANY, this.HAS_MANY_THROUGH]);
+
+  static isValid(type: string) {
+    return this.TYPE_SET.has(type);
+  }
 }
