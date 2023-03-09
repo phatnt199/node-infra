@@ -34,14 +34,14 @@ export interface IPersistableTimestampRepository<E extends BaseTzEntity<any>> ex
     mixTimestamp(entity: DataObject<E>, options?: {
         newInstance: boolean;
     }): DataObject<E>;
-    existsWith(where?: Where<E>, options?: Options): Promise<boolean>;
+    existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
     create(data: DataObject<E>, options?: Options): Promise<E>;
     createAll(datum: DataObject<E>[], options?: Options): Promise<E[]>;
     createWithReturn(data: DataObject<E>, options?: Options): Promise<E>;
     updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
     updateWithReturn(id: IdType, data: DataObject<E>, options?: Options): Promise<E>;
-    updateAll(data: DataObject<E>, where?: Where<E>, options?: Options): Promise<Count>;
-    upsertWith(data: DataObject<E>, where: Where<E>): Promise<E | null>;
+    updateAll(data: DataObject<E>, where?: Where<any>, options?: Options): Promise<Count>;
+    upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
     replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
 }
 export interface IService {

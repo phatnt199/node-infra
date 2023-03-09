@@ -13,10 +13,10 @@ export abstract class AbstractTimestampRepository<E extends BaseTzEntity<IdType>
   }
 
   abstract mixTimestamp(entity: DataObject<E>, options?: { newInstance: boolean } | undefined): DataObject<E>;
-  abstract existsWith(where?: any, options?: any): Promise<boolean>;
+  abstract existsWith(where?: Where<any>, options?: any): Promise<boolean>;
   abstract createWithReturn(data: DataObject<E>, options?: any): Promise<E>;
   abstract updateWithReturn(id: IdType, data: DataObject<E>, options?: any): Promise<E>;
-  abstract upsertWith(data: DataObject<E>, where: Where<E>): Promise<E | null>;
+  abstract upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ export abstract class AbstractViewRepository<
     super(entityClass, dataSource);
   }
 
-  async existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
+  async existsWith(where?: Where<any>, options?: Options): Promise<boolean> {
     const rs = await this.findOne({ where }, options);
     return rs !== null && rs !== undefined;
   }
@@ -68,7 +68,7 @@ export abstract class AbstractViewRepository<
     });
   }
 
-  updateAll(_data: DataObject<E>, _where?: Where<E>, _options?: Options): Promise<Count> {
+  updateAll(_data: DataObject<E>, _where?: Where<any>, _options?: Options): Promise<Count> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
@@ -110,7 +110,7 @@ export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends Abs
     super(entityClass, dataSource);
   }
 
-  async existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
+  async existsWith(where?: Where<any>, options?: Options): Promise<boolean> {
     const rs = await this.findOne({ where }, options);
     return rs !== null && rs !== undefined;
   }
@@ -143,12 +143,12 @@ export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends Abs
     return super.findById(id);
   }
 
-  updateAll(data: DataObject<E>, where?: Where<E>, options?: Options): Promise<Count> {
+  updateAll(data: DataObject<E>, where?: Where<any>, options?: Options): Promise<Count> {
     const enriched = this.mixTimestamp(data);
     return super.updateAll(enriched, where, options);
   }
 
-  async upsertWith(data: DataObject<E>, where: Where<E>): Promise<E | null> {
+  async upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null> {
     const isExisted = await this.existsWith(where);
     if (isExisted) {
       await this.updateAll(data, where);
