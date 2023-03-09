@@ -175,7 +175,7 @@ export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends Abs
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export class ViewRepository<E extends BaseTzEntity<IdType>> extends AbstractViewRepository<E, any> {
+export class ViewRepository<E extends BaseIdEntity<IdType>> extends AbstractViewRepository<E, any> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }

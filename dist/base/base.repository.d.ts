@@ -40,6 +40,6 @@ export declare class TimestampCrudRepository<E extends BaseTzEntity<IdType>> ext
         newInstance: boolean;
     }): DataObject<E>;
 }
-export declare class ViewRepository<E extends BaseTzEntity<IdType>> extends AbstractViewRepository<E, any> {
+export declare class ViewRepository<E extends BaseIdEntity<IdType>> extends AbstractViewRepository<E, any> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
 }
