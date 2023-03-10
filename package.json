@@ -1,5 +1,5 @@
 {
-  "name": "@tanphat199/lb4-infra",
+  "name": "@lb/infra",
   "private": true,
   "version": "0.0.3",
   "description": "Loopback 4 Infrastructure",
