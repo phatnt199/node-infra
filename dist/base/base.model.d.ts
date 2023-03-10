@@ -1,8 +1,8 @@
 import { Entity } from '@loopback/repository';
-import { IEntity, IPersistableEntity } from '../common/types';
+import { IdType, IEntity, IPersistableEntity } from '../common/types';
 export declare class BaseEntity extends Entity {
 }
-export declare class BaseIdEntity<T> extends BaseEntity implements IEntity<T> {
+export declare class BaseIdEntity<T extends IdType> extends BaseEntity implements IEntity<T> {
     id: T;
 }
 declare const BaseTzEntity_base: {
@@ -22,12 +22,12 @@ declare const BaseTzEntity_base: {
     readonly modelName: string;
     definition: import("@loopback/repository").ModelDefinition;
 };
-export declare class BaseTzEntity<T> extends BaseTzEntity_base implements IPersistableEntity<T> {
+export declare class BaseTzEntity<T extends IdType> extends BaseTzEntity_base implements IPersistableEntity<T> {
 }
 declare const BaseUserAuditTzEntity_base: {
     new (...args: any[]): {
         createdBy: Date;
-        modifiedBy: import("../common/types").IdType;
+        modifiedBy: IdType;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
@@ -41,12 +41,12 @@ declare const BaseUserAuditTzEntity_base: {
     readonly modelName: string;
     definition: import("@loopback/repository").ModelDefinition;
 };
-export declare class BaseUserAuditTzEntity<T> extends BaseUserAuditTzEntity_base implements IPersistableEntity<T> {
+export declare class BaseUserAuditTzEntity<T extends IdType> extends BaseUserAuditTzEntity_base implements IPersistableEntity<T> {
 }
 declare const BasePrincipalTzEntity_base: {
     new (...args: any[]): {
         principalType?: string | undefined;
-        principalId?: import("../common/types").IdType | undefined;
+        principalId?: IdType | undefined;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
@@ -60,7 +60,7 @@ declare const BasePrincipalTzEntity_base: {
     readonly modelName: string;
     definition: import("@loopback/repository").ModelDefinition;
 };
-export declare class BasePrincipalTzEntity<T> extends BasePrincipalTzEntity_base implements IPersistableEntity<T> {
+export declare class BasePrincipalTzEntity<T extends IdType> extends BasePrincipalTzEntity_base implements IPersistableEntity<T> {
 }
 declare const BaseDataTypeTzEntity_base: {
     new (...args: any[]): {
@@ -82,7 +82,7 @@ declare const BaseDataTypeTzEntity_base: {
     readonly modelName: string;
     definition: import("@loopback/repository").ModelDefinition;
 };
-export declare class BaseDataTypeTzEntity<T> extends BaseDataTypeTzEntity_base implements IPersistableEntity<T> {
+export declare class BaseDataTypeTzEntity<T extends IdType> extends BaseDataTypeTzEntity_base implements IPersistableEntity<T> {
 }
 declare const BaseTextSearchTzEntity_base: {
     new (...args: any[]): {
@@ -100,7 +100,7 @@ declare const BaseTextSearchTzEntity_base: {
     readonly modelName: string;
     definition: import("@loopback/repository").ModelDefinition;
 };
-export declare class BaseTextSearchTzEntity<T> extends BaseTextSearchTzEntity_base implements IPersistableEntity<T> {
+export declare class BaseTextSearchTzEntity<T extends IdType> extends BaseTextSearchTzEntity_base implements IPersistableEntity<T> {
 }
 declare const BasePrincipalDataTypeTzEntity_base: {
     new (...args: any[]): {
@@ -117,7 +117,7 @@ declare const BasePrincipalDataTypeTzEntity_base: {
 } & {
     new (...args: any[]): {
         principalType?: string | undefined;
-        principalId?: import("../common/types").IdType | undefined;
+        principalId?: IdType | undefined;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
@@ -131,7 +131,7 @@ declare const BasePrincipalDataTypeTzEntity_base: {
     readonly modelName: string;
     definition: import("@loopback/repository").ModelDefinition;
 };
-export declare class BasePrincipalDataTypeTzEntity<T> extends BasePrincipalDataTypeTzEntity_base implements IPersistableEntity<T> {
+export declare class BasePrincipalDataTypeTzEntity<T extends IdType> extends BasePrincipalDataTypeTzEntity_base implements IPersistableEntity<T> {
 }
 export declare class ApplicationError extends Error {
     protected statusCode: number;

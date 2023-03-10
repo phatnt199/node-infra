@@ -20,10 +20,7 @@ export abstract class AbstractTimestampRepository<E extends BaseTzEntity<IdType>
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class AbstractViewRepository<
-  E extends BaseIdEntity<IdType>,
-  R extends EntityRelation,
-> extends DefaultCrudRepository<E, IdType, R> {
+export abstract class ViewRepository<E extends BaseIdEntity<IdType>> extends DefaultCrudRepository<E, IdType, any> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }
@@ -171,12 +168,5 @@ export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends Abs
 
     entity.modifiedAt = new Date();
     return entity;
-  }
-}
-
-// ----------------------------------------------------------------------------------------------------------------------------------------
-export class ViewRepository<E extends BaseIdEntity<IdType>> extends AbstractViewRepository<E, any> {
-  constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
-    super(entityClass, dataSource);
   }
 }

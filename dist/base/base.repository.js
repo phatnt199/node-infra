@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ViewRepository = exports.TimestampCrudRepository = exports.AbstractViewRepository = exports.AbstractTimestampRepository = void 0;
+exports.TimestampCrudRepository = exports.ViewRepository = exports.AbstractTimestampRepository = void 0;
 const repository_1 = require("@loopback/repository");
 const utilities_1 = require("../utilities");
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ class AbstractTimestampRepository extends repository_1.DefaultCrudRepository {
 }
 exports.AbstractTimestampRepository = AbstractTimestampRepository;
 // ----------------------------------------------------------------------------------------------------------------------------------------
-class AbstractViewRepository extends repository_1.DefaultCrudRepository {
+class ViewRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource) {
         super(entityClass, dataSource);
     }
@@ -91,7 +91,7 @@ class AbstractViewRepository extends repository_1.DefaultCrudRepository {
         });
     }
 }
-exports.AbstractViewRepository = AbstractViewRepository;
+exports.ViewRepository = ViewRepository;
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class TimestampCrudRepository extends AbstractTimestampRepository {
     constructor(entityClass, dataSource) {
@@ -163,11 +163,4 @@ class TimestampCrudRepository extends AbstractTimestampRepository {
     }
 }
 exports.TimestampCrudRepository = TimestampCrudRepository;
-// ----------------------------------------------------------------------------------------------------------------------------------------
-class ViewRepository extends AbstractViewRepository {
-    constructor(entityClass, dataSource) {
-        super(entityClass, dataSource);
-    }
-}
-exports.ViewRepository = ViewRepository;
 //# sourceMappingURL=base.repository.js.map

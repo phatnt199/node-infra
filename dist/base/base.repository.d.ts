@@ -11,7 +11,7 @@ export declare abstract class AbstractTimestampRepository<E extends BaseTzEntity
     abstract updateWithReturn(id: IdType, data: DataObject<E>, options?: any): Promise<E>;
     abstract upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
 }
-export declare abstract class AbstractViewRepository<E extends BaseIdEntity<IdType>, R extends EntityRelation> extends DefaultCrudRepository<E, IdType, R> {
+export declare abstract class ViewRepository<E extends BaseIdEntity<IdType>> extends DefaultCrudRepository<E, IdType, any> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
     existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
     create(_data: DataObject<E>, _options?: Options): Promise<E>;
@@ -39,7 +39,4 @@ export declare class TimestampCrudRepository<E extends BaseTzEntity<IdType>> ext
     mixTimestamp(entity: DataObject<E>, options?: {
         newInstance: boolean;
     }): DataObject<E>;
-}
-export declare class ViewRepository<E extends BaseIdEntity<IdType>> extends AbstractViewRepository<E, any> {
-    constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
 }
