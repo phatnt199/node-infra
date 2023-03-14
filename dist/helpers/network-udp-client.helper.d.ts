@@ -7,14 +7,21 @@ interface NetworkUdpClientProps {
         host: string;
         port: number;
     };
-    onConnected?: () => void;
+    onConnected?: (opts: {
+        identifier: string;
+    }) => void;
     onData?: (opts: {
         identifier: string;
         message: Buffer;
         remote: dgram.RemoteInfo;
     }) => void;
-    onClosed?: () => void;
-    onError?: (error: any) => void;
+    onClosed?: (opts: {
+        identifier: string;
+    }) => void;
+    onError?: (opts: {
+        identifier: string;
+        error: Error;
+    }) => void;
 }
 export declare class NetworkUdpClient {
     private logger;

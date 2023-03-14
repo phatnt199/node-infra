@@ -47,13 +47,16 @@ class NetworkUdpClient {
         this.client = dgram_1.default.createSocket('udp4');
         this.client.on('close', () => {
             var _a;
-            (_a = this.onClosed) === null || _a === void 0 ? void 0 : _a.call(this);
+            (_a = this.onClosed) === null || _a === void 0 ? void 0 : _a.call(this, { identifier: this.identifier });
         });
         this.client.on('error', error => {
             var _a;
-            (_a = this.onError) === null || _a === void 0 ? void 0 : _a.call(this, error);
+            (_a = this.onError) === null || _a === void 0 ? void 0 : _a.call(this, { identifier: this.identifier, error });
         });
-        this.client.on('listening', this.onConnected);
+        this.client.on('listening', () => {
+            var _a;
+            (_a = this.onConnected) === null || _a === void 0 ? void 0 : _a.call(this, { identifier: this.identifier });
+        });
         this.client.on('message', (message, remote) => {
             var _a;
             this.logger.info(`[<==] Address: ${remote.address} | Port: ${remote.port} | Message: ${message}`);

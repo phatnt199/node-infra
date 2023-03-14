@@ -5,10 +5,10 @@ import dgram from 'dgram';
 interface NetworkUdpClientProps {
   identifier: string;
   options: { host: string; port: number };
-  onConnected?: () => void;
+  onConnected?: (opts: { identifier: string }) => void;
   onData?: (opts: { identifier: string; message: Buffer; remote: dgram.RemoteInfo }) => void;
-  onClosed?: () => void;
-  onError?: (error: any) => void;
+  onClosed?: (opts: { identifier: string }) => void;
+  onError?: (opts: { identifier: string; error: Error }) => void;
 }
 
 export class NetworkUdpClient {
@@ -16,10 +16,10 @@ export class NetworkUdpClient {
 
   private identifier: string;
   private options: { host: string; port: number };
-  private onConnected: () => void;
+  private onConnected: (opts: { identifier: string }) => void;
   private onData: (opts: { identifier: string; message: any; remote: dgram.RemoteInfo }) => void;
-  private onClosed?: () => void;
-  private onError?: (error: any) => void;
+  private onClosed?: (opts: { identifier: string }) => void;
+  private onError?: (opts: { identifier: string; error: Error }) => void;
 
   private client?: dgram.Socket | null;
 
@@ -75,14 +75,16 @@ export class NetworkUdpClient {
 
     this.client = dgram.createSocket('udp4');
     this.client.on('close', () => {
-      this.onClosed?.();
+      this.onClosed?.({ identifier: this.identifier });
     });
 
     this.client.on('error', error => {
-      this.onError?.(error);
+      this.onError?.({ identifier: this.identifier, error });
     });
 
-    this.client.on('listening', this.onConnected);
+    this.client.on('listening', () => {
+      this.onConnected?.({ identifier: this.identifier });
+    });
 
     this.client.on('message', (message, remote) => {
       this.logger.info(`[<==] Address: ${remote.address} | Port: ${remote.port} | Message: ${message}`);

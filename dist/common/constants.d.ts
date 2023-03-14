@@ -53,3 +53,12 @@ export declare class EntityRelations {
     static readonly TYPE_SET: Set<string>;
     static isValid(type: string): boolean;
 }
+export declare class SocketIOConstants {
+    static readonly EVENT_PING = "ping";
+    static readonly EVENT_CONNECT = "connection";
+    static readonly EVENT_DISCONNECT = "disconnect";
+    static readonly EVENT_JOIN = "join";
+    static readonly EVENT_LEAVE = "leave";
+    static readonly ROOM_DEFAULT = "io-default";
+    static readonly ROOM_NOTIFICATIOn = "io-notification";
+}

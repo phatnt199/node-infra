@@ -2,7 +2,7 @@
 var _a;
 var _b;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EntityRelations = exports.ApplicationRunModes = exports.MigrationStatuses = exports.Statuses = exports.Sorts = exports.ResultCodes = exports.ApplicationRoles = exports.Formatters = exports.App = void 0;
+exports.SocketIOConstants = exports.EntityRelations = exports.ApplicationRunModes = exports.MigrationStatuses = exports.Statuses = exports.Sorts = exports.ResultCodes = exports.ApplicationRoles = exports.Formatters = exports.App = void 0;
 class App {
 }
 exports.App = App;
@@ -70,4 +70,14 @@ EntityRelations.HAS_ONE = 'hasOne';
 EntityRelations.HAS_MANY = 'hasMany';
 EntityRelations.HAS_MANY_THROUGH = 'hasManyThrough';
 EntityRelations.TYPE_SET = new Set([_b.BELONGS_TO, _b.HAS_ONE, _b.HAS_MANY, _b.HAS_MANY_THROUGH]);
+class SocketIOConstants {
+}
+exports.SocketIOConstants = SocketIOConstants;
+SocketIOConstants.EVENT_PING = 'ping';
+SocketIOConstants.EVENT_CONNECT = 'connection';
+SocketIOConstants.EVENT_DISCONNECT = 'disconnect';
+SocketIOConstants.EVENT_JOIN = 'join';
+SocketIOConstants.EVENT_LEAVE = 'leave';
+SocketIOConstants.ROOM_DEFAULT = 'io-default';
+SocketIOConstants.ROOM_NOTIFICATIOn = 'io-notification';
 //# sourceMappingURL=constants.js.map

@@ -64,3 +64,14 @@ export class EntityRelations {
     return this.TYPE_SET.has(type);
   }
 }
+
+export class SocketIOConstants {
+  static readonly EVENT_PING = 'ping';
+  static readonly EVENT_CONNECT = 'connection';
+  static readonly EVENT_DISCONNECT = 'disconnect';
+  static readonly EVENT_JOIN = 'join';
+  static readonly EVENT_LEAVE = 'leave';
+
+  static readonly ROOM_DEFAULT = 'io-default';
+  static readonly ROOM_NOTIFICATIOn = 'io-notification';
+}
