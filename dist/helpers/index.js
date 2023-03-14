@@ -17,6 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./logger.helper"), exports);
 __exportStar(require("./di-container.helper"), exports);
 __exportStar(require("./network-tcp-client.helper"), exports);
+__exportStar(require("./network-udp-client.helper"), exports);
 __exportStar(require("./redis.helper"), exports);
 __exportStar(require("./bullmq.helper"), exports);
 __exportStar(require("./network.helper"), exports);
