@@ -73,5 +73,5 @@ export class SocketIOConstants {
   static readonly EVENT_LEAVE = 'leave';
 
   static readonly ROOM_DEFAULT = 'io-default';
-  static readonly ROOM_NOTIFICATIOn = 'io-notification';
+  static readonly ROOM_NOTIFICATION = 'io-notification';
 }

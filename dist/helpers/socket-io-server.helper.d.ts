@@ -5,11 +5,11 @@ import { BaseApplication } from '..';
 export interface ISocketIOServerOptions {
     identifier: string;
     useAuth: boolean;
-    path: string;
+    path?: string;
     application: BaseApplication;
     redisConnection: Redis;
     authenticateFn: (args: Handshake) => Promise<boolean>;
-    defaultRooms: string[];
+    defaultRooms?: string[];
 }
 export declare class SocketIOServerHelper {
     private logger;

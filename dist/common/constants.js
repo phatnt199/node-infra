@@ -79,5 +79,5 @@ SocketIOConstants.EVENT_DISCONNECT = 'disconnect';
 SocketIOConstants.EVENT_JOIN = 'join';
 SocketIOConstants.EVENT_LEAVE = 'leave';
 SocketIOConstants.ROOM_DEFAULT = 'io-default';
-SocketIOConstants.ROOM_NOTIFICATIOn = 'io-notification';
+SocketIOConstants.ROOM_NOTIFICATION = 'io-notification';
 //# sourceMappingURL=constants.js.map

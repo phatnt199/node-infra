@@ -13,11 +13,11 @@ import { BaseApplication } from '..';
 export interface ISocketIOServerOptions {
   identifier: string;
   useAuth: boolean;
-  path: string;
+  path?: string;
   application: BaseApplication;
   redisConnection: Redis;
   authenticateFn: (args: Handshake) => Promise<boolean>;
-  defaultRooms: string[];
+  defaultRooms?: string[];
 }
 
 // -------------------------------------------------------------------------------------------------------------
@@ -55,11 +55,11 @@ export class SocketIOServerHelper {
     this.logger.info('[io-server] Initialize SocketIO Server'); */
     this.identifier = opts.identifier;
     // this.useAuth = opts.useAuth;
-    this.path = opts.path;
+    this.path = opts.path ?? '';
     this.application = opts.application;
     this.redisConnection = opts.redisConnection;
     this.authenticateFn = opts.authenticateFn;
-    this.defaultRooms = opts.defaultRooms ?? [];
+    this.defaultRooms = opts.defaultRooms ?? [SocketIOConstants.ROOM_DEFAULT, SocketIOConstants.ROOM_NOTIFICATION];
 
     // Establish redis connection
     if (!this.redisConnection) {

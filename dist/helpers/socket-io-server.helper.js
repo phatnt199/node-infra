@@ -20,7 +20,7 @@ const common_1 = require("../common");
 // -------------------------------------------------------------------------------------------------------------
 class SocketIOServerHelper {
     constructor(opts) {
-        var _a;
+        var _a, _b;
         this.logger = helpers_1.LoggerFactory.getLogger([SocketIOServerHelper.name]);
         this.clients = {};
         /* if (!server) {
@@ -30,11 +30,11 @@ class SocketIOServerHelper {
         this.logger.info('[io-server] Initialize SocketIO Server'); */
         this.identifier = opts.identifier;
         // this.useAuth = opts.useAuth;
-        this.path = opts.path;
+        this.path = (_a = opts.path) !== null && _a !== void 0 ? _a : '';
         this.application = opts.application;
         this.redisConnection = opts.redisConnection;
         this.authenticateFn = opts.authenticateFn;
-        this.defaultRooms = (_a = opts.defaultRooms) !== null && _a !== void 0 ? _a : [];
+        this.defaultRooms = (_b = opts.defaultRooms) !== null && _b !== void 0 ? _b : [common_1.SocketIOConstants.ROOM_DEFAULT, common_1.SocketIOConstants.ROOM_NOTIFICATION];
         // Establish redis connection
         if (!this.redisConnection) {
             throw (0, utilities_1.getError)({
