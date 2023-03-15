@@ -2,18 +2,19 @@ import { Server as IOServer, Socket as IOSocket } from 'socket.io';
 import { Handshake } from 'socket.io/dist/socket';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { Emitter } from '@socket.io/redis-emitter';
-import { Server } from 'https';
 import Redis from 'ioredis';
+import { createServer } from 'http';
 
 import { LoggerFactory, ApplicationLogger } from '@/helpers';
 import { getError } from '@/utilities';
 import { SocketIOConstants } from '@/common';
+import { BaseApplication } from '..';
 
 export interface ISocketIOServerOptions {
   identifier: string;
   useAuth: boolean;
-  server: Server;
   path: string;
+  application: BaseApplication;
   redisConnection: Redis;
   authenticateFn: (args: Handshake) => Promise<boolean>;
   defaultRooms: string[];
@@ -31,7 +32,7 @@ export default class SocketIOServerHelper {
 
   private io: IOServer;
   private emitter?: Emitter;
-  private server: Server;
+  private application: BaseApplication;
   private redisConnection: Redis;
   private clients: Record<
     string,
@@ -55,6 +56,7 @@ export default class SocketIOServerHelper {
     this.identifier = opts.identifier;
     // this.useAuth = opts.useAuth;
     this.path = opts.path;
+    this.application = opts.application;
     this.redisConnection = opts.redisConnection;
     this.authenticateFn = opts.authenticateFn;
     this.defaultRooms = opts.defaultRooms ?? [];
@@ -73,7 +75,16 @@ export default class SocketIOServerHelper {
   // -------------------------------------------------------------------------------------------------------------
   configure() {
     this.logger.info('[configure][%s] Configuring IO Server', this.identifier);
-    this.io = new IOServer(this.server, { path: this.path ?? '' });
+
+    if (!this.application) {
+      throw getError({
+        statusCode: 500,
+        message: '[DANGER] Invalid application instance to init Socket.io server!',
+      });
+    }
+
+    const server = createServer(this.application.requestHandler);
+    this.io = new IOServer(server, { path: this.path ?? '' });
 
     // Configure socket.io authentication and authorization
     /* if (this.useAuth) {

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const socket_io_1 = require("socket.io");
 const redis_adapter_1 = require("@socket.io/redis-adapter");
 const redis_emitter_1 = require("@socket.io/redis-emitter");
+const http_1 = require("http");
 const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
 const common_1 = require("../common");
@@ -29,6 +30,7 @@ class SocketIOServerHelper {
         this.identifier = opts.identifier;
         // this.useAuth = opts.useAuth;
         this.path = opts.path;
+        this.application = opts.application;
         this.redisConnection = opts.redisConnection;
         this.authenticateFn = opts.authenticateFn;
         this.defaultRooms = (_a = opts.defaultRooms) !== null && _a !== void 0 ? _a : [];
@@ -45,7 +47,14 @@ class SocketIOServerHelper {
     configure() {
         var _a;
         this.logger.info('[configure][%s] Configuring IO Server', this.identifier);
-        this.io = new socket_io_1.Server(this.server, { path: (_a = this.path) !== null && _a !== void 0 ? _a : '' });
+        if (!this.application) {
+            throw (0, utilities_1.getError)({
+                statusCode: 500,
+                message: '[DANGER] Invalid application instance to init Socket.io server!',
+            });
+        }
+        const server = (0, http_1.createServer)(this.application.requestHandler);
+        this.io = new socket_io_1.Server(server, { path: (_a = this.path) !== null && _a !== void 0 ? _a : '' });
         // Configure socket.io authentication and authorization
         /* if (this.useAuth) {
           this.enableAuth();

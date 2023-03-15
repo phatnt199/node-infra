@@ -1,13 +1,12 @@
-/// <reference types="node" />
 import { Socket as IOSocket } from 'socket.io';
 import { Handshake } from 'socket.io/dist/socket';
-import { Server } from 'https';
 import Redis from 'ioredis';
+import { BaseApplication } from '..';
 export interface ISocketIOServerOptions {
     identifier: string;
     useAuth: boolean;
-    server: Server;
     path: string;
+    application: BaseApplication;
     redisConnection: Redis;
     authenticateFn: (args: Handshake) => Promise<boolean>;
     defaultRooms: string[];
@@ -20,7 +19,7 @@ export default class SocketIOServerHelper {
     private defaultRooms;
     private io;
     private emitter?;
-    private server;
+    private application;
     private redisConnection;
     private clients;
     constructor(opts: ISocketIOServerOptions);
