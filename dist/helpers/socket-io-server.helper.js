@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SocketIOServerHelper = void 0;
 const socket_io_1 = require("socket.io");
 const redis_adapter_1 = require("@socket.io/redis-adapter");
 const redis_emitter_1 = require("@socket.io/redis-emitter");
@@ -247,5 +248,5 @@ class SocketIOServerHelper {
         }
     }
 }
-exports.default = SocketIOServerHelper;
+exports.SocketIOServerHelper = SocketIOServerHelper;
 //# sourceMappingURL=socket-io-server.helper.js.map

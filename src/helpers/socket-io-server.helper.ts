@@ -21,7 +21,7 @@ export interface ISocketIOServerOptions {
 }
 
 // -------------------------------------------------------------------------------------------------------------
-export default class SocketIOServerHelper {
+export class SocketIOServerHelper {
   private logger: ApplicationLogger;
 
   private identifier: string;

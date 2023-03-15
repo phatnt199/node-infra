@@ -11,7 +11,7 @@ export interface ISocketIOServerOptions {
     authenticateFn: (args: Handshake) => Promise<boolean>;
     defaultRooms: string[];
 }
-export default class SocketIOServerHelper {
+export declare class SocketIOServerHelper {
     private logger;
     private identifier;
     private path;
