@@ -5,7 +5,7 @@ import { del, get, param, patch, post, requestBody, SchemaObject } from '@loopba
 import getProp from 'lodash/get';
 
 import { BaseIdEntity, BaseTzEntity, AbstractTimestampRepository } from './';
-import { EntityRelation, IController, IdType, NullableType, RelationType } from '@/common/types';
+import { EntityRelation, IController, IdType, NullableType, TRelationType } from '@/common/types';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import { EntityRelations } from '@/common';
@@ -44,7 +44,7 @@ export interface RelationCrudControllerOptions {
   association: {
     source: string;
     relationName: string;
-    relationType: RelationType;
+    relationType: TRelationType;
     target: string;
   };
   schema: {
@@ -60,7 +60,7 @@ export interface RelationCrudControllerOptions {
 // --------------------------------------------------------------------------------------------------------------
 export const defineRelationViewController = <S extends BaseTzEntity<IdType>, T extends BaseTzEntity<IdType>>(opts: {
   baseClass?: Class<BaseController>;
-  relationType: RelationType;
+  relationType: TRelationType;
   relationName: string;
 }): ControllerClass => {
   const { baseClass, relationType, relationName } = opts;

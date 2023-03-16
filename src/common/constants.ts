@@ -29,28 +29,33 @@ export class Sorts {
   static readonly ASC = 'asc';
 }
 
-export class Statuses {
-  static readonly UNKNOWN = '000_UNKNOWN';
-  static readonly ACTIVATED = '100_ACTIVATED';
-  static readonly DEACTIVATED = '101_DEACTIVATED';
-  static readonly BLOCKED = '102_BLOCKED';
-  static readonly DRAFT = '103_DRAFT';
-  static readonly ARCHIVE = '104_ARCHIVE';
-  static readonly SUCCESS = '105_SUCCESS';
-  static readonly FAIL = '106_FAIL';
-  static readonly SENT = '107_SENT';
-}
-
-export class MigrationStatuses {
-  static readonly UNKNOWN = Statuses.UNKNOWN;
-  static readonly SUCCESS = Statuses.SUCCESS;
-  static readonly FAIL = Statuses.FAIL;
-}
-
 export class ApplicationRunModes {
   static readonly MODE_START_UP = 'startup';
   static readonly MODE_MIGRATE = 'migrate';
   static readonly MODE_SEED = 'seed';
+}
+
+export class UserIdentifierSchemes {
+  static readonly USERNAME = 'username';
+  static readonly EMAIL = 'email';
+  static readonly PHONE_NUMBER = 'phone_number';
+  static readonly SCHEME_SET = new Set([this.USERNAME, this.EMAIL, this.PHONE_NUMBER]);
+
+  static isValid(scheme: string): boolean {
+    return this.SCHEME_SET.has(scheme);
+  }
+}
+
+export class UserCredentialSchemes {
+  static readonly BASIC = 'basic';
+  static readonly TWO_FA = '2fa';
+  static readonly OAUTH = 'oauth';
+  static readonly OAUTH2 = 'oauth2';
+  static readonly SCHEME_SET = new Set([this.BASIC, this.TWO_FA, this.OAUTH, this.OAUTH2]);
+
+  static isValid(scheme: string): boolean {
+    return this.SCHEME_SET.has(scheme);
+  }
 }
 
 export class EntityRelations {
@@ -64,6 +69,18 @@ export class EntityRelations {
     return this.TYPE_SET.has(type);
   }
 }
+
+export class UserTypes {
+  static readonly SYSTEM = 'SYSTEM';
+  static readonly LINKED = 'LINKED';
+  static readonly TYPE_SET = new Set([this.SYSTEM, this.LINKED]);
+
+  static isValid(orgType: string): boolean {
+    return this.TYPE_SET.has(orgType);
+  }
+}
+
+export class AccountTypes extends UserTypes {}
 
 export class SocketIOConstants {
   static readonly EVENT_PING = 'ping';

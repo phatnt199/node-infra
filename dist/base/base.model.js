@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApplicationError = exports.BasePrincipalDataTypeTzEntity = exports.BaseTextSearchTzEntity = exports.BaseDataTypeTzEntity = exports.BasePrincipalTzEntity = exports.BaseUserAuditTzEntity = exports.BaseTzEntity = exports.BaseIdEntity = exports.BaseEntity = void 0;
+exports.ApplicationError = exports.BaseTextSearchTzEntity = exports.BaseDataTypeTzEntity = exports.BaseUserAuditTzEntity = exports.BaseTzEntity = exports.BaseIdEntity = exports.BaseEntity = void 0;
 const repository_1 = require("@loopback/repository");
 const mixins_1 = require("../mixins");
 // ---------------------------------------------------------------------
@@ -29,7 +29,7 @@ __decorate([
 ], BaseIdEntity.prototype, "id", void 0);
 exports.BaseIdEntity = BaseIdEntity;
 // ---------------------------------------------------------------------
-class BaseTzEntity extends (0, mixins_1.TimestampMixin)((BaseIdEntity)) {
+class BaseTzEntity extends (0, mixins_1.TzMixin)((BaseIdEntity)) {
 }
 exports.BaseTzEntity = BaseTzEntity;
 // ---------------------------------------------------------------------
@@ -37,9 +37,9 @@ class BaseUserAuditTzEntity extends (0, mixins_1.UserAuditMixin)((BaseTzEntity))
 }
 exports.BaseUserAuditTzEntity = BaseUserAuditTzEntity;
 // ---------------------------------------------------------------------
-class BasePrincipalTzEntity extends (0, mixins_1.PrincipalMixin)((BaseTzEntity)) {
-}
-exports.BasePrincipalTzEntity = BasePrincipalTzEntity;
+/* export class BasePrincipalTzEntity<T extends IdType>
+  extends PrincipalMixin(BaseTzEntity<any>)
+  implements IPersistableEntity<T> {} */
 // ---------------------------------------------------------------------
 class BaseDataTypeTzEntity extends (0, mixins_1.DataTypeMixin)((BaseTzEntity)) {
 }
@@ -49,9 +49,13 @@ class BaseTextSearchTzEntity extends (0, mixins_1.TextSearchMixin)((BaseTzEntity
 }
 exports.BaseTextSearchTzEntity = BaseTextSearchTzEntity;
 // ---------------------------------------------------------------------
-class BasePrincipalDataTypeTzEntity extends (0, mixins_1.DataTypeMixin)((0, mixins_1.PrincipalMixin)((BaseTzEntity))) {
-}
-exports.BasePrincipalDataTypeTzEntity = BasePrincipalDataTypeTzEntity;
+/* export class BasePrincipalDataTypeTzEntity<T extends IdType>
+  extends DataTypeMixin(PrincipalMixin(BaseTzEntity<any>))
+  implements IPersistableEntity<T> {} */
+// ---------------------------------------------------------------------
+/* export class BasePrincipalUserAuditTzEntity<T extends IdType>
+  extends PrincipalMixin(BaseUserAuditTzEntity<any>)
+  implements IPersistableEntity<T> {} */
 // ---------------------------------------------------------------------
 class ApplicationError extends Error {
     constructor(opts) {

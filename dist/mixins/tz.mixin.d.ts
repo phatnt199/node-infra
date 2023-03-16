@@ -1,6 +1,6 @@
 import { MixinTarget } from '@loopback/core';
 import { Entity } from '@loopback/repository';
-export declare const TimestampMixin: <E extends MixinTarget<Entity>>(superClass: E) => {
+export declare const TzMixin: <E extends MixinTarget<Entity>>(superClass: E) => {
     new (...args: any[]): {
         createdAt: Date;
         modifiedAt: Date;

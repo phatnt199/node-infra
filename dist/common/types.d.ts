@@ -19,8 +19,9 @@ export type StringIdType = string;
 export type IdType = string | number;
 export type AnyType = any;
 export type NullableType = undefined | null | void;
-export type RelationType = 'belongsTo' | 'hasOne' | 'hasMany' | 'hasManyThrough';
-export type BullQueueRole = 'queue' | 'worker';
+export type TRelationType = 'belongsTo' | 'hasOne' | 'hasMany' | 'hasManyThrough';
+export type TBullQueueRole = 'queue' | 'worker';
+export type TPermissionEffect = 'allow' | 'deny';
 export interface IEntity<T> {
     id: T;
 }

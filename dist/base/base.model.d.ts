@@ -43,25 +43,6 @@ declare const BaseUserAuditTzEntity_base: {
 };
 export declare class BaseUserAuditTzEntity<T extends IdType> extends BaseUserAuditTzEntity_base implements IPersistableEntity<T> {
 }
-declare const BasePrincipalTzEntity_base: {
-    new (...args: any[]): {
-        principalType?: string | undefined;
-        principalId?: IdType | undefined;
-        getId: () => any;
-        getIdObject: () => Object;
-        toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
-    };
-} & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<any>;
-    getIdProperties(): string[];
-    getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
-    buildWhereForId(id: any): any;
-    readonly modelName: string;
-    definition: import("@loopback/repository").ModelDefinition;
-};
-export declare class BasePrincipalTzEntity<T extends IdType> extends BasePrincipalTzEntity_base implements IPersistableEntity<T> {
-}
 declare const BaseDataTypeTzEntity_base: {
     new (...args: any[]): {
         tValue?: string | undefined;
@@ -101,37 +82,6 @@ declare const BaseTextSearchTzEntity_base: {
     definition: import("@loopback/repository").ModelDefinition;
 };
 export declare class BaseTextSearchTzEntity<T extends IdType> extends BaseTextSearchTzEntity_base implements IPersistableEntity<T> {
-}
-declare const BasePrincipalDataTypeTzEntity_base: {
-    new (...args: any[]): {
-        tValue?: string | undefined;
-        nValue?: number | undefined;
-        jValue?: any;
-        bValue?: number[] | undefined;
-        dataType?: string | undefined;
-        getId: () => any;
-        getIdObject: () => Object;
-        toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
-    };
-} & {
-    new (...args: any[]): {
-        principalType?: string | undefined;
-        principalId?: IdType | undefined;
-        getId: () => any;
-        getIdObject: () => Object;
-        toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
-    };
-} & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<any>;
-    getIdProperties(): string[];
-    getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
-    buildWhereForId(id: any): any;
-    readonly modelName: string;
-    definition: import("@loopback/repository").ModelDefinition;
-};
-export declare class BasePrincipalDataTypeTzEntity<T extends IdType> extends BasePrincipalDataTypeTzEntity_base implements IPersistableEntity<T> {
 }
 export declare class ApplicationError extends Error {
     protected statusCode: number;

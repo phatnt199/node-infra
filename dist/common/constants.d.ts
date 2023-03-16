@@ -24,26 +24,25 @@ export declare class Sorts {
     static readonly DESC = "desc";
     static readonly ASC = "asc";
 }
-export declare class Statuses {
-    static readonly UNKNOWN = "000_UNKNOWN";
-    static readonly ACTIVATED = "100_ACTIVATED";
-    static readonly DEACTIVATED = "101_DEACTIVATED";
-    static readonly BLOCKED = "102_BLOCKED";
-    static readonly DRAFT = "103_DRAFT";
-    static readonly ARCHIVE = "104_ARCHIVE";
-    static readonly SUCCESS = "105_SUCCESS";
-    static readonly FAIL = "106_FAIL";
-    static readonly SENT = "107_SENT";
-}
-export declare class MigrationStatuses {
-    static readonly UNKNOWN = "000_UNKNOWN";
-    static readonly SUCCESS = "105_SUCCESS";
-    static readonly FAIL = "106_FAIL";
-}
 export declare class ApplicationRunModes {
     static readonly MODE_START_UP = "startup";
     static readonly MODE_MIGRATE = "migrate";
     static readonly MODE_SEED = "seed";
+}
+export declare class UserIdentifierSchemes {
+    static readonly USERNAME = "username";
+    static readonly EMAIL = "email";
+    static readonly PHONE_NUMBER = "phone_number";
+    static readonly SCHEME_SET: Set<string>;
+    static isValid(scheme: string): boolean;
+}
+export declare class UserCredentialSchemes {
+    static readonly BASIC = "basic";
+    static readonly TWO_FA = "2fa";
+    static readonly OAUTH = "oauth";
+    static readonly OAUTH2 = "oauth2";
+    static readonly SCHEME_SET: Set<string>;
+    static isValid(scheme: string): boolean;
 }
 export declare class EntityRelations {
     static readonly BELONGS_TO = "belongsTo";
@@ -52,6 +51,14 @@ export declare class EntityRelations {
     static readonly HAS_MANY_THROUGH = "hasManyThrough";
     static readonly TYPE_SET: Set<string>;
     static isValid(type: string): boolean;
+}
+export declare class UserTypes {
+    static readonly SYSTEM = "SYSTEM";
+    static readonly LINKED = "LINKED";
+    static readonly TYPE_SET: Set<string>;
+    static isValid(orgType: string): boolean;
+}
+export declare class AccountTypes extends UserTypes {
 }
 export declare class SocketIOConstants {
     static readonly EVENT_PING = "ping";

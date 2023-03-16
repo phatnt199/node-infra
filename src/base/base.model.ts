@@ -1,6 +1,6 @@
 import { Entity, property } from '@loopback/repository';
 import { IdType, IEntity, IPersistableEntity } from '@/common/types';
-import { TimestampMixin, DataTypeMixin, PrincipalMixin, TextSearchMixin, UserAuditMixin } from '@/mixins';
+import { TzMixin, DataTypeMixin, TextSearchMixin, UserAuditMixin } from '@/mixins';
 
 // ---------------------------------------------------------------------
 export class BaseEntity extends Entity {}
@@ -16,9 +16,7 @@ export class BaseIdEntity<T extends IdType> extends BaseEntity implements IEntit
 }
 
 // ---------------------------------------------------------------------
-export class BaseTzEntity<T extends IdType>
-  extends TimestampMixin(BaseIdEntity<any>)
-  implements IPersistableEntity<T> {}
+export class BaseTzEntity<T extends IdType> extends TzMixin(BaseIdEntity<any>) implements IPersistableEntity<T> {}
 
 // ---------------------------------------------------------------------
 export class BaseUserAuditTzEntity<T extends IdType>
@@ -26,9 +24,9 @@ export class BaseUserAuditTzEntity<T extends IdType>
   implements IPersistableEntity<T> {}
 
 // ---------------------------------------------------------------------
-export class BasePrincipalTzEntity<T extends IdType>
+/* export class BasePrincipalTzEntity<T extends IdType>
   extends PrincipalMixin(BaseTzEntity<any>)
-  implements IPersistableEntity<T> {}
+  implements IPersistableEntity<T> {} */
 
 // ---------------------------------------------------------------------
 export class BaseDataTypeTzEntity<T extends IdType>
@@ -41,9 +39,14 @@ export class BaseTextSearchTzEntity<T extends IdType>
   implements IPersistableEntity<T> {}
 
 // ---------------------------------------------------------------------
-export class BasePrincipalDataTypeTzEntity<T extends IdType>
+/* export class BasePrincipalDataTypeTzEntity<T extends IdType>
   extends DataTypeMixin(PrincipalMixin(BaseTzEntity<any>))
-  implements IPersistableEntity<T> {}
+  implements IPersistableEntity<T> {} */
+
+// ---------------------------------------------------------------------
+/* export class BasePrincipalUserAuditTzEntity<T extends IdType>
+  extends PrincipalMixin(BaseUserAuditTzEntity<any>)
+  implements IPersistableEntity<T> {} */
 
 // ---------------------------------------------------------------------
 export class ApplicationError extends Error {

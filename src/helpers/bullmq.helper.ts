@@ -1,12 +1,12 @@
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { Job, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
-import { BullQueueRole } from '@/common/types';
+import { TBullQueueRole } from '@/common/types';
 
 interface IBullMQOptions {
   queueName: string;
   identifier: string;
-  role: BullQueueRole;
+  role: TBullQueueRole;
   connection: Redis;
   numberOfWorker?: number;
   onWorkerData?: (job: Job) => Promise<any>;

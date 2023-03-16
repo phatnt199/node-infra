@@ -14,7 +14,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./timestamp.mixin"), exports);
+__exportStar(require("./tz.mixin"), exports);
 __exportStar(require("./data-type.mixin"), exports);
 __exportStar(require("./principal.mixin"), exports);
 __exportStar(require("./text-search.mixin"), exports);

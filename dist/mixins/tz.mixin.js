@@ -9,9 +9,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TimestampMixin = void 0;
+exports.TzMixin = void 0;
 const repository_1 = require("@loopback/repository");
-const TimestampMixin = (superClass) => {
+const TzMixin = (superClass) => {
     class Mixed extends superClass {
     }
     __decorate([
@@ -40,5 +40,5 @@ const TimestampMixin = (superClass) => {
     ], Mixed.prototype, "modifiedAt", void 0);
     return Mixed;
 };
-exports.TimestampMixin = TimestampMixin;
-//# sourceMappingURL=timestamp.mixin.js.map
+exports.TzMixin = TzMixin;
+//# sourceMappingURL=tz.mixin.js.map

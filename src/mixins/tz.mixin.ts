@@ -1,7 +1,7 @@
 import { MixinTarget } from '@loopback/core';
 import { Entity, property } from '@loopback/repository';
 
-export const TimestampMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
+export const TzMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
   class Mixed extends superClass {
     @property({
       type: 'date',
