@@ -3,16 +3,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PermissionMappingRepository = void 0;
 const __1 = require("..");
 class PermissionMappingRepository extends __1.TimestampCrudRepository {
-    constructor(entityClass, dataSource, userRepositoryGetter, roleRepositoryGetter, permissionRepositoryGetter) {
+    constructor(opts) {
+        const { entityClass, dataSource, userRepositoryGetter, roleRepositoryGetter, permissionRepositoryGetter } = opts;
         super(entityClass, dataSource);
         this.userRepositoryGetter = userRepositoryGetter;
         this.roleRepositoryGetter = roleRepositoryGetter;
         this.permissionRepositoryGetter = permissionRepositoryGetter;
-        this.user = this.createBelongsToAccessorFor('user', this.userRepositoryGetter);
+        this.user = this.createBelongsToAccessorFor('user', userRepositoryGetter);
         this.registerInclusionResolver('user', this.user.inclusionResolver);
-        this.role = this.createBelongsToAccessorFor('role', this.roleRepositoryGetter);
+        this.role = this.createBelongsToAccessorFor('role', roleRepositoryGetter);
         this.registerInclusionResolver('role', this.role.inclusionResolver);
-        this.permission = this.createBelongsToAccessorFor('permission', this.permissionRepositoryGetter);
+        this.permission = this.createBelongsToAccessorFor('permission', permissionRepositoryGetter);
         this.registerInclusionResolver('permission', this.permission.inclusionResolver);
     }
 }

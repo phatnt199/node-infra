@@ -4,12 +4,6 @@ import { UserIdentifierRepository, UserCredentialRepository, RoleRepository, Per
 import { User, UserIdentifier, UserCredential, UserRole, Permission, Role, PermissionMapping } from '../models';
 import { BaseDataSource, EntityClassType, IdType, NumberIdType, TimestampCrudRepository } from '..';
 export declare class UserRepository<T extends User> extends TimestampCrudRepository<T> {
-    protected userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier>>;
-    protected userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential>>;
-    protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
-    protected roleRepositoryGetter: Getter<RoleRepository<Role>>;
-    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>;
-    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
     readonly identifiers: HasManyRepositoryFactory<UserIdentifier, IdType>;
     readonly credentials: HasManyRepositoryFactory<UserCredential, IdType>;
     readonly children: HasManyRepositoryFactory<T, IdType>;
@@ -17,7 +11,22 @@ export declare class UserRepository<T extends User> extends TimestampCrudReposit
     readonly policies: HasManyRepositoryFactory<PermissionMapping, IdType>;
     readonly roles: HasManyThroughRepositoryFactory<Role, IdType, UserRole, IdType>;
     readonly permissions: HasManyThroughRepositoryFactory<Permission, IdType, PermissionMapping, IdType>;
-    constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource, userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier>>, userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential>>, userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>, roleRepositoryGetter: Getter<RoleRepository<Role>>, permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>, permissionRepositoryGetter: Getter<PermissionRepository<Permission>>);
+    protected userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier, T>>;
+    protected userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential, T>>;
+    protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
+    protected roleRepositoryGetter: Getter<RoleRepository<Role, T>>;
+    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping, T>>;
+    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
+    constructor(opts: {
+        entityClass: EntityClassType<T>;
+        dataSource: BaseDataSource;
+        userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier, T>>;
+        userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential, T>>;
+        roleRepositoryGetter: Getter<RoleRepository<Role, T>>;
+        userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
+        permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
+        permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping, T>>;
+    });
     getSignInCredential(opts: {
         userId: NumberIdType;
         identifierScheme: string;

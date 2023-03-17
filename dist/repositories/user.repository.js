@@ -13,14 +13,15 @@ exports.UserRepository = void 0;
 const core_1 = require("@loopback/core");
 const __1 = require("..");
 class UserRepository extends __1.TimestampCrudRepository {
-    constructor(entityClass, dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter, userRoleRepositoryGetter, roleRepositoryGetter, permissionMappingRepositoryGetter, permissionRepositoryGetter) {
+    constructor(opts) {
+        const { entityClass, dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter, roleRepositoryGetter, userRoleRepositoryGetter, permissionRepositoryGetter, permissionMappingRepositoryGetter } = opts;
         super(entityClass, dataSource);
         this.userIdentifierRepositoryGetter = userIdentifierRepositoryGetter;
         this.userCredentialRepositoryGetter = userCredentialRepositoryGetter;
-        this.userRoleRepositoryGetter = userRoleRepositoryGetter;
         this.roleRepositoryGetter = roleRepositoryGetter;
-        this.permissionMappingRepositoryGetter = permissionMappingRepositoryGetter;
+        this.userRoleRepositoryGetter = userRoleRepositoryGetter;
         this.permissionRepositoryGetter = permissionRepositoryGetter;
+        this.permissionMappingRepositoryGetter = permissionMappingRepositoryGetter;
         this.credentials = this.createHasManyRepositoryFactoryFor('credentials', this.userCredentialRepositoryGetter);
         // this.registerInclusionResolver('credentials', this.credentials.inclusionResolver);
         this.identifiers = this.createHasManyRepositoryFactoryFor('identifiers', this.userIdentifierRepositoryGetter);

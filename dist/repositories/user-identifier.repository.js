@@ -16,7 +16,8 @@ exports.UserIdentifierRepository = void 0;
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const __1 = require("..");
 class UserIdentifierRepository extends __1.TimestampCrudRepository {
-    constructor(entityClass, dataSource, userRepositoryGetter) {
+    constructor(opts) {
+        const { entityClass, dataSource, userRepositoryGetter } = opts;
         super(entityClass, dataSource);
         this.userRepositoryGetter = userRepositoryGetter;
         this.user = this.createBelongsToAccessorFor('user', this.userRepositoryGetter);

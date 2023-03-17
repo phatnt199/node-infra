@@ -6,7 +6,8 @@ export class PermissionRepository<T extends Permission> extends TimestampCrudRep
   public readonly parent: BelongsToAccessor<T, IdType>;
   public readonly children: HasManyRepositoryFactory<T, IdType>;
 
-  constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource) {
+  constructor(opts: { entityClass: EntityClassType<T>; dataSource: BaseDataSource }) {
+    const { entityClass, dataSource } = opts;
     super(entityClass, dataSource);
 
     this.parent = this.createBelongsToAccessorFor('parent', Getter.fromValue(this));

@@ -5,19 +5,37 @@ import { HasManyThroughRepositoryFactory } from '@loopback/repository';
 import { UserRoleRepository, UserRepository, PermissionMappingRepository, PermissionRepository } from '@/repositories';
 import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
 
-export class RoleRepository<T extends Role> extends TimestampCrudRepository<T> {
-  public readonly users: HasManyThroughRepositoryFactory<User, IdType, UserRole, IdType>;
+export class RoleRepository<T extends Role, U extends User> extends TimestampCrudRepository<T> {
+  public readonly users: HasManyThroughRepositoryFactory<U, IdType, UserRole, IdType>;
   public readonly permissions: HasManyThroughRepositoryFactory<Permission, IdType, PermissionMapping, IdType>;
 
-  constructor(
-    entityClass: EntityClassType<T>,
-    dataSource: BaseDataSource,
-    protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>,
-    protected userRepositoryGetter: Getter<UserRepository<User>>,
-    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>,
-    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>,
-  ) {
+  protected userRepositoryGetter: Getter<UserRepository<U>>;
+  protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
+  protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
+  protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping, U>>;
+
+  constructor(opts: {
+    entityClass: EntityClassType<T>;
+    dataSource: BaseDataSource;
+    userRepositoryGetter: Getter<UserRepository<U>>;
+    userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
+    permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
+    permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping, U>>;
+  }) {
+    const {
+      entityClass,
+      dataSource,
+      userRepositoryGetter,
+      userRoleRepositoryGetter,
+      permissionRepositoryGetter,
+      permissionMappingRepositoryGetter,
+    } = opts;
     super(entityClass, dataSource);
+
+    this.userRepositoryGetter = userRepositoryGetter;
+    this.userRoleRepositoryGetter = userRoleRepositoryGetter;
+    this.permissionRepositoryGetter = permissionRepositoryGetter;
+    this.permissionMappingRepositoryGetter = permissionMappingRepositoryGetter;
 
     this.users = this.createHasManyThroughRepositoryFactoryFor(
       'users',

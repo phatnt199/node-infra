@@ -4,12 +4,19 @@ import { User, UserRole } from '../models';
 import { HasManyThroughRepositoryFactory } from '@loopback/repository';
 import { UserRoleRepository, UserRepository, PermissionMappingRepository, PermissionRepository } from '../repositories';
 import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
-export declare class RoleRepository<T extends Role> extends TimestampCrudRepository<T> {
-    protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
-    protected userRepositoryGetter: Getter<UserRepository<User>>;
-    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>;
-    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
-    readonly users: HasManyThroughRepositoryFactory<User, IdType, UserRole, IdType>;
+export declare class RoleRepository<T extends Role, U extends User> extends TimestampCrudRepository<T> {
+    readonly users: HasManyThroughRepositoryFactory<U, IdType, UserRole, IdType>;
     readonly permissions: HasManyThroughRepositoryFactory<Permission, IdType, PermissionMapping, IdType>;
-    constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource, userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>, userRepositoryGetter: Getter<UserRepository<User>>, permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>, permissionRepositoryGetter: Getter<PermissionRepository<Permission>>);
+    protected userRepositoryGetter: Getter<UserRepository<U>>;
+    protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
+    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
+    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping, U>>;
+    constructor(opts: {
+        entityClass: EntityClassType<T>;
+        dataSource: BaseDataSource;
+        userRepositoryGetter: Getter<UserRepository<U>>;
+        userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
+        permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
+        permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping, U>>;
+    });
 }

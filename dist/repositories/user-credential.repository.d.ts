@@ -3,8 +3,12 @@ import { BelongsToAccessor } from '@loopback/repository';
 import { User, UserCredential } from '../models';
 import { UserRepository } from '../repositories';
 import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
-export declare class UserCredentialRepository<T extends UserCredential> extends TimestampCrudRepository<T> {
-    protected userRepositoryGetter: Getter<UserRepository<User>>;
-    readonly user: BelongsToAccessor<User, IdType>;
-    constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource, userRepositoryGetter: Getter<UserRepository<User>>);
+export declare class UserCredentialRepository<T extends UserCredential, U extends User> extends TimestampCrudRepository<T> {
+    readonly user: BelongsToAccessor<U, IdType>;
+    protected userRepositoryGetter: Getter<UserRepository<U>>;
+    constructor(opts: {
+        entityClass: EntityClassType<T>;
+        dataSource: BaseDataSource;
+        userRepositoryGetter: Getter<UserRepository<U>>;
+    });
 }
