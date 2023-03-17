@@ -20,7 +20,7 @@ import { NumberIdType } from '@/common/types';
     },
   },
 })
-export class UserPermission extends PrincipalMixin(BaseTzEntity<NumberIdType>, Permission.name) {
+export class UserPermission extends PrincipalMixin(BaseTzEntity<NumberIdType>, 'Permission') {
   @belongsTo(
     () => User,
     { keyFrom: 'userId' },
@@ -32,7 +32,7 @@ export class UserPermission extends PrincipalMixin(BaseTzEntity<NumberIdType>, P
   )
   userId: NumberIdType;
 
-  constructor(data?: Partial<UserRole>) {
+  constructor(data?: Partial<UserPermission>) {
     super(data);
   }
 }
@@ -53,7 +53,7 @@ export class UserPermission extends PrincipalMixin(BaseTzEntity<NumberIdType>, P
     },
   },
 })
-export class UserRole extends PrincipalMixin(BaseTzEntity<NumberIdType>, Role.name) {
+export class UserRole extends PrincipalMixin(BaseTzEntity<NumberIdType>, 'Role') {
   @belongsTo(
     () => User,
     { keyFrom: 'userId' },

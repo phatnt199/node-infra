@@ -15,7 +15,7 @@ const models_1 = require("../../models");
 const mixins_1 = require("../../mixins");
 const base_1 = require("../../base");
 // --------------------------------------------------------------------------------
-let UserPermission = class UserPermission extends (0, mixins_1.PrincipalMixin)((base_1.BaseTzEntity), models_1.Permission.name) {
+let UserPermission = class UserPermission extends (0, mixins_1.PrincipalMixin)((base_1.BaseTzEntity), 'Permission') {
     constructor(data) {
         super(data);
     }
@@ -48,7 +48,7 @@ UserPermission = __decorate([
 ], UserPermission);
 exports.UserPermission = UserPermission;
 // --------------------------------------------------------------------------------
-let UserRole = class UserRole extends (0, mixins_1.PrincipalMixin)((base_1.BaseTzEntity), models_1.Role.name) {
+let UserRole = class UserRole extends (0, mixins_1.PrincipalMixin)((base_1.BaseTzEntity), 'Role') {
     constructor(data) {
         super(data);
     }

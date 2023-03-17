@@ -19,7 +19,7 @@ declare const UserPermission_base: {
 };
 export declare class UserPermission extends UserPermission_base {
     userId: NumberIdType;
-    constructor(data?: Partial<UserRole>);
+    constructor(data?: Partial<UserPermission>);
 }
 declare const UserRole_base: {
     new (...args: any[]): {
