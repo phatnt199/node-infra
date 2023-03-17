@@ -15,19 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserCredentialRepository = void 0;
 const core_1 = require("@loopback/core");
 const repository_1 = require("@loopback/repository");
-const models_1 = require("../models");
 const __1 = require("..");
 let UserCredentialRepository = class UserCredentialRepository extends __1.TimestampCrudRepository {
-    constructor(dataSource, userRepositoryGetter) {
-        super(models_1.UserCredential, dataSource);
+    constructor(entityClass, dataSource, userRepositoryGetter) {
+        super(entityClass, dataSource);
         this.userRepositoryGetter = userRepositoryGetter;
         this.user = this.createBelongsToAccessorFor('user', this.userRepositoryGetter);
         this.registerInclusionResolver('user', this.user.inclusionResolver);
     }
 };
 UserCredentialRepository = __decorate([
-    __param(1, repository_1.repository.getter('UserRepository')),
-    __metadata("design:paramtypes", [__1.BaseDataSource, Function])
+    __param(2, repository_1.repository.getter('UserRepository')),
+    __metadata("design:paramtypes", [Object, __1.BaseDataSource, Function])
 ], UserCredentialRepository);
 exports.UserCredentialRepository = UserCredentialRepository;
 //# sourceMappingURL=user-credential.repository.js.map

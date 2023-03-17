@@ -13,28 +13,29 @@ import {
   UserRoleRepository,
 } from '@/repositories';
 import { User, UserIdentifier, UserCredential, UserRole, Permission, Role, PermissionMapping } from '@/models';
-import { BaseDataSource, getError, IdType, NumberIdType, TimestampCrudRepository } from '..';
+import { BaseDataSource, EntityClassType, getError, IdType, NumberIdType, TimestampCrudRepository } from '..';
 
-export class UserRepository extends TimestampCrudRepository<User> {
+export class UserRepository<T extends User> extends TimestampCrudRepository<T> {
   public readonly identifiers: HasManyRepositoryFactory<UserIdentifier, IdType>;
   public readonly credentials: HasManyRepositoryFactory<UserCredential, IdType>;
-  public readonly children: HasManyRepositoryFactory<User, IdType>;
-  public readonly parent: HasOneRepositoryFactory<User, IdType>;
+  public readonly children: HasManyRepositoryFactory<T, IdType>;
+  public readonly parent: HasOneRepositoryFactory<T, IdType>;
 
   public readonly policies: HasManyRepositoryFactory<PermissionMapping, IdType>;
   public readonly roles: HasManyThroughRepositoryFactory<Role, IdType, UserRole, IdType>;
   public readonly permissions: HasManyThroughRepositoryFactory<Permission, IdType, PermissionMapping, IdType>;
 
   constructor(
+    entityClass: EntityClassType<T>,
     dataSource: BaseDataSource,
-    private userIdentifierRepositoryGetter: Getter<UserIdentifierRepository>,
-    private userCredentialRepositoryGetter: Getter<UserCredentialRepository>,
-    private userRoleRepositoryGetter: Getter<UserRoleRepository>,
-    private roleRepositoryGetter: Getter<RoleRepository>,
-    private permissionMappingRepositoryGetter: Getter<PermissionMappingRepository>,
-    private permissionRepositoryGetter: Getter<PermissionRepository>,
+    private userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier>>,
+    private userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential>>,
+    private userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>,
+    private roleRepositoryGetter: Getter<RoleRepository<Role>>,
+    private permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>,
+    private permissionRepositoryGetter: Getter<PermissionRepository<Permission>>,
   ) {
-    super(User, dataSource);
+    super(entityClass, dataSource);
 
     this.credentials = this.createHasManyRepositoryFactoryFor('credentials', this.userCredentialRepositoryGetter);
     // this.registerInclusionResolver('credentials', this.credentials.inclusionResolver);

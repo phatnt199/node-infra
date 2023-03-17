@@ -1,5 +1,5 @@
 import { UserRole } from '../models';
-import { BaseDataSource, TimestampCrudRepository } from '..';
-export declare class UserRoleRepository extends TimestampCrudRepository<UserRole> {
-    constructor(dataSource: BaseDataSource);
+import { BaseDataSource, EntityClassType, TimestampCrudRepository } from '..';
+export declare class UserRoleRepository<T extends UserRole> extends TimestampCrudRepository<T> {
+    constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource);
 }

@@ -11,11 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
 const core_1 = require("@loopback/core");
-const models_1 = require("../models");
 const __1 = require("..");
 class UserRepository extends __1.TimestampCrudRepository {
-    constructor(dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter, userRoleRepositoryGetter, roleRepositoryGetter, permissionMappingRepositoryGetter, permissionRepositoryGetter) {
-        super(models_1.User, dataSource);
+    constructor(entityClass, dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter, userRoleRepositoryGetter, roleRepositoryGetter, permissionMappingRepositoryGetter, permissionRepositoryGetter) {
+        super(entityClass, dataSource);
         this.userIdentifierRepositoryGetter = userIdentifierRepositoryGetter;
         this.userCredentialRepositoryGetter = userCredentialRepositoryGetter;
         this.userRoleRepositoryGetter = userRoleRepositoryGetter;

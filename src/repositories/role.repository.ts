@@ -3,22 +3,27 @@ import { PermissionMapping, Permission, Role } from '@/models';
 import { User, UserRole } from '@/models';
 import { HasManyThroughRepositoryFactory } from '@loopback/repository';
 import { UserRoleRepository, UserRepository, PermissionMappingRepository, PermissionRepository } from '@/repositories';
-import { BaseDataSource, IdType, TimestampCrudRepository } from '..';
+import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
 
-export class RoleRepository extends TimestampCrudRepository<Role> {
+export class RoleRepository<T extends Role> extends TimestampCrudRepository<T> {
   public readonly users: HasManyThroughRepositoryFactory<User, IdType, UserRole, IdType>;
   public readonly permissions: HasManyThroughRepositoryFactory<Permission, IdType, PermissionMapping, IdType>;
 
   constructor(
+    entityClass: EntityClassType<T>,
     dataSource: BaseDataSource,
-    protected userRoleRepositoryGetter: Getter<UserRoleRepository>,
-    protected userRepositoryGetter: Getter<UserRepository>,
-    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository>,
-    protected permissionRepositoryGetter: Getter<PermissionRepository>,
+    protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>,
+    protected userRepositoryGetter: Getter<UserRepository<User>>,
+    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>,
+    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>,
   ) {
-    super(Role, dataSource);
+    super(entityClass, dataSource);
 
-    this.users = this.createHasManyThroughRepositoryFactoryFor('users', this.userRepositoryGetter, this.userRoleRepositoryGetter);
+    this.users = this.createHasManyThroughRepositoryFactoryFor(
+      'users',
+      this.userRepositoryGetter,
+      this.userRoleRepositoryGetter,
+    );
     this.registerInclusionResolver('users', this.users.inclusionResolver);
 
     this.permissions = this.createHasManyThroughRepositoryFactoryFor(

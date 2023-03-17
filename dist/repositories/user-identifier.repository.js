@@ -13,12 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserIdentifierRepository = void 0;
-const models_1 = require("../models");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const __1 = require("..");
 class UserIdentifierRepository extends __1.TimestampCrudRepository {
-    constructor(dataSource, userRepositoryGetter) {
-        super(models_1.UserIdentifier, dataSource);
+    constructor(entityClass, dataSource, userRepositoryGetter) {
+        super(entityClass, dataSource);
         this.userRepositoryGetter = userRepositoryGetter;
         this.user = this.createBelongsToAccessorFor('user', this.userRepositoryGetter);
         this.registerInclusionResolver('user', this.user.inclusionResolver);

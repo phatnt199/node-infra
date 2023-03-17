@@ -3,13 +3,13 @@ import { PermissionMapping, Permission, Role } from '../models';
 import { User, UserRole } from '../models';
 import { HasManyThroughRepositoryFactory } from '@loopback/repository';
 import { UserRoleRepository, UserRepository, PermissionMappingRepository, PermissionRepository } from '../repositories';
-import { BaseDataSource, IdType, TimestampCrudRepository } from '..';
-export declare class RoleRepository extends TimestampCrudRepository<Role> {
-    protected userRoleRepositoryGetter: Getter<UserRoleRepository>;
-    protected userRepositoryGetter: Getter<UserRepository>;
-    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository>;
-    protected permissionRepositoryGetter: Getter<PermissionRepository>;
+import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
+export declare class RoleRepository<T extends Role> extends TimestampCrudRepository<T> {
+    protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
+    protected userRepositoryGetter: Getter<UserRepository<User>>;
+    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>;
+    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
     readonly users: HasManyThroughRepositoryFactory<User, IdType, UserRole, IdType>;
     readonly permissions: HasManyThroughRepositoryFactory<Permission, IdType, PermissionMapping, IdType>;
-    constructor(dataSource: BaseDataSource, userRoleRepositoryGetter: Getter<UserRoleRepository>, userRepositoryGetter: Getter<UserRepository>, permissionMappingRepositoryGetter: Getter<PermissionMappingRepository>, permissionRepositoryGetter: Getter<PermissionRepository>);
+    constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource, userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>, userRepositoryGetter: Getter<UserRepository<User>>, permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>, permissionRepositoryGetter: Getter<PermissionRepository<Permission>>);
 }

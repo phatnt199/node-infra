@@ -1,11 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PermissionMappingRepository = void 0;
-const models_1 = require("../models");
 const __1 = require("..");
 class PermissionMappingRepository extends __1.TimestampCrudRepository {
-    constructor(dataSource, userRepositoryGetter, roleRepositoryGetter, permissionRepositoryGetter) {
-        super(models_1.PermissionMapping, dataSource);
+    constructor(entityClass, dataSource, userRepositoryGetter, roleRepositoryGetter, permissionRepositoryGetter) {
+        super(entityClass, dataSource);
         this.userRepositoryGetter = userRepositoryGetter;
         this.roleRepositoryGetter = roleRepositoryGetter;
         this.permissionRepositoryGetter = permissionRepositoryGetter;

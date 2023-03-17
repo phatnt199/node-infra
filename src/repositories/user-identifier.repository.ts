@@ -5,13 +5,17 @@ import { UserIdentifierSchemes } from '@/common';
 import { UserRepository } from '@/repositories';
 
 import isEmpty from 'lodash/isEmpty';
-import { BaseDataSource, IdType, TimestampCrudRepository } from '..';
+import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
 
-export class UserIdentifierRepository extends TimestampCrudRepository<UserIdentifier> {
+export class UserIdentifierRepository<T extends UserIdentifier> extends TimestampCrudRepository<T> {
   public readonly user: BelongsToAccessor<User, IdType>;
 
-  constructor(dataSource: BaseDataSource, protected userRepositoryGetter: Getter<UserRepository>) {
-    super(UserIdentifier, dataSource);
+  constructor(
+    entityClass: EntityClassType<T>,
+    dataSource: BaseDataSource,
+    protected userRepositoryGetter: Getter<UserRepository<User>>,
+  ) {
+    super(entityClass, dataSource);
     this.user = this.createBelongsToAccessorFor('user', this.userRepositoryGetter);
     this.registerInclusionResolver('user', this.user.inclusionResolver);
   }

@@ -1,5 +1,5 @@
 import { model, belongsTo } from '@loopback/repository';
-import { Permission, Role, User } from '@/models';
+import { User } from '@/models';
 import { PrincipalMixin } from '@/mixins';
 import { BaseTzEntity } from '@/base';
 import { NumberIdType } from '@/common/types';

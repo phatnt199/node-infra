@@ -1,8 +1,8 @@
 import { UserRole } from '@/models';
-import { BaseDataSource, TimestampCrudRepository } from '..';
+import { BaseDataSource, EntityClassType, TimestampCrudRepository } from '..';
 
-export class UserRoleRepository extends TimestampCrudRepository<UserRole> {
-  constructor(dataSource: BaseDataSource) {
-    super(UserRole, dataSource);
+export class UserRoleRepository<T extends UserRole> extends TimestampCrudRepository<T> {
+  constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource) {
+    super(entityClass, dataSource);
   }
 }
