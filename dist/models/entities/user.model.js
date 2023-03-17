@@ -8,18 +8,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var User_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const repository_1 = require("@loopback/repository");
 const common_1 = require("../../common");
 const models_1 = require("../../models");
 const base_1 = require("../../base");
-let User = User_1 = class User extends base_1.BaseTzEntity {
+class User extends base_1.BaseTzEntity {
     constructor(data) {
         super(data);
     }
-};
+}
 __decorate([
     (0, repository_1.property)({
         type: 'string',
@@ -78,11 +77,11 @@ __decorate([
     __metadata("design:type", Number)
 ], User.prototype, "parentId", void 0);
 __decorate([
-    (0, repository_1.hasOne)(() => User_1, { keyTo: 'parentId' }),
+    (0, repository_1.hasOne)(() => User, { keyTo: 'parentId' }),
     __metadata("design:type", User)
 ], User.prototype, "parent", void 0);
 __decorate([
-    (0, repository_1.hasMany)(() => User_1, { keyTo: 'parentId' }),
+    (0, repository_1.hasMany)(() => User, { keyTo: 'parentId' }),
     __metadata("design:type", Array)
 ], User.prototype, "children", void 0);
 __decorate([
@@ -115,17 +114,5 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], User.prototype, "permissions", void 0);
-User = User_1 = __decorate([
-    (0, repository_1.model)({
-        settings: {
-            postgresql: {
-                schema: 'public',
-                table: 'User',
-            },
-            hiddenProperties: ['createdAt', 'modifiedAt'],
-        },
-    }),
-    __metadata("design:paramtypes", [Object])
-], User);
 exports.User = User;
 //# sourceMappingURL=user.model.js.map

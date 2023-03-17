@@ -1,16 +1,8 @@
-import { model, property, belongsTo } from '@loopback/repository';
+import { property, belongsTo } from '@loopback/repository';
 import { User, Role, Permission } from '@/models';
 import { BaseTzEntity } from '@/base';
 import { NumberIdType } from '@/common/types';
 
-@model({
-  settings: {
-    postgresql: {
-      schema: 'public',
-      table: 'PermissionMapping',
-    },
-  },
-})
 export class PermissionMapping extends BaseTzEntity<NumberIdType> {
   @belongsTo(() => Permission, { keyFrom: 'permissionId' }, { name: 'permission_id' })
   permissionId: number;

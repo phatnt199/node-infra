@@ -13,11 +13,11 @@ exports.PermissionMapping = void 0;
 const repository_1 = require("@loopback/repository");
 const models_1 = require("../../models");
 const base_1 = require("../../base");
-let PermissionMapping = class PermissionMapping extends base_1.BaseTzEntity {
+class PermissionMapping extends base_1.BaseTzEntity {
     constructor(data) {
         super(data);
     }
-};
+}
 __decorate([
     (0, repository_1.belongsTo)(() => models_1.Permission, { keyFrom: 'permissionId' }, { name: 'permission_id' }),
     __metadata("design:type", Number)
@@ -34,17 +34,6 @@ __decorate([
     (0, repository_1.property)({ type: 'string' }),
     __metadata("design:type", String)
 ], PermissionMapping.prototype, "effect", void 0);
-PermissionMapping = __decorate([
-    (0, repository_1.model)({
-        settings: {
-            postgresql: {
-                schema: 'public',
-                table: 'PermissionMapping',
-            },
-        },
-    }),
-    __metadata("design:paramtypes", [Object])
-], PermissionMapping);
 exports.PermissionMapping = PermissionMapping;
 /* export interface PermissionMappingRelations {
   permission: Permission;

@@ -14,11 +14,11 @@ const common_1 = require("../../common");
 const repository_1 = require("@loopback/repository");
 const models_1 = require("../../models");
 const base_1 = require("../../base");
-let Role = class Role extends base_1.BaseTzEntity {
+class Role extends base_1.BaseTzEntity {
     constructor(data) {
         super(data);
     }
-};
+}
 __decorate([
     (0, repository_1.property)({
         type: 'string',
@@ -70,16 +70,5 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], Role.prototype, "permissions", void 0);
-Role = __decorate([
-    (0, repository_1.model)({
-        settings: {
-            postgresql: {
-                schema: 'public',
-                table: 'Role',
-            },
-        },
-    }),
-    __metadata("design:paramtypes", [Object])
-], Role);
 exports.Role = Role;
 //# sourceMappingURL=role.model.js.map

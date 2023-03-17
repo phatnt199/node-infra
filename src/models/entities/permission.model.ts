@@ -1,15 +1,7 @@
 import { BaseTzEntity } from '@/base';
 import { NumberIdType } from '@/common/types';
-import { model, property, belongsTo, hasMany } from '@loopback/repository';
+import { property, belongsTo, hasMany } from '@loopback/repository';
 
-@model({
-  settings: {
-    postgresql: {
-      schema: 'public',
-      table: 'Permission',
-    },
-  },
-})
 export class Permission extends BaseTzEntity<NumberIdType> {
   @property({
     type: 'string',

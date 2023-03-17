@@ -14,11 +14,11 @@ const repository_1 = require("@loopback/repository");
 const common_1 = require("../../common");
 const user_model_1 = require("./user.model");
 const base_1 = require("../../base");
-let UserCredential = class UserCredential extends base_1.BaseTzEntity {
+class UserCredential extends base_1.BaseTzEntity {
     constructor(data) {
         super(data);
     }
-};
+}
 __decorate([
     (0, repository_1.property)({
         type: 'string',
@@ -57,17 +57,5 @@ __decorate([
     }),
     __metadata("design:type", Number)
 ], UserCredential.prototype, "userId", void 0);
-UserCredential = __decorate([
-    (0, repository_1.model)({
-        settings: {
-            postgresql: {
-                schema: 'public',
-                table: 'UserCredential',
-            },
-            hiddenProperties: ['createdAt', 'modifiedAt', 'credential'],
-        },
-    }),
-    __metadata("design:paramtypes", [Object])
-], UserCredential);
 exports.UserCredential = UserCredential;
 //# sourceMappingURL=user-credential.model.js.map

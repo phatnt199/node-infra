@@ -1,18 +1,9 @@
-import { model, property, belongsTo } from '@loopback/repository';
+import { property, belongsTo } from '@loopback/repository';
 import { UserIdentifierSchemes } from '@/common';
 import { User } from '@/models';
 import { BaseTzEntity } from '@/base';
 import { NumberIdType } from '@/common/types';
 
-@model({
-  settings: {
-    postgresql: {
-      schema: 'public',
-      table: 'UserIdentifier',
-    },
-    hiddenProperties: ['createdAt', 'modifiedAt'],
-  },
-})
 export class UserIdentifier extends BaseTzEntity<NumberIdType> {
   @property({
     type: 'string',
