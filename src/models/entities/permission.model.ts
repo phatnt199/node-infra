@@ -39,10 +39,3 @@ export class Permission extends BaseTzEntity<NumberIdType> {
     super(data);
   }
 }
-
-/* export interface PermissionRelations {
-  parent: Permission;
-  children: Permission[];
-} 
-
-export type PermissionWithRelations = Permission & PermissionRelations; */

@@ -1,5 +1,5 @@
-import { BaseTzEntity } from '../../base';
-import { NumberIdType } from '../../common/types';
+import { BaseTzEntity } from '@/base';
+import { NumberIdType } from '@/common/types';
 export declare class UserIdentifier extends BaseTzEntity<NumberIdType> {
     scheme: string;
     provider?: string;

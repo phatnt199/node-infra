@@ -20,11 +20,3 @@ export class PermissionMapping extends BaseTzEntity<NumberIdType> {
     super(data);
   }
 }
-
-/* export interface PermissionMappingRelations {
-  permission: Permission;
-  role: Role;
-  user: User;
-}
-
-export type PermissionMappingWithRelations = PermissionMapping & PermissionMappingRelations; */

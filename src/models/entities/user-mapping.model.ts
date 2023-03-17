@@ -9,39 +9,6 @@ import { NumberIdType } from '@/common/types';
   settings: {
     postgresql: {
       schema: 'public',
-      table: 'UserPermission',
-    },
-    hiddenProperties: ['createdAt', 'modifiedAt'],
-    indexes: {
-      INDEX_UNIQUE_USER_PERMISSION: {
-        keys: { userId: 1, principalId: 1 },
-        options: { unique: true },
-      },
-    },
-  },
-})
-export class UserPermission extends PrincipalMixin(BaseTzEntity<NumberIdType>, 'Permission') {
-  @belongsTo(
-    () => User,
-    { keyFrom: 'userId' },
-    {
-      postgresql: {
-        columnName: 'user_id',
-      },
-    },
-  )
-  userId: NumberIdType;
-
-  constructor(data?: Partial<UserPermission>) {
-    super(data);
-  }
-}
-
-// --------------------------------------------------------------------------------
-@model({
-  settings: {
-    postgresql: {
-      schema: 'public',
       table: 'UserRole',
     },
     hiddenProperties: ['createdAt', 'modifiedAt'],

@@ -14,9 +14,9 @@ const socket_io_1 = require("socket.io");
 const redis_adapter_1 = require("@socket.io/redis-adapter");
 const redis_emitter_1 = require("@socket.io/redis-emitter");
 const http_1 = require("http");
-const helpers_1 = require("../helpers");
-const utilities_1 = require("../utilities");
-const common_1 = require("../common");
+const helpers_1 = require("@/helpers");
+const utilities_1 = require("@/utilities");
+const common_1 = require("@/common");
 // -------------------------------------------------------------------------------------------------------------
 class SocketIOServerHelper {
     constructor(opts) {

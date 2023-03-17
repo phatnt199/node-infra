@@ -9,7 +9,7 @@ const path_1 = __importDefault(require("path"));
 const winston_1 = require("winston");
 require("winston-daily-rotate-file");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
-const common_1 = require("../common");
+const common_1 = require("@/common");
 const LOGGER_FOLDER_PATH = (_a = process.env.LOGGER_FOLDER_PATH) !== null && _a !== void 0 ? _a : './';
 const LOG_ENVIRONMENTS = new Set(['development', 'alpha', 'beta', 'staging']);
 const LOGGER_PREFIX = common_1.App.APPLICATION_NAME;

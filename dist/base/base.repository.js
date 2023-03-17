@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TimestampCrudRepository = exports.ViewRepository = exports.AbstractTimestampRepository = void 0;
 const repository_1 = require("@loopback/repository");
-const utilities_1 = require("../utilities");
+const utilities_1 = require("@/utilities");
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractTimestampRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource) {

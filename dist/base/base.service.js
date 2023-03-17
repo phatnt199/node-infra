@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseService = void 0;
-const helpers_1 = require("../helpers");
+const helpers_1 = require("@/helpers");
 class BaseService {
     constructor(opts) {
         var _a;

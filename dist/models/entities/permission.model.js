@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Permission = void 0;
-const base_1 = require("../../base");
+const base_1 = require("@/base");
 const repository_1 = require("@loopback/repository");
 class Permission extends base_1.BaseTzEntity {
     constructor(data) {
@@ -57,10 +57,4 @@ __decorate([
     __metadata("design:type", Array)
 ], Permission.prototype, "children", void 0);
 exports.Permission = Permission;
-/* export interface PermissionRelations {
-  parent: Permission;
-  children: Permission[];
-}
-
-export type PermissionWithRelations = Permission & PermissionRelations; */
 //# sourceMappingURL=permission.model.js.map

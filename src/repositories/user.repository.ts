@@ -12,15 +12,20 @@ import {
   PermissionRepository,
   UserRoleRepository,
 } from '@/repositories';
-import { User, UserIdentifier, UserCredential, UserRole, Permission, Role, PermissionMapping } from '@/models';
+import {
+  User,
+  UserIdentifier,
+  UserCredential,
+  UserRole,
+  Permission,
+  Role,
+  PermissionMapping,
+  UserWithAuthorize,
+} from '@/models';
 import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
 
 export class UserRepository<
   U extends User,
-  R extends Role,
-  P extends Permission,
-  PM extends PermissionMapping,
-  UR extends UserRole,
   UI extends UserIdentifier,
   UC extends UserCredential,
 > extends TimestampCrudRepository<U> {
@@ -29,12 +34,48 @@ export class UserRepository<
   public readonly children: HasManyRepositoryFactory<U, IdType>;
   public readonly parent: HasOneRepositoryFactory<U, IdType>;
 
+  protected userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<U, UI>>;
+  protected userCredentialRepositoryGetter: Getter<UserCredentialRepository<U, UC>>;
+
+  constructor(opts: {
+    entityClass: EntityClassType<U>;
+    dataSource: BaseDataSource;
+    userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<U, UI>>;
+    userCredentialRepositoryGetter: Getter<UserCredentialRepository<U, UC>>;
+  }) {
+    const { entityClass, dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter } = opts;
+    super(entityClass, dataSource);
+
+    this.userIdentifierRepositoryGetter = userIdentifierRepositoryGetter;
+    this.userCredentialRepositoryGetter = userCredentialRepositoryGetter;
+
+    this.credentials = this.createHasManyRepositoryFactoryFor('credentials', this.userCredentialRepositoryGetter);
+    // this.registerInclusionResolver('credentials', this.credentials.inclusionResolver);
+
+    this.identifiers = this.createHasManyRepositoryFactoryFor('identifiers', this.userIdentifierRepositoryGetter);
+    this.registerInclusionResolver('identifiers', this.identifiers.inclusionResolver);
+
+    this.children = this.createHasManyRepositoryFactoryFor('children', Getter.fromValue(this));
+    this.registerInclusionResolver('children', this.children.inclusionResolver);
+
+    this.parent = this.createHasOneRepositoryFactoryFor('parent', Getter.fromValue(this));
+    this.registerInclusionResolver('parent', this.parent.inclusionResolver);
+  }
+}
+
+export class UserWithAuthorizeRepository<
+  U extends UserWithAuthorize,
+  R extends Role,
+  P extends Permission,
+  PM extends PermissionMapping,
+  UR extends UserRole,
+  UI extends UserIdentifier,
+  UC extends UserCredential,
+> extends UserRepository<U, UI, UC> {
   public readonly policies: HasManyRepositoryFactory<PM, IdType>;
   public readonly roles: HasManyThroughRepositoryFactory<R, IdType, UR, IdType>;
   public readonly permissions: HasManyThroughRepositoryFactory<P, IdType, PM, IdType>;
 
-  protected userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<U, UI>>;
-  protected userCredentialRepositoryGetter: Getter<UserCredentialRepository<U, UC>>;
   protected userRoleRepositoryGetter: Getter<UserRoleRepository<U, UR>>;
   protected roleRepositoryGetter: Getter<RoleRepository<U, R, P, PM, UR>>;
   protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<U, R, P, PM>>;
@@ -60,7 +101,7 @@ export class UserRepository<
       permissionRepositoryGetter,
       permissionMappingRepositoryGetter,
     } = opts;
-    super(entityClass, dataSource);
+    super({ entityClass, dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter });
 
     this.userIdentifierRepositoryGetter = userIdentifierRepositoryGetter;
     this.userCredentialRepositoryGetter = userCredentialRepositoryGetter;
@@ -68,18 +109,6 @@ export class UserRepository<
     this.userRoleRepositoryGetter = userRoleRepositoryGetter;
     this.permissionRepositoryGetter = permissionRepositoryGetter;
     this.permissionMappingRepositoryGetter = permissionMappingRepositoryGetter;
-
-    this.credentials = this.createHasManyRepositoryFactoryFor('credentials', this.userCredentialRepositoryGetter);
-    // this.registerInclusionResolver('credentials', this.credentials.inclusionResolver);
-
-    this.identifiers = this.createHasManyRepositoryFactoryFor('identifiers', this.userIdentifierRepositoryGetter);
-    this.registerInclusionResolver('identifiers', this.identifiers.inclusionResolver);
-
-    this.children = this.createHasManyRepositoryFactoryFor('children', Getter.fromValue(this));
-    this.registerInclusionResolver('children', this.children.inclusionResolver);
-
-    this.parent = this.createHasOneRepositoryFactoryFor('parent', Getter.fromValue(this));
-    this.registerInclusionResolver('parent', this.parent.inclusionResolver);
 
     this.roles = this.createHasManyThroughRepositoryFactoryFor(
       'roles',

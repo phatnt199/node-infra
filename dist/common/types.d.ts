@@ -1,4 +1,4 @@
-import { BaseTzEntity } from '../base';
+import { BaseTzEntity } from '@/base';
 import { Count, DataObject, Entity, Options, Where } from '@loopback/repository';
 export interface IApplication {
     preConfigure(): void;

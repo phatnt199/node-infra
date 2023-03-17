@@ -9,44 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserRole = exports.UserPermission = void 0;
+exports.UserRole = void 0;
 const repository_1 = require("@loopback/repository");
-const models_1 = require("../../models");
-const mixins_1 = require("../../mixins");
-const base_1 = require("../../base");
-// --------------------------------------------------------------------------------
-let UserPermission = class UserPermission extends (0, mixins_1.PrincipalMixin)((base_1.BaseTzEntity), 'Permission') {
-    constructor(data) {
-        super(data);
-    }
-};
-__decorate([
-    (0, repository_1.belongsTo)(() => models_1.User, { keyFrom: 'userId' }, {
-        postgresql: {
-            columnName: 'user_id',
-        },
-    }),
-    __metadata("design:type", Number)
-], UserPermission.prototype, "userId", void 0);
-UserPermission = __decorate([
-    (0, repository_1.model)({
-        settings: {
-            postgresql: {
-                schema: 'public',
-                table: 'UserPermission',
-            },
-            hiddenProperties: ['createdAt', 'modifiedAt'],
-            indexes: {
-                INDEX_UNIQUE_USER_PERMISSION: {
-                    keys: { userId: 1, principalId: 1 },
-                    options: { unique: true },
-                },
-            },
-        },
-    }),
-    __metadata("design:paramtypes", [Object])
-], UserPermission);
-exports.UserPermission = UserPermission;
+const models_1 = require("@/models");
+const mixins_1 = require("@/mixins");
+const base_1 = require("@/base");
 // --------------------------------------------------------------------------------
 let UserRole = class UserRole extends (0, mixins_1.PrincipalMixin)((base_1.BaseTzEntity), 'Role') {
     constructor(data) {

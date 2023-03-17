@@ -1,8 +1,9 @@
 import { property, hasMany, hasOne } from '@loopback/repository';
 import { UserTypes, UserStatuses } from '@/common';
-import { UserIdentifier, UserCredential, UserRole, Role, Permission, PermissionMapping } from '@/models';
+import { UserIdentifier, UserCredential } from '@/models';
 import { BaseTzEntity } from '@/base';
 import { NumberIdType } from '@/common/types';
+import { UserAuthorizeMixin } from '@/mixins';
 
 export class User extends BaseTzEntity<NumberIdType> {
   @property({
@@ -68,26 +69,9 @@ export class User extends BaseTzEntity<NumberIdType> {
   @hasMany(() => UserCredential, { keyTo: 'userId' })
   credentials: UserCredential[];
 
-  @hasMany(() => Role, {
-    through: {
-      model: () => UserRole,
-      keyFrom: 'userId',
-      keyTo: 'principalId',
-    },
-  })
-  roles: Role[];
-
-  @hasMany(() => PermissionMapping, { keyTo: 'userId' })
-  policies: PermissionMapping[];
-
-  @hasMany(() => Permission, {
-    through: {
-      model: () => PermissionMapping,
-    },
-  })
-  permissions: Permission[];
-
   constructor(data?: Partial<User>) {
     super(data);
   }
 }
+
+export class UserWithAuthorize extends UserAuthorizeMixin(User) {}

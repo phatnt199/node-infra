@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BullMQHelper = void 0;
-const helpers_1 = require("../helpers");
+const helpers_1 = require("@/helpers");
 const bullmq_1 = require("bullmq");
 class BullMQHelper {
     constructor(options) {

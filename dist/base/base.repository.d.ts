@@ -1,5 +1,5 @@
 import { Count, DataObject, DefaultCrudRepository, juggler, Options, Where } from '@loopback/repository';
-import { EntityClassType, EntityRelation, IdType, IPersistableTimestampRepository } from '../common/types';
+import { EntityClassType, EntityRelation, IdType, IPersistableTimestampRepository } from '@/common/types';
 import { BaseIdEntity, BaseTzEntity } from './base.model';
 export declare abstract class AbstractTimestampRepository<E extends BaseTzEntity<IdType>, R extends EntityRelation> extends DefaultCrudRepository<E, IdType, R> implements IPersistableTimestampRepository<E> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);

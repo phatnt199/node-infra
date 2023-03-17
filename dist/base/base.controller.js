@@ -30,9 +30,9 @@ const rest_crud_1 = require("@loopback/rest-crud");
 const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
 const get_1 = __importDefault(require("lodash/get"));
-const helpers_1 = require("../helpers");
-const utilities_1 = require("../utilities");
-const common_1 = require("../common");
+const helpers_1 = require("@/helpers");
+const utilities_1 = require("@/utilities");
+const common_1 = require("@/common");
 // --------------------------------------------------------------------------------------------------------------
 class BaseController {
     constructor(opts) {

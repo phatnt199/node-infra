@@ -1,10 +1,11 @@
-import { IdType } from '@/common/types';
 import { MixinTarget } from '@loopback/core';
 import { Entity } from '@loopback/repository';
-export declare const PrincipalMixin: <E extends MixinTarget<Entity>>(superClass: E, defaultPrincipalType?: string) => {
+import { Permission, PermissionMapping, Role } from '@/models';
+export declare const UserAuthorizeMixin: <E extends MixinTarget<Entity>>(superClass: E) => {
     new (...args: any[]): {
-        principalType?: string | undefined;
-        principalId?: IdType | undefined;
+        roles: Role[];
+        policies: PermissionMapping[];
+        permissions: Permission[];
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;

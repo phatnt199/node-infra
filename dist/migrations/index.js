@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.migration = void 0;
-const common_1 = require("../common");
-const repositories_1 = require("../repositories");
-const helpers_1 = require("../helpers");
+const common_1 = require("@/common");
+const repositories_1 = require("@/repositories");
+const helpers_1 = require("@/helpers");
 const migration_processes_1 = require("./migration-processes");
 const migration = (application) => __awaiter(void 0, void 0, void 0, function* () {
     helpers_1.applicationLogger.info('START | Migrate database');

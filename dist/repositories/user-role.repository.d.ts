@@ -1,4 +1,4 @@
-import { User, UserRole } from '../models';
+import { User, UserRole } from '@/models';
 import { BelongsToAccessor, Getter } from '@loopback/repository';
 import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository, UserRepository } from '..';
 export declare class UserRoleRepository<U extends User, UR extends UserRole> extends TimestampCrudRepository<UR> {
