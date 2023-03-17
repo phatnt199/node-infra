@@ -12,9 +12,9 @@ export class PermissionMappingRepository<T extends PermissionMapping> extends Ti
   constructor(
     entityClass: EntityClassType<T>,
     dataSource: BaseDataSource,
-    private userRepositoryGetter: Getter<UserRepository<User>>,
-    private roleRepositoryGetter: Getter<RoleRepository<Role>>,
-    private permissionRepositoryGetter: Getter<PermissionRepository<Permission>>,
+    protected userRepositoryGetter: Getter<UserRepository<User>>,
+    protected roleRepositoryGetter: Getter<RoleRepository<Role>>,
+    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>,
   ) {
     super(entityClass, dataSource);
 

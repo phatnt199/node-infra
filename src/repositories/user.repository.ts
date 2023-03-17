@@ -28,12 +28,12 @@ export class UserRepository<T extends User> extends TimestampCrudRepository<T> {
   constructor(
     entityClass: EntityClassType<T>,
     dataSource: BaseDataSource,
-    private userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier>>,
-    private userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential>>,
-    private userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>,
-    private roleRepositoryGetter: Getter<RoleRepository<Role>>,
-    private permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>,
-    private permissionRepositoryGetter: Getter<PermissionRepository<Permission>>,
+    protected userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier>>,
+    protected userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential>>,
+    protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>,
+    protected roleRepositoryGetter: Getter<RoleRepository<Role>>,
+    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>,
+    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>,
   ) {
     super(entityClass, dataSource);
 

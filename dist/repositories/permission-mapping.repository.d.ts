@@ -4,9 +4,9 @@ import { UserRepository, RoleRepository, PermissionRepository } from '../reposit
 import { BelongsToAccessor } from '@loopback/repository';
 import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
 export declare class PermissionMappingRepository<T extends PermissionMapping> extends TimestampCrudRepository<T> {
-    private userRepositoryGetter;
-    private roleRepositoryGetter;
-    private permissionRepositoryGetter;
+    protected userRepositoryGetter: Getter<UserRepository<User>>;
+    protected roleRepositoryGetter: Getter<RoleRepository<Role>>;
+    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
     readonly user: BelongsToAccessor<User, IdType>;
     readonly role: BelongsToAccessor<Role, IdType>;
     readonly permission: BelongsToAccessor<Permission, IdType>;

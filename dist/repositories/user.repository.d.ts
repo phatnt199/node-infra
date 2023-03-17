@@ -4,12 +4,12 @@ import { UserIdentifierRepository, UserCredentialRepository, RoleRepository, Per
 import { User, UserIdentifier, UserCredential, UserRole, Permission, Role, PermissionMapping } from '../models';
 import { BaseDataSource, EntityClassType, IdType, NumberIdType, TimestampCrudRepository } from '..';
 export declare class UserRepository<T extends User> extends TimestampCrudRepository<T> {
-    private userIdentifierRepositoryGetter;
-    private userCredentialRepositoryGetter;
-    private userRoleRepositoryGetter;
-    private roleRepositoryGetter;
-    private permissionMappingRepositoryGetter;
-    private permissionRepositoryGetter;
+    protected userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier>>;
+    protected userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential>>;
+    protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
+    protected roleRepositoryGetter: Getter<RoleRepository<Role>>;
+    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping>>;
+    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
     readonly identifiers: HasManyRepositoryFactory<UserIdentifier, IdType>;
     readonly credentials: HasManyRepositoryFactory<UserCredential, IdType>;
     readonly children: HasManyRepositoryFactory<T, IdType>;
