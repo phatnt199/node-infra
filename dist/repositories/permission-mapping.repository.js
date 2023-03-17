@@ -9,11 +9,11 @@ class PermissionMappingRepository extends __1.TimestampCrudRepository {
         this.userRepositoryGetter = userRepositoryGetter;
         this.roleRepositoryGetter = roleRepositoryGetter;
         this.permissionRepositoryGetter = permissionRepositoryGetter;
-        this.user = this.createBelongsToAccessorFor('user', userRepositoryGetter);
+        this.user = this.createBelongsToAccessorFor('user', this.userRepositoryGetter);
         this.registerInclusionResolver('user', this.user.inclusionResolver);
-        this.role = this.createBelongsToAccessorFor('role', roleRepositoryGetter);
+        this.role = this.createBelongsToAccessorFor('role', this.roleRepositoryGetter);
         this.registerInclusionResolver('role', this.role.inclusionResolver);
-        this.permission = this.createBelongsToAccessorFor('permission', permissionRepositoryGetter);
+        this.permission = this.createBelongsToAccessorFor('permission', this.permissionRepositoryGetter);
         this.registerInclusionResolver('permission', this.permission.inclusionResolver);
     }
 }

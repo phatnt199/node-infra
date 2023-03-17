@@ -2,11 +2,11 @@ import { BelongsToAccessor, HasManyRepositoryFactory, Getter } from '@loopback/r
 import { Permission } from '@/models';
 import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
 
-export class PermissionRepository<T extends Permission> extends TimestampCrudRepository<T> {
-  public readonly parent: BelongsToAccessor<T, IdType>;
-  public readonly children: HasManyRepositoryFactory<T, IdType>;
+export class PermissionRepository<P extends Permission> extends TimestampCrudRepository<P> {
+  public readonly parent: BelongsToAccessor<P, IdType>;
+  public readonly children: HasManyRepositoryFactory<P, IdType>;
 
-  constructor(opts: { entityClass: EntityClassType<T>; dataSource: BaseDataSource }) {
+  constructor(opts: { entityClass: EntityClassType<P>; dataSource: BaseDataSource }) {
     const { entityClass, dataSource } = opts;
     super(entityClass, dataSource);
 

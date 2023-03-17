@@ -13,36 +13,53 @@ import {
   UserRoleRepository,
 } from '@/repositories';
 import { User, UserIdentifier, UserCredential, UserRole, Permission, Role, PermissionMapping } from '@/models';
-import { BaseDataSource, EntityClassType, getError, IdType, NumberIdType, TimestampCrudRepository } from '..';
+import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
 
-export class UserRepository<T extends User> extends TimestampCrudRepository<T> {
-  public readonly identifiers: HasManyRepositoryFactory<UserIdentifier, IdType>;
-  public readonly credentials: HasManyRepositoryFactory<UserCredential, IdType>;
-  public readonly children: HasManyRepositoryFactory<T, IdType>;
-  public readonly parent: HasOneRepositoryFactory<T, IdType>;
+export class UserRepository<
+  U extends User,
+  R extends Role,
+  P extends Permission,
+  PM extends PermissionMapping,
+  UR extends UserRole,
+  UI extends UserIdentifier,
+  UC extends UserCredential,
+> extends TimestampCrudRepository<U> {
+  public readonly identifiers: HasManyRepositoryFactory<UI, IdType>;
+  public readonly credentials: HasManyRepositoryFactory<UC, IdType>;
+  public readonly children: HasManyRepositoryFactory<U, IdType>;
+  public readonly parent: HasOneRepositoryFactory<U, IdType>;
 
-  public readonly policies: HasManyRepositoryFactory<PermissionMapping, IdType>;
-  public readonly roles: HasManyThroughRepositoryFactory<Role, IdType, UserRole, IdType>;
-  public readonly permissions: HasManyThroughRepositoryFactory<Permission, IdType, PermissionMapping, IdType>;
+  public readonly policies: HasManyRepositoryFactory<PM, IdType>;
+  public readonly roles: HasManyThroughRepositoryFactory<R, IdType, UR, IdType>;
+  public readonly permissions: HasManyThroughRepositoryFactory<P, IdType, PM, IdType>;
 
-  protected userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier, T>>;
-  protected userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential, T>>;
-  protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
-  protected roleRepositoryGetter: Getter<RoleRepository<Role, T>>;
-  protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping, T>>;
-  protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
+  protected userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<U, UI>>;
+  protected userCredentialRepositoryGetter: Getter<UserCredentialRepository<U, UC>>;
+  protected userRoleRepositoryGetter: Getter<UserRoleRepository<U, UR>>;
+  protected roleRepositoryGetter: Getter<RoleRepository<U, R, P, PM, UR>>;
+  protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<U, R, P, PM>>;
+  protected permissionRepositoryGetter: Getter<PermissionRepository<P>>;
 
   constructor(opts: {
-    entityClass: EntityClassType<T>;
+    entityClass: EntityClassType<U>;
     dataSource: BaseDataSource;
-    userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier, T>>;
-    userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential, T>>;
-    roleRepositoryGetter: Getter<RoleRepository<Role, T>>;
-    userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
-    permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
-    permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping, T>>;
+    userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<U, UI>>;
+    userCredentialRepositoryGetter: Getter<UserCredentialRepository<U, UC>>;
+    roleRepositoryGetter: Getter<RoleRepository<U, R, P, PM, UR>>;
+    userRoleRepositoryGetter: Getter<UserRoleRepository<U, UR>>;
+    permissionRepositoryGetter: Getter<PermissionRepository<P>>;
+    permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<U, R, P, PM>>;
   }) {
-    const { entityClass, dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter, roleRepositoryGetter, userRoleRepositoryGetter, permissionRepositoryGetter, permissionMappingRepositoryGetter } = opts;
+    const {
+      entityClass,
+      dataSource,
+      userIdentifierRepositoryGetter,
+      userCredentialRepositoryGetter,
+      roleRepositoryGetter,
+      userRoleRepositoryGetter,
+      permissionRepositoryGetter,
+      permissionMappingRepositoryGetter,
+    } = opts;
     super(entityClass, dataSource);
 
     this.userIdentifierRepositoryGetter = userIdentifierRepositoryGetter;
@@ -80,56 +97,5 @@ export class UserRepository<T extends User> extends TimestampCrudRepository<T> {
 
     this.policies = this.createHasManyRepositoryFactoryFor('policies', this.permissionMappingRepositoryGetter);
     this.registerInclusionResolver('policies', this.policies.inclusionResolver);
-  }
-
-  // -----------------------------------------------------------------------------------------------------------------
-  async getSignInCredential(opts: { userId: NumberIdType; identifierScheme: string; credentialScheme: string }) {
-    const { userId, identifierScheme, credentialScheme } = opts;
-    const identifiers = await this.identifiers(userId).find({
-      where: { scheme: identifierScheme },
-    });
-
-    const credentials = await this.credentials(userId).find({
-      where: { scheme: credentialScheme },
-    });
-
-    return {
-      userId,
-      identifier: identifiers?.[0],
-      credential: credentials?.[0],
-    };
-  }
-
-  // -----------------------------------------------------------------------------------------------------------------
-  async findCredential(opts: {
-    userId: IdType;
-    scheme: string;
-    provider?: string;
-  }): Promise<UserCredential | undefined> {
-    const { userId, scheme, provider } = opts;
-    try {
-      const where: any = { scheme };
-
-      if (provider) {
-        where.provider = provider;
-      }
-
-      const credentials = await this.credentials(userId).find({ where });
-
-      if (credentials?.length > 1) {
-        throw getError({
-          statusCode: 400,
-          message: '[findCredential] Please specify credential provider!',
-        });
-      }
-
-      return credentials?.[0];
-    } catch (err) {
-      if (err.code === 'ENTITY_NOT_FOUND') {
-        return undefined;
-      }
-
-      throw err;
-    }
   }
 }

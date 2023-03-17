@@ -7,15 +7,15 @@ import { UserRepository } from '@/repositories';
 import isEmpty from 'lodash/isEmpty';
 import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
 
-export class UserIdentifierRepository<T extends UserIdentifier, U extends User> extends TimestampCrudRepository<T> {
+export class UserIdentifierRepository<U extends User, UI extends UserIdentifier> extends TimestampCrudRepository<UI> {
   public readonly user: BelongsToAccessor<U, IdType>;
 
-  protected userRepositoryGetter: Getter<UserRepository<U>>;
+  protected userRepositoryGetter: Getter<UserRepository<U, any, any, any, any, UI, any>>;
 
   constructor(opts: {
-    entityClass: EntityClassType<T>;
+    entityClass: EntityClassType<UI>;
     dataSource: BaseDataSource;
-    userRepositoryGetter: Getter<UserRepository<U>>;
+    userRepositoryGetter: Getter<UserRepository<U, any, any, any, any, UI, any>>;
   }) {
     const { entityClass, dataSource, userRepositoryGetter } = opts;
     super(entityClass, dataSource);

@@ -3,18 +3,18 @@ import { Role, User, Permission, PermissionMapping } from '../models';
 import { UserRepository, RoleRepository, PermissionRepository } from '../repositories';
 import { BelongsToAccessor } from '@loopback/repository';
 import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
-export declare class PermissionMappingRepository<T extends PermissionMapping, U extends User> extends TimestampCrudRepository<T> {
+export declare class PermissionMappingRepository<U extends User, R extends Role, P extends Permission, PM extends PermissionMapping> extends TimestampCrudRepository<PM> {
     readonly user: BelongsToAccessor<U, IdType>;
-    readonly role: BelongsToAccessor<Role, IdType>;
-    readonly permission: BelongsToAccessor<Permission, IdType>;
-    protected userRepositoryGetter: Getter<UserRepository<U>>;
-    protected roleRepositoryGetter: Getter<RoleRepository<Role, U>>;
-    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
+    readonly role: BelongsToAccessor<R, IdType>;
+    readonly permission: BelongsToAccessor<P, IdType>;
+    protected userRepositoryGetter: Getter<UserRepository<U, R, P, PM, any, any, any>>;
+    protected roleRepositoryGetter: Getter<RoleRepository<U, R, P, PM, any>>;
+    protected permissionRepositoryGetter: Getter<PermissionRepository<P>>;
     constructor(opts: {
-        entityClass: EntityClassType<T>;
+        entityClass: EntityClassType<PM>;
         dataSource: BaseDataSource;
-        userRepositoryGetter: Getter<UserRepository<U>>;
-        roleRepositoryGetter: Getter<RoleRepository<Role, U>>;
-        permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
+        userRepositoryGetter: Getter<UserRepository<U, R, P, PM, any, any, any>>;
+        roleRepositoryGetter: Getter<RoleRepository<U, R, P, PM, any>>;
+        permissionRepositoryGetter: Getter<PermissionRepository<P>>;
     });
 }

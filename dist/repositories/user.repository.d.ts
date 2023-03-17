@@ -2,43 +2,29 @@ import { Getter } from '@loopback/core';
 import { HasManyRepositoryFactory, HasOneRepositoryFactory, HasManyThroughRepositoryFactory } from '@loopback/repository';
 import { UserIdentifierRepository, UserCredentialRepository, RoleRepository, PermissionMappingRepository, PermissionRepository, UserRoleRepository } from '../repositories';
 import { User, UserIdentifier, UserCredential, UserRole, Permission, Role, PermissionMapping } from '../models';
-import { BaseDataSource, EntityClassType, IdType, NumberIdType, TimestampCrudRepository } from '..';
-export declare class UserRepository<T extends User> extends TimestampCrudRepository<T> {
-    readonly identifiers: HasManyRepositoryFactory<UserIdentifier, IdType>;
-    readonly credentials: HasManyRepositoryFactory<UserCredential, IdType>;
-    readonly children: HasManyRepositoryFactory<T, IdType>;
-    readonly parent: HasOneRepositoryFactory<T, IdType>;
-    readonly policies: HasManyRepositoryFactory<PermissionMapping, IdType>;
-    readonly roles: HasManyThroughRepositoryFactory<Role, IdType, UserRole, IdType>;
-    readonly permissions: HasManyThroughRepositoryFactory<Permission, IdType, PermissionMapping, IdType>;
-    protected userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier, T>>;
-    protected userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential, T>>;
-    protected userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
-    protected roleRepositoryGetter: Getter<RoleRepository<Role, T>>;
-    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping, T>>;
-    protected permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
+import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
+export declare class UserRepository<U extends User, R extends Role, P extends Permission, PM extends PermissionMapping, UR extends UserRole, UI extends UserIdentifier, UC extends UserCredential> extends TimestampCrudRepository<U> {
+    readonly identifiers: HasManyRepositoryFactory<UI, IdType>;
+    readonly credentials: HasManyRepositoryFactory<UC, IdType>;
+    readonly children: HasManyRepositoryFactory<U, IdType>;
+    readonly parent: HasOneRepositoryFactory<U, IdType>;
+    readonly policies: HasManyRepositoryFactory<PM, IdType>;
+    readonly roles: HasManyThroughRepositoryFactory<R, IdType, UR, IdType>;
+    readonly permissions: HasManyThroughRepositoryFactory<P, IdType, PM, IdType>;
+    protected userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<U, UI>>;
+    protected userCredentialRepositoryGetter: Getter<UserCredentialRepository<U, UC>>;
+    protected userRoleRepositoryGetter: Getter<UserRoleRepository<U, UR>>;
+    protected roleRepositoryGetter: Getter<RoleRepository<U, R, P, PM, UR>>;
+    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<U, R, P, PM>>;
+    protected permissionRepositoryGetter: Getter<PermissionRepository<P>>;
     constructor(opts: {
-        entityClass: EntityClassType<T>;
+        entityClass: EntityClassType<U>;
         dataSource: BaseDataSource;
-        userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<UserIdentifier, T>>;
-        userCredentialRepositoryGetter: Getter<UserCredentialRepository<UserCredential, T>>;
-        roleRepositoryGetter: Getter<RoleRepository<Role, T>>;
-        userRoleRepositoryGetter: Getter<UserRoleRepository<UserRole>>;
-        permissionRepositoryGetter: Getter<PermissionRepository<Permission>>;
-        permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<PermissionMapping, T>>;
+        userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<U, UI>>;
+        userCredentialRepositoryGetter: Getter<UserCredentialRepository<U, UC>>;
+        roleRepositoryGetter: Getter<RoleRepository<U, R, P, PM, UR>>;
+        userRoleRepositoryGetter: Getter<UserRoleRepository<U, UR>>;
+        permissionRepositoryGetter: Getter<PermissionRepository<P>>;
+        permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<U, R, P, PM>>;
     });
-    getSignInCredential(opts: {
-        userId: NumberIdType;
-        identifierScheme: string;
-        credentialScheme: string;
-    }): Promise<{
-        userId: number;
-        identifier: UserIdentifier;
-        credential: UserCredential;
-    }>;
-    findCredential(opts: {
-        userId: IdType;
-        scheme: string;
-        provider?: string;
-    }): Promise<UserCredential | undefined>;
 }
