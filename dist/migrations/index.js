@@ -13,11 +13,10 @@ exports.migration = void 0;
 const common_1 = require("../common");
 const repositories_1 = require("../repositories");
 const helpers_1 = require("../helpers");
-const migration_processes_1 = require("./migration-processes");
-const migration = (application) => __awaiter(void 0, void 0, void 0, function* () {
+const migration = (application, migrationProcesses) => __awaiter(void 0, void 0, void 0, function* () {
     helpers_1.applicationLogger.info('START | Migrate database');
     const migrationRepository = yield application.getRepository(repositories_1.MigrationRepository);
-    for (const mirgation of migration_processes_1.migrationProcesses) {
+    for (const mirgation of migrationProcesses) {
         const { name, fn } = mirgation;
         if (!name || !fn) {
             continue;

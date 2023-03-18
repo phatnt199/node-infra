@@ -70,3 +70,7 @@ export interface IError<N extends number = number> extends Error {
     message: string;
     [key: string]: any;
 }
+export type MigrationProcess = {
+    name: string;
+    fn: Function;
+};
