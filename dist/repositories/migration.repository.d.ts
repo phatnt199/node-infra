@@ -1,5 +1,7 @@
 import { Migration } from '../models';
-import { TzCrudRepository, BaseDataSource } from '../base';
-export declare class MigrationRepository extends TzCrudRepository<Migration> {
+import { BaseDataSource } from '../base';
+import { DefaultCrudRepository } from '@loopback/repository';
+import { EntityRelation, NumberIdType } from '..';
+export declare class MigrationRepository extends DefaultCrudRepository<Migration, NumberIdType, EntityRelation> {
     constructor(dataSource: BaseDataSource);
 }

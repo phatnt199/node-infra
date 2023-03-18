@@ -1,7 +1,7 @@
-import { BaseTzEntity } from '../../base';
-import { NumberIdType } from '../../common/types';
-export declare class Migration extends BaseTzEntity<NumberIdType> {
+import { Entity } from '@loopback/repository';
+import { NumberIdType } from '../../common';
+export declare class Migration extends Entity {
+    id: NumberIdType;
     name: string;
     status: string;
-    constructor(data?: Partial<Migration>);
 }

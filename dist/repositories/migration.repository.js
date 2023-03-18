@@ -17,11 +17,12 @@ const core_1 = require("@loopback/core");
 const models_1 = require("../models");
 const base_1 = require("../base");
 const lodash_1 = require("lodash");
+const repository_1 = require("@loopback/repository");
 const migrationDs = process.env.DS_MIGRATION;
 if (!migrationDs || (0, lodash_1.isEmpty)(migrationDs)) {
     throw new Error('[DANGER] INVALID MIGRATION DATASOURCE | Check again env DS_MIGRATION');
 }
-let MigrationRepository = class MigrationRepository extends base_1.TzCrudRepository {
+let MigrationRepository = class MigrationRepository extends repository_1.DefaultCrudRepository {
     constructor(dataSource) {
         super(models_1.Migration, dataSource);
     }
