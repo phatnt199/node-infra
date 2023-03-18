@@ -12,16 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Migration = void 0;
 const repository_1 = require("@loopback/repository");
 const common_1 = require("../../common");
-let Migration = class Migration extends repository_1.Entity {
+const base_1 = require("../../base");
+let Migration = class Migration extends base_1.BaseTzEntity {
+    constructor(data) {
+        super(data);
+    }
 };
-__decorate([
-    (0, repository_1.property)({
-        type: 'number',
-        id: true,
-        generated: true,
-    }),
-    __metadata("design:type", Number)
-], Migration.prototype, "id", void 0);
 __decorate([
     (0, repository_1.property)({
         type: 'string',
@@ -51,7 +47,8 @@ Migration = __decorate([
                 },
             },
         },
-    })
+    }),
+    __metadata("design:paramtypes", [Object])
 ], Migration);
 exports.Migration = Migration;
 //# sourceMappingURL=migration.model.js.map

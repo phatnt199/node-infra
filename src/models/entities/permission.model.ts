@@ -1,8 +1,7 @@
 import { BaseTzEntity } from '@/base';
-import { NumberIdType } from '@/common/types';
 import { property, belongsTo, hasMany } from '@loopback/repository';
 
-export class Permission extends BaseTzEntity<NumberIdType> {
+export class Permission extends BaseTzEntity {
   @property({
     type: 'string',
   })

@@ -35,7 +35,7 @@ export class BaseController implements IController {
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export const getIdSchema = <E extends BaseIdEntity<IdType>>(
+export const getIdSchema = <E extends BaseIdEntity>(
   entity: typeof BaseIdEntity & { prototype: E },
 ): SchemaObject => {
   const idProp = entity.getIdProperties()[0];
@@ -44,14 +44,14 @@ export const getIdSchema = <E extends BaseIdEntity<IdType>>(
 };
 
 // --------------------------------------------------------------------------------------------------------------
-export interface CrudControllerOptions<E extends BaseIdEntity<IdType>> {
+export interface CrudControllerOptions<E extends BaseIdEntity> {
   entity: typeof BaseIdEntity & { prototype: E };
   repository: { name: string };
   controller: CrudRestControllerOptions;
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export const defineCrudController = <E extends BaseTzEntity<IdType>>(opts: CrudControllerOptions<E>) => {
+export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControllerOptions<E>) => {
   const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = opts;
 
   const idPathParam: ParameterObject = {
@@ -287,7 +287,7 @@ export interface RelationCrudControllerOptions {
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export const defineRelationViewController = <S extends BaseTzEntity<IdType>, T extends BaseTzEntity<IdType>>(opts: {
+export const defineRelationViewController = <S extends BaseTzEntity, T extends BaseTzEntity>(opts: {
   baseClass?: Class<BaseController>;
   relationType: TRelationType;
   relationName: string;
@@ -359,9 +359,9 @@ export const defineRelationViewController = <S extends BaseTzEntity<IdType>, T e
 
 // --------------------------------------------------------------------------------------------------------------
 export const defineAssociateController = <
-  S extends BaseTzEntity<IdType>,
-  T extends BaseTzEntity<IdType>,
-  R extends BaseTzEntity<IdType> | NullableType,
+  S extends BaseTzEntity,
+  T extends BaseTzEntity,
+  R extends BaseTzEntity | NullableType,
 >(opts: {
   baseClass?: Class<BaseController>;
   relationName: string;
@@ -449,9 +449,9 @@ export const defineAssociateController = <
 
 // --------------------------------------------------------------------------------------------------------------
 export const defineRelationCrudController = <
-  S extends BaseTzEntity<IdType>,
-  T extends BaseTzEntity<IdType>,
-  R extends BaseTzEntity<IdType> | NullableType,
+  S extends BaseTzEntity,
+  T extends BaseTzEntity,
+  R extends BaseTzEntity | NullableType,
 >(
   controllerOptions: RelationCrudControllerOptions,
 ): ControllerClass => {

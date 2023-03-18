@@ -1,7 +1,6 @@
 import { User, Permission } from '../../models';
 import { BaseTzEntity } from '../../base';
-import { NumberIdType } from '../../common/types';
-export declare class Role extends BaseTzEntity<NumberIdType> {
+export declare class Role extends BaseTzEntity {
     identifier: string;
     name: string;
     description?: string;

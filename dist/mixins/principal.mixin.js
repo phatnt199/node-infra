@@ -17,7 +17,7 @@ const PrincipalMixin = (superClass, defaultPrincipalType) => {
     __decorate([
         (0, repository_1.property)({
             type: 'string',
-            default: defaultPrincipalType !== null && defaultPrincipalType !== void 0 ? defaultPrincipalType : null,
+            default: defaultPrincipalType,
             postgresql: {
                 columnName: 'principal_type',
                 dataType: 'text',

@@ -15,7 +15,7 @@ const models_1 = require("../../models");
 const mixins_1 = require("../../mixins");
 const base_1 = require("../../base");
 // --------------------------------------------------------------------------------
-let UserRole = class UserRole extends (0, mixins_1.PrincipalMixin)((base_1.BaseTzEntity), 'Role') {
+let UserRole = class UserRole extends (0, mixins_1.PrincipalMixin)(base_1.BaseTzEntity, 'Role') {
     constructor(data) {
         super(data);
     }

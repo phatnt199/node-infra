@@ -1,6 +1,5 @@
 import { BaseTzEntity } from '../../base';
-import { NumberIdType } from '../../common/types';
-export declare class User extends BaseTzEntity<NumberIdType> {
+export declare class User extends BaseTzEntity {
     realm?: string;
     status: string;
     userType?: string;

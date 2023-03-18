@@ -1,9 +1,8 @@
 import { property, belongsTo } from '@loopback/repository';
 import { User, Role, Permission } from '@/models';
 import { BaseTzEntity } from '@/base';
-import { NumberIdType } from '@/common/types';
 
-export class PermissionMapping extends BaseTzEntity<NumberIdType> {
+export class PermissionMapping extends BaseTzEntity {
   @belongsTo(() => Permission, { keyFrom: 'permissionId' }, { name: 'permission_id' })
   permissionId: number;
 

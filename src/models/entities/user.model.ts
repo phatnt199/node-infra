@@ -1,10 +1,9 @@
 import { property } from '@loopback/repository';
 import { UserTypes, UserStatuses } from '@/common';
 import { BaseTzEntity } from '@/base';
-import { NumberIdType } from '@/common/types';
 import { UserAuthorizeMixin } from '@/mixins';
 
-export class User extends BaseTzEntity<NumberIdType> {
+export class User extends BaseTzEntity {
   @property({
     type: 'string',
   })

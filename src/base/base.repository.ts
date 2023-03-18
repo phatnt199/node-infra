@@ -4,7 +4,7 @@ import { BaseIdEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model'
 import { getError } from '@/utilities';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class AbstractTzRepository<E extends BaseTzEntity<IdType>, R extends EntityRelation>
+export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation>
   extends DefaultCrudRepository<E, IdType, R>
   implements ITzRepository<E>
 {
@@ -20,7 +20,7 @@ export abstract class AbstractTzRepository<E extends BaseTzEntity<IdType>, R ext
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class ViewRepository<E extends BaseIdEntity<IdType>> extends DefaultCrudRepository<E, IdType, any> {
+export abstract class ViewRepository<E extends BaseIdEntity> extends DefaultCrudRepository<E, IdType, any> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }
@@ -102,7 +102,7 @@ export abstract class ViewRepository<E extends BaseIdEntity<IdType>> extends Def
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export class TzCrudRepository<E extends BaseTzEntity<IdType>> extends AbstractTzRepository<E, any> {
+export class TzCrudRepository<E extends BaseTzEntity> extends AbstractTzRepository<E, any> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }
@@ -172,7 +172,7 @@ export class TzCrudRepository<E extends BaseTzEntity<IdType>> extends AbstractTz
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export class UserAuditCrudRepository<E extends BaseUserAuditTzEntity<IdType>>
+export class UserAuditCrudRepository<E extends BaseUserAuditTzEntity>
   extends TzCrudRepository<E>
   implements IUserAuditRepository<E>
 {

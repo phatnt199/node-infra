@@ -9,14 +9,7 @@ declare const UserRole_base: {
         toJSON: () => Object;
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
-} & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<number>;
-    getIdProperties(): string[];
-    getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
-    buildWhereForId(id: any): any;
-    readonly modelName: string;
-    definition: import("@loopback/repository").ModelDefinition;
-};
+} & typeof BaseTzEntity;
 export declare class UserRole extends UserRole_base {
     userId: NumberIdType;
     constructor(data?: Partial<UserRole>);

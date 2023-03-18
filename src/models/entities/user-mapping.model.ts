@@ -20,7 +20,7 @@ import { NumberIdType } from '@/common/types';
     },
   },
 })
-export class UserRole extends PrincipalMixin(BaseTzEntity<NumberIdType>, 'Role') {
+export class UserRole extends PrincipalMixin(BaseTzEntity, 'Role') {
   @belongsTo(
     () => User,
     { keyFrom: 'userId' },
@@ -36,4 +36,3 @@ export class UserRole extends PrincipalMixin(BaseTzEntity<NumberIdType>, 'Role')
     super(data);
   }
 }
- 

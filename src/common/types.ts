@@ -24,12 +24,12 @@ export type TBullQueueRole = 'queue' | 'worker';
 export type TPermissionEffect = 'allow' | 'deny';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IEntity<T> {
-  id: T;
+export interface IEntity {
+  id: IdType;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface ITz {
+export interface ITz extends IEntity {
   createdAt: Date;
   modifiedAt: Date;
 }
@@ -41,10 +41,10 @@ export interface IUserAudit {
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IPersistableEntity<T> extends IEntity<T>, ITz { }
+export interface IPersistableEntity extends ITz { }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IPersistableRepository<E extends BaseIdEntity<IdType>> {
+export interface IPersistableRepository<E extends BaseIdEntity> {
   existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
 
   create(data: DataObject<E>, options?: Options): Promise<E>;
@@ -60,12 +60,12 @@ export interface IPersistableRepository<E extends BaseIdEntity<IdType>> {
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface ITzRepository<E extends BaseTzEntity<IdType>> extends IPersistableRepository<E> {
+export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepository<E> {
   mixTimestamp(entity: DataObject<E>, options?: { newInstance: boolean }): DataObject<E>;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IUserAuditRepository<E extends BaseTzEntity<IdType>> extends IPersistableRepository<E> {
+export interface IUserAuditRepository<E extends BaseTzEntity> extends IPersistableRepository<E> {
   mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean; authorId: IdType }): DataObject<E>;
 }
 

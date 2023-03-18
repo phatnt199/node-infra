@@ -1,6 +1,5 @@
 import { BaseTzEntity } from '../../base';
-import { NumberIdType } from '../../common/types';
-export declare class Permission extends BaseTzEntity<NumberIdType> {
+export declare class Permission extends BaseTzEntity {
     code: string;
     name: string;
     subject: string;

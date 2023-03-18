@@ -2,9 +2,8 @@ import { RoleStatuses } from '@/common';
 import { hasMany, property } from '@loopback/repository';
 import { User, UserRole, Permission, PermissionMapping } from '@/models';
 import { BaseTzEntity } from '@/base';
-import { NumberIdType } from '@/common/types';
 
-export class Role extends BaseTzEntity<NumberIdType> {
+export class Role extends BaseTzEntity {
   @property({
     type: 'string',
     require: true,

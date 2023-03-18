@@ -2,8 +2,8 @@ import { Entity } from '@loopback/repository';
 import { IdType, IEntity, IPersistableEntity } from '../common/types';
 export declare class BaseEntity extends Entity {
 }
-export declare class BaseIdEntity<T extends IdType> extends BaseEntity implements IEntity<T> {
-    id: T;
+export declare class BaseIdEntity extends BaseEntity implements IEntity {
+    id: IdType;
 }
 declare const BaseTzEntity_base: {
     new (...args: any[]): {
@@ -14,15 +14,8 @@ declare const BaseTzEntity_base: {
         toJSON: () => Object;
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
-} & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseIdEntity<any>;
-    getIdProperties(): string[];
-    getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
-    buildWhereForId(id: any): any;
-    readonly modelName: string;
-    definition: import("@loopback/repository").ModelDefinition;
-};
-export declare class BaseTzEntity<T extends IdType> extends BaseTzEntity_base implements IPersistableEntity<T> {
+} & typeof BaseIdEntity;
+export declare class BaseTzEntity extends BaseTzEntity_base implements IPersistableEntity {
 }
 declare const BaseUserAuditTzEntity_base: {
     new (...args: any[]): {
@@ -33,15 +26,8 @@ declare const BaseUserAuditTzEntity_base: {
         toJSON: () => Object;
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
-} & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<any>;
-    getIdProperties(): string[];
-    getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
-    buildWhereForId(id: any): any;
-    readonly modelName: string;
-    definition: import("@loopback/repository").ModelDefinition;
-};
-export declare class BaseUserAuditTzEntity<T extends IdType> extends BaseUserAuditTzEntity_base implements IPersistableEntity<T> {
+} & typeof BaseTzEntity;
+export declare class BaseUserAuditTzEntity extends BaseUserAuditTzEntity_base implements IPersistableEntity {
 }
 declare const BaseDataTypeTzEntity_base: {
     new (...args: any[]): {
@@ -55,15 +41,8 @@ declare const BaseDataTypeTzEntity_base: {
         toJSON: () => Object;
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
-} & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<any>;
-    getIdProperties(): string[];
-    getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
-    buildWhereForId(id: any): any;
-    readonly modelName: string;
-    definition: import("@loopback/repository").ModelDefinition;
-};
-export declare class BaseDataTypeTzEntity<T extends IdType> extends BaseDataTypeTzEntity_base implements IPersistableEntity<T> {
+} & typeof BaseTzEntity;
+export declare class BaseDataTypeTzEntity extends BaseDataTypeTzEntity_base implements IPersistableEntity {
 }
 declare const BaseTextSearchTzEntity_base: {
     new (...args: any[]): {
@@ -73,15 +52,8 @@ declare const BaseTextSearchTzEntity_base: {
         toJSON: () => Object;
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
-} & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<any>;
-    getIdProperties(): string[];
-    getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
-    buildWhereForId(id: any): any;
-    readonly modelName: string;
-    definition: import("@loopback/repository").ModelDefinition;
-};
-export declare class BaseTextSearchTzEntity<T extends IdType> extends BaseTextSearchTzEntity_base implements IPersistableEntity<T> {
+} & typeof BaseTzEntity;
+export declare class BaseTextSearchTzEntity extends BaseTextSearchTzEntity_base implements IPersistableEntity {
 }
 export declare class ApplicationError extends Error {
     protected statusCode: number;

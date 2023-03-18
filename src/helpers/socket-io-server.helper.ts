@@ -199,9 +199,19 @@ export class SocketIOServerHelper {
       this.identifier,
       new Date().toISOString(),
     );
-    for (const defaultRoom of this.defaultRooms) {
-      socket.join(defaultRoom);
-    }
+
+    Promise.all(this.defaultRooms.map((room: string) => socket.join(room)))
+      .then(() => {
+        this.logger.info('[add] Connection %s joined all defaultRooms %s', id, this.defaultRooms);
+      })
+      .catch(error => {
+        this.logger.error(
+          '[add] Connection %s failed to join defaultRooms %s | Error: %s',
+          id,
+          this.defaultRooms,
+          error,
+        );
+      });
 
     // Handle events
     socket.on(SocketIOConstants.EVENT_DISCONNECT, () => {
@@ -214,9 +224,13 @@ export class SocketIOServerHelper {
         return;
       }
 
-      for (const room of rooms) {
-        socket.join(room);
-      }
+      Promise.all(rooms.map((room: string) => socket.join(room)))
+        .then(() => {
+          this.logger.info('[add] Connection %s joined all rooms %s', id, rooms);
+        })
+        .catch(error => {
+          this.logger.error('[add] Connection %s failed to join rooms %s | Error: %s', id, rooms, error);
+        });
 
       this.logger.info('[%s] Connection: %s | JOIN Rooms: %j', SocketIOConstants.EVENT_JOIN, id, rooms);
     });
@@ -227,9 +241,13 @@ export class SocketIOServerHelper {
         return;
       }
 
-      for (const room of rooms) {
-        socket.leave(room);
-      }
+      Promise.all(rooms.map((room: string) => socket.leave(room)))
+        .then(() => {
+          this.logger.info('[add] Connection %s left all rooms %s', id, rooms);
+        })
+        .catch(error => {
+          this.logger.error('[add] Connection %s failed to leave rooms %s | Error: %s', id, rooms, error);
+        });
 
       this.logger.info('[%s] Connection: %s | LEAVE Rooms: %j', SocketIOConstants.EVENT_LEAVE, id, rooms);
     });

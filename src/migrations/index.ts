@@ -37,7 +37,7 @@ export const migration = async (application: BaseApplication, migrationProcesses
       logger.error('[%s] FAILED | Migrate process | Error: %s', name, error);
     } finally {
       if (migrated) {
-        await migrationRepository.updateById(migrated.id, { status: migrateStatus });
+        await migrationRepository.updateById(migrated.id as number, { status: migrateStatus });
       } else {
         await migrationRepository.create({ name, status: migrateStatus });
       }

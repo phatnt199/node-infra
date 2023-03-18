@@ -155,9 +155,13 @@ class SocketIOServerHelper {
             }
             // Valid connection
             this.logger.info('[add] Connection: %s | Identifier: %s | CONNECTED | Time: %s', id, this.identifier, new Date().toISOString());
-            for (const defaultRoom of this.defaultRooms) {
-                socket.join(defaultRoom);
-            }
+            Promise.all(this.defaultRooms.map((room) => socket.join(room)))
+                .then(() => {
+                this.logger.info('[add] Connection %s joined all defaultRooms %s', id, this.defaultRooms);
+            })
+                .catch(error => {
+                this.logger.error('[add] Connection %s failed to join defaultRooms %s | Error: %s', id, this.defaultRooms, error);
+            });
             // Handle events
             socket.on(common_1.SocketIOConstants.EVENT_DISCONNECT, () => {
                 this.disconnect({ socket });
@@ -167,9 +171,13 @@ class SocketIOServerHelper {
                 if (!(rooms === null || rooms === void 0 ? void 0 : rooms.length)) {
                     return;
                 }
-                for (const room of rooms) {
-                    socket.join(room);
-                }
+                Promise.all(rooms.map((room) => socket.join(room)))
+                    .then(() => {
+                    this.logger.info('[add] Connection %s joined all rooms %s', id, rooms);
+                })
+                    .catch(error => {
+                    this.logger.error('[add] Connection %s failed to join rooms %s | Error: %s', id, rooms, error);
+                });
                 this.logger.info('[%s] Connection: %s | JOIN Rooms: %j', common_1.SocketIOConstants.EVENT_JOIN, id, rooms);
             });
             socket.on(common_1.SocketIOConstants.EVENT_LEAVE, (payload) => {
@@ -177,9 +185,13 @@ class SocketIOServerHelper {
                 if (!(rooms === null || rooms === void 0 ? void 0 : rooms.length)) {
                     return;
                 }
-                for (const room of rooms) {
-                    socket.leave(room);
-                }
+                Promise.all(rooms.map((room) => socket.leave(room)))
+                    .then(() => {
+                    this.logger.info('[add] Connection %s left all rooms %s', id, rooms);
+                })
+                    .catch(error => {
+                    this.logger.error('[add] Connection %s failed to leave rooms %s | Error: %s', id, rooms, error);
+                });
                 this.logger.info('[%s] Connection: %s | LEAVE Rooms: %j', common_1.SocketIOConstants.EVENT_LEAVE, id, rooms);
             });
             this.ping({ socket, ignoreAuth: true });

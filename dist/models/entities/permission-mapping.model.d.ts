@@ -1,6 +1,5 @@
 import { BaseTzEntity } from '../../base';
-import { NumberIdType } from '../../common/types';
-export declare class PermissionMapping extends BaseTzEntity<NumberIdType> {
+export declare class PermissionMapping extends BaseTzEntity {
     permissionId: number;
     roleId: number;
     userId: number;

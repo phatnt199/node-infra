@@ -12,10 +12,10 @@ export declare class BaseController implements IController {
         scope?: string;
     });
 }
-export declare const getIdSchema: <E extends BaseIdEntity<IdType>>(entity: typeof BaseIdEntity & {
+export declare const getIdSchema: <E extends BaseIdEntity>(entity: typeof BaseIdEntity & {
     prototype: E;
 }) => SchemaObject;
-export interface CrudControllerOptions<E extends BaseIdEntity<IdType>> {
+export interface CrudControllerOptions<E extends BaseIdEntity> {
     entity: typeof BaseIdEntity & {
         prototype: E;
     };
@@ -24,7 +24,7 @@ export interface CrudControllerOptions<E extends BaseIdEntity<IdType>> {
     };
     controller: CrudRestControllerOptions;
 }
-export declare const defineCrudController: <E extends BaseTzEntity<IdType>>(opts: CrudControllerOptions<E>) => {
+export declare const defineCrudController: <E extends BaseTzEntity>(opts: CrudControllerOptions<E>) => {
     new (repository: AbstractTzRepository<E, EntityRelation>): {
         repository: AbstractTzRepository<E, EntityRelation>;
         find(filter?: Filter<E> | undefined): Promise<(E & EntityRelation)[]>;
@@ -48,13 +48,13 @@ export interface RelationCrudControllerOptions {
         controlTarget: boolean;
     };
 }
-export declare const defineRelationViewController: <S extends BaseTzEntity<IdType>, T extends BaseTzEntity<IdType>>(opts: {
+export declare const defineRelationViewController: <S extends BaseTzEntity, T extends BaseTzEntity>(opts: {
     baseClass?: Class<BaseController>;
     relationType: TRelationType;
     relationName: string;
 }) => ControllerClass;
-export declare const defineAssociateController: <S extends BaseTzEntity<IdType>, T extends BaseTzEntity<IdType>, R extends BaseTzEntity<IdType> | NullableType>(opts: {
+export declare const defineAssociateController: <S extends BaseTzEntity, T extends BaseTzEntity, R extends BaseTzEntity | NullableType>(opts: {
     baseClass?: Class<BaseController>;
     relationName: string;
 }) => ControllerClass;
-export declare const defineRelationCrudController: <S extends BaseTzEntity<IdType>, T extends BaseTzEntity<IdType>, R extends BaseTzEntity<IdType> | NullableType>(controllerOptions: RelationCrudControllerOptions) => ControllerClass;
+export declare const defineRelationCrudController: <S extends BaseTzEntity, T extends BaseTzEntity, R extends BaseTzEntity | NullableType>(controllerOptions: RelationCrudControllerOptions) => ControllerClass;

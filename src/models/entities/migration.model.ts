@@ -1,5 +1,6 @@
-import { Entity, model, property } from '@loopback/repository';
-import { MigrationStatuses, NumberIdType } from '@/common';
+import { model, property } from '@loopback/repository';
+import { MigrationStatuses } from '@/common';
+import { BaseTzEntity } from '@/base';
 
 @model({
   settings: {
@@ -16,14 +17,7 @@ import { MigrationStatuses, NumberIdType } from '@/common';
     },
   },
 })
-export class Migration extends Entity {
-  @property({
-    type: 'number',
-    id: true,
-    generated: true,
-  })
-  id: NumberIdType;
-
+export class Migration extends BaseTzEntity {
   @property({
     type: 'string',
     required: true,
@@ -35,4 +29,8 @@ export class Migration extends Entity {
     default: MigrationStatuses.UNKNOWN,
   })
   status: string;
+
+  constructor(data?: Partial<Migration>) {
+    super(data);
+  }
 }

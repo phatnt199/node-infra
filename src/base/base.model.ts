@@ -6,47 +6,35 @@ import { TzMixin, DataTypeMixin, TextSearchMixin, UserAuditMixin } from '@/mixin
 export class BaseEntity extends Entity { }
 
 // ---------------------------------------------------------------------
-export class BaseIdEntity<T extends IdType> extends BaseEntity implements IEntity<T> {
-  @property({
-    type: 'number',
-    id: true,
-    generated: true,
-  })
-  id: T;
+export class BaseIdEntity extends BaseEntity implements IEntity {
+  @property({ type: 'number', id: true, generated: true })
+  id: IdType;
 }
 
 // ---------------------------------------------------------------------
-export class BaseTzEntity<T extends IdType> extends TzMixin(BaseIdEntity<any>) implements IPersistableEntity<T> { }
+export class BaseTzEntity extends TzMixin(BaseIdEntity) implements IPersistableEntity { }
 
 // ---------------------------------------------------------------------
-export class BaseUserAuditTzEntity<T extends IdType>
-  extends UserAuditMixin(BaseTzEntity<any>)
-  implements IPersistableEntity<T> { }
+export class BaseUserAuditTzEntity extends UserAuditMixin(BaseTzEntity) implements IPersistableEntity { }
 
 // ---------------------------------------------------------------------
-/* export class BasePrincipalTzEntity<T extends IdType>
-  extends PrincipalMixin(BaseTzEntity<any>)
-  implements IPersistableEntity<T> {} */
+/* export class BasePrincipalTzEntity extends PrincipalMixin(BaseTzEntity) implements IPersistableEntity { } */
 
 // ---------------------------------------------------------------------
-export class BaseDataTypeTzEntity<T extends IdType>
-  extends DataTypeMixin(BaseTzEntity<any>)
-  implements IPersistableEntity<T> { }
+export class BaseDataTypeTzEntity extends DataTypeMixin(BaseTzEntity) implements IPersistableEntity { }
 
 // ---------------------------------------------------------------------
-export class BaseTextSearchTzEntity<T extends IdType>
-  extends TextSearchMixin(BaseTzEntity<any>)
-  implements IPersistableEntity<T> { }
+export class BaseTextSearchTzEntity extends TextSearchMixin(BaseTzEntity) implements IPersistableEntity { }
 
 // ---------------------------------------------------------------------
-/* export class BasePrincipalDataTypeTzEntity<T extends IdType>
-  extends DataTypeMixin(PrincipalMixin(BaseTzEntity<any>))
-  implements IPersistableEntity<T> {} */
+/* export class BasePrincipalDataTypeTzEntity
+  extends DataTypeMixin(PrincipalMixin(BaseTzEntity))
+  implements IPersistableEntity { } */
 
 // ---------------------------------------------------------------------
-/* export class BasePrincipalUserAuditTzEntity<T extends IdType>
-  extends PrincipalMixin(BaseUserAuditTzEntity<any>)
-  implements IPersistableEntity<T> {} */
+/* export class BasePrincipalUserAuditTzEntity
+  extends PrincipalMixin(BaseUserAuditTzEntity)
+  implements IPersistableEntity { } */
 
 // ---------------------------------------------------------------------
 export class ApplicationError extends Error {
