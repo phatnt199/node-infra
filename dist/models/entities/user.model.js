@@ -69,6 +69,9 @@ __decorate([
 ], User.prototype, "lastLoginAt", void 0);
 exports.User = User;
 class UserWithAuthorize extends (0, mixins_1.UserAuthorizeMixin)(User) {
+    constructor(data) {
+        super(data);
+    }
 }
 exports.UserWithAuthorize = UserWithAuthorize;
 //# sourceMappingURL=user.model.js.map

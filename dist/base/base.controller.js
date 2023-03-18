@@ -56,7 +56,7 @@ const defineCrudController = (opts) => {
         in: 'path',
         schema: (0, exports.getIdSchema)(entityOptions),
     };
-    class rController {
+    class ReadController {
         constructor(repository) {
             this.repository = repository;
         }
@@ -96,7 +96,7 @@ const defineCrudController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object]),
         __metadata("design:returntype", Promise)
-    ], rController.prototype, "find", null);
+    ], ReadController.prototype, "find", null);
     __decorate([
         (0, rest_1.get)('/{id}', {
             responses: {
@@ -115,7 +115,7 @@ const defineCrudController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", Promise)
-    ], rController.prototype, "findById", null);
+    ], ReadController.prototype, "findById", null);
     __decorate([
         (0, rest_1.get)('/count', {
             responses: {
@@ -133,14 +133,14 @@ const defineCrudController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object]),
         __metadata("design:returntype", Promise)
-    ], rController.prototype, "count", null);
+    ], ReadController.prototype, "count", null);
     if (controllerOptions.readonly) {
         if (repositoryOptions === null || repositoryOptions === void 0 ? void 0 : repositoryOptions.name) {
-            (0, core_1.inject)(`repositories.${repositoryOptions.name}`)(rController, undefined, 0);
+            (0, core_1.inject)(`repositories.${repositoryOptions.name}`)(ReadController, undefined, 0);
         }
-        return rController;
+        return ReadController;
     }
-    class crudController extends rController {
+    class CRUDController extends ReadController {
         constructor(repository) {
             super(repository);
         }
@@ -198,7 +198,7 @@ const defineCrudController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object]),
         __metadata("design:returntype", Promise)
-    ], crudController.prototype, "create", null);
+    ], CRUDController.prototype, "create", null);
     __decorate([
         (0, rest_1.patch)('/', {
             responses: {
@@ -226,7 +226,7 @@ const defineCrudController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", Promise)
-    ], crudController.prototype, "updateAll", null);
+    ], CRUDController.prototype, "updateAll", null);
     __decorate([
         (0, rest_1.patch)('/{id}', {
             responses: {
@@ -256,7 +256,7 @@ const defineCrudController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", Promise)
-    ], crudController.prototype, "updateById", null);
+    ], CRUDController.prototype, "updateById", null);
     __decorate([
         (0, rest_1.put)('/{id}', {
             responses: {
@@ -276,7 +276,7 @@ const defineCrudController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", Promise)
-    ], crudController.prototype, "replaceById", null);
+    ], CRUDController.prototype, "replaceById", null);
     __decorate([
         (0, rest_1.del)('/{id}', {
             responses: {
@@ -287,11 +287,11 @@ const defineCrudController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object]),
         __metadata("design:returntype", Promise)
-    ], crudController.prototype, "deleteById", null);
+    ], CRUDController.prototype, "deleteById", null);
     if (repositoryOptions === null || repositoryOptions === void 0 ? void 0 : repositoryOptions.name) {
-        (0, core_1.inject)(`repositories.${repositoryOptions.name}`)(crudController, undefined, 0);
+        (0, core_1.inject)(`repositories.${repositoryOptions.name}`)(CRUDController, undefined, 0);
     }
-    return crudController;
+    return CRUDController;
 };
 exports.defineCrudController = defineCrudController;
 // --------------------------------------------------------------------------------------------------------------

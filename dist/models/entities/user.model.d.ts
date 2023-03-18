@@ -20,5 +20,6 @@ declare const UserWithAuthorize_base: {
     };
 } & typeof User;
 export declare class UserWithAuthorize extends UserWithAuthorize_base {
+    constructor(data?: Partial<UserWithAuthorize>);
 }
 export {};

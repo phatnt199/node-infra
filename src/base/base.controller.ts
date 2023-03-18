@@ -60,7 +60,7 @@ export const defineCrudController = <E extends BaseTzEntity<IdType>>(opts: CrudC
     schema: getIdSchema(entityOptions),
   };
 
-  class rController implements IController {
+  class ReadController implements IController {
     repository: AbstractTzRepository<E, EntityRelation>;
 
     constructor(repository: AbstractTzRepository<E, EntityRelation>) {
@@ -128,13 +128,13 @@ export const defineCrudController = <E extends BaseTzEntity<IdType>>(opts: CrudC
 
   if (controllerOptions.readonly) {
     if (repositoryOptions?.name) {
-      inject(`repositories.${repositoryOptions.name}`)(rController, undefined, 0);
+      inject(`repositories.${repositoryOptions.name}`)(ReadController, undefined, 0);
     }
 
-    return rController;
+    return ReadController;
   }
 
-  class crudController extends rController {
+  class CRUDController extends ReadController {
     constructor(repository: AbstractTzRepository<E, EntityRelation>) {
       super(repository);
     }
@@ -262,10 +262,10 @@ export const defineCrudController = <E extends BaseTzEntity<IdType>>(opts: CrudC
   }
 
   if (repositoryOptions?.name) {
-    inject(`repositories.${repositoryOptions.name}`)(crudController, undefined, 0);
+    inject(`repositories.${repositoryOptions.name}`)(CRUDController, undefined, 0);
   }
 
-  return crudController;
+  return CRUDController;
 };
 
 // --------------------------------------------------------------------------------------------------------------

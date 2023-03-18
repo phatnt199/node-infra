@@ -53,4 +53,8 @@ export class User extends BaseTzEntity<NumberIdType> {
   }
 }
 
-export class UserWithAuthorize extends UserAuthorizeMixin(User) { }
+export class UserWithAuthorize extends UserAuthorizeMixin(User) {
+  constructor(data?: Partial<UserWithAuthorize>) {
+    super(data);
+  }
+}
