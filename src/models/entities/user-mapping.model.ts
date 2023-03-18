@@ -36,3 +36,4 @@ export class UserRole extends PrincipalMixin(BaseTzEntity<NumberIdType>, 'Role')
     super(data);
   }
 }
+ 

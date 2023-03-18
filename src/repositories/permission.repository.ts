@@ -1,8 +1,8 @@
 import { BelongsToAccessor, HasManyRepositoryFactory, Getter } from '@loopback/repository';
 import { Permission } from '@/models';
-import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
+import { BaseDataSource, EntityClassType, IdType, TzCrudRepository } from '..';
 
-export class PermissionRepository<P extends Permission> extends TimestampCrudRepository<P> {
+export class PermissionRepository<P extends Permission> extends TzCrudRepository<P> {
   public readonly parent: BelongsToAccessor<P, IdType>;
   public readonly children: HasManyRepositoryFactory<P, IdType>;
 

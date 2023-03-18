@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRoleRepository = void 0;
 const __1 = require("..");
-class UserRoleRepository extends __1.TimestampCrudRepository {
+class UserRoleRepository extends __1.TzCrudRepository {
     constructor(opts) {
         const { entityClass, dataSource, userRepositoryGetter } = opts;
         super(entityClass, dataSource);

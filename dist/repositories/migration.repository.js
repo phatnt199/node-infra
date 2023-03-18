@@ -14,14 +14,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MigrationRepository = void 0;
 const core_1 = require("@loopback/core");
-const models_1 = require("@/models");
-const base_1 = require("@/base");
+const models_1 = require("../models");
+const base_1 = require("../base");
 const lodash_1 = require("lodash");
 const migrationDs = process.env.DS_MIGRATION;
 if (!migrationDs || (0, lodash_1.isEmpty)(migrationDs)) {
     throw new Error('[DANGER] INVALID MIGRATION DATASOURCE | Check again env DS_MIGRATION');
 }
-let MigrationRepository = class MigrationRepository extends base_1.TimestampCrudRepository {
+let MigrationRepository = class MigrationRepository extends base_1.TzCrudRepository {
     constructor(dataSource) {
         super(models_1.Migration, dataSource);
     }

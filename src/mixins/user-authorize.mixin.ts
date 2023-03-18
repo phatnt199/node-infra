@@ -13,15 +13,15 @@ export const UserAuthorizeMixin = <E extends MixinTarget<Entity>>(superClass: E)
     })
     roles: Role[];
 
-    @hasMany(() => PermissionMapping, { keyTo: 'userId' })
-    policies: PermissionMapping[];
-
     @hasMany(() => Permission, {
       through: {
         model: () => PermissionMapping,
       },
     })
     permissions: Permission[];
+
+    @hasMany(() => PermissionMapping, { keyTo: 'userId' })
+    policies: PermissionMapping[];
   }
 
   return Mixed;

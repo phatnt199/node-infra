@@ -11,9 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRole = void 0;
 const repository_1 = require("@loopback/repository");
-const models_1 = require("@/models");
-const mixins_1 = require("@/mixins");
-const base_1 = require("@/base");
+const models_1 = require("../../models");
+const mixins_1 = require("../../mixins");
+const base_1 = require("../../base");
 // --------------------------------------------------------------------------------
 let UserRole = class UserRole extends (0, mixins_1.PrincipalMixin)((base_1.BaseTzEntity), 'Role') {
     constructor(data) {

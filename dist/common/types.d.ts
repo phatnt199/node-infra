@@ -1,4 +1,4 @@
-import { BaseTzEntity } from '@/base';
+import { BaseIdEntity, BaseTzEntity } from '../base';
 import { Count, DataObject, Entity, Options, Where } from '@loopback/repository';
 export interface IApplication {
     preConfigure(): void;
@@ -25,18 +25,17 @@ export type TPermissionEffect = 'allow' | 'deny';
 export interface IEntity<T> {
     id: T;
 }
-export interface ITimestamp {
+export interface ITz {
     createdAt: Date;
     modifiedAt: Date;
 }
-export interface IPersistableEntity<T> extends IEntity<T>, ITimestamp {
+export interface IUserAudit {
+    createdBy: IdType;
+    modifiedBy: IdType;
 }
-export interface IPersistableRepository {
+export interface IPersistableEntity<T> extends IEntity<T>, ITz {
 }
-export interface IPersistableTimestampRepository<E extends BaseTzEntity<any>> extends IPersistableRepository {
-    mixTimestamp(entity: DataObject<E>, options?: {
-        newInstance: boolean;
-    }): DataObject<E>;
+export interface IPersistableRepository<E extends BaseIdEntity<IdType>> {
     existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
     create(data: DataObject<E>, options?: Options): Promise<E>;
     createAll(datum: DataObject<E>[], options?: Options): Promise<E[]>;
@@ -46,6 +45,17 @@ export interface IPersistableTimestampRepository<E extends BaseTzEntity<any>> ex
     updateAll(data: DataObject<E>, where?: Where<any>, options?: Options): Promise<Count>;
     upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
     replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
+}
+export interface ITzRepository<E extends BaseTzEntity<IdType>> extends IPersistableRepository<E> {
+    mixTimestamp(entity: DataObject<E>, options?: {
+        newInstance: boolean;
+    }): DataObject<E>;
+}
+export interface IUserAuditRepository<E extends BaseTzEntity<IdType>> extends IPersistableRepository<E> {
+    mixUserAudit(entity: DataObject<E>, options?: {
+        newInstance: boolean;
+        authorId: IdType;
+    }): DataObject<E>;
 }
 export interface IService {
 }

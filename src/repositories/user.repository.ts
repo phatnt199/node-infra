@@ -1,82 +1,28 @@
 import { Getter } from '@loopback/core';
-import {
-  HasManyRepositoryFactory,
-  HasOneRepositoryFactory,
-  HasManyThroughRepositoryFactory,
-} from '@loopback/repository';
-import {
-  UserIdentifierRepository,
-  UserCredentialRepository,
-  RoleRepository,
-  PermissionMappingRepository,
-  PermissionRepository,
-  UserRoleRepository,
-} from '@/repositories';
-import {
-  User,
-  UserIdentifier,
-  UserCredential,
-  UserRole,
-  Permission,
-  Role,
-  PermissionMapping,
-  UserWithAuthorize,
-} from '@/models';
-import { BaseDataSource, EntityClassType, IdType, TimestampCrudRepository } from '..';
+import { HasManyRepositoryFactory, HasManyThroughRepositoryFactory } from '@loopback/repository';
+import { RoleRepository, PermissionMappingRepository, PermissionRepository, UserRoleRepository } from '@/repositories';
+import { User, UserRole, Permission, Role, PermissionMapping, UserWithAuthorize } from '@/models';
+import { BaseDataSource, EntityClassType, IdType, TzCrudRepository } from '..';
 
-export class UserRepository<
-  U extends User,
-  UI extends UserIdentifier,
-  UC extends UserCredential,
-> extends TimestampCrudRepository<U> {
-  public readonly identifiers: HasManyRepositoryFactory<UI, IdType>;
-  public readonly credentials: HasManyRepositoryFactory<UC, IdType>;
-  public readonly children: HasManyRepositoryFactory<U, IdType>;
-  public readonly parent: HasOneRepositoryFactory<U, IdType>;
-
-  protected userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<U, UI>>;
-  protected userCredentialRepositoryGetter: Getter<UserCredentialRepository<U, UC>>;
-
-  constructor(opts: {
-    entityClass: EntityClassType<U>;
-    dataSource: BaseDataSource;
-    userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<U, UI>>;
-    userCredentialRepositoryGetter: Getter<UserCredentialRepository<U, UC>>;
-  }) {
-    const { entityClass, dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter } = opts;
+export class UserRepository<U extends User> extends TzCrudRepository<U> {
+  constructor(opts: { entityClass: EntityClassType<U>; dataSource: BaseDataSource }) {
+    const { entityClass, dataSource } = opts;
     super(entityClass, dataSource);
-
-    this.userIdentifierRepositoryGetter = userIdentifierRepositoryGetter;
-    this.userCredentialRepositoryGetter = userCredentialRepositoryGetter;
-
-    this.credentials = this.createHasManyRepositoryFactoryFor('credentials', this.userCredentialRepositoryGetter);
-    // this.registerInclusionResolver('credentials', this.credentials.inclusionResolver);
-
-    this.identifiers = this.createHasManyRepositoryFactoryFor('identifiers', this.userIdentifierRepositoryGetter);
-    this.registerInclusionResolver('identifiers', this.identifiers.inclusionResolver);
-
-    this.children = this.createHasManyRepositoryFactoryFor('children', Getter.fromValue(this));
-    this.registerInclusionResolver('children', this.children.inclusionResolver);
-
-    this.parent = this.createHasOneRepositoryFactoryFor('parent', Getter.fromValue(this));
-    this.registerInclusionResolver('parent', this.parent.inclusionResolver);
   }
 }
 
-export class UserWithAuthorizeRepository<
+export class UserAuthorizeRepository<
   U extends UserWithAuthorize,
   R extends Role,
   P extends Permission,
   PM extends PermissionMapping,
   UR extends UserRole,
-  UI extends UserIdentifier,
-  UC extends UserCredential,
-> extends UserRepository<U, UI, UC> {
+> extends UserRepository<U> {
   public readonly policies: HasManyRepositoryFactory<PM, IdType>;
   public readonly roles: HasManyThroughRepositoryFactory<R, IdType, UR, IdType>;
   public readonly permissions: HasManyThroughRepositoryFactory<P, IdType, PM, IdType>;
 
-  protected userRoleRepositoryGetter: Getter<UserRoleRepository<U, UR>>;
+  protected userRoleRepositoryGetter: Getter<UserRoleRepository<U, R, P, PM, UR>>;
   protected roleRepositoryGetter: Getter<RoleRepository<U, R, P, PM, UR>>;
   protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<U, R, P, PM>>;
   protected permissionRepositoryGetter: Getter<PermissionRepository<P>>;
@@ -84,27 +30,21 @@ export class UserWithAuthorizeRepository<
   constructor(opts: {
     entityClass: EntityClassType<U>;
     dataSource: BaseDataSource;
-    userIdentifierRepositoryGetter: Getter<UserIdentifierRepository<U, UI>>;
-    userCredentialRepositoryGetter: Getter<UserCredentialRepository<U, UC>>;
     roleRepositoryGetter: Getter<RoleRepository<U, R, P, PM, UR>>;
-    userRoleRepositoryGetter: Getter<UserRoleRepository<U, UR>>;
+    userRoleRepositoryGetter: Getter<UserRoleRepository<U, R, P, PM, UR>>;
     permissionRepositoryGetter: Getter<PermissionRepository<P>>;
     permissionMappingRepositoryGetter: Getter<PermissionMappingRepository<U, R, P, PM>>;
   }) {
     const {
       entityClass,
       dataSource,
-      userIdentifierRepositoryGetter,
-      userCredentialRepositoryGetter,
       roleRepositoryGetter,
       userRoleRepositoryGetter,
       permissionRepositoryGetter,
       permissionMappingRepositoryGetter,
     } = opts;
-    super({ entityClass, dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter });
+    super({ entityClass, dataSource });
 
-    this.userIdentifierRepositoryGetter = userIdentifierRepositoryGetter;
-    this.userCredentialRepositoryGetter = userCredentialRepositoryGetter;
     this.roleRepositoryGetter = roleRepositoryGetter;
     this.userRoleRepositoryGetter = userRoleRepositoryGetter;
     this.permissionRepositoryGetter = permissionRepositoryGetter;

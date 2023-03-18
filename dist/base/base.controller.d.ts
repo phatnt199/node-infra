@@ -2,8 +2,8 @@ import { ControllerClass } from '@loopback/core';
 import { CrudRestControllerOptions } from '@loopback/rest-crud';
 import { SchemaObject } from '@loopback/rest';
 import { BaseIdEntity, BaseTzEntity } from './';
-import { IController, IdType, NullableType, TRelationType } from '@/common/types';
-import { ApplicationLogger } from '@/helpers';
+import { IController, IdType, NullableType, TRelationType } from '../common/types';
+import { ApplicationLogger } from '../helpers';
 import { Class } from '@loopback/service-proxy';
 export declare class BaseController implements IController {
     protected logger: ApplicationLogger;

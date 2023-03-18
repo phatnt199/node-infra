@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TimestampCrudRepository = exports.ViewRepository = exports.AbstractTimestampRepository = void 0;
+exports.UserAuditCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.AbstractTimestampRepository = void 0;
 const repository_1 = require("@loopback/repository");
-const utilities_1 = require("@/utilities");
+const utilities_1 = require("../utilities");
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractTimestampRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource) {
@@ -93,7 +93,7 @@ class ViewRepository extends repository_1.DefaultCrudRepository {
 }
 exports.ViewRepository = ViewRepository;
 // ----------------------------------------------------------------------------------------------------------------------------------------
-class TimestampCrudRepository extends AbstractTimestampRepository {
+class TzCrudRepository extends AbstractTimestampRepository {
     constructor(entityClass, dataSource) {
         super(entityClass, dataSource);
     }
@@ -123,7 +123,7 @@ class TimestampCrudRepository extends AbstractTimestampRepository {
         });
     }
     updateById(id, data, options) {
-        const enriched = this.mixTimestamp(data);
+        const enriched = this.mixTimestamp(data, { newInstance: false });
         return super.updateById(id, enriched, options);
     }
     updateWithReturn(id, data, options) {
@@ -136,7 +136,7 @@ class TimestampCrudRepository extends AbstractTimestampRepository {
         });
     }
     updateAll(data, where, options) {
-        const enriched = this.mixTimestamp(data);
+        const enriched = this.mixTimestamp(data, { newInstance: false });
         return super.updateAll(enriched, where, options);
     }
     upsertWith(data, where) {
@@ -151,7 +151,7 @@ class TimestampCrudRepository extends AbstractTimestampRepository {
         });
     }
     replaceById(id, data, options) {
-        const enriched = this.mixTimestamp(data);
+        const enriched = this.mixTimestamp(data, { newInstance: false });
         return super.replaceById(id, enriched, options);
     }
     mixTimestamp(entity, options = { newInstance: false }) {
@@ -162,5 +162,73 @@ class TimestampCrudRepository extends AbstractTimestampRepository {
         return entity;
     }
 }
-exports.TimestampCrudRepository = TimestampCrudRepository;
+exports.TzCrudRepository = TzCrudRepository;
+// ----------------------------------------------------------------------------------------------------------------------------------------
+class UserAuditCrudRepository extends TzCrudRepository {
+    constructor(entityClass, dataSource) {
+        super(entityClass, dataSource);
+    }
+    create(data, options) {
+        const enriched = this.mixUserAudit(data, { newInstance: true, authorId: options === null || options === void 0 ? void 0 : options.authorId });
+        return super.create(enriched, options);
+    }
+    createAll(datum, options) {
+        const enriched = datum.map(data => {
+            return this.mixUserAudit(data, { newInstance: true, authorId: options === null || options === void 0 ? void 0 : options.authorId });
+        });
+        return super.createAll(enriched, options);
+    }
+    createWithReturn(data, options) {
+        const _super = Object.create(null, {
+            findById: { get: () => super.findById }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            const saved = yield this.create(data, options);
+            return _super.findById.call(this, saved.id);
+        });
+    }
+    updateById(id, data, options) {
+        const enriched = this.mixUserAudit(data, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
+        return super.updateById(id, enriched, options);
+    }
+    updateWithReturn(id, data, options) {
+        const _super = Object.create(null, {
+            findById: { get: () => super.findById }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.updateById(id, data, options);
+            return _super.findById.call(this, id);
+        });
+    }
+    updateAll(data, where, options) {
+        const enriched = this.mixUserAudit(data, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
+        return super.updateAll(enriched, where, options);
+    }
+    upsertWith(data, where) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const isExisted = yield this.existsWith(where);
+            if (isExisted) {
+                yield this.updateAll(data, where);
+                const rs = yield this.findOne({ where });
+                return rs;
+            }
+            return this.create(data);
+        });
+    }
+    replaceById(id, data, options) {
+        const enriched = this.mixUserAudit(data, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
+        return super.replaceById(id, enriched, options);
+    }
+    mixUserAudit(entity, options) {
+        if (!(options === null || options === void 0 ? void 0 : options.authorId)) {
+            return entity;
+        }
+        if (options === null || options === void 0 ? void 0 : options.newInstance) {
+            entity.createdBy = options.authorId;
+        }
+        entity.modifiedBy = options.authorId;
+        return entity;
+    }
+}
+exports.UserAuditCrudRepository = UserAuditCrudRepository;
 //# sourceMappingURL=base.repository.js.map

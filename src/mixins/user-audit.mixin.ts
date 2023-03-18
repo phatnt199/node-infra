@@ -12,7 +12,7 @@ export const UserAuditMixin = <E extends MixinTarget<Entity>>(superClass: E) => 
       },
       hidden: true,
     })
-    createdBy: Date;
+    createdBy: IdType;
 
     @property({
       type: 'number',

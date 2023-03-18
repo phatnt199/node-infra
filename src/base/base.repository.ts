@@ -1,12 +1,12 @@
 import { Count, DataObject, DefaultCrudRepository, juggler, Options, Where } from '@loopback/repository';
-import { EntityClassType, EntityRelation, IdType, IPersistableTimestampRepository } from '@/common/types';
-import { BaseIdEntity, BaseTzEntity } from './base.model';
+import { EntityClassType, EntityRelation, IdType, ITzRepository, IUserAuditRepository } from '@/common/types';
+import { BaseIdEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
 import { getError } from '@/utilities';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export abstract class AbstractTimestampRepository<E extends BaseTzEntity<IdType>, R extends EntityRelation>
   extends DefaultCrudRepository<E, IdType, R>
-  implements IPersistableTimestampRepository<E>
+  implements ITzRepository<E>
 {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
@@ -102,7 +102,7 @@ export abstract class ViewRepository<E extends BaseIdEntity<IdType>> extends Def
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends AbstractTimestampRepository<E, any> {
+export class TzCrudRepository<E extends BaseTzEntity<IdType>> extends AbstractTimestampRepository<E, any> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }
@@ -131,7 +131,7 @@ export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends Abs
   }
 
   updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
-    const enriched = this.mixTimestamp(data);
+    const enriched = this.mixTimestamp(data, { newInstance: false });
     return super.updateById(id, enriched, options);
   }
 
@@ -141,7 +141,7 @@ export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends Abs
   }
 
   updateAll(data: DataObject<E>, where?: Where<any>, options?: Options): Promise<Count> {
-    const enriched = this.mixTimestamp(data);
+    const enriched = this.mixTimestamp(data, { newInstance: false });
     return super.updateAll(enriched, where, options);
   }
 
@@ -157,7 +157,7 @@ export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends Abs
   }
 
   replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
-    const enriched = this.mixTimestamp(data);
+    const enriched = this.mixTimestamp(data, { newInstance: false });
     return super.replaceById(id, enriched, options);
   }
 
@@ -167,6 +167,78 @@ export class TimestampCrudRepository<E extends BaseTzEntity<IdType>> extends Abs
     }
 
     entity.modifiedAt = new Date();
+    return entity;
+  }
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export class UserAuditCrudRepository<E extends BaseUserAuditTzEntity<IdType>>
+  extends TzCrudRepository<E>
+  implements IUserAuditRepository<E>
+{
+  constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
+    super(entityClass, dataSource);
+  }
+
+  create(data: DataObject<E>, options?: Options): Promise<E> {
+    const enriched = this.mixUserAudit(data, { newInstance: true, authorId: options?.authorId });
+    return super.create(enriched, options);
+  }
+
+  createAll(datum: DataObject<E>[], options?: Options): Promise<E[]> {
+    const enriched = datum.map(data => {
+      return this.mixUserAudit(data, { newInstance: true, authorId: options?.authorId });
+    });
+
+    return super.createAll(enriched, options);
+  }
+
+  async createWithReturn(data: DataObject<E>, options?: Options): Promise<E> {
+    const saved = await this.create(data, options);
+    return super.findById(saved.id);
+  }
+
+  updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+    const enriched = this.mixUserAudit(data, { newInstance: false, authorId: options?.authorId });
+    return super.updateById(id, enriched, options);
+  }
+
+  async updateWithReturn(id: IdType, data: DataObject<E>, options?: Options): Promise<E> {
+    await this.updateById(id, data, options);
+    return super.findById(id);
+  }
+
+  updateAll(data: DataObject<E>, where?: Where<any>, options?: Options): Promise<Count> {
+    const enriched = this.mixUserAudit(data, { newInstance: false, authorId: options?.authorId });
+    return super.updateAll(enriched, where, options);
+  }
+
+  async upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null> {
+    const isExisted = await this.existsWith(where);
+    if (isExisted) {
+      await this.updateAll(data, where);
+      const rs = await this.findOne({ where });
+      return rs;
+    }
+
+    return this.create(data);
+  }
+
+  replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+    const enriched = this.mixUserAudit(data, { newInstance: false, authorId: options?.authorId });
+    return super.replaceById(id, enriched, options);
+  }
+
+  mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean; authorId: IdType } | undefined): DataObject<E> {
+    if (!options?.authorId) {
+      return entity;
+    }
+
+    if (options?.newInstance) {
+      entity.createdBy = options.authorId;
+    }
+
+    entity.modifiedBy = options.authorId;
     return entity;
   }
 }

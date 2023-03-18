@@ -1,31 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserWithAuthorizeRepository = exports.UserRepository = void 0;
-const core_1 = require("@loopback/core");
+exports.UserAuthorizeRepository = exports.UserRepository = void 0;
 const __1 = require("..");
-class UserRepository extends __1.TimestampCrudRepository {
+class UserRepository extends __1.TzCrudRepository {
     constructor(opts) {
-        const { entityClass, dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter } = opts;
+        const { entityClass, dataSource } = opts;
         super(entityClass, dataSource);
-        this.userIdentifierRepositoryGetter = userIdentifierRepositoryGetter;
-        this.userCredentialRepositoryGetter = userCredentialRepositoryGetter;
-        this.credentials = this.createHasManyRepositoryFactoryFor('credentials', this.userCredentialRepositoryGetter);
-        // this.registerInclusionResolver('credentials', this.credentials.inclusionResolver);
-        this.identifiers = this.createHasManyRepositoryFactoryFor('identifiers', this.userIdentifierRepositoryGetter);
-        this.registerInclusionResolver('identifiers', this.identifiers.inclusionResolver);
-        this.children = this.createHasManyRepositoryFactoryFor('children', core_1.Getter.fromValue(this));
-        this.registerInclusionResolver('children', this.children.inclusionResolver);
-        this.parent = this.createHasOneRepositoryFactoryFor('parent', core_1.Getter.fromValue(this));
-        this.registerInclusionResolver('parent', this.parent.inclusionResolver);
     }
 }
 exports.UserRepository = UserRepository;
-class UserWithAuthorizeRepository extends UserRepository {
+class UserAuthorizeRepository extends UserRepository {
     constructor(opts) {
-        const { entityClass, dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter, roleRepositoryGetter, userRoleRepositoryGetter, permissionRepositoryGetter, permissionMappingRepositoryGetter, } = opts;
-        super({ entityClass, dataSource, userIdentifierRepositoryGetter, userCredentialRepositoryGetter });
-        this.userIdentifierRepositoryGetter = userIdentifierRepositoryGetter;
-        this.userCredentialRepositoryGetter = userCredentialRepositoryGetter;
+        const { entityClass, dataSource, roleRepositoryGetter, userRoleRepositoryGetter, permissionRepositoryGetter, permissionMappingRepositoryGetter, } = opts;
+        super({ entityClass, dataSource });
         this.roleRepositoryGetter = roleRepositoryGetter;
         this.userRoleRepositoryGetter = userRoleRepositoryGetter;
         this.permissionRepositoryGetter = permissionRepositoryGetter;
@@ -38,5 +25,5 @@ class UserWithAuthorizeRepository extends UserRepository {
         this.registerInclusionResolver('policies', this.policies.inclusionResolver);
     }
 }
-exports.UserWithAuthorizeRepository = UserWithAuthorizeRepository;
+exports.UserAuthorizeRepository = UserAuthorizeRepository;
 //# sourceMappingURL=user.repository.js.map

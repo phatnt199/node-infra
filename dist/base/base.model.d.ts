@@ -1,5 +1,5 @@
 import { Entity } from '@loopback/repository';
-import { IdType, IEntity, IPersistableEntity } from '@/common/types';
+import { IdType, IEntity, IPersistableEntity } from '../common/types';
 export declare class BaseEntity extends Entity {
 }
 export declare class BaseIdEntity<T extends IdType> extends BaseEntity implements IEntity<T> {
@@ -26,7 +26,7 @@ export declare class BaseTzEntity<T extends IdType> extends BaseTzEntity_base im
 }
 declare const BaseUserAuditTzEntity_base: {
     new (...args: any[]): {
-        createdBy: Date;
+        createdBy: IdType;
         modifiedBy: IdType;
         getId: () => any;
         getIdObject: () => Object;
@@ -34,7 +34,7 @@ declare const BaseUserAuditTzEntity_base: {
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
 } & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<any>;
+    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<IdType>;
     getIdProperties(): string[];
     getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
     buildWhereForId(id: any): any;
@@ -56,7 +56,7 @@ declare const BaseDataTypeTzEntity_base: {
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
 } & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<any>;
+    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<IdType>;
     getIdProperties(): string[];
     getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
     buildWhereForId(id: any): any;
@@ -74,7 +74,7 @@ declare const BaseTextSearchTzEntity_base: {
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
 } & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<any>;
+    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<IdType>;
     getIdProperties(): string[];
     getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
     buildWhereForId(id: any): any;

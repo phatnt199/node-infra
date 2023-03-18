@@ -3,7 +3,7 @@ import { IdType, IEntity, IPersistableEntity } from '@/common/types';
 import { TzMixin, DataTypeMixin, TextSearchMixin, UserAuditMixin } from '@/mixins';
 
 // ---------------------------------------------------------------------
-export class BaseEntity extends Entity {}
+export class BaseEntity extends Entity { }
 
 // ---------------------------------------------------------------------
 export class BaseIdEntity<T extends IdType> extends BaseEntity implements IEntity<T> {
@@ -16,12 +16,12 @@ export class BaseIdEntity<T extends IdType> extends BaseEntity implements IEntit
 }
 
 // ---------------------------------------------------------------------
-export class BaseTzEntity<T extends IdType> extends TzMixin(BaseIdEntity<any>) implements IPersistableEntity<T> {}
+export class BaseTzEntity<T extends IdType> extends TzMixin(BaseIdEntity<any>) implements IPersistableEntity<T> { }
 
 // ---------------------------------------------------------------------
 export class BaseUserAuditTzEntity<T extends IdType>
-  extends UserAuditMixin(BaseTzEntity<any>)
-  implements IPersistableEntity<T> {}
+  extends UserAuditMixin(BaseTzEntity<IdType>)
+  implements IPersistableEntity<T> { }
 
 // ---------------------------------------------------------------------
 /* export class BasePrincipalTzEntity<T extends IdType>
@@ -30,13 +30,13 @@ export class BaseUserAuditTzEntity<T extends IdType>
 
 // ---------------------------------------------------------------------
 export class BaseDataTypeTzEntity<T extends IdType>
-  extends DataTypeMixin(BaseTzEntity<any>)
-  implements IPersistableEntity<T> {}
+  extends DataTypeMixin(BaseTzEntity<IdType>)
+  implements IPersistableEntity<T> { }
 
 // ---------------------------------------------------------------------
 export class BaseTextSearchTzEntity<T extends IdType>
-  extends TextSearchMixin(BaseTzEntity<any>)
-  implements IPersistableEntity<T> {}
+  extends TextSearchMixin(BaseTzEntity<IdType>)
+  implements IPersistableEntity<T> { }
 
 // ---------------------------------------------------------------------
 /* export class BasePrincipalDataTypeTzEntity<T extends IdType>

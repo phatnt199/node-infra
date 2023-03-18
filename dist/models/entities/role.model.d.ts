@@ -1,6 +1,6 @@
-import { User, Permission } from '@/models';
-import { BaseTzEntity } from '@/base';
-import { NumberIdType } from '@/common/types';
+import { User, Permission } from '../../models';
+import { BaseTzEntity } from '../../base';
+import { NumberIdType } from '../../common/types';
 export declare class Role extends BaseTzEntity<NumberIdType> {
     identifier: string;
     name: string;

@@ -23,7 +23,7 @@ const UserAuditMixin = (superClass) => {
             },
             hidden: true,
         }),
-        __metadata("design:type", Date)
+        __metadata("design:type", Object)
     ], Mixed.prototype, "createdBy", void 0);
     __decorate([
         (0, repository_1.property)({

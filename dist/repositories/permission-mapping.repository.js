@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PermissionMappingRepository = void 0;
 const __1 = require("..");
-class PermissionMappingRepository extends __1.TimestampCrudRepository {
+class PermissionMappingRepository extends __1.TzCrudRepository {
     constructor(opts) {
         const { entityClass, dataSource, userRepositoryGetter, roleRepositoryGetter, permissionRepositoryGetter } = opts;
         super(entityClass, dataSource);

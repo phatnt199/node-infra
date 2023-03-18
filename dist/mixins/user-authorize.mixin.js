@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserAuthorizeMixin = void 0;
 const repository_1 = require("@loopback/repository");
-const models_1 = require("@/models");
+const models_1 = require("../models");
 const UserAuthorizeMixin = (superClass) => {
     class Mixed extends superClass {
     }
@@ -26,10 +26,6 @@ const UserAuthorizeMixin = (superClass) => {
         __metadata("design:type", Array)
     ], Mixed.prototype, "roles", void 0);
     __decorate([
-        (0, repository_1.hasMany)(() => models_1.PermissionMapping, { keyTo: 'userId' }),
-        __metadata("design:type", Array)
-    ], Mixed.prototype, "policies", void 0);
-    __decorate([
         (0, repository_1.hasMany)(() => models_1.Permission, {
             through: {
                 model: () => models_1.PermissionMapping,
@@ -37,6 +33,10 @@ const UserAuthorizeMixin = (superClass) => {
         }),
         __metadata("design:type", Array)
     ], Mixed.prototype, "permissions", void 0);
+    __decorate([
+        (0, repository_1.hasMany)(() => models_1.PermissionMapping, { keyTo: 'userId' }),
+        __metadata("design:type", Array)
+    ], Mixed.prototype, "policies", void 0);
     return Mixed;
 };
 exports.UserAuthorizeMixin = UserAuthorizeMixin;

@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PermissionRepository = void 0;
 const repository_1 = require("@loopback/repository");
 const __1 = require("..");
-class PermissionRepository extends __1.TimestampCrudRepository {
+class PermissionRepository extends __1.TzCrudRepository {
     constructor(opts) {
         const { entityClass, dataSource } = opts;
         super(entityClass, dataSource);

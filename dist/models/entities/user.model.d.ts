@@ -1,24 +1,18 @@
-import { UserIdentifier, UserCredential } from '@/models';
-import { BaseTzEntity } from '@/base';
-import { NumberIdType } from '@/common/types';
+import { BaseTzEntity } from '../../base';
+import { NumberIdType } from '../../common/types';
 export declare class User extends BaseTzEntity<NumberIdType> {
     realm?: string;
     status: string;
     userType?: string;
     activatedAt?: Date;
     lastLoginAt?: Date;
-    parentId?: number;
-    parent: User;
-    children: User[];
-    identifiers: UserIdentifier[];
-    credentials: UserCredential[];
     constructor(data?: Partial<User>);
 }
 declare const UserWithAuthorize_base: {
     new (...args: any[]): {
-        roles: import("@/models").Role[];
-        policies: import("@/models").PermissionMapping[];
-        permissions: import("@/models").Permission[];
+        roles: import("./role.model").Role[];
+        permissions: import("./permission.model").Permission[];
+        policies: import("./permission-mapping.model").PermissionMapping[];
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
