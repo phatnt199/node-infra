@@ -1,7 +1,7 @@
 import { Count, DataObject, DefaultCrudRepository, juggler, Options, Where } from '@loopback/repository';
 import { EntityClassType, EntityRelation, IdType, ITzRepository, IUserAuditRepository } from '../common/types';
 import { BaseIdEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
-export declare abstract class AbstractTimestampRepository<E extends BaseTzEntity<IdType>, R extends EntityRelation> extends DefaultCrudRepository<E, IdType, R> implements ITzRepository<E> {
+export declare abstract class AbstractTzRepository<E extends BaseTzEntity<IdType>, R extends EntityRelation> extends DefaultCrudRepository<E, IdType, R> implements ITzRepository<E> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
     abstract mixTimestamp(entity: DataObject<E>, options?: {
         newInstance: boolean;
@@ -25,7 +25,7 @@ export declare abstract class ViewRepository<E extends BaseIdEntity<IdType>> ext
     deleteAll(_where?: Where<E>, _options?: Options): Promise<Count>;
     deleteById(_id: IdType, _options?: Options): Promise<void>;
 }
-export declare class TzCrudRepository<E extends BaseTzEntity<IdType>> extends AbstractTimestampRepository<E, any> {
+export declare class TzCrudRepository<E extends BaseTzEntity<IdType>> extends AbstractTzRepository<E, any> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
     existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
     create(data: DataObject<E>, options?: Options): Promise<E>;

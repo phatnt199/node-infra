@@ -4,7 +4,7 @@ import { BaseIdEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model'
 import { getError } from '@/utilities';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class AbstractTimestampRepository<E extends BaseTzEntity<IdType>, R extends EntityRelation>
+export abstract class AbstractTzRepository<E extends BaseTzEntity<IdType>, R extends EntityRelation>
   extends DefaultCrudRepository<E, IdType, R>
   implements ITzRepository<E>
 {
@@ -102,7 +102,7 @@ export abstract class ViewRepository<E extends BaseIdEntity<IdType>> extends Def
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export class TzCrudRepository<E extends BaseTzEntity<IdType>> extends AbstractTimestampRepository<E, any> {
+export class TzCrudRepository<E extends BaseTzEntity<IdType>> extends AbstractTzRepository<E, any> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }

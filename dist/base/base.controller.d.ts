@@ -1,8 +1,9 @@
 import { ControllerClass } from '@loopback/core';
 import { CrudRestControllerOptions } from '@loopback/rest-crud';
+import { Count, Filter, FilterExcludingWhere, Where } from '@loopback/repository';
 import { SchemaObject } from '@loopback/rest';
-import { BaseIdEntity, BaseTzEntity } from './';
-import { IController, IdType, NullableType, TRelationType } from '../common/types';
+import { BaseIdEntity, BaseTzEntity, AbstractTzRepository } from './';
+import { EntityRelation, IController, IdType, NullableType, TRelationType } from '../common/types';
 import { ApplicationLogger } from '../helpers';
 import { Class } from '@loopback/service-proxy';
 export declare class BaseController implements IController {
@@ -11,6 +12,9 @@ export declare class BaseController implements IController {
         scope?: string;
     });
 }
+export declare const getIdSchema: <E extends BaseIdEntity<IdType>>(entity: typeof BaseIdEntity & {
+    prototype: E;
+}) => SchemaObject;
 export interface CrudControllerOptions<E extends BaseIdEntity<IdType>> {
     entity: typeof BaseIdEntity & {
         prototype: E;
@@ -18,11 +22,16 @@ export interface CrudControllerOptions<E extends BaseIdEntity<IdType>> {
     repository: {
         name: string;
     };
-    controller: CrudRestControllerOptions & {
-        extends: [];
-    };
+    controller: CrudRestControllerOptions;
 }
-export declare function defineCrudController<E extends BaseIdEntity<IdType>>(options: CrudControllerOptions<E>): import("@loopback/rest-crud").CrudRestControllerCtor<E, IdType, "id", {}>;
+export declare const defineCrudController: <E extends BaseTzEntity<IdType>>(opts: CrudControllerOptions<E>) => {
+    new (repository: AbstractTzRepository<E, EntityRelation>): {
+        repository: AbstractTzRepository<E, EntityRelation>;
+        find(filter?: Filter<E> | undefined): Promise<(E & EntityRelation)[]>;
+        findById(id: IdType, filter?: FilterExcludingWhere<E> | undefined): Promise<E & EntityRelation>;
+        count(where?: Where<E> | undefined): Promise<Count>;
+    };
+};
 export interface RelationCrudControllerOptions {
     association: {
         source: string;

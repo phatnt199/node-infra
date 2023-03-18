@@ -1,10 +1,24 @@
 import { ControllerClass, inject } from '@loopback/core';
-import { CrudRestControllerOptions, defineCrudRestController } from '@loopback/rest-crud';
-import { Count, CountSchema, DataObject, Filter, Where } from '@loopback/repository';
-import { del, get, param, patch, post, requestBody, SchemaObject } from '@loopback/rest';
+import { CrudRestControllerOptions } from '@loopback/rest-crud';
+import { Count, CountSchema, DataObject, Filter, FilterExcludingWhere, Where } from '@loopback/repository';
+import {
+  del,
+  get,
+  getFilterSchemaFor,
+  getJsonSchema,
+  getModelSchemaRef,
+  jsonToSchemaObject,
+  param,
+  ParameterObject,
+  patch,
+  post,
+  put,
+  requestBody,
+  SchemaObject,
+} from '@loopback/rest';
 import getProp from 'lodash/get';
 
-import { BaseIdEntity, BaseTzEntity, AbstractTimestampRepository } from './';
+import { BaseIdEntity, BaseTzEntity, AbstractTzRepository } from './';
 import { EntityRelation, IController, IdType, NullableType, TRelationType } from '@/common/types';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
@@ -21,23 +35,238 @@ export class BaseController implements IController {
 }
 
 // --------------------------------------------------------------------------------------------------------------
+export const getIdSchema = <E extends BaseIdEntity<IdType>>(
+  entity: typeof BaseIdEntity & { prototype: E },
+): SchemaObject => {
+  const idProp = entity.getIdProperties()[0];
+  const modelSchema = jsonToSchemaObject(getJsonSchema(entity)) as SchemaObject;
+  return modelSchema.properties?.[idProp] as SchemaObject;
+};
+
+// --------------------------------------------------------------------------------------------------------------
 export interface CrudControllerOptions<E extends BaseIdEntity<IdType>> {
   entity: typeof BaseIdEntity & { prototype: E };
   repository: { name: string };
-  controller: CrudRestControllerOptions & { extends: [] };
+  controller: CrudRestControllerOptions;
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export function defineCrudController<E extends BaseIdEntity<IdType>>(options: CrudControllerOptions<E>) {
-  const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = options;
-  const controller = defineCrudRestController<E, IdType, 'id'>(entityOptions, controllerOptions);
+export const defineCrudController = <E extends BaseTzEntity<IdType>>(opts: CrudControllerOptions<E>) => {
+  const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = opts;
 
-  if (repositoryOptions?.name) {
-    inject(`repositories.${repositoryOptions.name}`)(controller, undefined, 0);
+  const idPathParam: ParameterObject = {
+    name: 'id',
+    in: 'path',
+    schema: getIdSchema(entityOptions),
+  };
+
+  class rController implements IController {
+    repository: AbstractTzRepository<E, EntityRelation>;
+
+    constructor(repository: AbstractTzRepository<E, EntityRelation>) {
+      this.repository = repository;
+    }
+
+    @get('/', {
+      responses: {
+        '200': {
+          description: `Array of model instance ${entityOptions.name}`,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: getModelSchemaRef(entityOptions, { includeRelations: true }),
+              },
+            },
+          },
+        },
+      },
+    })
+    async find(@param.filter(entityOptions) filter?: Filter<E>): Promise<(E & EntityRelation)[]> {
+      return this.repository.find(filter);
+    }
+
+    @get('/{id}', {
+      responses: {
+        '200': {
+          description: `Find model instance ${entityOptions.name}`,
+          content: {
+            'application/json': {
+              schema: getModelSchemaRef(entityOptions, { includeRelations: true }),
+            },
+          },
+        },
+      },
+    })
+    async findById(
+      @param(idPathParam) id: IdType,
+      @param.query.object('filter', getFilterSchemaFor(entityOptions, { exclude: 'where' }))
+      filter?: FilterExcludingWhere<E>,
+    ): Promise<E & EntityRelation> {
+      return this.repository.findById(id, filter);
+    }
+
+    @get('/count', {
+      responses: {
+        '200': {
+          description: `Count number of model instance ${entityOptions.name}`,
+          content: {
+            'application/json': {
+              schema: CountSchema,
+            },
+          },
+        },
+      },
+    })
+    async count(
+      @param.where(entityOptions)
+      where?: Where<E>,
+    ): Promise<Count> {
+      return this.repository.count(where);
+    }
   }
 
-  return controller;
-}
+  if (controllerOptions.readonly) {
+    if (repositoryOptions?.name) {
+      inject(`repositories.${repositoryOptions.name}`)(rController, undefined, 0);
+    }
+
+    return rController;
+  }
+
+  class crudController extends rController {
+    constructor(repository: AbstractTzRepository<E, EntityRelation>) {
+      super(repository);
+    }
+
+    @post('/', {
+      responses: {
+        '200': {
+          description: `Create model instance ${entityOptions.name}`,
+          content: {
+            'application/json': {
+              schema: getModelSchemaRef(entityOptions),
+            },
+          },
+        },
+      },
+    })
+    async create(
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(entityOptions, {
+              title: `New ${entityOptions.name} payload`,
+              exclude: ['id', 'createdAt', 'modifiedAt'],
+            }),
+          },
+        },
+      })
+      data: Omit<E, 'id'>,
+    ): Promise<E> {
+      const rs = await this.repository.create(data as DataObject<E>);
+      return rs;
+    }
+
+    @patch('/', {
+      responses: {
+        '200': {
+          description: `Number of updated ${entityOptions.name} models`,
+          content: {
+            'application/json': {
+              schema: CountSchema,
+            },
+          },
+        },
+      },
+    })
+    async updateAll(
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(entityOptions, {
+              title: `Partial fields of ${entityOptions.name}`,
+              partial: true,
+            }),
+          },
+        },
+      })
+      data: Partial<E>,
+      @param.where(entityOptions)
+      where?: Where<E>,
+    ): Promise<Count> {
+      return this.repository.updateAll(data as DataObject<E>, where);
+    }
+
+    @patch('/{id}', {
+      responses: {
+        '200': {
+          description: `Updated ${entityOptions.name} models`,
+          content: {
+            'application/json': {
+              schema: getModelSchemaRef(entityOptions, {
+                title: `Updated ${entityOptions.name} models`,
+              }),
+            },
+          },
+        },
+      },
+    })
+    async updateById(
+      @param(idPathParam) id: IdType,
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(entityOptions, {
+              title: `Partial fields of ${entityOptions.name}`,
+              partial: true,
+            }),
+          },
+        },
+      })
+      data: Partial<E>,
+    ): Promise<E> {
+      const rs = await this.repository.updateWithReturn(id, data as DataObject<E>);
+      return rs;
+    }
+
+    @put('/{id}', {
+      responses: {
+        '204': { description: `${entityOptions.name} was replaced` },
+      },
+    })
+    async replaceById(
+      @param(idPathParam) id: IdType,
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(entityOptions, {
+              title: `Fields of ${entityOptions.name}`,
+            }),
+          },
+        },
+      })
+      data: E,
+    ): Promise<void> {
+      await this.repository.replaceById(id, data);
+    }
+
+    @del('/{id}', {
+      responses: {
+        '204': { description: `${entityOptions} was deleted` },
+      },
+    })
+    async deleteById(@param(idPathParam) id: IdType): Promise<void> {
+      await this.repository.deleteById(id);
+    }
+  }
+
+  if (repositoryOptions?.name) {
+    inject(`repositories.${repositoryOptions.name}`)(crudController, undefined, 0);
+  }
+
+  return crudController;
+};
 
 // --------------------------------------------------------------------------------------------------------------
 export interface RelationCrudControllerOptions {
@@ -64,17 +293,17 @@ export const defineRelationViewController = <S extends BaseTzEntity<IdType>, T e
   relationName: string;
 }): ControllerClass => {
   const { baseClass, relationType, relationName } = opts;
-  const restPath = `/{id}/${relationName}`;
 
+  const restPath = `/{id}/${relationName}`;
   const BaseClass = baseClass ?? BaseController;
 
   class ViewController extends BaseClass implements IController {
-    sourceRepository: AbstractTimestampRepository<S, EntityRelation>;
-    targetRepository: AbstractTimestampRepository<T, EntityRelation>;
+    sourceRepository: AbstractTzRepository<S, EntityRelation>;
+    targetRepository: AbstractTzRepository<T, EntityRelation>;
 
     constructor(
-      sourceRepository: AbstractTimestampRepository<S, EntityRelation>,
-      targetRepository: AbstractTimestampRepository<T, EntityRelation>,
+      sourceRepository: AbstractTzRepository<S, EntityRelation>,
+      targetRepository: AbstractTzRepository<T, EntityRelation>,
     ) {
       super({ scope: `ViewController.${relationName}` });
       if (!sourceRepository) {
@@ -104,7 +333,7 @@ export const defineRelationViewController = <S extends BaseTzEntity<IdType>, T e
         },
       },
     })
-    async find(@param.path.number('id') id: number, @param.query.object('filter') filter?: Filter<T>): Promise<T[]> {
+    async find(@param.path.number('id') id: IdType, @param.query.object('filter') filter?: Filter<T>): Promise<T[]> {
       const ref = getProp(this.sourceRepository, relationName)(id);
 
       switch (relationType) {
@@ -143,12 +372,12 @@ export const defineAssociateController = <
   const BaseClass = baseClass ?? BaseController;
 
   class AssociationController extends BaseClass implements IController {
-    sourceRepository: AbstractTimestampRepository<S, EntityRelation>;
-    targetRepository: AbstractTimestampRepository<T, EntityRelation>;
+    sourceRepository: AbstractTzRepository<S, EntityRelation>;
+    targetRepository: AbstractTzRepository<T, EntityRelation>;
 
     constructor(
-      sourceRepository: AbstractTimestampRepository<S, EntityRelation>,
-      targetRepository: AbstractTimestampRepository<T, EntityRelation>,
+      sourceRepository: AbstractTzRepository<S, EntityRelation>,
+      targetRepository: AbstractTzRepository<T, EntityRelation>,
     ) {
       super({ scope: `AssociationController.${relationName}` });
 
@@ -253,10 +482,7 @@ export const defineRelationCrudController = <
 
   // -----------------------------------------------------------------------------------------------
   class Controller extends ExtendsableClass {
-    constructor(
-      sourceRepository: AbstractTimestampRepository<S, any>,
-      targetRepository: AbstractTimestampRepository<T, any>,
-    ) {
+    constructor(sourceRepository: AbstractTzRepository<S, any>, targetRepository: AbstractTzRepository<T, any>) {
       if (!sourceRepository) {
         throw getError({
           statusCode: 500,

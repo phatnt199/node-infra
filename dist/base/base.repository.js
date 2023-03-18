@@ -9,16 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserAuditCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.AbstractTimestampRepository = void 0;
+exports.UserAuditCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.AbstractTzRepository = void 0;
 const repository_1 = require("@loopback/repository");
 const utilities_1 = require("../utilities");
 // ----------------------------------------------------------------------------------------------------------------------------------------
-class AbstractTimestampRepository extends repository_1.DefaultCrudRepository {
+class AbstractTzRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource) {
         super(entityClass, dataSource);
     }
 }
-exports.AbstractTimestampRepository = AbstractTimestampRepository;
+exports.AbstractTzRepository = AbstractTzRepository;
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class ViewRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource) {
@@ -93,7 +93,7 @@ class ViewRepository extends repository_1.DefaultCrudRepository {
 }
 exports.ViewRepository = ViewRepository;
 // ----------------------------------------------------------------------------------------------------------------------------------------
-class TzCrudRepository extends AbstractTimestampRepository {
+class TzCrudRepository extends AbstractTzRepository {
     constructor(entityClass, dataSource) {
         super(entityClass, dataSource);
     }

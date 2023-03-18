@@ -24,9 +24,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineRelationCrudController = exports.defineAssociateController = exports.defineRelationViewController = exports.defineCrudController = exports.BaseController = void 0;
+exports.defineRelationCrudController = exports.defineAssociateController = exports.defineRelationViewController = exports.defineCrudController = exports.getIdSchema = exports.BaseController = void 0;
 const core_1 = require("@loopback/core");
-const rest_crud_1 = require("@loopback/rest-crud");
 const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
 const get_1 = __importDefault(require("lodash/get"));
@@ -42,14 +41,258 @@ class BaseController {
 }
 exports.BaseController = BaseController;
 // --------------------------------------------------------------------------------------------------------------
-function defineCrudController(options) {
-    const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = options;
-    const controller = (0, rest_crud_1.defineCrudRestController)(entityOptions, controllerOptions);
-    if (repositoryOptions === null || repositoryOptions === void 0 ? void 0 : repositoryOptions.name) {
-        (0, core_1.inject)(`repositories.${repositoryOptions.name}`)(controller, undefined, 0);
+const getIdSchema = (entity) => {
+    var _a;
+    const idProp = entity.getIdProperties()[0];
+    const modelSchema = (0, rest_1.jsonToSchemaObject)((0, rest_1.getJsonSchema)(entity));
+    return (_a = modelSchema.properties) === null || _a === void 0 ? void 0 : _a[idProp];
+};
+exports.getIdSchema = getIdSchema;
+// --------------------------------------------------------------------------------------------------------------
+const defineCrudController = (opts) => {
+    const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = opts;
+    const idPathParam = {
+        name: 'id',
+        in: 'path',
+        schema: (0, exports.getIdSchema)(entityOptions),
+    };
+    class rController {
+        constructor(repository) {
+            this.repository = repository;
+        }
+        find(filter) {
+            return __awaiter(this, void 0, void 0, function* () {
+                return this.repository.find(filter);
+            });
+        }
+        findById(id, filter) {
+            return __awaiter(this, void 0, void 0, function* () {
+                return this.repository.findById(id, filter);
+            });
+        }
+        count(where) {
+            return __awaiter(this, void 0, void 0, function* () {
+                return this.repository.count(where);
+            });
+        }
     }
-    return controller;
-}
+    __decorate([
+        (0, rest_1.get)('/', {
+            responses: {
+                '200': {
+                    description: `Array of model instance ${entityOptions.name}`,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'array',
+                                items: (0, rest_1.getModelSchemaRef)(entityOptions, { includeRelations: true }),
+                            },
+                        },
+                    },
+                },
+            },
+        }),
+        __param(0, rest_1.param.filter(entityOptions)),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object]),
+        __metadata("design:returntype", Promise)
+    ], rController.prototype, "find", null);
+    __decorate([
+        (0, rest_1.get)('/{id}', {
+            responses: {
+                '200': {
+                    description: `Find model instance ${entityOptions.name}`,
+                    content: {
+                        'application/json': {
+                            schema: (0, rest_1.getModelSchemaRef)(entityOptions, { includeRelations: true }),
+                        },
+                    },
+                },
+            },
+        }),
+        __param(0, (0, rest_1.param)(idPathParam)),
+        __param(1, rest_1.param.query.object('filter', (0, rest_1.getFilterSchemaFor)(entityOptions, { exclude: 'where' }))),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object, Object]),
+        __metadata("design:returntype", Promise)
+    ], rController.prototype, "findById", null);
+    __decorate([
+        (0, rest_1.get)('/count', {
+            responses: {
+                '200': {
+                    description: `Count number of model instance ${entityOptions.name}`,
+                    content: {
+                        'application/json': {
+                            schema: repository_1.CountSchema,
+                        },
+                    },
+                },
+            },
+        }),
+        __param(0, rest_1.param.where(entityOptions)),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object]),
+        __metadata("design:returntype", Promise)
+    ], rController.prototype, "count", null);
+    if (controllerOptions.readonly) {
+        if (repositoryOptions === null || repositoryOptions === void 0 ? void 0 : repositoryOptions.name) {
+            (0, core_1.inject)(`repositories.${repositoryOptions.name}`)(rController, undefined, 0);
+        }
+        return rController;
+    }
+    class crudController extends rController {
+        constructor(repository) {
+            super(repository);
+        }
+        create(data) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const rs = yield this.repository.create(data);
+                return rs;
+            });
+        }
+        updateAll(data, where) {
+            return __awaiter(this, void 0, void 0, function* () {
+                return this.repository.updateAll(data, where);
+            });
+        }
+        updateById(id, data) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const rs = yield this.repository.updateWithReturn(id, data);
+                return rs;
+            });
+        }
+        replaceById(id, data) {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield this.repository.replaceById(id, data);
+            });
+        }
+        deleteById(id) {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield this.repository.deleteById(id);
+            });
+        }
+    }
+    __decorate([
+        (0, rest_1.post)('/', {
+            responses: {
+                '200': {
+                    description: `Create model instance ${entityOptions.name}`,
+                    content: {
+                        'application/json': {
+                            schema: (0, rest_1.getModelSchemaRef)(entityOptions),
+                        },
+                    },
+                },
+            },
+        }),
+        __param(0, (0, rest_1.requestBody)({
+            content: {
+                'application/json': {
+                    schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                        title: `New ${entityOptions.name} payload`,
+                        exclude: ['id', 'createdAt', 'modifiedAt'],
+                    }),
+                },
+            },
+        })),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object]),
+        __metadata("design:returntype", Promise)
+    ], crudController.prototype, "create", null);
+    __decorate([
+        (0, rest_1.patch)('/', {
+            responses: {
+                '200': {
+                    description: `Number of updated ${entityOptions.name} models`,
+                    content: {
+                        'application/json': {
+                            schema: repository_1.CountSchema,
+                        },
+                    },
+                },
+            },
+        }),
+        __param(0, (0, rest_1.requestBody)({
+            content: {
+                'application/json': {
+                    schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                        title: `Partial fields of ${entityOptions.name}`,
+                        partial: true,
+                    }),
+                },
+            },
+        })),
+        __param(1, rest_1.param.where(entityOptions)),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object, Object]),
+        __metadata("design:returntype", Promise)
+    ], crudController.prototype, "updateAll", null);
+    __decorate([
+        (0, rest_1.patch)('/{id}', {
+            responses: {
+                '200': {
+                    description: `Updated ${entityOptions.name} models`,
+                    content: {
+                        'application/json': {
+                            schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                                title: `Updated ${entityOptions.name} models`,
+                            }),
+                        },
+                    },
+                },
+            },
+        }),
+        __param(0, (0, rest_1.param)(idPathParam)),
+        __param(1, (0, rest_1.requestBody)({
+            content: {
+                'application/json': {
+                    schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                        title: `Partial fields of ${entityOptions.name}`,
+                        partial: true,
+                    }),
+                },
+            },
+        })),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object, Object]),
+        __metadata("design:returntype", Promise)
+    ], crudController.prototype, "updateById", null);
+    __decorate([
+        (0, rest_1.put)('/{id}', {
+            responses: {
+                '204': { description: `${entityOptions.name} was replaced` },
+            },
+        }),
+        __param(0, (0, rest_1.param)(idPathParam)),
+        __param(1, (0, rest_1.requestBody)({
+            content: {
+                'application/json': {
+                    schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                        title: `Fields of ${entityOptions.name}`,
+                    }),
+                },
+            },
+        })),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object, Object]),
+        __metadata("design:returntype", Promise)
+    ], crudController.prototype, "replaceById", null);
+    __decorate([
+        (0, rest_1.del)('/{id}', {
+            responses: {
+                '204': { description: `${entityOptions} was deleted` },
+            },
+        }),
+        __param(0, (0, rest_1.param)(idPathParam)),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object]),
+        __metadata("design:returntype", Promise)
+    ], crudController.prototype, "deleteById", null);
+    if (repositoryOptions === null || repositoryOptions === void 0 ? void 0 : repositoryOptions.name) {
+        (0, core_1.inject)(`repositories.${repositoryOptions.name}`)(crudController, undefined, 0);
+    }
+    return crudController;
+};
 exports.defineCrudController = defineCrudController;
 // --------------------------------------------------------------------------------------------------------------
 const defineRelationViewController = (opts) => {
@@ -108,7 +351,7 @@ const defineRelationViewController = (opts) => {
         __param(0, rest_1.param.path.number('id')),
         __param(1, rest_1.param.query.object('filter')),
         __metadata("design:type", Function),
-        __metadata("design:paramtypes", [Number, Object]),
+        __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", Promise)
     ], ViewController.prototype, "find", null);
     return ViewController;
