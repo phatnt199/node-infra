@@ -35,29 +35,6 @@ export class ApplicationRunModes {
   static readonly MODE_SEED = 'seed';
 }
 
-export class UserIdentifierSchemes {
-  static readonly USERNAME = 'username';
-  static readonly EMAIL = 'email';
-  static readonly PHONE_NUMBER = 'phone_number';
-  static readonly SCHEME_SET = new Set([this.USERNAME, this.EMAIL, this.PHONE_NUMBER]);
-
-  static isValid(scheme: string): boolean {
-    return this.SCHEME_SET.has(scheme);
-  }
-}
-
-export class UserCredentialSchemes {
-  static readonly BASIC = 'basic';
-  static readonly TWO_FA = '2fa';
-  static readonly OAUTH = 'oauth';
-  static readonly OAUTH2 = 'oauth2';
-  static readonly SCHEME_SET = new Set([this.BASIC, this.TWO_FA, this.OAUTH, this.OAUTH2]);
-
-  static isValid(scheme: string): boolean {
-    return this.SCHEME_SET.has(scheme);
-  }
-}
-
 export class EntityRelations {
   static readonly BELONGS_TO = 'belongsTo';
   static readonly HAS_ONE = 'hasOne';

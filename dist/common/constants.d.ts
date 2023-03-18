@@ -29,21 +29,6 @@ export declare class ApplicationRunModes {
     static readonly MODE_MIGRATE = "migrate";
     static readonly MODE_SEED = "seed";
 }
-export declare class UserIdentifierSchemes {
-    static readonly USERNAME = "username";
-    static readonly EMAIL = "email";
-    static readonly PHONE_NUMBER = "phone_number";
-    static readonly SCHEME_SET: Set<string>;
-    static isValid(scheme: string): boolean;
-}
-export declare class UserCredentialSchemes {
-    static readonly BASIC = "basic";
-    static readonly TWO_FA = "2fa";
-    static readonly OAUTH = "oauth";
-    static readonly OAUTH2 = "oauth2";
-    static readonly SCHEME_SET: Set<string>;
-    static isValid(scheme: string): boolean;
-}
 export declare class EntityRelations {
     static readonly BELONGS_TO = "belongsTo";
     static readonly HAS_ONE = "hasOne";

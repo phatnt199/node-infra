@@ -14,7 +14,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EntityRelations = void 0;
 const helpers_1 = require("./helpers");
 const { APPLICATION_NAME = 'PNT', APPLICATION_TIMEZONE = 'Asia/Ho_Chi_Minh', DS_MIGRATION = 'postgres', LOGGER_FOLDER_PATH = './', } = process.env;
 helpers_1.applicationLogger.info('------------------------------------');
@@ -31,7 +30,5 @@ __exportStar(require("./mixins"), exports);
 __exportStar(require("./models"), exports);
 __exportStar(require("./repositories"), exports);
 __exportStar(require("./utilities"), exports);
-__exportStar(require("./common/types"), exports);
-var constants_1 = require("./common/constants");
-Object.defineProperty(exports, "EntityRelations", { enumerable: true, get: function () { return constants_1.EntityRelations; } });
+__exportStar(require("./common"), exports);
 //# sourceMappingURL=index.js.map

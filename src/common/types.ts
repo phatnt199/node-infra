@@ -41,7 +41,7 @@ export interface IUserAudit {
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IPersistableEntity<T> extends IEntity<T>, ITz {}
+export interface IPersistableEntity<T> extends IEntity<T>, ITz { }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IPersistableRepository<E extends BaseIdEntity<IdType>> {
@@ -66,14 +66,14 @@ export interface ITzRepository<E extends BaseTzEntity<IdType>> extends IPersista
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IUserAuditRepository<E extends BaseTzEntity<IdType>> extends IPersistableRepository<E> {
-  mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean, authorId: IdType }): DataObject<E>;
+  mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean; authorId: IdType }): DataObject<E>;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IService {}
+export interface IService { }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IController {}
+export interface IController { }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface EnvironmentValidationResult {
