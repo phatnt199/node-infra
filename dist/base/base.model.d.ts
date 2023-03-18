@@ -34,7 +34,7 @@ declare const BaseUserAuditTzEntity_base: {
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
 } & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<IdType>;
+    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<any>;
     getIdProperties(): string[];
     getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
     buildWhereForId(id: any): any;
@@ -56,7 +56,7 @@ declare const BaseDataTypeTzEntity_base: {
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
 } & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<IdType>;
+    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<any>;
     getIdProperties(): string[];
     getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
     buildWhereForId(id: any): any;
@@ -74,7 +74,7 @@ declare const BaseTextSearchTzEntity_base: {
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
 } & {
-    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<IdType>;
+    new (data?: import("@loopback/repository").DataObject<import("@loopback/repository").Model> | undefined): BaseTzEntity<any>;
     getIdProperties(): string[];
     getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
     buildWhereForId(id: any): any;

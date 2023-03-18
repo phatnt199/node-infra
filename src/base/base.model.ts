@@ -20,7 +20,7 @@ export class BaseTzEntity<T extends IdType> extends TzMixin(BaseIdEntity<any>) i
 
 // ---------------------------------------------------------------------
 export class BaseUserAuditTzEntity<T extends IdType>
-  extends UserAuditMixin(BaseTzEntity<IdType>)
+  extends UserAuditMixin(BaseTzEntity<any>)
   implements IPersistableEntity<T> { }
 
 // ---------------------------------------------------------------------
@@ -30,12 +30,12 @@ export class BaseUserAuditTzEntity<T extends IdType>
 
 // ---------------------------------------------------------------------
 export class BaseDataTypeTzEntity<T extends IdType>
-  extends DataTypeMixin(BaseTzEntity<IdType>)
+  extends DataTypeMixin(BaseTzEntity<any>)
   implements IPersistableEntity<T> { }
 
 // ---------------------------------------------------------------------
 export class BaseTextSearchTzEntity<T extends IdType>
-  extends TextSearchMixin(BaseTzEntity<IdType>)
+  extends TextSearchMixin(BaseTzEntity<any>)
   implements IPersistableEntity<T> { }
 
 // ---------------------------------------------------------------------
