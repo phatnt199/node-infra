@@ -24,11 +24,11 @@ helpers_1.applicationLogger.info('- LogPath: %s', LOGGER_FOLDER_PATH);
 helpers_1.applicationLogger.info('- MigrationDS: %s', DS_MIGRATION);
 helpers_1.applicationLogger.info('------------------------------------');
 __exportStar(require("./base"), exports);
+__exportStar(require("./common"), exports);
 __exportStar(require("./helpers"), exports);
 __exportStar(require("./migrations"), exports);
 __exportStar(require("./mixins"), exports);
 __exportStar(require("./models"), exports);
 __exportStar(require("./repositories"), exports);
 __exportStar(require("./utilities"), exports);
-__exportStar(require("./common"), exports);
 //# sourceMappingURL=index.js.map

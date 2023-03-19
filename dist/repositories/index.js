@@ -15,9 +15,4 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./migration.repository"), exports);
-__exportStar(require("./user.repository"), exports);
-__exportStar(require("./role.repository"), exports);
-__exportStar(require("./permission.repository"), exports);
-__exportStar(require("./user-role.repository"), exports);
-__exportStar(require("./permission-mapping.repository"), exports);
 //# sourceMappingURL=index.js.map

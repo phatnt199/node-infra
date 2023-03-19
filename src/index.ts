@@ -16,10 +16,10 @@ applicationLogger.info('- MigrationDS: %s', DS_MIGRATION);
 applicationLogger.info('------------------------------------');
 
 export * from './base';
+export * from './common';
 export * from './helpers';
 export * from './migrations';
 export * from './mixins';
 export * from './models';
 export * from './repositories';
 export * from './utilities';
-export * from './common';
