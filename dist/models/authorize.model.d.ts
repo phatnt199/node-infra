@@ -1,19 +1,12 @@
 import { EntityResolver } from '@loopback/repository';
 import { BaseIdEntity } from '../base';
-export declare const defineRole: (opts: {
-    userRosolver: EntityResolver<BaseIdEntity>;
-    permissionRosolver: EntityResolver<BaseIdEntity>;
-    userRoleResolver: EntityResolver<BaseIdEntity>;
-    permissionMappingRosolver: EntityResolver<BaseIdEntity>;
-}) => {
+export declare const defineRole: () => {
     new (data?: Partial<{
         identifier: string;
         name: string;
         description?: string | undefined;
         priority: number;
         status: string;
-        users: (import("@loopback/repository").Class<BaseIdEntity> & typeof import("@loopback/repository").Entity)[];
-        permissions: (import("@loopback/repository").Class<BaseIdEntity> & typeof import("@loopback/repository").Entity)[];
         id: number;
         createdAt: Date;
         modifiedAt: Date;
@@ -27,8 +20,6 @@ export declare const defineRole: (opts: {
         description?: string | undefined;
         priority: number;
         status: string;
-        users: (import("@loopback/repository").Class<BaseIdEntity> & typeof import("@loopback/repository").Entity)[];
-        permissions: (import("@loopback/repository").Class<BaseIdEntity> & typeof import("@loopback/repository").Entity)[];
         id: number;
         createdAt: Date;
         modifiedAt: Date;

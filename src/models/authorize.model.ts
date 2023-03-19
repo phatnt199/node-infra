@@ -4,16 +4,7 @@ import { PrincipalMixin } from '@/mixins';
 import { RoleStatuses } from '@/common';
 
 // -----------------------------------------------------------------------
-export const defineRole = (opts: {
-  userRosolver: EntityResolver<BaseIdEntity>;
-  permissionRosolver: EntityResolver<BaseIdEntity>;
-  userRoleResolver: EntityResolver<BaseIdEntity>;
-  permissionMappingRosolver: EntityResolver<BaseIdEntity>;
-}) => {
-  const { userRosolver, permissionRosolver, userRoleResolver, permissionMappingRosolver } = opts;
-  const UserEntity = userRosolver();
-  const PermissionEntity = userRosolver();
-
+export const defineRole = () => {
   class Role extends BaseTzEntity {
     @property({
       type: 'string',
@@ -42,22 +33,6 @@ export const defineRole = (opts: {
       default: RoleStatuses.ACTIVATED,
     })
     status: string;
-
-    @hasMany(userRosolver, {
-      through: {
-        model: userRoleResolver,
-        keyFrom: 'principalId',
-        keyTo: 'userId',
-      },
-    })
-    users: (typeof UserEntity)[];
-
-    @hasMany(permissionRosolver, {
-      through: {
-        model: permissionMappingRosolver,
-      },
-    })
-    permissions: (typeof PermissionEntity)[];
 
     constructor(data?: Partial<Role>) {
       super(data);

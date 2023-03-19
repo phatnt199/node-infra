@@ -15,10 +15,7 @@ const base_1 = require("../base");
 const mixins_1 = require("../mixins");
 const common_1 = require("../common");
 // -----------------------------------------------------------------------
-const defineRole = (opts) => {
-    const { userRosolver, permissionRosolver, userRoleResolver, permissionMappingRosolver } = opts;
-    const UserEntity = userRosolver();
-    const PermissionEntity = userRosolver();
+const defineRole = () => {
     class Role extends base_1.BaseTzEntity {
         constructor(data) {
             super(data);
@@ -57,24 +54,6 @@ const defineRole = (opts) => {
         }),
         __metadata("design:type", String)
     ], Role.prototype, "status", void 0);
-    __decorate([
-        (0, repository_1.hasMany)(userRosolver, {
-            through: {
-                model: userRoleResolver,
-                keyFrom: 'principalId',
-                keyTo: 'userId',
-            },
-        }),
-        __metadata("design:type", Array)
-    ], Role.prototype, "users", void 0);
-    __decorate([
-        (0, repository_1.hasMany)(permissionRosolver, {
-            through: {
-                model: permissionMappingRosolver,
-            },
-        }),
-        __metadata("design:type", Array)
-    ], Role.prototype, "permissions", void 0);
     return Role;
 };
 exports.defineRole = defineRole;
