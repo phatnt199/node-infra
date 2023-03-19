@@ -1,0 +1,160 @@
+import { property, belongsTo, EntityResolver, hasMany } from '@loopback/repository';
+import { BaseIdEntity, BaseTzEntity } from '@/base';
+import { PrincipalMixin } from '@/mixins';
+import { RoleStatuses } from '@/common';
+
+// -----------------------------------------------------------------------
+export const defineRole = (opts: {
+  userRosolver: EntityResolver<BaseIdEntity>;
+  permissionRosolver: EntityResolver<BaseIdEntity>;
+  userRoleResolver: EntityResolver<BaseIdEntity>;
+  permissionMappingRosolver: EntityResolver<BaseIdEntity>;
+}) => {
+  const { userRosolver, permissionRosolver, userRoleResolver, permissionMappingRosolver } = opts;
+  const UserEntity = userRosolver();
+  const PermissionEntity = userRosolver();
+
+  class Role extends BaseTzEntity {
+    @property({
+      type: 'string',
+      require: true,
+    })
+    identifier: string;
+
+    @property({
+      type: 'string',
+      require: true,
+    })
+    name: string;
+
+    @property({
+      type: 'string',
+    })
+    description?: string;
+
+    @property({
+      type: 'number',
+    })
+    priority: number;
+
+    @property({
+      type: 'string',
+      default: RoleStatuses.ACTIVATED,
+    })
+    status: string;
+
+    @hasMany(userRosolver, {
+      through: {
+        model: userRoleResolver,
+        keyFrom: 'principalId',
+        keyTo: 'userId',
+      },
+    })
+    users: (typeof UserEntity)[];
+
+    @hasMany(permissionRosolver, {
+      through: {
+        model: permissionMappingRosolver,
+      },
+    })
+    permissions: (typeof PermissionEntity)[];
+
+    constructor(data?: Partial<Role>) {
+      super(data);
+    }
+  }
+
+  return Role;
+};
+
+// -----------------------------------------------------------------------
+export const definePermission = () => {
+  class Permission extends BaseTzEntity {
+    @property({
+      type: 'string',
+    })
+    code: string;
+
+    @property({
+      type: 'string',
+    })
+    name: string;
+
+    @property({
+      type: 'string',
+    })
+    subject: string;
+
+    @property({
+      type: 'string',
+      postgresql: { columnName: 'p_type' },
+    })
+    pType: string;
+
+    @property({
+      type: 'string',
+    })
+    action: string;
+
+    @belongsTo(() => Permission, { keyFrom: 'parentId' }, { name: 'parent_id' })
+    parentId: number;
+
+    @hasMany(() => Permission, { keyTo: 'parentId' })
+    children: Permission[];
+
+    constructor(data?: Partial<Permission>) {
+      super(data);
+    }
+  }
+
+  return Permission;
+};
+
+// -----------------------------------------------------------------------
+export const definePermissionMapping = (opts: {
+  userRosolver: EntityResolver<BaseIdEntity>;
+  roleResolver: EntityResolver<BaseIdEntity>;
+  permissionResolver: EntityResolver<BaseIdEntity>;
+}) => {
+  const { userRosolver, roleResolver, permissionResolver } = opts;
+
+  class PermissionMapping extends BaseTzEntity {
+    @belongsTo(userRosolver, { keyFrom: 'userId' }, { name: 'user_id' })
+    userId: number;
+
+    @belongsTo(roleResolver, { keyFrom: 'roleId' }, { name: 'role_id' })
+    roleId: number;
+
+    @belongsTo(permissionResolver, { keyFrom: 'permissionId' }, { name: 'permission_id' })
+    permissionId: number;
+
+    @property({ type: 'string' })
+    effect: string;
+
+    constructor(data?: Partial<PermissionMapping>) {
+      super(data);
+    }
+  }
+  return PermissionMapping;
+};
+
+// -----------------------------------------------------------------------
+export const defineUserRole = (userRosolver: EntityResolver<BaseIdEntity>) => {
+  class UserRole extends PrincipalMixin(BaseTzEntity, 'Role') {
+    @belongsTo(
+      userRosolver,
+      { keyFrom: 'userId' },
+      {
+        postgresql: {
+          columnName: 'user_id',
+        },
+      },
+    )
+    userId: number;
+
+    constructor(data?: Partial<UserRole>) {
+      super(data);
+    }
+  }
+  return UserRole;
+};

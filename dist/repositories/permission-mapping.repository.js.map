@@ -1,1 +1,0 @@
-{"version":3,"file":"permission-mapping.repository.js","sourceRoot":"","sources":["../../src/repositories/permission-mapping.repository.ts"],"names":[],"mappings":";;;AACA,iCAA0D;AAG1D,MAAa,2BAAyD,SAAQ,uBAAmB;IAC/F,YAAY,IAAqE;QAC/E,MAAM,EAAE,WAAW,EAAE,UAAU,EAAE,GAAG,IAAI,CAAC;QACzC,KAAK,CAAC,WAAW,EAAE,UAAU,CAAC,CAAC;IACjC,CAAC;CACF;AALD,kEAKC"}

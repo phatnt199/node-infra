@@ -1,7 +1,22 @@
-import { property } from '@loopback/repository';
+import { model, property } from '@loopback/repository';
 import { MigrationStatuses } from '@/common';
 import { BaseTzEntity } from '@/base';
 
+@model({
+  settings: {
+    postgresql: {
+      schema: 'public',
+      table: 'Migration',
+    },
+    strict: true,
+    indexes: {
+      INDEX_UNIQUE_NAME: {
+        keys: { name: 1 },
+        options: { unique: true },
+      },
+    },
+  },
+})
 export class Migration extends BaseTzEntity {
   @property({
     type: 'string',
