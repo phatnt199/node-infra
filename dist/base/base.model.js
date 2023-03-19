@@ -21,14 +21,14 @@ class BaseIdEntity extends BaseEntity {
 }
 __decorate([
     (0, repository_1.property)({ type: 'number', id: true, generated: true }),
-    __metadata("design:type", Object)
+    __metadata("design:type", Number)
 ], BaseIdEntity.prototype, "id", void 0);
 exports.BaseIdEntity = BaseIdEntity;
 class BaseTzEntity extends BaseEntity {
 }
 __decorate([
     (0, repository_1.property)({ type: 'number', id: true, generated: true }),
-    __metadata("design:type", Object)
+    __metadata("design:type", Number)
 ], BaseTzEntity.prototype, "id", void 0);
 __decorate([
     (0, repository_1.property)({

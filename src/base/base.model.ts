@@ -1,19 +1,18 @@
 import { Entity, property } from '@loopback/repository';
-import { IdType, IEntity } from '@/common/types';
 import { DataTypeMixin, TextSearchMixin, UserAuditMixin } from '@/mixins';
 
 // ---------------------------------------------------------------------
 export class BaseEntity extends Entity { }
 
 // ---------------------------------------------------------------------
-export class BaseIdEntity extends BaseEntity implements IEntity {
+export class BaseIdEntity extends BaseEntity {
   @property({ type: 'number', id: true, generated: true })
-  id: IdType;
+  id: number;
 }
 
-export class BaseTzEntity extends BaseEntity implements IEntity {
+export class BaseTzEntity extends BaseEntity {
   @property({ type: 'number', id: true, generated: true })
-  id: IdType;
+  id: number;
 
   @property({
     type: 'date',
