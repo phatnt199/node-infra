@@ -96,34 +96,31 @@ const definePermission = () => {
         __metadata("design:type", String)
     ], Permission.prototype, "action", void 0);
     __decorate([
-        (0, repository_1.belongsTo)(() => Permission, { keyFrom: 'parentId' }, { name: 'parent_id' }),
+        (0, repository_1.property)({
+            type: 'number',
+        }),
         __metadata("design:type", Number)
     ], Permission.prototype, "parentId", void 0);
-    __decorate([
-        (0, repository_1.hasMany)(() => Permission, { keyTo: 'parentId' }),
-        __metadata("design:type", Array)
-    ], Permission.prototype, "children", void 0);
     return Permission;
 };
 exports.definePermission = definePermission;
 // -----------------------------------------------------------------------
-const definePermissionMapping = (opts) => {
-    const { userRosolver, roleResolver, permissionResolver } = opts;
+const definePermissionMapping = () => {
     class PermissionMapping extends base_1.BaseTzEntity {
         constructor(data) {
             super(data);
         }
     }
     __decorate([
-        (0, repository_1.belongsTo)(userRosolver, { keyFrom: 'userId' }, { name: 'user_id' }),
+        (0, repository_1.property)({ type: 'number' }),
         __metadata("design:type", Number)
     ], PermissionMapping.prototype, "userId", void 0);
     __decorate([
-        (0, repository_1.belongsTo)(roleResolver, { keyFrom: 'roleId' }, { name: 'role_id' }),
+        (0, repository_1.property)({ type: 'number' }),
         __metadata("design:type", Number)
     ], PermissionMapping.prototype, "roleId", void 0);
     __decorate([
-        (0, repository_1.belongsTo)(permissionResolver, { keyFrom: 'permissionId' }, { name: 'permission_id' }),
+        (0, repository_1.property)({ type: 'number' }),
         __metadata("design:type", Number)
     ], PermissionMapping.prototype, "permissionId", void 0);
     __decorate([
@@ -134,19 +131,14 @@ const definePermissionMapping = (opts) => {
 };
 exports.definePermissionMapping = definePermissionMapping;
 // -----------------------------------------------------------------------
-const defineUserRole = (opts) => {
-    const { userRosolver } = opts;
+const defineUserRole = () => {
     class UserRole extends (0, mixins_1.PrincipalMixin)(base_1.BaseTzEntity, 'Role') {
         constructor(data) {
             super(data);
         }
     }
     __decorate([
-        (0, repository_1.belongsTo)(userRosolver, { keyFrom: 'userId' }, {
-            postgresql: {
-                columnName: 'user_id',
-            },
-        }),
+        (0, repository_1.property)({ type: 'number' }),
         __metadata("design:type", Number)
     ], UserRole.prototype, "userId", void 0);
     return UserRole;

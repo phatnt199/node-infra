@@ -1,5 +1,3 @@
-import { EntityResolver } from '@loopback/repository';
-import { BaseTzEntity } from '../base';
 export declare const defineRole: () => {
     new (data?: Partial<{
         identifier: string;
@@ -42,7 +40,6 @@ export declare const definePermission: () => {
         pType: string;
         action: string;
         parentId: number;
-        children: any[];
         id: number;
         createdAt: Date;
         modifiedAt: Date;
@@ -57,7 +54,6 @@ export declare const definePermission: () => {
         pType: string;
         action: string;
         parentId: number;
-        children: any[];
         id: number;
         createdAt: Date;
         modifiedAt: Date;
@@ -72,11 +68,7 @@ export declare const definePermission: () => {
     readonly modelName: string;
     definition: import("@loopback/repository").ModelDefinition;
 };
-export declare const definePermissionMapping: (opts: {
-    userRosolver: EntityResolver<BaseTzEntity>;
-    roleResolver: EntityResolver<BaseTzEntity>;
-    permissionResolver: EntityResolver<BaseTzEntity>;
-}) => {
+export declare const definePermissionMapping: () => {
     new (data?: Partial<{
         userId: number;
         roleId: number;
@@ -108,9 +100,7 @@ export declare const definePermissionMapping: (opts: {
     readonly modelName: string;
     definition: import("@loopback/repository").ModelDefinition;
 };
-export declare const defineUserRole: (opts: {
-    userRosolver: EntityResolver<BaseTzEntity>;
-}) => {
+export declare const defineUserRole: () => {
     new (data?: Partial<{
         userId: number;
         principalType?: string | undefined;

@@ -1,4 +1,4 @@
-import { property, belongsTo, EntityResolver, hasMany } from '@loopback/repository';
+import { property } from '@loopback/repository';
 import { BaseTzEntity } from '@/base';
 import { PrincipalMixin } from '@/mixins';
 import { RoleStatuses } from '@/common';
@@ -71,11 +71,10 @@ export const definePermission = () => {
     })
     action: string;
 
-    @belongsTo(() => Permission, { keyFrom: 'parentId' }, { name: 'parent_id' })
+    @property({
+      type: 'number',
+    })
     parentId: number;
-
-    @hasMany(() => Permission, { keyTo: 'parentId' })
-    children: Permission[];
 
     constructor(data?: Partial<Permission>) {
       super(data);
@@ -86,21 +85,15 @@ export const definePermission = () => {
 };
 
 // -----------------------------------------------------------------------
-export const definePermissionMapping = (opts: {
-  userRosolver: EntityResolver<BaseTzEntity>;
-  roleResolver: EntityResolver<BaseTzEntity>;
-  permissionResolver: EntityResolver<BaseTzEntity>;
-}) => {
-  const { userRosolver, roleResolver, permissionResolver } = opts;
-
+export const definePermissionMapping = () => {
   class PermissionMapping extends BaseTzEntity {
-    @belongsTo(userRosolver, { keyFrom: 'userId' }, { name: 'user_id' })
+    @property({ type: 'number' })
     userId: number;
 
-    @belongsTo(roleResolver, { keyFrom: 'roleId' }, { name: 'role_id' })
+    @property({ type: 'number' })
     roleId: number;
 
-    @belongsTo(permissionResolver, { keyFrom: 'permissionId' }, { name: 'permission_id' })
+    @property({ type: 'number' })
     permissionId: number;
 
     @property({ type: 'string' })
@@ -114,18 +107,9 @@ export const definePermissionMapping = (opts: {
 };
 
 // -----------------------------------------------------------------------
-export const defineUserRole = (opts: { userRosolver: EntityResolver<BaseTzEntity> }) => {
-  const { userRosolver } = opts;
+export const defineUserRole = () => {
   class UserRole extends PrincipalMixin(BaseTzEntity, 'Role') {
-    @belongsTo(
-      userRosolver,
-      { keyFrom: 'userId' },
-      {
-        postgresql: {
-          columnName: 'user_id',
-        },
-      },
-    )
+    @property({ type: 'number' })
     userId: number;
 
     constructor(data?: Partial<UserRole>) {
