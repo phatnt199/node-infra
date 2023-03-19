@@ -6,7 +6,7 @@ import { BaseApplication } from '@/base';
 
 export const migration = async (application: BaseApplication, migrationProcesses: Array<MigrationProcess>) => {
   logger.info('START | Migrate database');
-  const migrationRepository: MigrationRepository = await application.getRepository(MigrationRepository);
+  const migrationRepository = application.getSync<MigrationRepository<Migration>>('repositories.MigrationRepository');
 
   for (const mirgation of migrationProcesses) {
     const { name, fn } = mirgation;
@@ -18,7 +18,9 @@ export const migration = async (application: BaseApplication, migrationProcesses
     let migrateStatus: string = MigrationStatuses.UNKNOWN;
 
     try {
-      migrated = await migrationRepository.findOne({ where: { name } });
+      migrated = await migrationRepository.findOne({
+        where: { name },
+      });
 
       if (migrated && migrated.status === MigrationStatuses.SUCCESS) {
         migrateStatus = migrated.status;

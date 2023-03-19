@@ -13,11 +13,11 @@ exports.Migration = void 0;
 const repository_1 = require("@loopback/repository");
 const common_1 = require("../common");
 const base_1 = require("../base");
-let Migration = class Migration extends base_1.BaseTzEntity {
+class Migration extends base_1.BaseTzEntity {
     constructor(data) {
         super(data);
     }
-};
+}
 __decorate([
     (0, repository_1.property)({
         type: 'string',
@@ -32,23 +32,5 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], Migration.prototype, "status", void 0);
-Migration = __decorate([
-    (0, repository_1.model)({
-        settings: {
-            postgresql: {
-                schema: 'public',
-                table: 'Migration',
-            },
-            strict: true,
-            indexes: {
-                INDEX_UNIQUE_NAME: {
-                    keys: { name: 1 },
-                    options: { unique: true },
-                },
-            },
-        },
-    }),
-    __metadata("design:paramtypes", [Object])
-], Migration);
 exports.Migration = Migration;
 //# sourceMappingURL=migration.model.js.map

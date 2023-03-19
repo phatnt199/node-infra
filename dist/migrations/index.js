@@ -11,11 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.migration = void 0;
 const common_1 = require("../common");
-const repositories_1 = require("../repositories");
 const helpers_1 = require("../helpers");
 const migration = (application, migrationProcesses) => __awaiter(void 0, void 0, void 0, function* () {
     helpers_1.applicationLogger.info('START | Migrate database');
-    const migrationRepository = yield application.getRepository(repositories_1.MigrationRepository);
+    const migrationRepository = application.getSync('repositories.MigrationRepository');
     for (const mirgation of migrationProcesses) {
         const { name, fn } = mirgation;
         if (!name || !fn) {
@@ -24,7 +23,9 @@ const migration = (application, migrationProcesses) => __awaiter(void 0, void 0,
         let migrated = null;
         let migrateStatus = common_1.MigrationStatuses.UNKNOWN;
         try {
-            migrated = yield migrationRepository.findOne({ where: { name } });
+            migrated = yield migrationRepository.findOne({
+                where: { name },
+            });
             if (migrated && migrated.status === common_1.MigrationStatuses.SUCCESS) {
                 migrateStatus = migrated.status;
                 helpers_1.applicationLogger.info('[%s] SKIP | Migrate process', name);
