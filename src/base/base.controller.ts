@@ -35,9 +35,7 @@ export class BaseController implements IController {
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export const getIdSchema = <E extends BaseIdEntity>(
-  entity: typeof BaseIdEntity & { prototype: E },
-): SchemaObject => {
+export const getIdSchema = <E extends BaseIdEntity>(entity: typeof BaseIdEntity & { prototype: E }): SchemaObject => {
   const idProp = entity.getIdProperties()[0];
   const modelSchema = jsonToSchemaObject(getJsonSchema(entity)) as SchemaObject;
   return modelSchema.properties?.[idProp] as SchemaObject;

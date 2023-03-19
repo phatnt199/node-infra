@@ -33,8 +33,6 @@ class BaseUserAuditTzEntity extends (0, mixins_1.UserAuditMixin)(BaseTzEntity) {
 }
 exports.BaseUserAuditTzEntity = BaseUserAuditTzEntity;
 // ---------------------------------------------------------------------
-/* export class BasePrincipalTzEntity extends PrincipalMixin(BaseTzEntity) implements IPersistableEntity { } */
-// ---------------------------------------------------------------------
 class BaseDataTypeTzEntity extends (0, mixins_1.DataTypeMixin)(BaseTzEntity) {
 }
 exports.BaseDataTypeTzEntity = BaseDataTypeTzEntity;
@@ -42,14 +40,6 @@ exports.BaseDataTypeTzEntity = BaseDataTypeTzEntity;
 class BaseTextSearchTzEntity extends (0, mixins_1.TextSearchMixin)(BaseTzEntity) {
 }
 exports.BaseTextSearchTzEntity = BaseTextSearchTzEntity;
-// ---------------------------------------------------------------------
-/* export class BasePrincipalDataTypeTzEntity
-  extends DataTypeMixin(PrincipalMixin(BaseTzEntity))
-  implements IPersistableEntity { } */
-// ---------------------------------------------------------------------
-/* export class BasePrincipalUserAuditTzEntity
-  extends PrincipalMixin(BaseUserAuditTzEntity)
-  implements IPersistableEntity { } */
 // ---------------------------------------------------------------------
 class ApplicationError extends Error {
     constructor(opts) {

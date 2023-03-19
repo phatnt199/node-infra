@@ -33,7 +33,7 @@ export class User extends BaseTzEntity {
     type: 'date',
     postgresql: {
       columnName: 'activated_at',
-      dataType: 'TIMESTAMP WITH TIME ZONE',
+      dataType: 'TIMESTAMPTZ',
     },
   })
   activatedAt?: Date;
@@ -42,7 +42,7 @@ export class User extends BaseTzEntity {
     type: 'date',
     postgresql: {
       columnName: 'last_login_at',
-      dataType: 'TIMESTAMP WITH TIME ZONE',
+      dataType: 'TIMESTAMPTZ',
     },
   })
   lastLoginAt?: Date;

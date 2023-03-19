@@ -25,16 +25,6 @@ export type TPermissionEffect = 'allow' | 'deny';
 export interface IEntity {
     id: IdType;
 }
-export interface ITz extends IEntity {
-    createdAt: Date;
-    modifiedAt: Date;
-}
-export interface IUserAudit {
-    createdBy: IdType;
-    modifiedBy: IdType;
-}
-export interface IPersistableEntity extends ITz {
-}
 export interface IPersistableRepository<E extends BaseIdEntity> {
     existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
     create(data: DataObject<E>, options?: Options): Promise<E>;

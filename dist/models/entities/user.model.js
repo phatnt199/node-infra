@@ -52,7 +52,7 @@ __decorate([
         type: 'date',
         postgresql: {
             columnName: 'activated_at',
-            dataType: 'TIMESTAMP WITH TIME ZONE',
+            dataType: 'TIMESTAMPTZ',
         },
     }),
     __metadata("design:type", Date)
@@ -62,7 +62,7 @@ __decorate([
         type: 'date',
         postgresql: {
             columnName: 'last_login_at',
-            dataType: 'TIMESTAMP WITH TIME ZONE',
+            dataType: 'TIMESTAMPTZ',
         },
     }),
     __metadata("design:type", Date)

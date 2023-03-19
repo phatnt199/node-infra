@@ -1,7 +1,7 @@
-export const getUserRepository = () => {}
+export const getUserRepository = () => { };
 
-export const getRoleRepository = () => {}
+export const getRoleRepository = () => { };
 
-export const getPermissionRepository = () => {}
+export const getPermissionRepository = () => { };
 
-export const getPermissionMappingRepository = () => {}
+export const getPermissionMappingRepository = () => { };

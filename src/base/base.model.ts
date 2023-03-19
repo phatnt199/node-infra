@@ -1,5 +1,5 @@
 import { Entity, property } from '@loopback/repository';
-import { IdType, IEntity, IPersistableEntity } from '@/common/types';
+import { IdType, IEntity } from '@/common/types';
 import { TzMixin, DataTypeMixin, TextSearchMixin, UserAuditMixin } from '@/mixins';
 
 // ---------------------------------------------------------------------
@@ -12,29 +12,16 @@ export class BaseIdEntity extends BaseEntity implements IEntity {
 }
 
 // ---------------------------------------------------------------------
-export class BaseTzEntity extends TzMixin(BaseIdEntity) implements IPersistableEntity { }
+export class BaseTzEntity extends TzMixin(BaseIdEntity) { }
 
 // ---------------------------------------------------------------------
-export class BaseUserAuditTzEntity extends UserAuditMixin(BaseTzEntity) implements IPersistableEntity { }
+export class BaseUserAuditTzEntity extends UserAuditMixin(BaseTzEntity) { }
 
 // ---------------------------------------------------------------------
-/* export class BasePrincipalTzEntity extends PrincipalMixin(BaseTzEntity) implements IPersistableEntity { } */
+export class BaseDataTypeTzEntity extends DataTypeMixin(BaseTzEntity) { }
 
 // ---------------------------------------------------------------------
-export class BaseDataTypeTzEntity extends DataTypeMixin(BaseTzEntity) implements IPersistableEntity { }
-
-// ---------------------------------------------------------------------
-export class BaseTextSearchTzEntity extends TextSearchMixin(BaseTzEntity) implements IPersistableEntity { }
-
-// ---------------------------------------------------------------------
-/* export class BasePrincipalDataTypeTzEntity
-  extends DataTypeMixin(PrincipalMixin(BaseTzEntity))
-  implements IPersistableEntity { } */
-
-// ---------------------------------------------------------------------
-/* export class BasePrincipalUserAuditTzEntity
-  extends PrincipalMixin(BaseUserAuditTzEntity)
-  implements IPersistableEntity { } */
+export class BaseTextSearchTzEntity extends TextSearchMixin(BaseTzEntity) { }
 
 // ---------------------------------------------------------------------
 export class ApplicationError extends Error {
