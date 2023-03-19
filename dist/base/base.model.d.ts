@@ -1,21 +1,13 @@
 import { Entity } from '@loopback/repository';
-import { IdType, IEntity } from '../common/types';
+import { IdType, IEntity } from '@/common/types';
 export declare class BaseEntity extends Entity {
 }
 export declare class BaseIdEntity extends BaseEntity implements IEntity {
     id: IdType;
 }
-declare const BaseTzEntity_base: {
-    new (...args: any[]): {
-        createdAt: Date;
-        modifiedAt: Date;
-        getId: () => any;
-        getIdObject: () => Object;
-        toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
-    };
-} & typeof BaseIdEntity;
-export declare class BaseTzEntity extends BaseTzEntity_base {
+export declare class BaseTzEntity extends BaseIdEntity {
+    createdAt: Date;
+    modifiedAt: Date;
 }
 declare const BaseUserAuditTzEntity_base: {
     new (...args: any[]): {

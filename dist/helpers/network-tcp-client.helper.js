@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NetworkTcpClient = void 0;
-const helpers_1 = require("../helpers");
+const helpers_1 = require("@/helpers");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const net_1 = require("net");
 class NetworkTcpClient {

@@ -1,6 +1,6 @@
 import { Entity, property } from '@loopback/repository';
 import { IdType, IEntity } from '@/common/types';
-import { TzMixin, DataTypeMixin, TextSearchMixin, UserAuditMixin } from '@/mixins';
+import { DataTypeMixin, TextSearchMixin, UserAuditMixin } from '@/mixins';
 
 // ---------------------------------------------------------------------
 export class BaseEntity extends Entity { }
@@ -11,8 +11,29 @@ export class BaseIdEntity extends BaseEntity implements IEntity {
   id: IdType;
 }
 
-// ---------------------------------------------------------------------
-export class BaseTzEntity extends TzMixin(BaseIdEntity) { }
+export class BaseTzEntity extends BaseIdEntity {
+  @property({
+    type: 'date',
+    defaultFn: 'now',
+    postgresql: {
+      columnName: 'created_at',
+      dataType: 'TIMESTAMPTZ',
+    },
+    hidden: true,
+  })
+  createdAt: Date;
+
+  @property({
+    type: 'date',
+    defaultFn: 'now',
+    postgresql: {
+      columnName: 'modified_at',
+      dataType: 'TIMESTAMPTZ',
+    },
+    hidden: true,
+  })
+  modifiedAt: Date;
+}
 
 // ---------------------------------------------------------------------
 export class BaseUserAuditTzEntity extends UserAuditMixin(BaseTzEntity) { }

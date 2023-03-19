@@ -1,4 +1,4 @@
-import { BaseTzEntity } from '../../base';
+import { BaseTzEntity } from '@/base';
 export declare class User extends BaseTzEntity {
     realm?: string;
     status: string;
@@ -9,9 +9,9 @@ export declare class User extends BaseTzEntity {
 }
 declare const UserWithAuthorize_base: {
     new (...args: any[]): {
-        roles: import("./role.model").Role[];
-        permissions: import("./permission.model").Permission[];
-        policies: import("./permission-mapping.model").PermissionMapping[];
+        roles: Role[];
+        permissions: Permission[];
+        policies: PermissionMapping[];
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;

@@ -1,4 +1,4 @@
-import { BaseTzEntity } from '../../base';
+import { BaseTzEntity } from '@/base';
 export declare class Migration extends BaseTzEntity {
     name: string;
     status: string;

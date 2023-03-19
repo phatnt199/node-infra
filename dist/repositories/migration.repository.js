@@ -14,8 +14,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MigrationRepository = void 0;
 const core_1 = require("@loopback/core");
-const models_1 = require("../models");
-const base_1 = require("../base");
+const models_1 = require("@/models");
+const base_1 = require("@/base");
 const lodash_1 = require("lodash");
 const repository_1 = require("@loopback/repository");
 const migrationDs = process.env.DS_MIGRATION;

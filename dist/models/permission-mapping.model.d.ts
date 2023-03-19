@@ -1,4 +1,4 @@
-import { BaseTzEntity } from '../../base';
+import { BaseTzEntity } from '@/base';
 export declare class PermissionMapping extends BaseTzEntity {
     permissionId: number;
     roleId: number;

@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApplicationError = exports.BaseTextSearchTzEntity = exports.BaseDataTypeTzEntity = exports.BaseUserAuditTzEntity = exports.BaseTzEntity = exports.BaseIdEntity = exports.BaseEntity = void 0;
 const repository_1 = require("@loopback/repository");
-const mixins_1 = require("../mixins");
+const mixins_1 = require("@/mixins");
 // ---------------------------------------------------------------------
 class BaseEntity extends repository_1.Entity {
 }
@@ -24,9 +24,32 @@ __decorate([
     __metadata("design:type", Object)
 ], BaseIdEntity.prototype, "id", void 0);
 exports.BaseIdEntity = BaseIdEntity;
-// ---------------------------------------------------------------------
-class BaseTzEntity extends (0, mixins_1.TzMixin)(BaseIdEntity) {
+class BaseTzEntity extends BaseIdEntity {
 }
+__decorate([
+    (0, repository_1.property)({
+        type: 'date',
+        defaultFn: 'now',
+        postgresql: {
+            columnName: 'created_at',
+            dataType: 'TIMESTAMPTZ',
+        },
+        hidden: true,
+    }),
+    __metadata("design:type", Date)
+], BaseTzEntity.prototype, "createdAt", void 0);
+__decorate([
+    (0, repository_1.property)({
+        type: 'date',
+        defaultFn: 'now',
+        postgresql: {
+            columnName: 'modified_at',
+            dataType: 'TIMESTAMPTZ',
+        },
+        hidden: true,
+    }),
+    __metadata("design:type", Date)
+], BaseTzEntity.prototype, "modifiedAt", void 0);
 exports.BaseTzEntity = BaseTzEntity;
 // ---------------------------------------------------------------------
 class BaseUserAuditTzEntity extends (0, mixins_1.UserAuditMixin)(BaseTzEntity) {

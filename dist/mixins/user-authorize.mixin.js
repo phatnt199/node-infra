@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserAuthorizeMixin = void 0;
 const repository_1 = require("@loopback/repository");
-const models_1 = require("../models");
+const models_1 = require("@/models");
 const UserAuthorizeMixin = (superClass) => {
     class Mixed extends superClass {
     }

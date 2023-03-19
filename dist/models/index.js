@@ -14,5 +14,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./entities"), exports);
+__exportStar(require("./migration.model"), exports);
+__exportStar(require("./user.model"), exports);
+/* export * from './role.model';
+export * from './permission.model';
+export * from './user-mapping.model';
+export * from './permission-mapping.model'; */
 //# sourceMappingURL=index.js.map

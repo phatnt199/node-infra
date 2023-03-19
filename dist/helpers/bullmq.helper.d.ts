@@ -1,6 +1,6 @@
 import { Job, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
-import { TBullQueueRole } from '../common/types';
+import { TBullQueueRole } from '@/common/types';
 interface IBullMQOptions {
     queueName: string;
     identifier: string;
