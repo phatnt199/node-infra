@@ -1,5 +1,5 @@
 import { property, belongsTo, EntityResolver, hasMany } from '@loopback/repository';
-import { BaseIdEntity, BaseTzEntity } from '@/base';
+import { BaseTzEntity } from '@/base';
 import { PrincipalMixin } from '@/mixins';
 import { RoleStatuses } from '@/common';
 
@@ -87,9 +87,9 @@ export const definePermission = () => {
 
 // -----------------------------------------------------------------------
 export const definePermissionMapping = (opts: {
-  userRosolver: EntityResolver<BaseIdEntity>;
-  roleResolver: EntityResolver<BaseIdEntity>;
-  permissionResolver: EntityResolver<BaseIdEntity>;
+  userRosolver: EntityResolver<BaseTzEntity>;
+  roleResolver: EntityResolver<BaseTzEntity>;
+  permissionResolver: EntityResolver<BaseTzEntity>;
 }) => {
   const { userRosolver, roleResolver, permissionResolver } = opts;
 
@@ -114,7 +114,7 @@ export const definePermissionMapping = (opts: {
 };
 
 // -----------------------------------------------------------------------
-export const defineUserRole = (opts: { userRosolver: EntityResolver<BaseIdEntity> }) => {
+export const defineUserRole = (opts: { userRosolver: EntityResolver<BaseTzEntity> }) => {
   const { userRosolver } = opts;
   class UserRole extends PrincipalMixin(BaseTzEntity, 'Role') {
     @belongsTo(
