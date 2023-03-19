@@ -11,8 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PermissionMapping = void 0;
 const repository_1 = require("@loopback/repository");
-const models_1 = require("@/models");
-const base_1 = require("@/base");
+const models_1 = require("../models");
+const base_1 = require("../base");
 class PermissionMapping extends base_1.BaseTzEntity {
     constructor(data) {
         super(data);

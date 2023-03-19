@@ -11,9 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserWithAuthorize = exports.User = void 0;
 const repository_1 = require("@loopback/repository");
-const common_1 = require("@/common");
-const base_1 = require("@/base");
-const mixins_1 = require("@/mixins");
+const common_1 = require("../common");
+const base_1 = require("../base");
+const mixins_1 = require("../mixins");
 class User extends base_1.BaseTzEntity {
     constructor(data) {
         super(data);

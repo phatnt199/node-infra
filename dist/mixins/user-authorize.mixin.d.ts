@@ -1,6 +1,6 @@
 import { MixinTarget } from '@loopback/core';
 import { Entity } from '@loopback/repository';
-import { Permission, PermissionMapping, Role } from '@/models';
+import { Permission, PermissionMapping, Role } from '../models';
 export declare const UserAuthorizeMixin: <E extends MixinTarget<Entity>>(superClass: E) => {
     new (...args: any[]): {
         roles: Role[];

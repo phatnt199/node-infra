@@ -1,5 +1,5 @@
-import { User, Permission } from '@/models';
-import { BaseTzEntity } from '@/base';
+import { User, Permission } from '../models';
+import { BaseTzEntity } from '../base';
 export declare class Role extends BaseTzEntity {
     identifier: string;
     name: string;

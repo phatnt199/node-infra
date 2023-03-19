@@ -1,7 +1,7 @@
 import { Getter } from '@loopback/core';
 import { HasManyRepositoryFactory, HasManyThroughRepositoryFactory } from '@loopback/repository';
-import { RoleRepository, PermissionMappingRepository, PermissionRepository, UserRoleRepository } from '@/repositories';
-import { User, UserRole, Permission, Role, PermissionMapping, UserWithAuthorize } from '@/models';
+import { RoleRepository, PermissionMappingRepository, PermissionRepository, UserRoleRepository } from '../repositories';
+import { User, UserRole, Permission, Role, PermissionMapping, UserWithAuthorize } from '../models';
 import { BaseDataSource, EntityClassType, IdType, TzCrudRepository } from '..';
 export declare class UserRepository<U extends User> extends TzCrudRepository<U> {
     constructor(opts: {

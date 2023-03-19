@@ -1,4 +1,4 @@
-import { BaseTzEntity } from '@/base';
+import { BaseTzEntity } from '../base';
 export declare class User extends BaseTzEntity {
     realm?: string;
     status: string;

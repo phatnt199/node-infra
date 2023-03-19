@@ -1,9 +1,9 @@
-import { BaseTzEntity } from '@/base';
-import { NumberIdType } from '@/common/types';
+import { BaseTzEntity } from '../base';
+import { NumberIdType } from '../common/types';
 declare const UserRole_base: {
     new (...args: any[]): {
         principalType?: string | undefined;
-        principalId?: import("@/common/types").IdType | undefined;
+        principalId?: import("../common/types").IdType | undefined;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;

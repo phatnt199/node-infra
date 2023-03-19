@@ -1,8 +1,8 @@
 import { Getter } from '@loopback/core';
-import { PermissionMapping, Permission, Role } from '@/models';
-import { UserWithAuthorize, UserRole } from '@/models';
+import { PermissionMapping, Permission, Role } from '../models';
+import { UserWithAuthorize, UserRole } from '../models';
 import { HasManyThroughRepositoryFactory } from '@loopback/repository';
-import { UserRoleRepository, UserRepository, PermissionMappingRepository, PermissionRepository } from '@/repositories';
+import { UserRoleRepository, UserRepository, PermissionMappingRepository, PermissionRepository } from '../repositories';
 import { BaseDataSource, EntityClassType, IdType, TzCrudRepository } from '..';
 export declare class RoleRepository<U extends UserWithAuthorize, R extends Role, P extends Permission, PM extends PermissionMapping, UR extends UserRole> extends TzCrudRepository<R> {
     readonly users: HasManyThroughRepositoryFactory<U, IdType, UR, IdType>;

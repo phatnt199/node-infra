@@ -1,6 +1,6 @@
 import { Getter } from '@loopback/core';
-import { Role, UserWithAuthorize, Permission, PermissionMapping } from '@/models';
-import { UserRepository, RoleRepository, PermissionRepository } from '@/repositories';
+import { Role, UserWithAuthorize, Permission, PermissionMapping } from '../models';
+import { UserRepository, RoleRepository, PermissionRepository } from '../repositories';
 import { BelongsToAccessor } from '@loopback/repository';
 import { BaseDataSource, EntityClassType, IdType, TzCrudRepository } from '..';
 export declare class PermissionMappingRepository<U extends UserWithAuthorize, R extends Role, P extends Permission, PM extends PermissionMapping> extends TzCrudRepository<PM> {

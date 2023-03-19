@@ -1,11 +1,12 @@
 import { Entity } from '@loopback/repository';
-import { IdType, IEntity } from '@/common/types';
-export declare class BaseEntity extends Entity implements IEntity {
+import { IdType, IEntity } from '../common/types';
+export declare class BaseEntity extends Entity {
 }
-export declare class BaseIdEntity extends BaseEntity {
+export declare class BaseIdEntity extends BaseEntity implements IEntity {
     id: IdType;
 }
-export declare class BaseTzEntity extends BaseIdEntity {
+export declare class BaseTzEntity extends BaseEntity implements IEntity {
+    id: IdType;
     createdAt: Date;
     modifiedAt: Date;
 }

@@ -1,4 +1,4 @@
-import { BaseTzEntity } from '@/base';
+import { BaseTzEntity } from '../base';
 export declare class Permission extends BaseTzEntity {
     code: string;
     name: string;
