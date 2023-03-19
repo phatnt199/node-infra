@@ -134,7 +134,8 @@ const definePermissionMapping = (opts) => {
 };
 exports.definePermissionMapping = definePermissionMapping;
 // -----------------------------------------------------------------------
-const defineUserRole = (userRosolver) => {
+const defineUserRole = (opts) => {
+    const { userRosolver } = opts;
     class UserRole extends (0, mixins_1.PrincipalMixin)(base_1.BaseTzEntity, 'Role') {
         constructor(data) {
             super(data);

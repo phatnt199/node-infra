@@ -114,7 +114,8 @@ export const definePermissionMapping = (opts: {
 };
 
 // -----------------------------------------------------------------------
-export const defineUserRole = (userRosolver: EntityResolver<BaseIdEntity>) => {
+export const defineUserRole = (opts: { userRosolver: EntityResolver<BaseIdEntity> }) => {
+  const { userRosolver } = opts;
   class UserRole extends PrincipalMixin(BaseTzEntity, 'Role') {
     @belongsTo(
       userRosolver,

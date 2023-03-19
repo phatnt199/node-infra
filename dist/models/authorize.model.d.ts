@@ -108,7 +108,9 @@ export declare const definePermissionMapping: (opts: {
     readonly modelName: string;
     definition: import("@loopback/repository").ModelDefinition;
 };
-export declare const defineUserRole: (userRosolver: EntityResolver<BaseIdEntity>) => {
+export declare const defineUserRole: (opts: {
+    userRosolver: EntityResolver<BaseIdEntity>;
+}) => {
     new (data?: Partial<{
         userId: number;
         principalType?: string | undefined;
