@@ -1,6 +1,6 @@
 import { Count, DataObject, DefaultCrudRepository, juggler, Options, Where } from '@loopback/repository';
 import { EntityClassType, EntityRelation, IdType, ITzRepository, IUserAuditRepository } from '../common/types';
-import { BaseIdEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
+import { BaseEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
 export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation> extends DefaultCrudRepository<E, IdType, R> implements ITzRepository<E> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
     abstract mixTimestamp(entity: DataObject<E>, options?: {
@@ -11,7 +11,7 @@ export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R ext
     abstract updateWithReturn(id: IdType, data: DataObject<E>, options?: any): Promise<E>;
     abstract upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
 }
-export declare abstract class ViewRepository<E extends BaseIdEntity> extends DefaultCrudRepository<E, IdType, any> {
+export declare abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRepository<E, IdType, any> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
     existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
     create(_data: DataObject<E>, _options?: Options): Promise<E>;

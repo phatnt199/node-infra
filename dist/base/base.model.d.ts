@@ -4,6 +4,12 @@ export declare class BaseEntity extends Entity {
 export declare class BaseIdEntity extends BaseEntity {
     id: number;
 }
+export declare class BaseNumberIdEntity extends BaseEntity {
+    id: number;
+}
+export declare class BaseStringIdEntity extends BaseEntity {
+    id: string;
+}
 export declare class BaseTzEntity extends BaseEntity {
     id: number;
     createdAt: Date;

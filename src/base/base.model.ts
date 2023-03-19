@@ -2,7 +2,7 @@ import { Entity, property } from '@loopback/repository';
 import { DataTypeMixin, TextSearchMixin, UserAuditMixin } from '@/mixins';
 
 // ---------------------------------------------------------------------
-export class BaseEntity extends Entity { }
+export class BaseEntity extends Entity {}
 
 // ---------------------------------------------------------------------
 export class BaseIdEntity extends BaseEntity {
@@ -10,6 +10,19 @@ export class BaseIdEntity extends BaseEntity {
   id: number;
 }
 
+// ---------------------------------------------------------------------
+export class BaseNumberIdEntity extends BaseEntity {
+  @property({ type: 'number', id: true, generated: true })
+  id: number;
+}
+
+// ---------------------------------------------------------------------
+export class BaseStringIdEntity extends BaseEntity {
+  @property({ type: 'string', id: true })
+  id: string;
+}
+
+// ---------------------------------------------------------------------
 export class BaseTzEntity extends BaseEntity {
   @property({ type: 'number', id: true, generated: true })
   id: number;
@@ -38,13 +51,13 @@ export class BaseTzEntity extends BaseEntity {
 }
 
 // ---------------------------------------------------------------------
-export class BaseUserAuditTzEntity extends UserAuditMixin(BaseTzEntity) { }
+export class BaseUserAuditTzEntity extends UserAuditMixin(BaseTzEntity) {}
 
 // ---------------------------------------------------------------------
-export class BaseDataTypeTzEntity extends DataTypeMixin(BaseTzEntity) { }
+export class BaseDataTypeTzEntity extends DataTypeMixin(BaseTzEntity) {}
 
 // ---------------------------------------------------------------------
-export class BaseTextSearchTzEntity extends TextSearchMixin(BaseTzEntity) { }
+export class BaseTextSearchTzEntity extends TextSearchMixin(BaseTzEntity) {}
 
 // ---------------------------------------------------------------------
 export class ApplicationError extends Error {
