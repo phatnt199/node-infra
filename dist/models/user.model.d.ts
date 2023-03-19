@@ -9,9 +9,9 @@ export declare class User extends BaseTzEntity {
 }
 declare const UserWithAuthorize_base: {
     new (...args: any[]): {
-        roles: Role[];
-        permissions: Permission[];
-        policies: PermissionMapping[];
+        roles: import("./role.model").Role[];
+        permissions: import("./permission.model").Permission[];
+        policies: import("./permission-mapping.model").PermissionMapping[];
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;

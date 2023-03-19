@@ -3,10 +3,10 @@ import { IdType, IEntity } from '@/common/types';
 import { DataTypeMixin, TextSearchMixin, UserAuditMixin } from '@/mixins';
 
 // ---------------------------------------------------------------------
-export class BaseEntity extends Entity { }
+export class BaseEntity extends Entity implements IEntity  { }
 
 // ---------------------------------------------------------------------
-export class BaseIdEntity extends BaseEntity implements IEntity {
+export class BaseIdEntity extends BaseEntity{
   @property({ type: 'number', id: true, generated: true })
   id: IdType;
 }
