@@ -11,7 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserAuthorizeMixin = void 0;
 const repository_1 = require("@loopback/repository");
-const UserAuthorizeMixin = (superClass, roleResolver, permissionResolver, userRoleResolver, permissionMappingResolver) => {
+const UserAuthorizeMixin = (opts) => {
+    const { superClass, resolvers: { roleResolver, permissionResolver, userRoleResolver, permissionMappingResolver }, } = opts;
     const RoleEntity = roleResolver();
     const PermissionEntity = permissionResolver();
     const PermissionMappingEntity = permissionMappingResolver();

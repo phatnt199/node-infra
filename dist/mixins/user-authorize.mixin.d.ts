@@ -2,7 +2,15 @@ import { MixinTarget } from '@loopback/core';
 import { EntityResolver } from '@loopback/repository';
 import { User } from '../models';
 import { BaseIdEntity } from '../base/base.model';
-export declare const UserAuthorizeMixin: <E extends MixinTarget<User>>(superClass: E, roleResolver: EntityResolver<BaseIdEntity>, permissionResolver: EntityResolver<BaseIdEntity>, userRoleResolver: EntityResolver<BaseIdEntity>, permissionMappingResolver: EntityResolver<BaseIdEntity>) => {
+export declare const UserAuthorizeMixin: <E extends MixinTarget<User>>(opts: {
+    superClass: E;
+    resolvers: {
+        roleResolver: EntityResolver<BaseIdEntity>;
+        permissionResolver: EntityResolver<BaseIdEntity>;
+        userRoleResolver: EntityResolver<BaseIdEntity>;
+        permissionMappingResolver: EntityResolver<BaseIdEntity>;
+    };
+}) => {
     new (...args: any[]): {
         roles: (import("@loopback/repository").Class<BaseIdEntity> & typeof import("@loopback/repository").Entity)[];
         permissions: (import("@loopback/repository").Class<BaseIdEntity> & typeof import("@loopback/repository").Entity)[];

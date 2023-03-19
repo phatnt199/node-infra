@@ -3,13 +3,19 @@ import { EntityResolver, hasMany } from '@loopback/repository';
 import { User } from '@/models';
 import { BaseIdEntity } from '@/base/base.model';
 
-export const UserAuthorizeMixin = <E extends MixinTarget<User>>(
-  superClass: E,
-  roleResolver: EntityResolver<BaseIdEntity>,
-  permissionResolver: EntityResolver<BaseIdEntity>,
-  userRoleResolver: EntityResolver<BaseIdEntity>,
-  permissionMappingResolver: EntityResolver<BaseIdEntity>,
-) => {
+export const UserAuthorizeMixin = <E extends MixinTarget<User>>(opts: {
+  superClass: E;
+  resolvers: {
+    roleResolver: EntityResolver<BaseIdEntity>;
+    permissionResolver: EntityResolver<BaseIdEntity>;
+    userRoleResolver: EntityResolver<BaseIdEntity>;
+    permissionMappingResolver: EntityResolver<BaseIdEntity>;
+  };
+}) => {
+  const {
+    superClass,
+    resolvers: { roleResolver, permissionResolver, userRoleResolver, permissionMappingResolver },
+  } = opts;
   const RoleEntity = roleResolver();
   const PermissionEntity = permissionResolver();
   const PermissionMappingEntity = permissionMappingResolver();
