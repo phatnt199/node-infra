@@ -1,0 +1,17 @@
+import { BaseTzEntity } from '../base';
+import { NumberIdType } from '../common/types';
+declare const UserRole_base: {
+    new (...args: any[]): {
+        principalType?: string | undefined;
+        principalId?: import("../common/types").IdType | undefined;
+        getId: () => any;
+        getIdObject: () => Object;
+        toJSON: () => Object;
+        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+    };
+} & typeof BaseTzEntity;
+export declare class UserRole extends UserRole_base {
+    userId: NumberIdType;
+    constructor(data?: Partial<UserRole>);
+}
+export {};
