@@ -80,7 +80,7 @@ const defineCrudController = (opts) => {
         (0, rest_1.get)('/', {
             responses: {
                 '200': {
-                    description: `Array of model instance ${entityOptions.name}`,
+                    description: `Array of ${entityOptions.name} model instances`,
                     content: {
                         'application/json': {
                             schema: {
@@ -101,7 +101,7 @@ const defineCrudController = (opts) => {
         (0, rest_1.get)('/{id}', {
             responses: {
                 '200': {
-                    description: `Find model instance ${entityOptions.name}`,
+                    description: `Find ${entityOptions.name} model instance`,
                     content: {
                         'application/json': {
                             schema: (0, rest_1.getModelSchemaRef)(entityOptions, { includeRelations: true }),
@@ -120,7 +120,7 @@ const defineCrudController = (opts) => {
         (0, rest_1.get)('/count', {
             responses: {
                 '200': {
-                    description: `Count number of model instance ${entityOptions.name}`,
+                    description: `Count number of ${entityOptions.name} model instance`,
                     content: {
                         'application/json': {
                             schema: repository_1.CountSchema,
@@ -176,7 +176,7 @@ const defineCrudController = (opts) => {
         (0, rest_1.post)('/', {
             responses: {
                 '200': {
-                    description: `Create model instance ${entityOptions.name}`,
+                    description: `Create ${entityOptions.name} model instance`,
                     content: {
                         'application/json': {
                             schema: (0, rest_1.getModelSchemaRef)(entityOptions),

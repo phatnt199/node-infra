@@ -68,7 +68,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
     @get('/', {
       responses: {
         '200': {
-          description: `Array of model instance ${entityOptions.name}`,
+          description: `Array of ${entityOptions.name} model instances`,
           content: {
             'application/json': {
               schema: {
@@ -87,7 +87,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
     @get('/{id}', {
       responses: {
         '200': {
-          description: `Find model instance ${entityOptions.name}`,
+          description: `Find ${entityOptions.name} model instance`,
           content: {
             'application/json': {
               schema: getModelSchemaRef(entityOptions, { includeRelations: true }),
@@ -107,7 +107,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
     @get('/count', {
       responses: {
         '200': {
-          description: `Count number of model instance ${entityOptions.name}`,
+          description: `Count number of ${entityOptions.name} model instance`,
           content: {
             'application/json': {
               schema: CountSchema,
@@ -140,7 +140,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
     @post('/', {
       responses: {
         '200': {
-          description: `Create model instance ${entityOptions.name}`,
+          description: `Create ${entityOptions.name} model instance`,
           content: {
             'application/json': {
               schema: getModelSchemaRef(entityOptions),
