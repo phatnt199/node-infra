@@ -7,7 +7,7 @@ declare abstract class AbstractAuthorizeRepository<T extends BaseTzEntity> exten
     constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource);
     abstract bindingRelations(): void;
 }
-export declare abstract class RoleRepository<U extends BaseTzEntity, R extends BaseTzEntity, P extends BaseTzEntity, PM extends BaseTzEntity, UR extends BaseTzEntity> extends AbstractAuthorizeRepository<R> {
+export declare abstract class AbstractRoleRepository<U extends BaseTzEntity, R extends BaseTzEntity, P extends BaseTzEntity, PM extends BaseTzEntity, UR extends BaseTzEntity> extends AbstractAuthorizeRepository<R> {
     protected users: HasManyThroughRepositoryFactory<U, IdType, UR, IdType>;
     protected permissions: HasManyThroughRepositoryFactory<P, IdType, PM, IdType>;
     constructor(opts: {
@@ -15,7 +15,7 @@ export declare abstract class RoleRepository<U extends BaseTzEntity, R extends B
         dataSource: BaseDataSource;
     });
 }
-export declare abstract class PermissionRepository<P extends BaseTzEntity> extends AbstractAuthorizeRepository<P> {
+export declare abstract class AbstractPermissionRepository<P extends BaseTzEntity> extends AbstractAuthorizeRepository<P> {
     protected parent: BelongsToAccessor<P, IdType>;
     protected children: HasManyRepositoryFactory<P, IdType>;
     constructor(opts: {
@@ -23,14 +23,14 @@ export declare abstract class PermissionRepository<P extends BaseTzEntity> exten
         dataSource: BaseDataSource;
     });
 }
-export declare abstract class UserRoleRepository<U extends BaseTzEntity, UR extends BaseTzEntity> extends AbstractAuthorizeRepository<UR> {
+export declare abstract class AbstractUserRoleRepository<U extends BaseTzEntity, UR extends BaseTzEntity> extends AbstractAuthorizeRepository<UR> {
     protected user: BelongsToAccessor<U, IdType>;
     constructor(opts: {
         entityClass: EntityClassType<UR>;
         dataSource: BaseDataSource;
     });
 }
-export declare abstract class PermissionMappingRepository<U extends BaseTzEntity, R extends BaseTzEntity, P extends BaseTzEntity, PM extends BaseTzEntity> extends AbstractAuthorizeRepository<PM> {
+export declare abstract class AbstractPermissionMappingRepository<U extends BaseTzEntity, R extends BaseTzEntity, P extends BaseTzEntity, PM extends BaseTzEntity> extends AbstractAuthorizeRepository<PM> {
     user: BelongsToAccessor<U, IdType>;
     role: BelongsToAccessor<R, IdType>;
     permission: BelongsToAccessor<P, IdType>;

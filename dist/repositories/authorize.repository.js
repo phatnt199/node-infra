@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PermissionMappingRepository = exports.UserRoleRepository = exports.PermissionRepository = exports.RoleRepository = void 0;
+exports.AbstractPermissionMappingRepository = exports.AbstractUserRoleRepository = exports.AbstractPermissionRepository = exports.AbstractRoleRepository = void 0;
 const base_repository_1 = require("../base/base.repository");
 class AbstractAuthorizeRepository extends base_repository_1.TzCrudRepository {
     constructor(entityClass, dataSource) {
@@ -9,35 +9,35 @@ class AbstractAuthorizeRepository extends base_repository_1.TzCrudRepository {
     }
 }
 // ----------------------------------------------------------------------------
-class RoleRepository extends AbstractAuthorizeRepository {
+class AbstractRoleRepository extends AbstractAuthorizeRepository {
     constructor(opts) {
         const { entityClass, dataSource } = opts;
         super(entityClass, dataSource);
     }
 }
-exports.RoleRepository = RoleRepository;
+exports.AbstractRoleRepository = AbstractRoleRepository;
 // ----------------------------------------------------------------------------
-class PermissionRepository extends AbstractAuthorizeRepository {
+class AbstractPermissionRepository extends AbstractAuthorizeRepository {
     constructor(opts) {
         const { entityClass, dataSource } = opts;
         super(entityClass, dataSource);
     }
 }
-exports.PermissionRepository = PermissionRepository;
+exports.AbstractPermissionRepository = AbstractPermissionRepository;
 // ----------------------------------------------------------------------------
-class UserRoleRepository extends AbstractAuthorizeRepository {
+class AbstractUserRoleRepository extends AbstractAuthorizeRepository {
     constructor(opts) {
         const { entityClass, dataSource } = opts;
         super(entityClass, dataSource);
     }
 }
-exports.UserRoleRepository = UserRoleRepository;
+exports.AbstractUserRoleRepository = AbstractUserRoleRepository;
 // ----------------------------------------------------------------------------
-class PermissionMappingRepository extends AbstractAuthorizeRepository {
+class AbstractPermissionMappingRepository extends AbstractAuthorizeRepository {
     constructor(opts) {
         const { entityClass, dataSource } = opts;
         super(entityClass, dataSource);
     }
 }
-exports.PermissionMappingRepository = PermissionMappingRepository;
+exports.AbstractPermissionMappingRepository = AbstractPermissionMappingRepository;
 //# sourceMappingURL=authorize.repository.js.map

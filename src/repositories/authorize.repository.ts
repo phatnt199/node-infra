@@ -15,7 +15,7 @@ abstract class AbstractAuthorizeRepository<T extends BaseTzEntity> extends TzCru
 }
 
 // ----------------------------------------------------------------------------
-export abstract class RoleRepository<
+export abstract class AbstractRoleRepository<
   U extends BaseTzEntity,
   R extends BaseTzEntity,
   P extends BaseTzEntity,
@@ -32,7 +32,7 @@ export abstract class RoleRepository<
 }
 
 // ----------------------------------------------------------------------------
-export abstract class PermissionRepository<P extends BaseTzEntity> extends AbstractAuthorizeRepository<P> {
+export abstract class AbstractPermissionRepository<P extends BaseTzEntity> extends AbstractAuthorizeRepository<P> {
   protected parent: BelongsToAccessor<P, IdType>;
   protected children: HasManyRepositoryFactory<P, IdType>;
 
@@ -43,7 +43,7 @@ export abstract class PermissionRepository<P extends BaseTzEntity> extends Abstr
 }
 
 // ----------------------------------------------------------------------------
-export abstract class UserRoleRepository<
+export abstract class AbstractUserRoleRepository<
   U extends BaseTzEntity,
   UR extends BaseTzEntity,
 > extends AbstractAuthorizeRepository<UR> {
@@ -56,7 +56,7 @@ export abstract class UserRoleRepository<
 }
 
 // ----------------------------------------------------------------------------
-export abstract class PermissionMappingRepository<
+export abstract class AbstractPermissionMappingRepository<
   U extends BaseTzEntity,
   R extends BaseTzEntity,
   P extends BaseTzEntity,
@@ -66,10 +66,7 @@ export abstract class PermissionMappingRepository<
   role: BelongsToAccessor<R, IdType>;
   permission: BelongsToAccessor<P, IdType>;
 
-  constructor(opts: {
-    entityClass: EntityClassType<PM>;
-    dataSource: BaseDataSource;
-  }) {
+  constructor(opts: { entityClass: EntityClassType<PM>; dataSource: BaseDataSource }) {
     const { entityClass, dataSource } = opts;
     super(entityClass, dataSource);
   }
