@@ -25,6 +25,7 @@ helpers_1.applicationLogger.info('- MigrationDS: %s', DS_MIGRATION);
 helpers_1.applicationLogger.info('------------------------------------');
 __exportStar(require("./base"), exports);
 __exportStar(require("./common"), exports);
+__exportStar(require("./components"), exports);
 __exportStar(require("./helpers"), exports);
 __exportStar(require("./migrations"), exports);
 __exportStar(require("./mixins"), exports);
