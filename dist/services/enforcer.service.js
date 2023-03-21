@@ -30,6 +30,7 @@ const casbin_1 = require("casbin");
 const fs_1 = __importDefault(require("fs"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const utilities_1 = require("../utilities");
+const common_1 = require("../common");
 const __1 = require("..");
 const core_1 = require("@loopback/core");
 let EnforcerService = EnforcerService_1 = class EnforcerService {
@@ -65,8 +66,8 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
 };
 EnforcerService = EnforcerService_1 = __decorate([
     (0, core_1.injectable)({ scope: core_1.BindingScope.SINGLETON }),
-    __param(0, (0, core_1.inject)(__1.AuthorizerKeys.CONFIGURE_PATH)),
-    __param(1, (0, core_1.inject)(__1.AuthorizerKeys.ADAPTER_DATASOURCE)),
+    __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.CONFIGURE_PATH)),
+    __param(1, (0, core_1.inject)(common_1.AuthorizerKeys.ADAPTER_DATASOURCE)),
     __metadata("design:paramtypes", [String, __1.BaseDataSource])
 ], EnforcerService);
 exports.EnforcerService = EnforcerService;

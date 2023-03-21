@@ -2,7 +2,8 @@ import { Adapter, Enforcer, newCachedEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 import { getError } from '@/utilities';
-import { ApplicationLogger, AuthorizerKeys, BaseDataSource, CasbinLBAdapter, LoggerFactory } from '..';
+import { AuthorizerKeys } from '@/common'
+import { ApplicationLogger, BaseDataSource, CasbinLBAdapter, LoggerFactory } from '..';
 import { BindingScope, inject, injectable } from '@loopback/core';
 
 @injectable({ scope: BindingScope.SINGLETON })

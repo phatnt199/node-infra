@@ -10,21 +10,10 @@ import {
 } from '@loopback/authorization';
 import { AuthorizeProvider } from '@/providers';
 import { EnforcerService } from '@/services';
-
-export class AuthorizeComponentKeys {
-  static readonly APPLICATION_NAME = '@app/authorize/component/application_name';
-  static readonly USER_MODEL = '@app/authorize/component/models/user';
-}
-
-export class AuthorizerKeys {
-  static readonly PROVIDER = '@app/authorize/provider';
-  static readonly ENFORCER = '@app/authorize/enforcer';
-  static readonly ADAPTER_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
-  static readonly CONFIGURE_PATH = '@app/authorize/configure_path';
-}
+import { AuthorizerKeys } from '@/common';
 
 export class AuthorizeComponent extends BaseComponent {
-  bindings: Binding[] = [Binding.bind(AuthorizeComponentKeys.APPLICATION_NAME).to(AuthorizeComponent.name)];
+  bindings: Binding[] = [Binding.bind(AuthorizerKeys.APPLICATION_NAME).to(AuthorizeComponent.name)];
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
     super({ scope: AuthorizeComponent.name });
@@ -39,7 +28,7 @@ export class AuthorizeComponent extends BaseComponent {
   }
 
   binding() {
-    const applicationName = this.application.getSync<string>(AuthorizeComponentKeys.APPLICATION_NAME);
+    const applicationName = this.application.getSync<string>(AuthorizerKeys.APPLICATION_NAME);
     this.logger.info('[binding] Binding authorize for application %s...', applicationName);
 
     this.application.component(AuthorizationComponent);
