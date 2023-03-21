@@ -2,7 +2,7 @@ import { property } from '@loopback/repository';
 import { UserTypes, UserStatuses } from '@/common';
 import { BaseTzEntity } from '@/base';
 
-export class User extends BaseTzEntity {
+export class BaseUser extends BaseTzEntity {
   @property({
     type: 'string',
   })
@@ -46,7 +46,7 @@ export class User extends BaseTzEntity {
   })
   lastLoginAt?: Date;
 
-  constructor(data?: Partial<User>) {
+  constructor(data?: Partial<BaseUser>) {
     super(data);
   }
 }

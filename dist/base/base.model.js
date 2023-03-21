@@ -42,6 +42,9 @@ __decorate([
 exports.BaseStringIdEntity = BaseStringIdEntity;
 // ---------------------------------------------------------------------
 class BaseTzEntity extends BaseEntity {
+    constructor(data) {
+        super(data);
+    }
 }
 __decorate([
     (0, repository_1.property)({ type: 'number', id: true, generated: true }),

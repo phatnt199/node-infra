@@ -1,6 +1,6 @@
 import { BootMixin } from '@loopback/boot';
 import { ApplicationConfig } from '@loopback/core';
-import { RepositoryMixin } from '@loopback/repository';
+import { Entity, RepositoryMixin } from '@loopback/repository';
 import { RestApplication } from '@loopback/rest';
 import { ServiceMixin } from '@loopback/service-proxy';
 import { EnvironmentValidationResult, IApplication } from '@/common/types';
@@ -10,6 +10,8 @@ export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
   implements IApplication
 {
+  models: Entity[];
+
   constructor(options: ApplicationConfig = {}) {
     super(options);
     const applicationEnv = process.env.NODE_ENV ?? 'unknown';
@@ -24,6 +26,9 @@ export abstract class BaseApplication
       applicationLogger.log('info', '[application] All application environments are valid...');
     }
 
+    applicationLogger.log('info', '[application] Declare application models...');
+    this.models = this.declareModels();
+
     // Do configure while modules for application.
     applicationLogger.log('info', '[application] Executing Pre-Configure...');
     this.preConfigure();
@@ -33,6 +38,7 @@ export abstract class BaseApplication
   }
 
   abstract validateEnv(): EnvironmentValidationResult;
+  abstract declareModels(): Entity[];
   abstract preConfigure(): void;
   abstract postConfigure(): void;
 }

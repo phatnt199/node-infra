@@ -14,6 +14,7 @@ export declare class BaseTzEntity extends BaseEntity {
     id: number;
     createdAt: Date;
     modifiedAt: Date;
+    constructor(data?: Partial<BaseTzEntity>);
 }
 declare const BaseUserAuditTzEntity_base: {
     new (...args: any[]): {

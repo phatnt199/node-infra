@@ -73,6 +73,7 @@ export const definePermission = () => {
 
     @property({
       type: 'number',
+      postgresql: { columnName: 'parent_id' },
     })
     parentId: number;
 

@@ -11,9 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defineUserRole = exports.definePermissionMapping = exports.definePermission = exports.defineRole = void 0;
 const repository_1 = require("@loopback/repository");
-const base_1 = require("../base");
-const mixins_1 = require("../mixins");
-const common_1 = require("../common");
+const base_1 = require("../../base");
+const mixins_1 = require("../../mixins");
+const common_1 = require("../../common");
 // -----------------------------------------------------------------------
 const defineRole = () => {
     class Role extends base_1.BaseTzEntity {
@@ -98,6 +98,7 @@ const definePermission = () => {
     __decorate([
         (0, repository_1.property)({
             type: 'number',
+            postgresql: { columnName: 'parent_id' },
         }),
         __metadata("design:type", Number)
     ], Permission.prototype, "parentId", void 0);
@@ -144,4 +145,4 @@ const defineUserRole = () => {
     return UserRole;
 };
 exports.defineUserRole = defineUserRole;
-//# sourceMappingURL=authorize.model.js.map
+//# sourceMappingURL=defs.js.map

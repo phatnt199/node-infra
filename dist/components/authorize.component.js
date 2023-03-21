@@ -16,25 +16,48 @@ exports.AuthorizeComponent = exports.AuthorizeComponentKeys = void 0;
 const base_component_1 = require("../base/base.component");
 const core_1 = require("@loopback/core");
 const base_application_1 = require("../base/base.application");
-const models_1 = require("../models");
+const authorize_1 = require("../models/authorize");
+const authorization_1 = require("@loopback/authorization");
+const providers_1 = require("../providers");
+const services_1 = require("../services");
 class AuthorizeComponentKeys {
 }
 exports.AuthorizeComponentKeys = AuthorizeComponentKeys;
-AuthorizeComponentKeys.APPLICATION_NAME = 'authorize.component.application_name';
-AuthorizeComponentKeys.USER_MODEL = 'authorize.component.models.user';
+AuthorizeComponentKeys.APPLICATION_NAME = '@app/authorize/component/application_name';
+AuthorizeComponentKeys.USER_MODEL = '@app/authorize/component/models/user';
+AuthorizeComponentKeys.AUTHORIZER = {
+    PROVIDER: '@app/authorize/provider',
+    ENFORCER: '@app/authorize/enforcer',
+    ADAPTER: '@app/authorize/enforcer/adapter',
+    ADAPTER_CONNECTION_STRING: '@app/authorize/enforcer/adapter/connection_string',
+    CONFIGURE_PATH: '@app/authorize/configure_path',
+};
 let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthorizeComponent.name });
         this.application = application;
-        this.bindings = [
-            core_1.Binding.bind(AuthorizeComponentKeys.APPLICATION_NAME).to(AuthorizeComponent.name),
-            core_1.Binding.bind(AuthorizeComponentKeys.USER_MODEL).to(models_1.User),
-        ];
-        this.test();
+        this.bindings = [core_1.Binding.bind(AuthorizeComponentKeys.APPLICATION_NAME).to(AuthorizeComponent.name)];
+        this.binding();
     }
-    test() {
+    defineModels() {
+        this.application.model(authorize_1.Role);
+        this.application.model(authorize_1.Permission);
+        this.application.model(authorize_1.PermissionMapping);
+    }
+    binding() {
         const applicationName = this.application.getSync(AuthorizeComponentKeys.APPLICATION_NAME);
-        console.log(applicationName);
+        this.logger.info('[binding] Binding authorize for application %s...', applicationName);
+        this.application.configure(authorization_1.AuthorizationBindings.COMPONENT).to({
+            precedence: authorization_1.AuthorizationDecision.DENY,
+            defaultDecision: authorization_1.AuthorizationDecision.DENY,
+        });
+        this.application.component(authorization_1.AuthorizationComponent);
+        this.application
+            .bind(AuthorizeComponentKeys.AUTHORIZER.PROVIDER)
+            .toProvider(providers_1.AuthorizeProvider)
+            .tag(authorization_1.AuthorizationTags.AUTHORIZER);
+        this.application.bind(AuthorizeComponentKeys.AUTHORIZER.ENFORCER).to(services_1.EnforcerService);
+        this.application.service(services_1.EnforcerService);
     }
 };
 AuthorizeComponent = __decorate([
@@ -42,4 +65,4 @@ AuthorizeComponent = __decorate([
     __metadata("design:paramtypes", [base_application_1.BaseApplication])
 ], AuthorizeComponent);
 exports.AuthorizeComponent = AuthorizeComponent;
-//# sourceMappingURL=authorization.component.js.map
+//# sourceMappingURL=authorize.component.js.map

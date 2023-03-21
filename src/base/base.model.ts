@@ -48,6 +48,10 @@ export class BaseTzEntity extends BaseEntity {
     hidden: true,
   })
   modifiedAt: Date;
+
+  constructor(data?: Partial<BaseTzEntity>) {
+    super(data);
+  }
 }
 
 // ---------------------------------------------------------------------

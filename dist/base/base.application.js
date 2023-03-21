@@ -21,6 +21,8 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
         else {
             helpers_1.applicationLogger.log('info', '[application] All application environments are valid...');
         }
+        helpers_1.applicationLogger.log('info', '[application] Declare application models...');
+        this.models = this.declareModels();
         // Do configure while modules for application.
         helpers_1.applicationLogger.log('info', '[application] Executing Pre-Configure...');
         this.preConfigure();

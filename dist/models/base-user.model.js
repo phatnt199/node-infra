@@ -9,11 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.BaseUser = void 0;
 const repository_1 = require("@loopback/repository");
 const common_1 = require("../common");
 const base_1 = require("../base");
-class User extends base_1.BaseTzEntity {
+class BaseUser extends base_1.BaseTzEntity {
     constructor(data) {
         super(data);
     }
@@ -23,7 +23,7 @@ __decorate([
         type: 'string',
     }),
     __metadata("design:type", String)
-], User.prototype, "realm", void 0);
+], BaseUser.prototype, "realm", void 0);
 __decorate([
     (0, repository_1.property)({
         type: 'string',
@@ -34,7 +34,7 @@ __decorate([
         },
     }),
     __metadata("design:type", String)
-], User.prototype, "status", void 0);
+], BaseUser.prototype, "status", void 0);
 __decorate([
     (0, repository_1.property)({
         type: 'string',
@@ -45,7 +45,7 @@ __decorate([
         },
     }),
     __metadata("design:type", String)
-], User.prototype, "userType", void 0);
+], BaseUser.prototype, "userType", void 0);
 __decorate([
     (0, repository_1.property)({
         type: 'date',
@@ -55,7 +55,7 @@ __decorate([
         },
     }),
     __metadata("design:type", Date)
-], User.prototype, "activatedAt", void 0);
+], BaseUser.prototype, "activatedAt", void 0);
 __decorate([
     (0, repository_1.property)({
         type: 'date',
@@ -65,6 +65,6 @@ __decorate([
         },
     }),
     __metadata("design:type", Date)
-], User.prototype, "lastLoginAt", void 0);
-exports.User = User;
-//# sourceMappingURL=user.model.js.map
+], BaseUser.prototype, "lastLoginAt", void 0);
+exports.BaseUser = BaseUser;
+//# sourceMappingURL=base-user.model.js.map

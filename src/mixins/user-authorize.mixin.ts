@@ -1,9 +1,8 @@
 import { MixinTarget } from '@loopback/core';
 import { EntityResolver, hasMany } from '@loopback/repository';
-import { User } from '@/models';
 import { BaseIdEntity } from '@/base/base.model';
 
-export const UserAuthorizeMixin = <E extends MixinTarget<User>>(opts: {
+export const UserAuthorizeMixin = <E extends MixinTarget<BaseIdEntity>>(opts: {
   superClass: E;
   resolvers: {
     roleResolver: EntityResolver<BaseIdEntity>;
