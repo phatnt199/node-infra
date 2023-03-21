@@ -14,7 +14,24 @@ import { AuthorizerKeys } from '@/common';
 import { PermissionMappingRepository, PermissionRepository, RoleRepository, UserRoleRepository } from '@/repositories';
 
 export class AuthorizeComponent extends BaseComponent {
-  bindings: Binding[] = [Binding.bind(AuthorizerKeys.APPLICATION_NAME).to(AuthorizeComponent.name)];
+  bindings: Binding[] = [
+    Binding.bind(AuthorizerKeys.APPLICATION_NAME).to(AuthorizeComponent.name),
+
+    // Model bindings
+    Binding.bind(AuthorizerKeys.ROLE_MODEL).toClass(Role),
+    Binding.bind(AuthorizerKeys.PERMISSION_MODEL).toClass(Permission),
+    Binding.bind(AuthorizerKeys.PERMISSION_MAPPING_MODEL).toClass(PermissionMapping),
+    Binding.bind(AuthorizerKeys.USER_ROLE_MODEL).toClass(UserRole),
+
+    // Repository bindings
+    Binding.bind(AuthorizerKeys.ROLE_REPOSITORY).toClass(RoleRepository),
+    Binding.bind(AuthorizerKeys.PERMISSION_REPOSITORY).toClass(PermissionRepository),
+    Binding.bind(AuthorizerKeys.PERMISSION_MAPPING_REPOSITORY).toClass(PermissionMappingRepository),
+    Binding.bind(AuthorizerKeys.USER_ROLE_REPOSITORY).toClass(UserRoleRepository),
+
+    Binding.bind(AuthorizerKeys.ADAPTER_DATASOURCE).to('datasources.postgres'),
+    Binding.bind(AuthorizerKeys.CONFIGURE_PATH).to('/'),
+  ];
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
     super({ scope: AuthorizeComponent.name });
@@ -52,10 +69,5 @@ export class AuthorizeComponent extends BaseComponent {
     });
 
     this.application.bind(AuthorizerKeys.PROVIDER).toProvider(AuthorizeProvider).tag(AuthorizationTags.AUTHORIZER);
-
-    console.log('isBound RoleRepository: ', this.application.isBound('repositories.RoleRepository'));
-    console.log('isBound PermissionRepository: ', this.application.isBound('repositories.PermissionRepository'));
-    console.log('isBound PermissionMappingRepository: ', this.application.isBound('repositories.PermissionMappingRepository'));
-    console.log('isBound UserRoleRepository: ', this.application.isBound('repositories.UserRoleRepository'));
   }
 }

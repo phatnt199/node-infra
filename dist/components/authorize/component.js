@@ -26,7 +26,21 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
     constructor(application) {
         super({ scope: AuthorizeComponent.name });
         this.application = application;
-        this.bindings = [core_1.Binding.bind(common_1.AuthorizerKeys.APPLICATION_NAME).to(AuthorizeComponent.name)];
+        this.bindings = [
+            core_1.Binding.bind(common_1.AuthorizerKeys.APPLICATION_NAME).to(AuthorizeComponent.name),
+            // Model bindings
+            core_1.Binding.bind(common_1.AuthorizerKeys.ROLE_MODEL).toClass(authorize_1.Role),
+            core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MODEL).toClass(authorize_1.Permission),
+            core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MAPPING_MODEL).toClass(authorize_1.PermissionMapping),
+            core_1.Binding.bind(common_1.AuthorizerKeys.USER_ROLE_MODEL).toClass(authorize_1.UserRole),
+            // Repository bindings
+            core_1.Binding.bind(common_1.AuthorizerKeys.ROLE_REPOSITORY).toClass(repositories_1.RoleRepository),
+            core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_REPOSITORY).toClass(repositories_1.PermissionRepository),
+            core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MAPPING_REPOSITORY).toClass(repositories_1.PermissionMappingRepository),
+            core_1.Binding.bind(common_1.AuthorizerKeys.USER_ROLE_REPOSITORY).toClass(repositories_1.UserRoleRepository),
+            core_1.Binding.bind(common_1.AuthorizerKeys.ADAPTER_DATASOURCE).to('datasources.postgres'),
+            core_1.Binding.bind(common_1.AuthorizerKeys.CONFIGURE_PATH).to('/'),
+        ];
         this.binding();
     }
     defineModels() {
@@ -53,10 +67,6 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
             defaultDecision: authorization_1.AuthorizationDecision.DENY,
         });
         this.application.bind(common_1.AuthorizerKeys.PROVIDER).toProvider(provider_1.AuthorizeProvider).tag(authorization_1.AuthorizationTags.AUTHORIZER);
-        console.log('isBound RoleRepository: ', this.application.isBound('repositories.RoleRepository'));
-        console.log('isBound PermissionRepository: ', this.application.isBound('repositories.PermissionRepository'));
-        console.log('isBound PermissionMappingRepository: ', this.application.isBound('repositories.PermissionMappingRepository'));
-        console.log('isBound UserRoleRepository: ', this.application.isBound('repositories.UserRoleRepository'));
     }
 };
 AuthorizeComponent = __decorate([

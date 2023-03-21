@@ -5,7 +5,17 @@ class AuthorizerKeys {
 }
 exports.AuthorizerKeys = AuthorizerKeys;
 AuthorizerKeys.APPLICATION_NAME = '@app/authorize/component/application_name';
-AuthorizerKeys.USER_MODEL = '@app/authorize/component/models/user';
+// -----------------------------------------------------------------------------
+AuthorizerKeys.ROLE_MODEL = '@app/authorize/component/models/user';
+AuthorizerKeys.PERMISSION_MODEL = '@app/authorize/component/models/permission';
+AuthorizerKeys.PERMISSION_MAPPING_MODEL = '@app/authorize/component/models/permission_mapping';
+AuthorizerKeys.USER_ROLE_MODEL = '@app/authorize/component/models/user_role';
+// -----------------------------------------------------------------------------
+AuthorizerKeys.ROLE_REPOSITORY = '@app/authorize/component/repositories/user';
+AuthorizerKeys.PERMISSION_REPOSITORY = '@app/authorize/component/repositories/permission';
+AuthorizerKeys.PERMISSION_MAPPING_REPOSITORY = '@app/authorize/component/repositories/permission_mapping';
+AuthorizerKeys.USER_ROLE_REPOSITORY = '@app/authorize/component/repositories/user_role';
+// -----------------------------------------------------------------------------
 AuthorizerKeys.PROVIDER = '@app/authorize/provider';
 AuthorizerKeys.ENFORCER = '@app/authorize/enforcer';
 AuthorizerKeys.ADAPTER_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
