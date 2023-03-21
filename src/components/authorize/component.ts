@@ -8,9 +8,10 @@ import {
   AuthorizationDecision,
   AuthorizationTags,
 } from '@loopback/authorization';
-import { AuthorizeProvider } from './provider'
+import { AuthorizeProvider } from './provider';
 import { EnforcerService } from '@/services';
 import { AuthorizerKeys } from '@/common';
+import { PermissionMappingRepository, PermissionRepository, RoleRepository, UserRoleRepository } from '@/repositories';
 
 export class AuthorizeComponent extends BaseComponent {
   bindings: Binding[] = [Binding.bind(AuthorizerKeys.APPLICATION_NAME).to(AuthorizeComponent.name)];
@@ -27,9 +28,19 @@ export class AuthorizeComponent extends BaseComponent {
     this.application.model(PermissionMapping);
   }
 
+  defineRepositories() {
+    this.application.repository(RoleRepository);
+    this.application.repository(PermissionRepository);
+    this.application.repository(PermissionMappingRepository);
+    this.application.repository(UserRoleRepository);
+  }
+
   binding() {
     const applicationName = this.application.getSync<string>(AuthorizerKeys.APPLICATION_NAME);
     this.logger.info('[binding] Binding authorize for application %s...', applicationName);
+
+    this.defineModels();
+    this.defineRepositories();
 
     this.application.component(AuthorizationComponent);
     this.application.bind(AuthorizerKeys.ENFORCER).toInjectable(EnforcerService);

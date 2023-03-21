@@ -18,4 +18,5 @@ __exportStar(require("./defs"), exports);
 __exportStar(require("./role.model"), exports);
 __exportStar(require("./permission.model"), exports);
 __exportStar(require("./permission-mapping.model"), exports);
+__exportStar(require("./user-role.model"), exports);
 //# sourceMappingURL=index.js.map

@@ -1,5 +1,5 @@
 import { FilteredAdapter, Model } from 'casbin';
-import { BaseDataSource } from '@/base/base.datasource';
+import { BaseDataSource } from '../base/base.datasource';
 export declare class EnforcerDefinitions {
     static readonly DEFAULT_AUTHORIZATION_SCOPE = "execute";
     static readonly PREFIX_USER = "user";

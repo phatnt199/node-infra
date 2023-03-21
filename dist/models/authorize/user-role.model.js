@@ -9,46 +9,27 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Migration = void 0;
+exports.UserRole = void 0;
 const repository_1 = require("@loopback/repository");
-const common_1 = require("../common");
-const base_1 = require("../base");
-let Migration = class Migration extends base_1.BaseTzEntity {
+const defs_1 = require("./defs");
+const BaseUserRole = (0, defs_1.defineUserRole)();
+// ---------------------------------------------------------------
+let UserRole = class UserRole extends BaseUserRole {
     constructor(data) {
         super(data);
     }
 };
-__decorate([
-    (0, repository_1.property)({
-        type: 'string',
-        required: true,
-    }),
-    __metadata("design:type", String)
-], Migration.prototype, "name", void 0);
-__decorate([
-    (0, repository_1.property)({
-        type: 'string',
-        default: common_1.MigrationStatuses.UNKNOWN,
-    }),
-    __metadata("design:type", String)
-], Migration.prototype, "status", void 0);
-Migration = __decorate([
+UserRole = __decorate([
     (0, repository_1.model)({
         settings: {
             postgresql: {
                 schema: 'public',
-                table: 'Migration',
+                table: 'UserRole',
             },
-            strict: true,
-            indexes: {
-                INDEX_UNIQUE_NAME: {
-                    keys: { name: 1 },
-                    options: { unique: true },
-                },
-            },
+            hiddenProperties: ['createdAt', 'modifiedAt'],
         },
     }),
     __metadata("design:paramtypes", [Object])
-], Migration);
-exports.Migration = Migration;
-//# sourceMappingURL=migration.model.js.map
+], UserRole);
+exports.UserRole = UserRole;
+//# sourceMappingURL=user-role.model.js.map

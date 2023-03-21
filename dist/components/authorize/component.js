@@ -13,14 +13,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizeComponent = void 0;
-const base_component_1 = require("@/base/base.component");
+const base_component_1 = require("../../base/base.component");
 const core_1 = require("@loopback/core");
-const base_application_1 = require("@/base/base.application");
-const authorize_1 = require("@/models/authorize");
+const base_application_1 = require("../../base/base.application");
+const authorize_1 = require("../../models/authorize");
 const authorization_1 = require("@loopback/authorization");
 const provider_1 = require("./provider");
-const services_1 = require("@/services");
-const common_1 = require("@/common");
+const services_1 = require("../../services");
+const common_1 = require("../../common");
+const repositories_1 = require("../../repositories");
 let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthorizeComponent.name });
@@ -33,9 +34,17 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
         this.application.model(authorize_1.Permission);
         this.application.model(authorize_1.PermissionMapping);
     }
+    defineRepositories() {
+        this.application.repository(repositories_1.RoleRepository);
+        this.application.repository(repositories_1.PermissionRepository);
+        this.application.repository(repositories_1.PermissionMappingRepository);
+        this.application.repository(repositories_1.UserRoleRepository);
+    }
     binding() {
         const applicationName = this.application.getSync(common_1.AuthorizerKeys.APPLICATION_NAME);
         this.logger.info('[binding] Binding authorize for application %s...', applicationName);
+        this.defineModels();
+        this.defineRepositories();
         this.application.component(authorization_1.AuthorizationComponent);
         this.application.bind(common_1.AuthorizerKeys.ENFORCER).toInjectable(services_1.EnforcerService);
         this.application.configure(authorization_1.AuthorizationBindings.COMPONENT).to({

@@ -25,9 +25,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizeProvider = void 0;
-const common_1 = require("@/common");
-const helpers_1 = require("@/helpers");
-const services_1 = require("@/services");
+const common_1 = require("../../common");
+const helpers_1 = require("../../helpers");
+const services_1 = require("../../services");
 const authorization_1 = require("@loopback/authorization");
 const core_1 = require("@loopback/core");
 const intersection_1 = __importDefault(require("lodash/intersection"));
