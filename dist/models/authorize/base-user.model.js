@@ -91,7 +91,6 @@ User = User_1 = __decorate([
                 schema: 'public',
                 table: 'User',
             },
-            hiddenProperties: ['createdAt', 'modifiedAt'],
         },
     }),
     __metadata("design:paramtypes", [Object])

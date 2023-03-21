@@ -8,7 +8,6 @@ import { BaseTzEntity } from '@/base';
       schema: 'public',
       table: 'User',
     },
-    hiddenProperties: ['createdAt', 'modifiedAt'],
   },
 })
 export class User extends BaseTzEntity {
