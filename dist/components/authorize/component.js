@@ -33,6 +33,7 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
         this.application.model(authorize_1.Role);
         this.application.model(authorize_1.Permission);
         this.application.model(authorize_1.PermissionMapping);
+        this.application.model(authorize_1.UserRole);
     }
     defineRepositories() {
         this.application.repository(repositories_1.RoleRepository);
@@ -52,7 +53,10 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
             defaultDecision: authorization_1.AuthorizationDecision.DENY,
         });
         this.application.bind(common_1.AuthorizerKeys.PROVIDER).toProvider(provider_1.AuthorizeProvider).tag(authorization_1.AuthorizationTags.AUTHORIZER);
-        console.log(this.application);
+        console.log('isBound RoleRepository: ', this.application.isBound('repositories.RoleRepository'));
+        console.log('isBound PermissionRepository: ', this.application.isBound('repositories.PermissionRepository'));
+        console.log('isBound PermissionMappingRepository: ', this.application.isBound('repositories.PermissionMappingRepository'));
+        console.log('isBound UserRoleRepository: ', this.application.isBound('repositories.UserRoleRepository'));
     }
 };
 AuthorizeComponent = __decorate([

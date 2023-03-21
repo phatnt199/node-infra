@@ -1,7 +1,7 @@
 import { BaseComponent } from '@/base/base.component';
 import { Binding, CoreBindings, inject } from '@loopback/core';
 import { BaseApplication } from '@/base/base.application';
-import { Role, Permission, PermissionMapping } from '@/models/authorize';
+import { Role, Permission, PermissionMapping, UserRole } from '@/models/authorize';
 import {
   AuthorizationBindings,
   AuthorizationComponent,
@@ -26,6 +26,7 @@ export class AuthorizeComponent extends BaseComponent {
     this.application.model(Role);
     this.application.model(Permission);
     this.application.model(PermissionMapping);
+    this.application.model(UserRole);
   }
 
   defineRepositories() {
@@ -51,6 +52,10 @@ export class AuthorizeComponent extends BaseComponent {
     });
 
     this.application.bind(AuthorizerKeys.PROVIDER).toProvider(AuthorizeProvider).tag(AuthorizationTags.AUTHORIZER);
-    console.log(this.application)
+
+    console.log('isBound RoleRepository: ', this.application.isBound('repositories.RoleRepository'));
+    console.log('isBound PermissionRepository: ', this.application.isBound('repositories.PermissionRepository'));
+    console.log('isBound PermissionMappingRepository: ', this.application.isBound('repositories.PermissionMappingRepository'));
+    console.log('isBound UserRoleRepository: ', this.application.isBound('repositories.UserRoleRepository'));
   }
 }
