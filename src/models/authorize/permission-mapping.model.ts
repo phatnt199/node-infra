@@ -7,7 +7,7 @@ const BasePermissionMapping = definePermissionMapping();
   settings: {
     postgresql: {
       schema: 'public',
-      table: 'casbin',
+      table: 'PermissionMapping',
     },
     hiddenProperties: ['createdAt', 'modifiedAt'],
     indexes: {

@@ -13,14 +13,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizeComponent = void 0;
-const base_component_1 = require("../base/base.component");
+const base_component_1 = require("@/base/base.component");
 const core_1 = require("@loopback/core");
-const base_application_1 = require("../base/base.application");
-const authorize_1 = require("../models/authorize");
+const base_application_1 = require("@/base/base.application");
+const authorize_1 = require("@/models/authorize");
 const authorization_1 = require("@loopback/authorization");
-const providers_1 = require("../providers");
-const services_1 = require("../services");
-const common_1 = require("../common");
+const provider_1 = require("./provider");
+const services_1 = require("@/services");
+const common_1 = require("@/common");
 let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthorizeComponent.name });
@@ -42,7 +42,7 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
             precedence: authorization_1.AuthorizationDecision.DENY,
             defaultDecision: authorization_1.AuthorizationDecision.DENY,
         });
-        this.application.bind(common_1.AuthorizerKeys.PROVIDER).toProvider(providers_1.AuthorizeProvider).tag(authorization_1.AuthorizationTags.AUTHORIZER);
+        this.application.bind(common_1.AuthorizerKeys.PROVIDER).toProvider(provider_1.AuthorizeProvider).tag(authorization_1.AuthorizationTags.AUTHORIZER);
     }
 };
 AuthorizeComponent = __decorate([
@@ -50,4 +50,4 @@ AuthorizeComponent = __decorate([
     __metadata("design:paramtypes", [base_application_1.BaseApplication])
 ], AuthorizeComponent);
 exports.AuthorizeComponent = AuthorizeComponent;
-//# sourceMappingURL=authorize.component.js.map
+//# sourceMappingURL=component.js.map

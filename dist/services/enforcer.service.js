@@ -29,8 +29,8 @@ exports.EnforcerService = void 0;
 const casbin_1 = require("casbin");
 const fs_1 = __importDefault(require("fs"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
-const utilities_1 = require("../utilities");
-const common_1 = require("../common");
+const utilities_1 = require("@/utilities");
+const common_1 = require("@/common");
 const __1 = require("..");
 const core_1 = require("@loopback/core");
 let EnforcerService = EnforcerService_1 = class EnforcerService {
@@ -61,6 +61,21 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
             yield this.enforcer.loadPolicy();
             this.logger.info('[getEnforcer] Loaded all application policies!');
             return this.enforcer;
+        });
+    }
+    // -----------------------------------------------------------------------------------------
+    getTypeEnforcer(pType, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const enforcer = yield this.getEnforcer();
+            if (!enforcer) {
+                return null;
+            }
+            const filterValue = {
+                principalType: pType,
+                principalValue: id,
+            };
+            yield enforcer.loadFilteredPolicy(filterValue);
+            return enforcer;
         });
     }
 };

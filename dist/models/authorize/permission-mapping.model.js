@@ -23,7 +23,7 @@ PermissionMapping = __decorate([
         settings: {
             postgresql: {
                 schema: 'public',
-                table: 'casbin',
+                table: 'PermissionMapping',
             },
             hiddenProperties: ['createdAt', 'modifiedAt'],
             indexes: {

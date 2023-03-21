@@ -2,8 +2,8 @@ import { Adapter, Enforcer, newCachedEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 import { getError } from '@/utilities';
-import { AuthorizerKeys } from '@/common'
-import { ApplicationLogger, BaseDataSource, CasbinLBAdapter, LoggerFactory } from '..';
+import { AuthorizerKeys, IdType } from '@/common';
+import { ApplicationLogger, BaseDataSource, CasbinLBAdapter, LoggerFactory, EnforcerFilterValue } from '..';
 import { BindingScope, inject, injectable } from '@loopback/core';
 
 @injectable({ scope: BindingScope.SINGLETON })
@@ -46,5 +46,20 @@ export class EnforcerService {
 
     this.logger.info('[getEnforcer] Loaded all application policies!');
     return this.enforcer;
+  }
+
+  // -----------------------------------------------------------------------------------------
+  async getTypeEnforcer(pType: string, id: IdType): Promise<Enforcer | null> {
+    const enforcer = await this.getEnforcer();
+    if (!enforcer) {
+      return null;
+    }
+
+    const filterValue: EnforcerFilterValue = {
+      principalType: pType,
+      principalValue: id,
+    };
+    await enforcer.loadFilteredPolicy(filterValue);
+    return enforcer;
   }
 }

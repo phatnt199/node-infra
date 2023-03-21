@@ -8,7 +8,7 @@ import {
   AuthorizationDecision,
   AuthorizationTags,
 } from '@loopback/authorization';
-import { AuthorizeProvider } from '@/providers';
+import { AuthorizeProvider } from './provider'
 import { EnforcerService } from '@/services';
 import { AuthorizerKeys } from '@/common';
 

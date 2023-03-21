@@ -15,6 +15,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./defs"), exports);
+__exportStar(require("./base-user.model"), exports);
 __exportStar(require("./role.model"), exports);
 __exportStar(require("./permission.model"), exports);
 __exportStar(require("./permission-mapping.model"), exports);

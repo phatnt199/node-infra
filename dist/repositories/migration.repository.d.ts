@@ -1,5 +1,5 @@
-import { Migration } from '../models';
-import { BaseDataSource, TzCrudRepository } from '../base';
+import { Migration } from '@/models';
+import { BaseDataSource, TzCrudRepository } from '@/base';
 import { EntityClassType } from '..';
 export declare class MigrationRepository<T extends Migration> extends TzCrudRepository<T> {
     constructor(opts: {
