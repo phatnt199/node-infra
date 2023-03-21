@@ -6,7 +6,7 @@ import { User } from '@/models';
 import { Getter, HasManyRepositoryFactory, HasOneRepositoryFactory } from '@loopback/repository';
 
 // ----------------------------------------------------------------------------
-export class UserRepository<T extends User> extends TzCrudRepository<T> {
+export abstract class UserRepository<T extends User> extends TzCrudRepository<T> {
   public readonly children: HasManyRepositoryFactory<T, IdType>;
   public readonly parent: HasOneRepositoryFactory<T, IdType>;
 
