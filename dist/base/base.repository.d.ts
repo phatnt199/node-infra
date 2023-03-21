@@ -25,7 +25,7 @@ export declare abstract class ViewRepository<E extends BaseEntity> extends Defau
     deleteAll(_where?: Where<E>, _options?: Options): Promise<Count>;
     deleteById(_id: IdType, _options?: Options): Promise<void>;
 }
-export declare class TzCrudRepository<E extends BaseTzEntity> extends AbstractTzRepository<E, any> {
+export declare abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractTzRepository<E, any> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
     existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
     create(data: DataObject<E>, options?: Options): Promise<E>;
@@ -40,7 +40,7 @@ export declare class TzCrudRepository<E extends BaseTzEntity> extends AbstractTz
         newInstance: boolean;
     }): DataObject<E>;
 }
-export declare class UserAuditCrudRepository<E extends BaseUserAuditTzEntity> extends TzCrudRepository<E> implements IUserAuditRepository<E> {
+export declare abstract class UserAuditCrudRepository<E extends BaseUserAuditTzEntity> extends TzCrudRepository<E> implements IUserAuditRepository<E> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
     create(data: DataObject<E>, options?: Options): Promise<E>;
     createAll(datum: DataObject<E>[], options?: Options): Promise<E[]>;

@@ -102,7 +102,7 @@ export abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRe
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export class TzCrudRepository<E extends BaseTzEntity> extends AbstractTzRepository<E, any> {
+export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractTzRepository<E, any> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }
@@ -172,7 +172,7 @@ export class TzCrudRepository<E extends BaseTzEntity> extends AbstractTzReposito
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export class UserAuditCrudRepository<E extends BaseUserAuditTzEntity>
+export abstract class UserAuditCrudRepository<E extends BaseUserAuditTzEntity>
   extends TzCrudRepository<E>
   implements IUserAuditRepository<E>
 {
