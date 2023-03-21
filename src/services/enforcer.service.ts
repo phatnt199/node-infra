@@ -2,7 +2,7 @@ import { Adapter, Enforcer, newCachedEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 import { getError } from '@/utilities';
-import { ApplicationLogger, AuthorizeComponentKeys, BaseDataSource, CasbinLBAdapter, LoggerFactory } from '..';
+import { ApplicationLogger, AuthorizerKeys, BaseDataSource, CasbinLBAdapter, LoggerFactory } from '..';
 import { BindingScope, inject, injectable } from '@loopback/core';
 
 @injectable({ scope: BindingScope.SINGLETON })
@@ -13,8 +13,8 @@ export class EnforcerService {
   private adapter: Adapter;
 
   constructor(
-    @inject(AuthorizeComponentKeys.AUTHORIZER.CONFIGURE_PATH) protected confPath: string,
-    @inject(AuthorizeComponentKeys.AUTHORIZER.ADAPTER_DATASOURCE) protected datasource: BaseDataSource,
+    @inject(AuthorizerKeys.CONFIGURE_PATH) protected confPath: string,
+    @inject(AuthorizerKeys.ADAPTER_DATASOURCE) protected datasource: BaseDataSource,
   ) {
     this.logger = LoggerFactory.getLogger([EnforcerService.name]);
   }

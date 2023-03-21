@@ -14,12 +14,13 @@ import { EnforcerService } from '@/services';
 export class AuthorizeComponentKeys {
   static readonly APPLICATION_NAME = '@app/authorize/component/application_name';
   static readonly USER_MODEL = '@app/authorize/component/models/user';
-  static readonly AUTHORIZER = {
-    PROVIDER: '@app/authorize/provider',
-    EFORCER: '@app/authorize/enforcer',
-    ADAPTER_DATASOURCE: '@app/authorize/enforcer/adapter/datasource',
-    CONFIGURE_PATH: '@app/authorize/configure_path',
-  };
+}
+
+export class AuthorizerKeys {
+  static readonly PROVIDER = '@app/authorize/provider';
+  static readonly ENFORCER = '@app/authorize/enforcer';
+  static readonly ADAPTER_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
+  static readonly CONFIGURE_PATH = '@app/authorize/configure_path';
 }
 
 export class AuthorizeComponent extends BaseComponent {
@@ -42,16 +43,13 @@ export class AuthorizeComponent extends BaseComponent {
     this.logger.info('[binding] Binding authorize for application %s...', applicationName);
 
     this.application.component(AuthorizationComponent);
-    this.application.bind(AuthorizeComponentKeys.AUTHORIZER.EFORCER).toInjectable(EnforcerService);
+    this.application.bind(AuthorizerKeys.ENFORCER).toInjectable(EnforcerService);
 
     this.application.configure(AuthorizationBindings.COMPONENT).to({
       precedence: AuthorizationDecision.DENY,
       defaultDecision: AuthorizationDecision.DENY,
     });
 
-    this.application
-      .bind(AuthorizeComponentKeys.AUTHORIZER.PROVIDER)
-      .toProvider(AuthorizeProvider)
-      .tag(AuthorizationTags.AUTHORIZER);
+    this.application.bind(AuthorizerKeys.PROVIDER).toProvider(AuthorizeProvider).tag(AuthorizationTags.AUTHORIZER);
   }
 }
