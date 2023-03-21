@@ -2,11 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractPermissionMappingRepository = exports.AbstractUserRoleRepository = exports.AbstractPermissionRepository = exports.AbstractRoleRepository = exports.UserRepository = void 0;
 const base_repository_1 = require("@/base/base.repository");
+const repository_1 = require("@loopback/repository");
 // ----------------------------------------------------------------------------
 class UserRepository extends base_repository_1.TzCrudRepository {
     constructor(opts) {
         const { entityClass, dataSource } = opts;
         super(entityClass, dataSource);
+        this.children = this.createHasManyRepositoryFactoryFor('children', repository_1.Getter.fromValue(this));
+        this.registerInclusionResolver('children', this.children.inclusionResolver);
+        this.parent = this.createHasOneRepositoryFactoryFor('parent', repository_1.Getter.fromValue(this));
+        this.registerInclusionResolver('parent', this.parent.inclusionResolver);
     }
 }
 exports.UserRepository = UserRepository;

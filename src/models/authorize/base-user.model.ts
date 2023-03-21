@@ -1,8 +1,17 @@
-import { property } from '@loopback/repository';
+import { hasMany, hasOne, model, property } from '@loopback/repository';
 import { UserTypes, UserStatuses } from '@/common';
 import { BaseTzEntity } from '@/base';
 
-export class BaseUser extends BaseTzEntity {
+@model({
+  settings: {
+    postgresql: {
+      schema: 'public',
+      table: 'User',
+    },
+    hiddenProperties: ['createdAt', 'modifiedAt'],
+  },
+})
+export class User extends BaseTzEntity {
   @property({
     type: 'string',
   })
@@ -46,7 +55,21 @@ export class BaseUser extends BaseTzEntity {
   })
   lastLoginAt?: Date;
 
-  constructor(data?: Partial<BaseUser>) {
+  @property({
+    type: 'number',
+    postgresql: {
+      columnName: 'parent_id',
+    },
+  })
+  parentId: number;
+
+  @hasOne(() => User, { keyTo: 'parentId' })
+  parent: User;
+
+  @hasMany(() => User, { keyTo: 'parentId' })
+  children: User[];
+
+  constructor(data?: Partial<User>) {
     super(data);
   }
 }

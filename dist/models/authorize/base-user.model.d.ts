@@ -1,9 +1,12 @@
 import { BaseTzEntity } from '@/base';
-export declare class BaseUser extends BaseTzEntity {
+export declare class User extends BaseTzEntity {
     realm?: string;
     status: string;
     userType?: string;
     activatedAt?: Date;
     lastLoginAt?: Date;
-    constructor(data?: Partial<BaseUser>);
+    parentId: number;
+    parent: User;
+    children: User[];
+    constructor(data?: Partial<User>);
 }

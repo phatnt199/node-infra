@@ -1,8 +1,12 @@
 import { BaseDataSource } from '@/base/base.datasource';
 import { BaseTzEntity } from '@/base/base.model';
 import { TzCrudRepository } from '@/base/base.repository';
-import { EntityClassType } from '@/common';
-export declare class UserRepository<T extends BaseTzEntity> extends TzCrudRepository<T> {
+import { EntityClassType, IdType } from '@/common';
+import { User } from '@/models';
+import { HasManyRepositoryFactory, HasOneRepositoryFactory } from '@loopback/repository';
+export declare class UserRepository<T extends User> extends TzCrudRepository<T> {
+    readonly children: HasManyRepositoryFactory<T, IdType>;
+    readonly parent: HasOneRepositoryFactory<T, IdType>;
     constructor(opts: {
         entityClass: EntityClassType<T>;
         dataSource: BaseDataSource;

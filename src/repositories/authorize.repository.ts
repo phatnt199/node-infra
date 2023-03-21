@@ -1,13 +1,24 @@
 import { BaseDataSource } from '@/base/base.datasource';
 import { BaseTzEntity } from '@/base/base.model';
 import { TzCrudRepository } from '@/base/base.repository';
-import { EntityClassType } from '@/common';
+import { EntityClassType, IdType } from '@/common';
+import { User } from '@/models';
+import { Getter, HasManyRepositoryFactory, HasOneRepositoryFactory } from '@loopback/repository';
 
 // ----------------------------------------------------------------------------
-export class UserRepository<T extends BaseTzEntity> extends TzCrudRepository<T> {
+export class UserRepository<T extends User> extends TzCrudRepository<T> {
+  public readonly children: HasManyRepositoryFactory<T, IdType>;
+  public readonly parent: HasOneRepositoryFactory<T, IdType>;
+
   constructor(opts: { entityClass: EntityClassType<T>; dataSource: BaseDataSource }) {
     const { entityClass, dataSource } = opts;
     super(entityClass, dataSource);
+
+    this.children = this.createHasManyRepositoryFactoryFor('children', Getter.fromValue(this));
+    this.registerInclusionResolver('children', this.children.inclusionResolver);
+
+    this.parent = this.createHasOneRepositoryFactoryFor('parent', Getter.fromValue(this));
+    this.registerInclusionResolver('parent', this.parent.inclusionResolver);
   }
 }
 
