@@ -51,5 +51,6 @@ export class AuthorizeComponent extends BaseComponent {
     });
 
     this.application.bind(AuthorizerKeys.PROVIDER).toProvider(AuthorizeProvider).tag(AuthorizationTags.AUTHORIZER);
+    console.log(this.application)
   }
 }

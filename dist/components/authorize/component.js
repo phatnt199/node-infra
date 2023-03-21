@@ -52,6 +52,7 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
             defaultDecision: authorization_1.AuthorizationDecision.DENY,
         });
         this.application.bind(common_1.AuthorizerKeys.PROVIDER).toProvider(provider_1.AuthorizeProvider).tag(authorization_1.AuthorizationTags.AUTHORIZER);
+        console.log(this.application);
     }
 };
 AuthorizeComponent = __decorate([
