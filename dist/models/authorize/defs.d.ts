@@ -1,3 +1,43 @@
+export declare const defineUser: () => {
+    new (data?: Partial<{
+        realm?: string | undefined;
+        status: string;
+        userType?: string | undefined;
+        activatedAt?: Date | undefined;
+        lastLoginAt?: Date | undefined;
+        parentId: number;
+        parent: any;
+        children: any[];
+        id: number;
+        createdAt: Date;
+        modifiedAt: Date;
+        getId(): any;
+        getIdObject(): Object;
+        toJSON(): Object;
+        toObject(options?: import("@loopback/repository").AnyObject | undefined): Object;
+    }> | undefined): {
+        realm?: string | undefined;
+        status: string;
+        userType?: string | undefined;
+        activatedAt?: Date | undefined;
+        lastLoginAt?: Date | undefined;
+        parentId: number;
+        parent: any;
+        children: any[];
+        id: number;
+        createdAt: Date;
+        modifiedAt: Date;
+        getId(): any;
+        getIdObject(): Object;
+        toJSON(): Object;
+        toObject(options?: import("@loopback/repository").AnyObject | undefined): Object;
+    };
+    getIdProperties(): string[];
+    getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
+    buildWhereForId(id: any): any;
+    readonly modelName: string;
+    definition: import("@loopback/repository").ModelDefinition;
+};
 export declare const defineRole: () => {
     new (data?: Partial<{
         identifier: string;
