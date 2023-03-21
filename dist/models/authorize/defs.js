@@ -113,15 +113,24 @@ const definePermissionMapping = () => {
         }
     }
     __decorate([
-        (0, repository_1.property)({ type: 'number' }),
+        (0, repository_1.property)({
+            type: 'number',
+            postgresql: { columnName: 'user_id' },
+        }),
         __metadata("design:type", Number)
     ], PermissionMapping.prototype, "userId", void 0);
     __decorate([
-        (0, repository_1.property)({ type: 'number' }),
+        (0, repository_1.property)({
+            type: 'number',
+            postgresql: { columnName: 'role_id' },
+        }),
         __metadata("design:type", Number)
     ], PermissionMapping.prototype, "roleId", void 0);
     __decorate([
-        (0, repository_1.property)({ type: 'number' }),
+        (0, repository_1.property)({
+            type: 'number',
+            postgresql: { columnName: 'permission_id' },
+        }),
         __metadata("design:type", Number)
     ], PermissionMapping.prototype, "permissionId", void 0);
     __decorate([

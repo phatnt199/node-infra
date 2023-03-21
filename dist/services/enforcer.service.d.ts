@@ -1,10 +1,11 @@
 import { Enforcer } from 'casbin';
-import { BaseService } from '../base/base.service';
-export declare class EnforcerService extends BaseService {
+import { BaseDataSource } from '..';
+export declare class EnforcerService {
     protected confPath: string;
-    protected adapterConnectionString: string;
+    protected datasource: BaseDataSource;
+    private logger;
     private enforcer;
     private adapter;
-    constructor(confPath: string, adapterConnectionString: string);
+    constructor(confPath: string, datasource: BaseDataSource);
     getEnforcer(): Promise<Enforcer>;
 }

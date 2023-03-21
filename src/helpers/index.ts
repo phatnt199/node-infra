@@ -6,3 +6,4 @@ export * from './redis.helper';
 export * from './bullmq.helper';
 export * from './network.helper';
 export * from './socket-io-server.helper';
+export * from './casbin-lb-adapter.helper';

@@ -88,13 +88,22 @@ export const definePermission = () => {
 // -----------------------------------------------------------------------
 export const definePermissionMapping = () => {
   class PermissionMapping extends BaseTzEntity {
-    @property({ type: 'number' })
+    @property({
+      type: 'number',
+      postgresql: { columnName: 'user_id' },
+    })
     userId: number;
 
-    @property({ type: 'number' })
+    @property({
+      type: 'number',
+      postgresql: { columnName: 'role_id' },
+    })
     roleId: number;
 
-    @property({ type: 'number' })
+    @property({
+      type: 'number',
+      postgresql: { columnName: 'permission_id' },
+    })
     permissionId: number;
 
     @property({ type: 'string' })

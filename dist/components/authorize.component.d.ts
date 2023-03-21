@@ -6,9 +6,8 @@ export declare class AuthorizeComponentKeys {
     static readonly USER_MODEL = "@app/authorize/component/models/user";
     static readonly AUTHORIZER: {
         PROVIDER: string;
-        ENFORCER: string;
-        ADAPTER: string;
-        ADAPTER_CONNECTION_STRING: string;
+        EFORCER: string;
+        ADAPTER_DATASOURCE: string;
         CONFIGURE_PATH: string;
     };
 }

@@ -29,16 +29,14 @@ exports.EnforcerService = void 0;
 const casbin_1 = require("casbin");
 const fs_1 = __importDefault(require("fs"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
-const base_service_1 = require("../base/base.service");
-const core_1 = require("@loopback/core");
-const authorize_component_1 = require("../components/authorize.component");
 const utilities_1 = require("../utilities");
-const casbin_pg_adapter_1 = __importDefault(require("casbin-pg-adapter"));
-let EnforcerService = EnforcerService_1 = class EnforcerService extends base_service_1.BaseService {
-    constructor(confPath, adapterConnectionString) {
-        super({ scope: EnforcerService_1.name });
+const __1 = require("..");
+const core_1 = require("@loopback/core");
+let EnforcerService = EnforcerService_1 = class EnforcerService {
+    constructor(confPath, datasource) {
         this.confPath = confPath;
-        this.adapterConnectionString = adapterConnectionString;
+        this.datasource = datasource;
+        this.logger = __1.LoggerFactory.getLogger([EnforcerService_1.name]);
     }
     getEnforcer() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -57,21 +55,19 @@ let EnforcerService = EnforcerService_1 = class EnforcerService extends base_ser
                     message: '[getEnforcer] Enforcer configuration path is not existed!',
                 });
             }
-            this.adapter = yield casbin_pg_adapter_1.default.newAdapter({
-                connectionString: this.adapterConnectionString,
-                migrate: true,
-            });
+            this.adapter = new __1.CasbinLBAdapter(this.datasource);
             this.enforcer = yield (0, casbin_1.newCachedEnforcer)(this.confPath, this.adapter);
             yield this.enforcer.loadPolicy();
+            this.logger.info('[getEnforcer] Loaded all application policies!');
             return this.enforcer;
         });
     }
 };
 EnforcerService = EnforcerService_1 = __decorate([
     (0, core_1.injectable)({ scope: core_1.BindingScope.SINGLETON }),
-    __param(0, (0, core_1.inject)(authorize_component_1.AuthorizeComponentKeys.AUTHORIZER.CONFIGURE_PATH)),
-    __param(1, (0, core_1.inject)(authorize_component_1.AuthorizeComponentKeys.AUTHORIZER.ADAPTER_CONNECTION_STRING)),
-    __metadata("design:paramtypes", [String, String])
+    __param(0, (0, core_1.inject)(__1.AuthorizeComponentKeys.AUTHORIZER.CONFIGURE_PATH)),
+    __param(1, (0, core_1.inject)(__1.AuthorizeComponentKeys.AUTHORIZER.ADAPTER_DATASOURCE)),
+    __metadata("design:paramtypes", [String, __1.BaseDataSource])
 ], EnforcerService);
 exports.EnforcerService = EnforcerService;
 //# sourceMappingURL=enforcer.service.js.map

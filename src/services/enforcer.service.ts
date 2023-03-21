@@ -1,22 +1,22 @@
 import { Adapter, Enforcer, newCachedEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
-import { BaseService } from '@/base/base.service';
-import { BindingScope, inject, injectable } from '@loopback/core';
-import { AuthorizeComponentKeys } from '@/components/authorize.component';
 import { getError } from '@/utilities';
-import PostgresAdapter from 'casbin-pg-adapter';
+import { ApplicationLogger, AuthorizeComponentKeys, BaseDataSource, CasbinLBAdapter, LoggerFactory } from '..';
+import { BindingScope, inject, injectable } from '@loopback/core';
 
 @injectable({ scope: BindingScope.SINGLETON })
-export class EnforcerService extends BaseService {
+export class EnforcerService {
+  private logger: ApplicationLogger;
+
   private enforcer: Enforcer;
   private adapter: Adapter;
 
   constructor(
     @inject(AuthorizeComponentKeys.AUTHORIZER.CONFIGURE_PATH) protected confPath: string,
-    @inject(AuthorizeComponentKeys.AUTHORIZER.ADAPTER_CONNECTION_STRING) protected adapterConnectionString: string,
+    @inject(AuthorizeComponentKeys.AUTHORIZER.ADAPTER_DATASOURCE) protected datasource: BaseDataSource,
   ) {
-    super({ scope: EnforcerService.name });
+    this.logger = LoggerFactory.getLogger([EnforcerService.name]);
   }
 
   async getEnforcer(): Promise<Enforcer> {
@@ -38,14 +38,12 @@ export class EnforcerService extends BaseService {
       });
     }
 
-    this.adapter = await PostgresAdapter.newAdapter({
-      connectionString: this.adapterConnectionString,
-      migrate: true,
-    });
-
+    this.adapter = new CasbinLBAdapter(this.datasource);
     this.enforcer = await newCachedEnforcer(this.confPath, this.adapter);
 
     await this.enforcer.loadPolicy();
+
+    this.logger.info('[getEnforcer] Loaded all application policies!');
     return this.enforcer;
   }
 }
