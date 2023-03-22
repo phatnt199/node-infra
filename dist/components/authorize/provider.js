@@ -99,6 +99,8 @@ let AuthorizeProvider = class AuthorizeProvider {
                 return authorization_1.AuthorizationDecision.DENY;
             }
             const { userId, roles: userRoles } = context.principals[0];
+            console.log('Context: ', context);
+            console.log('Principals: ', context.principals);
             // DENY all unknown user and unknow roles
             if (!userId || !userRoles) {
                 return authorization_1.AuthorizationDecision.DENY;
