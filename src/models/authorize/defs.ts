@@ -1,4 +1,4 @@
-import { hasMany, hasOne, property } from '@loopback/repository';
+import { property } from '@loopback/repository';
 import { BaseTzEntity } from '@/base';
 import { PrincipalMixin } from '@/mixins';
 import { RoleStatuses, UserStatuses, UserTypes } from '@/common';
@@ -56,12 +56,6 @@ export const defineUser = () => {
       },
     })
     parentId: number;
-
-    @hasOne(() => User, { keyTo: 'parentId' })
-    parent: User;
-
-    @hasMany(() => User, { keyTo: 'parentId' })
-    children: User[];
 
     constructor(data?: Partial<User>) {
       super(data);

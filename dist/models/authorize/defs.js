@@ -78,14 +78,6 @@ const defineUser = () => {
         }),
         __metadata("design:type", Number)
     ], User.prototype, "parentId", void 0);
-    __decorate([
-        (0, repository_1.hasOne)(() => User, { keyTo: 'parentId' }),
-        __metadata("design:type", User)
-    ], User.prototype, "parent", void 0);
-    __decorate([
-        (0, repository_1.hasMany)(() => User, { keyTo: 'parentId' }),
-        __metadata("design:type", Array)
-    ], User.prototype, "children", void 0);
     return User;
 };
 exports.defineUser = defineUser;

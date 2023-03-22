@@ -6,8 +6,6 @@ export declare const defineUser: () => {
         activatedAt?: Date | undefined;
         lastLoginAt?: Date | undefined;
         parentId: number;
-        parent: any;
-        children: any[];
         id: number;
         createdAt: Date;
         modifiedAt: Date;
@@ -22,8 +20,6 @@ export declare const defineUser: () => {
         activatedAt?: Date | undefined;
         lastLoginAt?: Date | undefined;
         parentId: number;
-        parent: any;
-        children: any[];
         id: number;
         createdAt: Date;
         modifiedAt: Date;
