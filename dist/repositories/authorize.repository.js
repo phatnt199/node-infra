@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRoleRepository = exports.PermissionMappingRepository = exports.PermissionRepository = exports.RoleRepository = exports.AbstractAuthorizeRepository = void 0;
 const base_datasource_1 = require("../base/base.datasource");
 const base_repository_1 = require("../base/base.repository");
-const common_1 = require("../common");
 const models_1 = require("../models");
 const core_1 = require("@loopback/core");
+const DS_AUTHORIZE = process.env.DS_AUTHORIZE;
 // ----------------------------------------------------------------------------
 class AbstractAuthorizeRepository extends base_repository_1.TzCrudRepository {
     constructor(entityClass, dataSource) {
@@ -34,7 +34,7 @@ let RoleRepository = class RoleRepository extends AbstractAuthorizeRepository {
     bindingRelations() { }
 };
 RoleRepository = __decorate([
-    __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.ADAPTER_DATASOURCE)),
+    __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], RoleRepository);
 exports.RoleRepository = RoleRepository;
@@ -46,7 +46,7 @@ let PermissionRepository = class PermissionRepository extends AbstractAuthorizeR
     bindingRelations() { }
 };
 PermissionRepository = __decorate([
-    __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.ADAPTER_DATASOURCE)),
+    __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], PermissionRepository);
 exports.PermissionRepository = PermissionRepository;
@@ -58,7 +58,7 @@ let PermissionMappingRepository = class PermissionMappingRepository extends Abst
     bindingRelations() { }
 };
 PermissionMappingRepository = __decorate([
-    __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.ADAPTER_DATASOURCE)),
+    __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], PermissionMappingRepository);
 exports.PermissionMappingRepository = PermissionMappingRepository;
@@ -70,7 +70,7 @@ let UserRoleRepository = class UserRoleRepository extends AbstractAuthorizeRepos
     bindingRelations() { }
 };
 UserRoleRepository = __decorate([
-    __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.ADAPTER_DATASOURCE)),
+    __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], UserRoleRepository);
 exports.UserRoleRepository = UserRoleRepository;

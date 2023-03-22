@@ -15,7 +15,7 @@ export class EnforcerService {
 
   constructor(
     @inject(AuthorizerKeys.CONFIGURE_PATH) protected confPath: string,
-    @inject(AuthorizerKeys.ADAPTER_DATASOURCE) protected datasource: BaseDataSource,
+    @inject(`datasources.${process.env.DS_AUTHORIZE}`) protected datasource: BaseDataSource,
   ) {
     this.logger = LoggerFactory.getLogger([EnforcerService.name]);
   }

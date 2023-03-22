@@ -269,10 +269,10 @@ declare const BaseApplication_base: (new (...args: any[]) => {
     eventNames: () => (string | symbol)[];
 }) & typeof RestApplication;
 export declare abstract class BaseApplication extends BaseApplication_base implements IApplication {
-    models: Entity[];
+    models: Set<Entity>;
     constructor(options?: ApplicationConfig);
     abstract validateEnv(): EnvironmentValidationResult;
-    abstract declareModels(): Entity[];
+    abstract declareModels(): Set<Entity>;
     abstract preConfigure(): void;
     abstract postConfigure(): void;
 }

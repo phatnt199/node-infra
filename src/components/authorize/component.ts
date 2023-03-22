@@ -44,6 +44,11 @@ export class AuthorizeComponent extends BaseComponent {
     this.application.model(Permission);
     this.application.model(PermissionMapping);
     this.application.model(UserRole);
+
+    this.application.models.add(Role.name);
+    this.application.models.add(Permission.name);
+    this.application.models.add(PermissionMapping.name);
+    this.application.models.add(UserRole.name);
   }
 
   defineRepositories() {

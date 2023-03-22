@@ -2,7 +2,7 @@ import { BaseIdEntity, BaseTzEntity } from '@/base';
 import { Count, DataObject, Entity, Options, Where } from '@loopback/repository';
 
 export interface IApplication {
-  models: Entity[];
+  models: Set<string>;
   preConfigure(): void;
   postConfigure(): void;
 }
