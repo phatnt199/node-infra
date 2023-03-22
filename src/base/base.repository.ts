@@ -1,7 +1,8 @@
-import { Count, DataObject, DefaultCrudRepository, juggler, Options, Where } from '@loopback/repository';
+import { AnyObject, Count, DataObject, DefaultCrudRepository, juggler, Options, Where } from '@loopback/repository';
 import { EntityClassType, EntityRelation, IdType, ITzRepository } from '@/common/types';
-import { BaseEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
+import { BaseEntity, BaseTextSearchTzEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
 import { getError } from '@/utilities';
+import get from 'lodash/get';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation>
@@ -14,7 +15,7 @@ export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends Ent
 
   abstract mixTimestamp(entity: DataObject<E>, options?: { newInstance: boolean }): DataObject<E>;
   abstract mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean; authorId: IdType }): DataObject<E>;
-  abstract mixTextSearch(entity: DataObject<E>, options?: { moreData: any; ignoreUpdate: boolean }): DataObject<E>;
+  // abstract mixTextSearch(entity: DataObject<E>, options?: { moreData: any; ignoreUpdate: boolean }): DataObject<E>;
 
   abstract existsWith(where?: Where<any>, options?: any): Promise<boolean>;
   abstract createWithReturn(data: DataObject<E>, options?: any): Promise<E>;
@@ -122,7 +123,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
     return super.create(enriched, options);
   }
 
-  createAll(datum: DataObject<E>[], options?: Options): Promise<E[]> {
+  createAll(datum: DataObject<E>[], options?: { authorId?: IdType }): Promise<E[]> {
     const enriched = datum.map(data => {
       const tmp = this.mixTimestamp(data, { newInstance: true });
       return this.mixUserAudit(tmp, { newInstance: true, authorId: options?.authorId });
@@ -182,7 +183,10 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
     return entity;
   }
 
-  mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean; authorId: IdType } | undefined): DataObject<E> {
+  mixUserAudit(
+    entity: DataObject<E>,
+    options?: { newInstance: boolean; authorId?: IdType } | undefined,
+  ): DataObject<E> {
     if (!options?.authorId) {
       return entity;
     }
@@ -192,6 +196,82 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
     }
 
     (entity as BaseUserAuditTzEntity).modifiedBy = options.authorId;
+    return entity;
+  }
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export abstract class TextSearchTzCrudRepository<E extends BaseTextSearchTzEntity> extends TzCrudRepository<E> {
+  constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
+    super(entityClass, dataSource);
+  }
+
+  abstract renderTextSearch(entity: DataObject<E>, moreData: AnyObject): string;
+
+  async existsWith(where?: Where<any>, options?: Options): Promise<boolean> {
+    const rs = await this.findOne({ where }, options);
+    return rs !== null && rs !== undefined;
+  }
+
+  create(data: DataObject<E>, options?: Options): Promise<E> {
+    const enriched = this.mixTextSearch(data, options);
+    return super.create(enriched, options);
+  }
+
+  createAll(datum: DataObject<E>[], options?: Options): Promise<E[]> {
+    const enriched = datum.map(data => {
+      return this.mixTextSearch(data, options);
+    });
+
+    return super.createAll(enriched, options);
+  }
+
+  async createWithReturn(data: DataObject<E>, options?: Options): Promise<E> {
+    const saved = await this.create(data, options);
+    return super.findById(saved.id);
+  }
+
+  updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+    const enriched = this.mixTextSearch(data, options);
+    return super.updateById(id, enriched, options);
+  }
+
+  async updateWithReturn(id: IdType, data: DataObject<E>, options?: Options): Promise<E> {
+    await this.updateById(id, data, options);
+    return super.findById(id);
+  }
+
+  updateAll(data: DataObject<E>, where?: Where<any>, options?: Options): Promise<Count> {
+    const enriched = this.mixTextSearch(data, options);
+
+    return super.updateAll(enriched, where, options);
+  }
+
+  async upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null> {
+    const isExisted = await this.existsWith(where);
+    if (isExisted) {
+      await this.updateAll(data, where);
+      const rs = await this.findOne({ where });
+      return rs;
+    }
+
+    return this.create(data);
+  }
+
+  replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+    const enriched = this.mixTextSearch(data, options);
+    return super.replaceById(id, enriched, options);
+  }
+
+  mixTextSearch(entity: DataObject<E>, options?: Options): DataObject<E> {
+    const moreData = get(options, 'moreData');
+    const ignoreUpdate = get(options, 'ignoreUpdate');
+
+    if (ignoreUpdate) {
+      return entity;
+    }
+
+    entity.textSearch = this.renderTextSearch(entity, moreData);
     return entity;
   }
 }

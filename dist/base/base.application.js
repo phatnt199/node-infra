@@ -5,7 +5,7 @@ const boot_1 = require("@loopback/boot");
 const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
 const service_proxy_1 = require("@loopback/service-proxy");
-const helpers_1 = require("@/helpers");
+const helpers_1 = require("../helpers");
 class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceMixin)((0, repository_1.RepositoryMixin)(rest_1.RestApplication))) {
     constructor(options = {}) {
         var _a, _b;

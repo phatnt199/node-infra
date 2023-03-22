@@ -1,4 +1,4 @@
-import { BaseIdEntity, BaseTzEntity } from '@/base';
+import { BaseIdEntity, BaseTzEntity } from '../base';
 import { Count, DataObject, Entity, Options, Where } from '@loopback/repository';
 export interface IApplication {
     models: Set<string>;
@@ -44,10 +44,6 @@ export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepos
     mixUserAudit(entity: DataObject<E>, options?: {
         newInstance: boolean;
         authorId: IdType;
-    }): DataObject<E>;
-    mixTextSearch(entity: DataObject<E>, options?: {
-        moreData: any;
-        ignoreUpdate: boolean;
     }): DataObject<E>;
 }
 export interface IService {

@@ -8,10 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TzCrudRepository = exports.ViewRepository = exports.AbstractTzRepository = void 0;
+exports.TextSearchTzCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.AbstractTzRepository = void 0;
 const repository_1 = require("@loopback/repository");
-const utilities_1 = require("@/utilities");
+const utilities_1 = require("../utilities");
+const get_1 = __importDefault(require("lodash/get"));
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractTzRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource) {
@@ -178,4 +182,77 @@ class TzCrudRepository extends AbstractTzRepository {
     }
 }
 exports.TzCrudRepository = TzCrudRepository;
+// ----------------------------------------------------------------------------------------------------------------------------------------
+class TextSearchTzCrudRepository extends TzCrudRepository {
+    constructor(entityClass, dataSource) {
+        super(entityClass, dataSource);
+    }
+    existsWith(where, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rs = yield this.findOne({ where }, options);
+            return rs !== null && rs !== undefined;
+        });
+    }
+    create(data, options) {
+        const enriched = this.mixTextSearch(data, options);
+        return super.create(enriched, options);
+    }
+    createAll(datum, options) {
+        const enriched = datum.map(data => {
+            return this.mixTextSearch(data, options);
+        });
+        return super.createAll(enriched, options);
+    }
+    createWithReturn(data, options) {
+        const _super = Object.create(null, {
+            findById: { get: () => super.findById }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            const saved = yield this.create(data, options);
+            return _super.findById.call(this, saved.id);
+        });
+    }
+    updateById(id, data, options) {
+        const enriched = this.mixTextSearch(data, options);
+        return super.updateById(id, enriched, options);
+    }
+    updateWithReturn(id, data, options) {
+        const _super = Object.create(null, {
+            findById: { get: () => super.findById }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.updateById(id, data, options);
+            return _super.findById.call(this, id);
+        });
+    }
+    updateAll(data, where, options) {
+        const enriched = this.mixTextSearch(data, options);
+        return super.updateAll(enriched, where, options);
+    }
+    upsertWith(data, where) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const isExisted = yield this.existsWith(where);
+            if (isExisted) {
+                yield this.updateAll(data, where);
+                const rs = yield this.findOne({ where });
+                return rs;
+            }
+            return this.create(data);
+        });
+    }
+    replaceById(id, data, options) {
+        const enriched = this.mixTextSearch(data, options);
+        return super.replaceById(id, enriched, options);
+    }
+    mixTextSearch(entity, options) {
+        const moreData = (0, get_1.default)(options, 'moreData');
+        const ignoreUpdate = (0, get_1.default)(options, 'ignoreUpdate');
+        if (ignoreUpdate) {
+            return entity;
+        }
+        entity.textSearch = this.renderTextSearch(entity, moreData);
+        return entity;
+    }
+}
+exports.TextSearchTzCrudRepository = TextSearchTzCrudRepository;
 //# sourceMappingURL=base.repository.js.map
