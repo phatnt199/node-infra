@@ -28,7 +28,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     return {
       subject: subject?.toLowerCase() || '',
       object: (object?.toLowerCase() || '')?.replace(/controller/g, ''),
-      action: action?.toLowerCase() || EnforcerDefinitions.DEFAULT_AUTHORIZATION_SCOPE,
+      action: action?.toLowerCase() || EnforcerDefinitions.ACTION_EXECUTE,
     };
   }
 
@@ -52,6 +52,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
 
       const subject = `${EnforcerDefinitions.PREFIX_ROLE}_${roleParts[0]}`;
       const enforcePayload = this.normalizeEnforcePayload(subject, object, action);
+      console.log(enforcePayload);
       rs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
 
       if (rs) {
@@ -108,7 +109,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     const roleRs = await this.authorizeRolePermission(
       userRoles,
       resourceId ?? resource ?? context.resource,
-      scopes?.[0] ?? EnforcerDefinitions.DEFAULT_AUTHORIZATION_SCOPE,
+      scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
     );
 
     if (roleRs) {
@@ -119,7 +120,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     const userRs = await this.authorizeUserPermission(
       userId,
       resourceId ?? resource ?? context.resource,
-      scopes?.[0] ?? EnforcerDefinitions.DEFAULT_AUTHORIZATION_SCOPE,
+      scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
     );
 
     return userRs ? AuthorizationDecision.ALLOW : AuthorizationDecision.DENY;

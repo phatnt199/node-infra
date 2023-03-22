@@ -4,7 +4,9 @@ import { BaseDataSource } from '@/base/base.datasource';
 import { ApplicationLogger, LoggerFactory } from './logger.helper';
 
 export class EnforcerDefinitions {
-  static readonly DEFAULT_AUTHORIZATION_SCOPE = 'execute';
+  static readonly ACTION_EXECUTE = 'execute';
+  static readonly ACTION_READ = 'read';
+  static readonly ACTION_WRITE = 'write';
   static readonly PREFIX_USER = 'user';
   static readonly PTYPE_USER = 'p';
   static readonly PREFIX_ROLE = 'role';
@@ -53,7 +55,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
     const permissionMapping = await this.datasource.execute(
       `SELECT id, user_id, role_id, permission_id FROM public."PermissionMapping" WHERE permission_id = ${permissionId}`,
     );
-    rs = [...rs, permission.code, EnforcerDefinitions.DEFAULT_AUTHORIZATION_SCOPE, permissionMapping.effect];
+    rs = [...rs, permission.code, EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
     return rs.join(',');
   }
 

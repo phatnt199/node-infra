@@ -19,7 +19,9 @@ const logger_helper_1 = require("./logger.helper");
 class EnforcerDefinitions {
 }
 exports.EnforcerDefinitions = EnforcerDefinitions;
-EnforcerDefinitions.DEFAULT_AUTHORIZATION_SCOPE = 'execute';
+EnforcerDefinitions.ACTION_EXECUTE = 'execute';
+EnforcerDefinitions.ACTION_READ = 'read';
+EnforcerDefinitions.ACTION_WRITE = 'write';
 EnforcerDefinitions.PREFIX_USER = 'user';
 EnforcerDefinitions.PTYPE_USER = 'p';
 EnforcerDefinitions.PREFIX_ROLE = 'role';
@@ -52,7 +54,7 @@ class CasbinLBAdapter {
             }
             const permission = yield this.datasource.execute(`SELECT id, code, name, FROM public."Permission" WHERE id = ${permissionId} `);
             const permissionMapping = yield this.datasource.execute(`SELECT id, user_id, role_id, permission_id FROM public."PermissionMapping" WHERE permission_id = ${permissionId}`);
-            rs = [...rs, permission.code, EnforcerDefinitions.DEFAULT_AUTHORIZATION_SCOPE, permissionMapping.effect];
+            rs = [...rs, permission.code, EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
             return rs.join(',');
         });
     }

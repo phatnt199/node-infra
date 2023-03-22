@@ -46,7 +46,7 @@ let AuthorizeProvider = class AuthorizeProvider {
         return {
             subject: (subject === null || subject === void 0 ? void 0 : subject.toLowerCase()) || '',
             object: (_a = ((object === null || object === void 0 ? void 0 : object.toLowerCase()) || '')) === null || _a === void 0 ? void 0 : _a.replace(/controller/g, ''),
-            action: (action === null || action === void 0 ? void 0 : action.toLowerCase()) || helpers_1.EnforcerDefinitions.DEFAULT_AUTHORIZATION_SCOPE,
+            action: (action === null || action === void 0 ? void 0 : action.toLowerCase()) || helpers_1.EnforcerDefinitions.ACTION_EXECUTE,
         };
     }
     // -------------------------------------------------------------------------------------------------------------------
@@ -67,6 +67,7 @@ let AuthorizeProvider = class AuthorizeProvider {
                 }
                 const subject = `${helpers_1.EnforcerDefinitions.PREFIX_ROLE}_${roleParts[0]}`;
                 const enforcePayload = this.normalizeEnforcePayload(subject, object, action);
+                console.log(enforcePayload);
                 rs = yield enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
                 if (rs) {
                     break;
@@ -113,12 +114,12 @@ let AuthorizeProvider = class AuthorizeProvider {
                 return authorization_1.AuthorizationDecision.ALLOW;
             }
             // Authorize with role permissions
-            const roleRs = yield this.authorizeRolePermission(userRoles, (_b = resourceId !== null && resourceId !== void 0 ? resourceId : resource) !== null && _b !== void 0 ? _b : context.resource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : helpers_1.EnforcerDefinitions.DEFAULT_AUTHORIZATION_SCOPE);
+            const roleRs = yield this.authorizeRolePermission(userRoles, (_b = resourceId !== null && resourceId !== void 0 ? resourceId : resource) !== null && _b !== void 0 ? _b : context.resource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
             if (roleRs) {
                 return authorization_1.AuthorizationDecision.ALLOW;
             }
             // Authorize with user permissions
-            const userRs = yield this.authorizeUserPermission(userId, (_d = resourceId !== null && resourceId !== void 0 ? resourceId : resource) !== null && _d !== void 0 ? _d : context.resource, (_e = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _e !== void 0 ? _e : helpers_1.EnforcerDefinitions.DEFAULT_AUTHORIZATION_SCOPE);
+            const userRs = yield this.authorizeUserPermission(userId, (_d = resourceId !== null && resourceId !== void 0 ? resourceId : resource) !== null && _d !== void 0 ? _d : context.resource, (_e = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _e !== void 0 ? _e : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
             return userRs ? authorization_1.AuthorizationDecision.ALLOW : authorization_1.AuthorizationDecision.DENY;
         });
     }
