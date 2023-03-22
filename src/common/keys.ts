@@ -6,7 +6,7 @@ export class AuthorizerKeys {
   static readonly PERMISSION_MODEL = '@app/authorize/component/models/permission';
   static readonly PERMISSION_MAPPING_MODEL = '@app/authorize/component/models/permission_mapping';
   static readonly USER_ROLE_MODEL = '@app/authorize/component/models/user_role';
-  
+
   // -----------------------------------------------------------------------------
   static readonly ROLE_REPOSITORY = '@app/authorize/component/repositories/user';
   static readonly PERMISSION_REPOSITORY = '@app/authorize/component/repositories/permission';
@@ -19,3 +19,4 @@ export class AuthorizerKeys {
   static readonly ADAPTER_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
   static readonly CONFIGURE_PATH = '@app/authorize/configure_path';
 }
+

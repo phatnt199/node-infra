@@ -140,7 +140,7 @@ export declare const defineUserRole: () => {
     new (data?: Partial<{
         userId: number;
         principalType?: string | undefined;
-        principalId?: import("../../common").IdType | undefined;
+        principalId?: import("@/common").IdType | undefined;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
@@ -151,7 +151,7 @@ export declare const defineUserRole: () => {
     }> | undefined): {
         userId: number;
         principalType?: string | undefined;
-        principalId?: import("../../common").IdType | undefined;
+        principalId?: import("@/common").IdType | undefined;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;

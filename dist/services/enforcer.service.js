@@ -29,8 +29,8 @@ exports.EnforcerService = void 0;
 const casbin_1 = require("casbin");
 const fs_1 = __importDefault(require("fs"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
-const utilities_1 = require("../utilities");
-const common_1 = require("../common");
+const utilities_1 = require("@/utilities");
+const common_1 = require("@/common");
 const __1 = require("..");
 const core_1 = require("@loopback/core");
 let EnforcerService = EnforcerService_1 = class EnforcerService {

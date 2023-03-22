@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseComponent = void 0;
-const helpers_1 = require("../helpers");
+const helpers_1 = require("@/helpers");
 class BaseComponent {
     constructor(opts) {
         var _a;

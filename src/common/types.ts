@@ -48,11 +48,8 @@ export interface IPersistableRepository<E extends BaseIdEntity> {
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepository<E> {
   mixTimestamp(entity: DataObject<E>, options?: { newInstance: boolean }): DataObject<E>;
-}
-
-// ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IUserAuditRepository<E extends BaseTzEntity> extends IPersistableRepository<E> {
   mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean; authorId: IdType }): DataObject<E>;
+  mixTextSearch(entity: DataObject<E>, options?: { moreData: any; ignoreUpdate: boolean }): DataObject<E>;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------

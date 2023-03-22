@@ -3,8 +3,8 @@ import { CrudRestControllerOptions } from '@loopback/rest-crud';
 import { Count, Filter, FilterExcludingWhere, Where } from '@loopback/repository';
 import { SchemaObject } from '@loopback/rest';
 import { BaseIdEntity, BaseTzEntity, AbstractTzRepository } from './';
-import { EntityRelation, IController, IdType, NullableType, TRelationType } from '../common/types';
-import { ApplicationLogger } from '../helpers';
+import { EntityRelation, IController, IdType, NullableType, TRelationType } from '@/common/types';
+import { ApplicationLogger } from '@/helpers';
 import { Class } from '@loopback/service-proxy';
 export declare class BaseController implements IController {
     protected logger: ApplicationLogger;

@@ -1,11 +1,19 @@
 import { Count, DataObject, DefaultCrudRepository, juggler, Options, Where } from '@loopback/repository';
-import { EntityClassType, EntityRelation, IdType, ITzRepository, IUserAuditRepository } from '../common/types';
-import { BaseEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
+import { EntityClassType, EntityRelation, IdType, ITzRepository } from '@/common/types';
+import { BaseEntity, BaseTzEntity } from './base.model';
 export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation> extends DefaultCrudRepository<E, IdType, R> implements ITzRepository<E> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
     abstract mixTimestamp(entity: DataObject<E>, options?: {
         newInstance: boolean;
-    } | undefined): DataObject<E>;
+    }): DataObject<E>;
+    abstract mixUserAudit(entity: DataObject<E>, options?: {
+        newInstance: boolean;
+        authorId: IdType;
+    }): DataObject<E>;
+    abstract mixTextSearch(entity: DataObject<E>, options?: {
+        moreData: any;
+        ignoreUpdate: boolean;
+    }): DataObject<E>;
     abstract existsWith(where?: Where<any>, options?: any): Promise<boolean>;
     abstract createWithReturn(data: DataObject<E>, options?: any): Promise<E>;
     abstract updateWithReturn(id: IdType, data: DataObject<E>, options?: any): Promise<E>;
@@ -39,17 +47,6 @@ export declare abstract class TzCrudRepository<E extends BaseTzEntity> extends A
     mixTimestamp(entity: DataObject<E>, options?: {
         newInstance: boolean;
     }): DataObject<E>;
-}
-export declare abstract class UserAuditCrudRepository<E extends BaseUserAuditTzEntity> extends TzCrudRepository<E> implements IUserAuditRepository<E> {
-    constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
-    create(data: DataObject<E>, options?: Options): Promise<E>;
-    createAll(datum: DataObject<E>[], options?: Options): Promise<E[]>;
-    createWithReturn(data: DataObject<E>, options?: Options): Promise<E>;
-    updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
-    updateWithReturn(id: IdType, data: DataObject<E>, options?: Options): Promise<E>;
-    updateAll(data: DataObject<E>, where?: Where<any>, options?: Options): Promise<Count>;
-    upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
-    replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
     mixUserAudit(entity: DataObject<E>, options?: {
         newInstance: boolean;
         authorId: IdType;

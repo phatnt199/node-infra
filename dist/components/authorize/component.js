@@ -13,15 +13,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizeComponent = void 0;
-const base_component_1 = require("../../base/base.component");
+const base_component_1 = require("@/base/base.component");
 const core_1 = require("@loopback/core");
-const base_application_1 = require("../../base/base.application");
-const authorize_1 = require("../../models/authorize");
+const base_application_1 = require("@/base/base.application");
+const authorize_1 = require("@/models/authorize");
 const authorization_1 = require("@loopback/authorization");
 const provider_1 = require("./provider");
-const services_1 = require("../../services");
-const common_1 = require("../../common");
-const repositories_1 = require("../../repositories");
+const services_1 = require("@/services");
+const common_1 = require("@/common");
+const repositories_1 = require("@/repositories");
 let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthorizeComponent.name });
@@ -48,6 +48,10 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
         this.application.model(authorize_1.Permission);
         this.application.model(authorize_1.PermissionMapping);
         this.application.model(authorize_1.UserRole);
+        this.application.models.add(authorize_1.Role.name);
+        this.application.models.add(authorize_1.Permission.name);
+        this.application.models.add(authorize_1.PermissionMapping.name);
+        this.application.models.add(authorize_1.UserRole.name);
     }
     defineRepositories() {
         this.application.repository(repositories_1.RoleRepository);

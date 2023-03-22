@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserAuditCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.AbstractTzRepository = void 0;
+exports.TzCrudRepository = exports.ViewRepository = exports.AbstractTzRepository = void 0;
 const repository_1 = require("@loopback/repository");
-const utilities_1 = require("../utilities");
+const utilities_1 = require("@/utilities");
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractTzRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource) {
@@ -104,12 +104,14 @@ class TzCrudRepository extends AbstractTzRepository {
         });
     }
     create(data, options) {
-        const enriched = this.mixTimestamp(data, { newInstance: true });
+        let enriched = this.mixTimestamp(data, { newInstance: true });
+        enriched = this.mixUserAudit(enriched, { newInstance: true, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         return super.create(enriched, options);
     }
     createAll(datum, options) {
         const enriched = datum.map(data => {
-            return this.mixTimestamp(data, { newInstance: true });
+            const tmp = this.mixTimestamp(data, { newInstance: true });
+            return this.mixUserAudit(tmp, { newInstance: true, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         });
         return super.createAll(enriched, options);
     }
@@ -123,7 +125,8 @@ class TzCrudRepository extends AbstractTzRepository {
         });
     }
     updateById(id, data, options) {
-        const enriched = this.mixTimestamp(data, { newInstance: false });
+        let enriched = this.mixTimestamp(data, { newInstance: false });
+        enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         return super.updateById(id, enriched, options);
     }
     updateWithReturn(id, data, options) {
@@ -136,7 +139,8 @@ class TzCrudRepository extends AbstractTzRepository {
         });
     }
     updateAll(data, where, options) {
-        const enriched = this.mixTimestamp(data, { newInstance: false });
+        let enriched = this.mixTimestamp(data, { newInstance: false });
+        enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         return super.updateAll(enriched, where, options);
     }
     upsertWith(data, where) {
@@ -151,7 +155,8 @@ class TzCrudRepository extends AbstractTzRepository {
         });
     }
     replaceById(id, data, options) {
-        const enriched = this.mixTimestamp(data, { newInstance: false });
+        let enriched = this.mixTimestamp(data, { newInstance: false });
+        enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         return super.replaceById(id, enriched, options);
     }
     mixTimestamp(entity, options = { newInstance: false }) {
@@ -160,64 +165,6 @@ class TzCrudRepository extends AbstractTzRepository {
         }
         entity.modifiedAt = new Date();
         return entity;
-    }
-}
-exports.TzCrudRepository = TzCrudRepository;
-// ----------------------------------------------------------------------------------------------------------------------------------------
-class UserAuditCrudRepository extends TzCrudRepository {
-    constructor(entityClass, dataSource) {
-        super(entityClass, dataSource);
-    }
-    create(data, options) {
-        const enriched = this.mixUserAudit(data, { newInstance: true, authorId: options === null || options === void 0 ? void 0 : options.authorId });
-        return super.create(enriched, options);
-    }
-    createAll(datum, options) {
-        const enriched = datum.map(data => {
-            return this.mixUserAudit(data, { newInstance: true, authorId: options === null || options === void 0 ? void 0 : options.authorId });
-        });
-        return super.createAll(enriched, options);
-    }
-    createWithReturn(data, options) {
-        const _super = Object.create(null, {
-            findById: { get: () => super.findById }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            const saved = yield this.create(data, options);
-            return _super.findById.call(this, saved.id);
-        });
-    }
-    updateById(id, data, options) {
-        const enriched = this.mixUserAudit(data, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
-        return super.updateById(id, enriched, options);
-    }
-    updateWithReturn(id, data, options) {
-        const _super = Object.create(null, {
-            findById: { get: () => super.findById }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.updateById(id, data, options);
-            return _super.findById.call(this, id);
-        });
-    }
-    updateAll(data, where, options) {
-        const enriched = this.mixUserAudit(data, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
-        return super.updateAll(enriched, where, options);
-    }
-    upsertWith(data, where) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const isExisted = yield this.existsWith(where);
-            if (isExisted) {
-                yield this.updateAll(data, where);
-                const rs = yield this.findOne({ where });
-                return rs;
-            }
-            return this.create(data);
-        });
-    }
-    replaceById(id, data, options) {
-        const enriched = this.mixUserAudit(data, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
-        return super.replaceById(id, enriched, options);
     }
     mixUserAudit(entity, options) {
         if (!(options === null || options === void 0 ? void 0 : options.authorId)) {
@@ -230,5 +177,5 @@ class UserAuditCrudRepository extends TzCrudRepository {
         return entity;
     }
 }
-exports.UserAuditCrudRepository = UserAuditCrudRepository;
+exports.TzCrudRepository = TzCrudRepository;
 //# sourceMappingURL=base.repository.js.map

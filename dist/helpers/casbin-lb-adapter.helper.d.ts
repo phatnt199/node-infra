@@ -1,5 +1,5 @@
 import { FilteredAdapter, Model } from 'casbin';
-import { BaseDataSource } from '../base/base.datasource';
+import { BaseDataSource } from '@/base/base.datasource';
 export declare class EnforcerDefinitions {
     static readonly ACTION_EXECUTE = "execute";
     static readonly ACTION_READ = "read";
