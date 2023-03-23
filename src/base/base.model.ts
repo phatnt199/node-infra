@@ -1,8 +1,8 @@
 import { Entity, property } from '@loopback/repository';
-import { DataTypeMixin, TextSearchMixin, UserAuditMixin } from '@/mixins';
+import { DataTypeMixin, TextSearchMixin, TzMixin, UserAuditMixin } from '@/mixins';
 
 // ---------------------------------------------------------------------
-export class BaseEntity extends Entity {}
+export class BaseEntity extends Entity { }
 
 // ---------------------------------------------------------------------
 export class BaseIdEntity extends BaseEntity {
@@ -23,45 +23,16 @@ export class BaseStringIdEntity extends BaseEntity {
 }
 
 // ---------------------------------------------------------------------
-export class BaseTzEntity extends BaseEntity {
-  @property({ type: 'number', id: true, generated: true })
-  id: number;
-
-  @property({
-    type: 'date',
-    defaultFn: 'now',
-    postgresql: {
-      columnName: 'created_at',
-      dataType: 'TIMESTAMPTZ',
-    },
-    hidden: true,
-  })
-  createdAt: Date;
-
-  @property({
-    type: 'date',
-    defaultFn: 'now',
-    postgresql: {
-      columnName: 'modified_at',
-      dataType: 'TIMESTAMPTZ',
-    },
-    hidden: true,
-  })
-  modifiedAt: Date;
-
-  constructor(data?: Partial<BaseTzEntity>) {
-    super(data);
-  }
-}
+export class BaseTzEntity extends TzMixin(BaseIdEntity) { }
 
 // ---------------------------------------------------------------------
-export class BaseUserAuditTzEntity extends UserAuditMixin(BaseTzEntity) {}
+export class BaseUserAuditTzEntity extends UserAuditMixin(BaseTzEntity) { }
 
 // ---------------------------------------------------------------------
-export class BaseDataTypeTzEntity extends DataTypeMixin(BaseTzEntity) {}
+export class BaseDataTypeTzEntity extends DataTypeMixin(BaseTzEntity) { }
 
 // ---------------------------------------------------------------------
-export class BaseTextSearchTzEntity extends TextSearchMixin(BaseTzEntity) {}
+export class BaseTextSearchTzEntity extends TextSearchMixin(BaseTzEntity) { }
 
 // ---------------------------------------------------------------------
 export class ApplicationError extends Error {

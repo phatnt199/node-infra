@@ -10,11 +10,17 @@ export declare class BaseNumberIdEntity extends BaseEntity {
 export declare class BaseStringIdEntity extends BaseEntity {
     id: string;
 }
-export declare class BaseTzEntity extends BaseEntity {
-    id: number;
-    createdAt: Date;
-    modifiedAt: Date;
-    constructor(data?: Partial<BaseTzEntity>);
+declare const BaseTzEntity_base: {
+    new (...args: any[]): {
+        createdAt: Date;
+        modifiedAt: Date;
+        getId: () => any;
+        getIdObject: () => Object;
+        toJSON: () => Object;
+        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+    };
+} & typeof BaseIdEntity;
+export declare class BaseTzEntity extends BaseTzEntity_base {
 }
 declare const BaseUserAuditTzEntity_base: {
     new (...args: any[]): {

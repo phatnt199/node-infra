@@ -7,9 +7,9 @@ declare const BaseUserRole: {
         getIdObject: () => Object;
         toJSON: () => Object;
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
-        id: number;
         createdAt: Date;
         modifiedAt: Date;
+        id: number;
     }> | undefined): {
         userId: number;
         principalType?: string | undefined;
@@ -18,9 +18,9 @@ declare const BaseUserRole: {
         getIdObject: () => Object;
         toJSON: () => Object;
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
-        id: number;
         createdAt: Date;
         modifiedAt: Date;
+        id: number;
     };
     getIdProperties(): string[];
     getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;

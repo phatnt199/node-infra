@@ -41,39 +41,8 @@ __decorate([
 ], BaseStringIdEntity.prototype, "id", void 0);
 exports.BaseStringIdEntity = BaseStringIdEntity;
 // ---------------------------------------------------------------------
-class BaseTzEntity extends BaseEntity {
-    constructor(data) {
-        super(data);
-    }
+class BaseTzEntity extends (0, mixins_1.TzMixin)(BaseIdEntity) {
 }
-__decorate([
-    (0, repository_1.property)({ type: 'number', id: true, generated: true }),
-    __metadata("design:type", Number)
-], BaseTzEntity.prototype, "id", void 0);
-__decorate([
-    (0, repository_1.property)({
-        type: 'date',
-        defaultFn: 'now',
-        postgresql: {
-            columnName: 'created_at',
-            dataType: 'TIMESTAMPTZ',
-        },
-        hidden: true,
-    }),
-    __metadata("design:type", Date)
-], BaseTzEntity.prototype, "createdAt", void 0);
-__decorate([
-    (0, repository_1.property)({
-        type: 'date',
-        defaultFn: 'now',
-        postgresql: {
-            columnName: 'modified_at',
-            dataType: 'TIMESTAMPTZ',
-        },
-        hidden: true,
-    }),
-    __metadata("design:type", Date)
-], BaseTzEntity.prototype, "modifiedAt", void 0);
 exports.BaseTzEntity = BaseTzEntity;
 // ---------------------------------------------------------------------
 class BaseUserAuditTzEntity extends (0, mixins_1.UserAuditMixin)(BaseTzEntity) {

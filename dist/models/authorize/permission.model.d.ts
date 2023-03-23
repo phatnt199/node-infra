@@ -6,13 +6,13 @@ declare const BasePermission: {
         pType: string;
         action: string;
         parentId: number;
-        id: number;
         createdAt: Date;
         modifiedAt: Date;
-        getId(): any;
-        getIdObject(): Object;
-        toJSON(): Object;
-        toObject(options?: import("@loopback/repository").AnyObject | undefined): Object;
+        getId: () => any;
+        getIdObject: () => Object;
+        toJSON: () => Object;
+        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        id: number;
     }> | undefined): {
         code: string;
         name: string;
@@ -20,13 +20,13 @@ declare const BasePermission: {
         pType: string;
         action: string;
         parentId: number;
-        id: number;
         createdAt: Date;
         modifiedAt: Date;
-        getId(): any;
-        getIdObject(): Object;
-        toJSON(): Object;
-        toObject(options?: import("@loopback/repository").AnyObject | undefined): Object;
+        getId: () => any;
+        getIdObject: () => Object;
+        toJSON: () => Object;
+        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        id: number;
     };
     getIdProperties(): string[];
     getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
