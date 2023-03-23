@@ -16,7 +16,7 @@ const migration = (application, migrationProcesses) => __awaiter(void 0, void 0,
     helpers_1.applicationLogger.info('START | Migrate database');
     const migrationRepository = application.getSync('repositories.MigrationRepository');
     for (const mirgation of migrationProcesses) {
-        const { name, fn } = mirgation;
+        const { name, fn, options } = mirgation;
         if (!name || !fn) {
             continue;
         }
@@ -26,7 +26,7 @@ const migration = (application, migrationProcesses) => __awaiter(void 0, void 0,
             migrated = yield migrationRepository.findOne({
                 where: { name },
             });
-            if (migrated && migrated.status === common_1.MigrationStatuses.SUCCESS) {
+            if (!(options === null || options === void 0 ? void 0 : options.alwaysRun) && migrated && migrated.status === common_1.MigrationStatuses.SUCCESS) {
                 migrateStatus = migrated.status;
                 helpers_1.applicationLogger.info('[%s] SKIP | Migrate process', name);
                 continue;
