@@ -44,6 +44,7 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
             if (this.enforcer) {
                 return this.enforcer;
             }
+            console.log({ confPath: this.confPath });
             if (!this.confPath || (0, isEmpty_1.default)(this.confPath)) {
                 throw (0, utilities_1.getError)({
                     statusCode: 500,

@@ -25,6 +25,7 @@ export class EnforcerService {
       return this.enforcer;
     }
 
+    console.log({ confPath: this.confPath });
     if (!this.confPath || isEmpty(this.confPath)) {
       throw getError({
         statusCode: 500,
