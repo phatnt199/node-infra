@@ -87,7 +87,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
 
     const { userId, roles: userRoles } = context.principals[0];
 
-    console.log('Context: ', context);
+    console.log('Context: ', context, metadata);
     console.log('Principals: ', context.principals);
 
     // DENY all unknown user and unknow roles
