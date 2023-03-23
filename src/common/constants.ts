@@ -18,6 +18,12 @@ export class ApplicationRoles {
   static readonly API = 'api';
 }
 
+export class FixedUserRoles {
+  static readonly SUPER_ADMIN = '999-super-admin';
+  static readonly ADMIN = '998-admin';
+  static readonly FULL_AUTHORIZE_ROLES = [this.SUPER_ADMIN, this.ADMIN];
+}
+
 export class ResultCodes {
   static readonly RS_FAIL = 0;
   static readonly RS_SUCCESS = 1;

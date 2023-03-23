@@ -1,8 +1,8 @@
 "use strict";
 var _a;
-var _b, _c;
+var _b, _c, _d;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.ApplicationRoles = exports.Formatters = exports.App = void 0;
+exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.FixedUserRoles = exports.ApplicationRoles = exports.Formatters = exports.App = void 0;
 class App {
 }
 exports.App = App;
@@ -23,6 +23,13 @@ class ApplicationRoles {
 }
 exports.ApplicationRoles = ApplicationRoles;
 ApplicationRoles.API = 'api';
+class FixedUserRoles {
+}
+exports.FixedUserRoles = FixedUserRoles;
+_b = FixedUserRoles;
+FixedUserRoles.SUPER_ADMIN = '999-super-admin';
+FixedUserRoles.ADMIN = '998-admin';
+FixedUserRoles.FULL_AUTHORIZE_ROLES = [_b.SUPER_ADMIN, _b.ADMIN];
 class ResultCodes {
 }
 exports.ResultCodes = ResultCodes;
@@ -46,22 +53,22 @@ class EntityRelations {
     }
 }
 exports.EntityRelations = EntityRelations;
-_b = EntityRelations;
+_c = EntityRelations;
 EntityRelations.BELONGS_TO = 'belongsTo';
 EntityRelations.HAS_ONE = 'hasOne';
 EntityRelations.HAS_MANY = 'hasMany';
 EntityRelations.HAS_MANY_THROUGH = 'hasManyThrough';
-EntityRelations.TYPE_SET = new Set([_b.BELONGS_TO, _b.HAS_ONE, _b.HAS_MANY, _b.HAS_MANY_THROUGH]);
+EntityRelations.TYPE_SET = new Set([_c.BELONGS_TO, _c.HAS_ONE, _c.HAS_MANY, _c.HAS_MANY_THROUGH]);
 class UserTypes {
     static isValid(orgType) {
         return this.TYPE_SET.has(orgType);
     }
 }
 exports.UserTypes = UserTypes;
-_c = UserTypes;
+_d = UserTypes;
 UserTypes.SYSTEM = 'SYSTEM';
 UserTypes.LINKED = 'LINKED';
-UserTypes.TYPE_SET = new Set([_c.SYSTEM, _c.LINKED]);
+UserTypes.TYPE_SET = new Set([_d.SYSTEM, _d.LINKED]);
 class AccountTypes extends UserTypes {
 }
 exports.AccountTypes = AccountTypes;

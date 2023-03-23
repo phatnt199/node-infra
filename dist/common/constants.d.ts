@@ -15,6 +15,11 @@ export declare class Formatters {
 export declare class ApplicationRoles {
     static readonly API = "api";
 }
+export declare class FixedUserRoles {
+    static readonly SUPER_ADMIN = "999-super-admin";
+    static readonly ADMIN = "998-admin";
+    static readonly FULL_AUTHORIZE_ROLES: string[];
+}
 export declare class ResultCodes {
     static readonly RS_FAIL = 0;
     static readonly RS_SUCCESS = 1;

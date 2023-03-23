@@ -93,36 +93,35 @@ let AuthorizeProvider = class AuthorizeProvider {
     }
     // -------------------------------------------------------------------------------------------------------------------
     authorize(context, metadata) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function* () {
             if ((context === null || context === void 0 ? void 0 : context.principals.length) <= 0) {
                 return authorization_1.AuthorizationDecision.DENY;
             }
-            const { userId, roles: userRoles } = context.principals[0];
-            console.log('Context: ', context, metadata);
-            console.log('Principals: ', context.principals);
+            const { userId, roles } = context.principals[0];
             // DENY all unknown user and unknow roles
-            if (!userId || !userRoles) {
+            if (!userId || !(roles === null || roles === void 0 ? void 0 : roles.length)) {
                 return authorization_1.AuthorizationDecision.DENY;
             }
             // ALLOW SUPER_ADMIN and ADMIN roles
-            /* if (userRoles.includes(FixedUserRoles.SUPER_ADMIN) || userRoles.includes(FixedUserRoles.ADMIN)) {
-              return AuthorizationDecision.ALLOW;
-            } */
+            if (((_a = (0, intersection_1.default)(common_1.FixedUserRoles.FULL_AUTHORIZE_ROLES, roles)) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+                return authorization_1.AuthorizationDecision.ALLOW;
+            }
             const resourceId = yield context.invocationContext.get(RESOURCE_ID, { optional: true });
             const { resource, allowedRoles = [], scopes } = metadata;
+            this.logger.info('[authorize] Authorizing... | ResourceId: %s | Resource: %s | allowedRoles: %j | scopes: %j', resourceId, resource, allowedRoles, scopes);
             // ALLOW pre-defined roles
-            if (((_a = (0, intersection_1.default)(allowedRoles, userRoles)) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+            if (((_b = (0, intersection_1.default)(allowedRoles, roles)) === null || _b === void 0 ? void 0 : _b.length) > 0) {
                 return authorization_1.AuthorizationDecision.ALLOW;
             }
             // Authorize with role permissions
-            const roleRs = yield this.authorizeRolePermission(userRoles, (_b = resourceId !== null && resourceId !== void 0 ? resourceId : resource) !== null && _b !== void 0 ? _b : context.resource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
-            if (roleRs) {
+            const roleAuthorizeDecision = yield this.authorizeRolePermission(roles, (_c = resourceId !== null && resourceId !== void 0 ? resourceId : resource) !== null && _c !== void 0 ? _c : context.resource, (_d = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _d !== void 0 ? _d : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
+            if (roleAuthorizeDecision) {
                 return authorization_1.AuthorizationDecision.ALLOW;
             }
             // Authorize with user permissions
-            const userRs = yield this.authorizeUserPermission(userId, (_d = resourceId !== null && resourceId !== void 0 ? resourceId : resource) !== null && _d !== void 0 ? _d : context.resource, (_e = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _e !== void 0 ? _e : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
-            return userRs ? authorization_1.AuthorizationDecision.ALLOW : authorization_1.AuthorizationDecision.DENY;
+            const userAuthorizeDecision = yield this.authorizeUserPermission(userId, (_e = resourceId !== null && resourceId !== void 0 ? resourceId : resource) !== null && _e !== void 0 ? _e : context.resource, (_f = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _f !== void 0 ? _f : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
+            return userAuthorizeDecision ? authorization_1.AuthorizationDecision.ALLOW : authorization_1.AuthorizationDecision.DENY;
         });
     }
 };

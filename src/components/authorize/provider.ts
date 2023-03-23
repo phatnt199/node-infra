@@ -1,4 +1,4 @@
-import { AuthorizerKeys } from '@/common';
+import { AuthorizerKeys, FixedUserRoles } from '@/common';
 import { ApplicationLogger, EnforcerDefinitions, LoggerFactory } from '@/helpers';
 import { EnforcerService } from '@/services';
 import {
@@ -85,47 +85,51 @@ export class AuthorizeProvider implements Provider<Authorizer> {
       return AuthorizationDecision.DENY;
     }
 
-    const { userId, roles: userRoles } = context.principals[0];
-
-    console.log('Context: ', context, metadata);
-    console.log('Principals: ', context.principals);
+    const { userId, roles } = context.principals[0];
 
     // DENY all unknown user and unknow roles
-    if (!userId || !userRoles) {
+    if (!userId || !roles?.length) {
       return AuthorizationDecision.DENY;
     }
 
     // ALLOW SUPER_ADMIN and ADMIN roles
-    /* if (userRoles.includes(FixedUserRoles.SUPER_ADMIN) || userRoles.includes(FixedUserRoles.ADMIN)) {
+    if (intersection(FixedUserRoles.FULL_AUTHORIZE_ROLES, roles)?.length > 0) {
       return AuthorizationDecision.ALLOW;
-    } */
+    }
 
     const resourceId = await context.invocationContext.get(RESOURCE_ID, { optional: true });
     const { resource, allowedRoles = [], scopes } = metadata;
+    this.logger.info(
+      '[authorize] Authorizing... | ResourceId: %s | Resource: %s | allowedRoles: %j | scopes: %j',
+      resourceId,
+      resource,
+      allowedRoles,
+      scopes,
+    );
 
     // ALLOW pre-defined roles
-    if (intersection(allowedRoles, userRoles)?.length > 0) {
+    if (intersection(allowedRoles, roles)?.length > 0) {
       return AuthorizationDecision.ALLOW;
     }
 
     // Authorize with role permissions
-    const roleRs = await this.authorizeRolePermission(
-      userRoles,
+    const roleAuthorizeDecision = await this.authorizeRolePermission(
+      roles,
       resourceId ?? resource ?? context.resource,
       scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
     );
 
-    if (roleRs) {
+    if (roleAuthorizeDecision) {
       return AuthorizationDecision.ALLOW;
     }
 
     // Authorize with user permissions
-    const userRs = await this.authorizeUserPermission(
+    const userAuthorizeDecision = await this.authorizeUserPermission(
       userId,
       resourceId ?? resource ?? context.resource,
       scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
     );
 
-    return userRs ? AuthorizationDecision.ALLOW : AuthorizationDecision.DENY;
+    return userAuthorizeDecision ? AuthorizationDecision.ALLOW : AuthorizationDecision.DENY;
   }
 }
