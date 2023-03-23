@@ -53,10 +53,10 @@ export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepos
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IService { }
+export interface IService {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IController { }
+export interface IController {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface EnvironmentValidationResult {
@@ -75,4 +75,5 @@ export interface IError<N extends number = number> extends Error {
 export type MigrationProcess = {
   name: string;
   fn: Function;
+  options?: { alwaysRun?: boolean };
 };

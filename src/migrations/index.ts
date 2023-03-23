@@ -9,7 +9,7 @@ export const migration = async (application: BaseApplication, migrationProcesses
   const migrationRepository = application.getSync<MigrationRepository<Migration>>('repositories.MigrationRepository');
 
   for (const mirgation of migrationProcesses) {
-    const { name, fn } = mirgation;
+    const { name, fn, options } = mirgation;
     if (!name || !fn) {
       continue;
     }
@@ -22,7 +22,7 @@ export const migration = async (application: BaseApplication, migrationProcesses
         where: { name },
       });
 
-      if (migrated && migrated.status === MigrationStatuses.SUCCESS) {
+      if (!options?.alwaysRun && migrated && migrated.status === MigrationStatuses.SUCCESS) {
         migrateStatus = migrated.status;
         logger.info('[%s] SKIP | Migrate process', name);
         continue;
