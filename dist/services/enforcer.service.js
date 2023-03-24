@@ -58,6 +58,7 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
             }
             this.adapter = new __1.CasbinLBAdapter(this.datasource);
             this.enforcer = yield (0, casbin_1.newCachedEnforcer)(this.confPath, this.adapter);
+            yield this.enforcer.loadPolicy();
             return this.enforcer;
         });
     }

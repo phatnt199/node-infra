@@ -41,6 +41,8 @@ export class EnforcerService {
 
     this.adapter = new CasbinLBAdapter(this.datasource);
     this.enforcer = await newCachedEnforcer(this.confPath, this.adapter);
+
+    await this.enforcer.loadPolicy();
     return this.enforcer;
   }
 
