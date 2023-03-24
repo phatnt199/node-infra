@@ -53,6 +53,7 @@ let AuthorizeProvider = class AuthorizeProvider {
     authorizeRolePermission(roles, object, action) {
         return __awaiter(this, void 0, void 0, function* () {
             let rs = false;
+            this.logger.info('[authorizeRolePermission] Roles: %j | Object: %s | Action: %s', roles, object, action);
             for (const role of roles) {
                 const roleParts = role.split('|');
                 if (roleParts.length < 2) {

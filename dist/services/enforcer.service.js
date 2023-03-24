@@ -44,7 +44,6 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
             if (this.enforcer) {
                 return this.enforcer;
             }
-            console.log({ confPath: this.confPath });
             if (!this.confPath || (0, isEmpty_1.default)(this.confPath)) {
                 throw (0, utilities_1.getError)({
                     statusCode: 500,
@@ -59,8 +58,6 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
             }
             this.adapter = new __1.CasbinLBAdapter(this.datasource);
             this.enforcer = yield (0, casbin_1.newCachedEnforcer)(this.confPath, this.adapter);
-            yield this.enforcer.loadPolicy();
-            this.logger.info('[getEnforcer] Loaded all application policies!');
             return this.enforcer;
         });
     }

@@ -105,6 +105,7 @@ class CasbinLBAdapter {
                 return;
             }
             const acls = yield this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`);
+            console.log('[loadFilteredPolicy] Acls: ', JSON.stringify(whereCondition), JSON.stringify(acls));
             if ((acls === null || acls === void 0 ? void 0 : acls.length) <= 0) {
                 return;
             }

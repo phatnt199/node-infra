@@ -36,6 +36,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
   async authorizeRolePermission(roles: string[], object: string, action: string): Promise<boolean> {
     let rs = false;
 
+    this.logger.info('[authorizeRolePermission] Roles: %j | Object: %s | Action: %s', roles, object, action);
     for (const role of roles) {
       const roleParts = role.split('|');
       if (roleParts.length < 2) {

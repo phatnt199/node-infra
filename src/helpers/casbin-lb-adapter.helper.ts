@@ -110,6 +110,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
     }
 
     const acls = await this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`);
+    console.log('[loadFilteredPolicy] Acls: ', JSON.stringify(whereCondition), JSON.stringify(acls));
     if (acls?.length <= 0) {
       return;
     }
@@ -133,6 +134,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
   // -----------------------------------------------------------------------------------------
   async loadPolicy(model: Model): Promise<void> {
     const acls = await this.datasource.execute('SELECT * FROM public."PermissionMapping"');
+
     for (const acl of acls) {
       const policyLine = await this.generatePolicyLine(acl);
       if (!policyLine || isEmpty(policyLine)) {
