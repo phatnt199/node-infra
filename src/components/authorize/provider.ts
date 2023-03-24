@@ -7,10 +7,8 @@ import {
   AuthorizationMetadata,
   Authorizer,
 } from '@loopback/authorization';
-import { BindingKey, inject, Provider } from '@loopback/core';
+import { inject, Provider } from '@loopback/core';
 import intersection from 'lodash/intersection';
-
-const RESOURCE_ID = BindingKey.create<string>('resourceId');
 
 export class AuthorizeProvider implements Provider<Authorizer> {
   private logger: ApplicationLogger;
