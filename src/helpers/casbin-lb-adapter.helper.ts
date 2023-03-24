@@ -110,7 +110,9 @@ export class CasbinLBAdapter implements FilteredAdapter {
       return;
     }
 
-    const acls = await this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`);
+    const sql = `SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`;
+    console.log('Executing: ', sql);
+    const acls = await this.datasource.execute(sql);
     console.log('[loadFilteredPolicy] Acls: ', JSON.stringify(whereCondition), JSON.stringify(acls));
     if (acls?.length <= 0) {
       return;

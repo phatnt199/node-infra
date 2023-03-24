@@ -98,11 +98,9 @@ export class AuthorizeProvider implements Provider<Authorizer> {
       return AuthorizationDecision.ALLOW;
     }
 
-    const resourceId = await context.invocationContext.get(RESOURCE_ID, { optional: true });
     const { resource, allowedRoles = [], scopes } = metadata;
     this.logger.info(
-      '[authorize] Authorizing... | ResourceId: %s | Resource: %s | allowedRoles: %j | scopes: %j',
-      resourceId,
+      '[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j',
       resource,
       allowedRoles,
       scopes,
@@ -116,7 +114,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     // Authorize with role permissions
     const roleAuthorizeDecision = await this.authorizeRolePermission(
       roles,
-      resourceId ?? resource ?? context.resource,
+      context.resource,
       scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
     );
 
@@ -127,7 +125,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     // Authorize with user permissions
     const userAuthorizeDecision = await this.authorizeUserPermission(
       userId,
-      resourceId ?? resource ?? context.resource,
+      resource ?? context.resource,
       scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
     );
 
