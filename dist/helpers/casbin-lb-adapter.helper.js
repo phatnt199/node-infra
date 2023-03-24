@@ -34,6 +34,7 @@ class CasbinLBAdapter {
     }
     // -----------------------------------------------------------------------------------------
     getRule(opts) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const { id, permissionId, pType } = opts;
             let rs = [];
@@ -55,7 +56,7 @@ class CasbinLBAdapter {
             }
             const permission = yield this.datasource.execute(`SELECT id, code, name, FROM public."Permission" WHERE id = ${permissionId} `);
             const permissionMapping = yield this.datasource.execute(`SELECT id, user_id, role_id, permission_id FROM public."PermissionMapping" WHERE permission_id = ${permissionId}`);
-            rs = [...rs, permission.code, EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
+            rs = [...rs, (_a = permission.code) === null || _a === void 0 ? void 0 : _a.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
             return rs.join(',');
         });
     }

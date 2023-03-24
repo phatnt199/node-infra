@@ -56,7 +56,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
     const permissionMapping = await this.datasource.execute(
       `SELECT id, user_id, role_id, permission_id FROM public."PermissionMapping" WHERE permission_id = ${permissionId}`,
     );
-    rs = [...rs, permission.code, EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
+    rs = [...rs, permission.code?.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
     return rs.join(',');
   }
 
