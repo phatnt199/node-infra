@@ -42,10 +42,10 @@ let AuthorizeProvider = class AuthorizeProvider {
     }
     // -------------------------------------------------------------------------------------------------------------------
     normalizeEnforcePayload(subject, object, action) {
-        var _a;
+        var _a, _b;
         return {
             subject: (subject === null || subject === void 0 ? void 0 : subject.toLowerCase()) || '',
-            object: (_a = ((object === null || object === void 0 ? void 0 : object.toLowerCase()) || '')) === null || _a === void 0 ? void 0 : _a.replace(/controller/g, ''),
+            object: (_b = (_a = ((object === null || object === void 0 ? void 0 : object.toLowerCase()) || '')) === null || _a === void 0 ? void 0 : _a.replace(/controller/g, '')) === null || _b === void 0 ? void 0 : _b.replace(/.prototype/g, ''),
             action: (action === null || action === void 0 ? void 0 : action.toLowerCase()) || helpers_1.EnforcerDefinitions.ACTION_EXECUTE,
         };
     }

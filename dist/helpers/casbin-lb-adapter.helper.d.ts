@@ -17,7 +17,11 @@ export declare class CasbinLBAdapter implements FilteredAdapter {
     private datasource;
     private logger;
     constructor(datasource: BaseDataSource);
-    getRule(id: number, permissionId: number, pType: string): Promise<string | null>;
+    getRule(opts: {
+        id: number;
+        permissionId: number;
+        pType: string;
+    }): Promise<string | null>;
     getFilterCondition(filter: EnforcerFilterValue): string | null;
     generatePolicyLine(rule: {
         userId: number;

@@ -27,7 +27,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
   normalizeEnforcePayload(subject: string, object: string, action: string) {
     return {
       subject: subject?.toLowerCase() || '',
-      object: (object?.toLowerCase() || '')?.replace(/controller/g, ''),
+      object: (object?.toLowerCase() || '')?.replace(/controller/g, '')?.replace(/.prototype/g, ''),
       action: action?.toLowerCase() || EnforcerDefinitions.ACTION_EXECUTE,
     };
   }

@@ -33,8 +33,9 @@ class CasbinLBAdapter {
         this.logger = logger_helper_1.LoggerFactory.getLogger([CasbinLBAdapter.name]);
     }
     // -----------------------------------------------------------------------------------------
-    getRule(id, permissionId, pType) {
+    getRule(opts) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { id, permissionId, pType } = opts;
             let rs = [];
             switch (pType) {
                 case EnforcerDefinitions.PTYPE_USER: {
@@ -89,11 +90,10 @@ class CasbinLBAdapter {
             const { userId, roleId, permissionId } = rule;
             let rs = '';
             if (userId) {
-                rs = yield this.getRule(userId, permissionId, EnforcerDefinitions.PTYPE_USER);
+                rs = yield this.getRule({ id: userId, permissionId, pType: EnforcerDefinitions.PTYPE_USER });
+                return rs;
             }
-            else if (roleId) {
-                rs = yield this.getRule(roleId, permissionId, EnforcerDefinitions.PTYPE_ROLE);
-            }
+            rs = yield this.getRule({ id: roleId, permissionId, pType: EnforcerDefinitions.PTYPE_ROLE });
             return rs;
         });
     }

@@ -27,7 +27,8 @@ export class CasbinLBAdapter implements FilteredAdapter {
   }
 
   // -----------------------------------------------------------------------------------------
-  async getRule(id: number, permissionId: number, pType: string): Promise<string | null> {
+  async getRule(opts: { id: number; permissionId: number; pType: string }): Promise<string | null> {
+    const { id, permissionId, pType } = opts;
     let rs: (string | undefined)[] = [];
 
     switch (pType) {
@@ -94,11 +95,11 @@ export class CasbinLBAdapter implements FilteredAdapter {
     let rs: string | null = '';
 
     if (userId) {
-      rs = await this.getRule(userId, permissionId, EnforcerDefinitions.PTYPE_USER);
-    } else if (roleId) {
-      rs = await this.getRule(roleId, permissionId, EnforcerDefinitions.PTYPE_ROLE);
+      rs = await this.getRule({ id: userId, permissionId, pType: EnforcerDefinitions.PTYPE_USER });
+      return rs;
     }
 
+    rs = await this.getRule({ id: roleId, permissionId, pType: EnforcerDefinitions.PTYPE_ROLE });
     return rs;
   }
 
