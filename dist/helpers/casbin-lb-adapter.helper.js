@@ -107,14 +107,16 @@ class CasbinLBAdapter {
                 return;
             }
             const sql = `SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`;
-            console.log('Executing: ', sql);
             const acls = yield this.datasource.execute(sql);
-            console.log('[loadFilteredPolicy] Acls: ', JSON.stringify(whereCondition), JSON.stringify(acls));
             if ((acls === null || acls === void 0 ? void 0 : acls.length) <= 0) {
                 return;
             }
             for (const acl of acls) {
-                const policyLine = yield this.generatePolicyLine(acl);
+                const policyLine = yield this.generatePolicyLine({
+                    userId: (0, get_1.default)(acl, 'user_id'),
+                    roleId: (0, get_1.default)(acl, 'role_id'),
+                    permissionId: (0, get_1.default)(acl, 'permission_id'),
+                });
                 if (!policyLine || (0, isEmpty_1.default)(policyLine)) {
                     continue;
                 }

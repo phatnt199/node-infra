@@ -30,7 +30,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
   // -----------------------------------------------------------------------------------------
   async getRule(opts: { id: number; permissionId: number; pType: string }): Promise<string | null> {
     const { id, permissionId, pType } = opts;
-    let rs: (string | undefined)[] = [];
+    let rs: string[] = [];
 
     switch (pType) {
       case EnforcerDefinitions.PTYPE_USER: {
@@ -112,15 +112,17 @@ export class CasbinLBAdapter implements FilteredAdapter {
     }
 
     const sql = `SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`;
-    console.log('Executing: ', sql);
     const acls = await this.datasource.execute(sql);
-    console.log('[loadFilteredPolicy] Acls: ', JSON.stringify(whereCondition), JSON.stringify(acls));
     if (acls?.length <= 0) {
       return;
     }
 
     for (const acl of acls) {
-      const policyLine = await this.generatePolicyLine(acl);
+      const policyLine = await this.generatePolicyLine({
+        userId: get(acl, 'user_id'),
+        roleId: get(acl, 'role_id'),
+        permissionId: get(acl, 'permission_id'),
+      });
       if (!policyLine || isEmpty(policyLine)) {
         continue;
       }
@@ -138,7 +140,6 @@ export class CasbinLBAdapter implements FilteredAdapter {
   // -----------------------------------------------------------------------------------------
   async loadPolicy(model: Model): Promise<void> {
     const acls = await this.datasource.execute('SELECT * FROM public."PermissionMapping"');
-
     for (const acl of acls) {
       const policyLine = await this.generatePolicyLine({
         userId: get(acl, 'user_id'),
