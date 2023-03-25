@@ -116,18 +116,19 @@ let AuthorizeProvider = class AuthorizeProvider {
                 return authorization_1.AuthorizationDecision.ALLOW;
             }
             const { resource, allowedRoles = [], scopes } = metadata;
-            this.logger.info('[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j', resource, allowedRoles, scopes);
+            const requestResource = resource !== null && resource !== void 0 ? resource : context.resource;
+            this.logger.info('[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j', requestResource, allowedRoles, scopes);
             // ALLOW pre-defined roles
             if (((_b = (0, intersection_1.default)(allowedRoles, roleIdentifiers)) === null || _b === void 0 ? void 0 : _b.length) > 0) {
                 return authorization_1.AuthorizationDecision.ALLOW;
             }
             // Authorize with role permissions
-            const roleAuthorizeDecision = yield this.authorizeRolePermission(roleIds, resource !== null && resource !== void 0 ? resource : context.resource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
+            const roleAuthorizeDecision = yield this.authorizeRolePermission(roleIds, requestResource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
             if (roleAuthorizeDecision) {
                 return authorization_1.AuthorizationDecision.ALLOW;
             }
             // Authorize with user permissions
-            const userAuthorizeDecision = yield this.authorizeUserPermission(userId, resource !== null && resource !== void 0 ? resource : context.resource, (_d = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _d !== void 0 ? _d : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
+            const userAuthorizeDecision = yield this.authorizeUserPermission(userId, requestResource, (_d = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _d !== void 0 ? _d : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
             return userAuthorizeDecision ? authorization_1.AuthorizationDecision.ALLOW : authorization_1.AuthorizationDecision.DENY;
         });
     }

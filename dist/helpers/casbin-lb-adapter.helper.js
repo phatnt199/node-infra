@@ -54,7 +54,7 @@ class CasbinLBAdapter {
             if (rs.length < 2) {
                 return null;
             }
-            const permission = yield this.datasource.execute(`SELECT id, code, name, FROM public."Permission" WHERE id = ${permissionId} `);
+            const permission = yield this.datasource.execute(`SELECT id, code, name FROM public."Permission" WHERE id = ${permissionId} `);
             const permissionMapping = yield this.datasource.execute(`SELECT id, user_id, role_id, permission_id FROM public."PermissionMapping" WHERE permission_id = ${permissionId}`);
             rs = [...rs, (_a = permission.code) === null || _a === void 0 ? void 0 : _a.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
             return rs.join(',');

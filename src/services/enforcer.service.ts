@@ -38,7 +38,7 @@ export class EnforcerService {
       });
     }
 
-    this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', this.confPath, this.datasource);
+    this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', this.confPath, this.datasource.name);
     const casbinAdapter = new CasbinLBAdapter(this.datasource);
     this.enforcer = await newEnforcer(this.confPath, casbinAdapter);
 

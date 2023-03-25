@@ -50,7 +50,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
     }
 
     const permission = await this.datasource.execute(
-      `SELECT id, code, name, FROM public."Permission" WHERE id = ${permissionId} `,
+      `SELECT id, code, name FROM public."Permission" WHERE id = ${permissionId} `,
     );
 
     const permissionMapping = await this.datasource.execute(

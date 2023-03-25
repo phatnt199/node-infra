@@ -56,7 +56,7 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
                     message: '[getEnforcer] Enforcer configuration path is not existed!',
                 });
             }
-            this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', this.confPath, this.datasource);
+            this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', this.confPath, this.datasource.name);
             const casbinAdapter = new __1.CasbinLBAdapter(this.datasource);
             this.enforcer = yield (0, casbin_1.newEnforcer)(this.confPath, casbinAdapter);
             this.logger.info('[getEnforcer] Created new enforcer | Configure path: %s', this.confPath);
