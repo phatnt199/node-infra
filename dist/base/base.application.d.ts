@@ -1,6 +1,7 @@
 import { ApplicationConfig } from '@loopback/core';
 import { RestApplication } from '@loopback/rest';
 import { EnvironmentValidationResult, IApplication } from '../common/types';
+import { ApplicationLogger } from '../helpers';
 declare const BaseApplication_base: (new (...args: any[]) => {
     projectRoot: string;
     bootOptions?: import("@loopback/boot").BootOptions | undefined;
@@ -268,6 +269,7 @@ declare const BaseApplication_base: (new (...args: any[]) => {
     eventNames: () => (string | symbol)[];
 }) & typeof RestApplication;
 export declare abstract class BaseApplication extends BaseApplication_base implements IApplication {
+    protected logger: ApplicationLogger;
     models: Set<string>;
     constructor(options?: ApplicationConfig);
     abstract validateEnv(): EnvironmentValidationResult;

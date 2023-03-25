@@ -1,7 +1,4 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseApplication = void 0;
 const boot_1 = require("@loopback/boot");
@@ -9,34 +6,31 @@ const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
 const service_proxy_1 = require("@loopback/service-proxy");
 const helpers_1 = require("../helpers");
-const rest_crud_1 = require("@loopback/rest-crud");
-const path_1 = __importDefault(require("path"));
+const base_sequence_1 = require("./base.sequence");
 class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceMixin)((0, repository_1.RepositoryMixin)(rest_1.RestApplication))) {
     constructor(options = {}) {
         var _a, _b;
         super(options);
-        // Set up default home page
-        this.static('/', path_1.default.join(__dirname, '../public'));
-        this.projectRoot = __dirname;
-        this.component(rest_crud_1.CrudRestComponent);
+        this.logger = helpers_1.LoggerFactory.getLogger(['Application']);
+        this.sequence(base_sequence_1.BaseApplicationSequence);
         const applicationEnv = (_a = process.env.NODE_ENV) !== null && _a !== void 0 ? _a : 'unknown';
-        helpers_1.applicationLogger.log('info', '[application] Starting application with ENV "%s"...', applicationEnv);
+        this.logger.info(' Starting application with ENV "%s"...', applicationEnv);
         // Validate whole application environment args.
-        helpers_1.applicationLogger.log('info', '[application] Validating application environments...');
+        this.logger.info(' Validating application environments...');
         const envValidation = this.validateEnv();
         if (!envValidation.result) {
             throw new Error((_b = envValidation === null || envValidation === void 0 ? void 0 : envValidation.message) !== null && _b !== void 0 ? _b : 'Invalid application environment!');
         }
         else {
-            helpers_1.applicationLogger.log('info', '[application] All application environments are valid...');
+            this.logger.info(' All application environments are valid...');
         }
-        helpers_1.applicationLogger.log('info', '[application] Declare application models...');
+        this.logger.info(' Declare application models...');
         this.models = new Set([]);
         this.models = this.declareModels();
         // Do configure while modules for application.
-        helpers_1.applicationLogger.log('info', '[application] Executing Pre-Configure...');
+        this.logger.info(' Executing Pre-Configure...');
         this.preConfigure();
-        helpers_1.applicationLogger.log('info', '[application] Executing Post-Configure...');
+        this.logger.info(' Executing Post-Configure...');
         this.postConfigure();
     }
 }
