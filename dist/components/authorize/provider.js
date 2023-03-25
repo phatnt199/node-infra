@@ -70,6 +70,7 @@ let AuthorizeProvider = class AuthorizeProvider {
     authorize(context, metadata) {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
+            const t = new Date().getTime();
             if ((context === null || context === void 0 ? void 0 : context.principals.length) <= 0) {
                 return authorization_1.AuthorizationDecision.DENY;
             }
@@ -93,7 +94,6 @@ let AuthorizeProvider = class AuthorizeProvider {
             }
             const { resource, allowedRoles = [], scopes } = metadata;
             const requestResource = resource !== null && resource !== void 0 ? resource : context.resource;
-            this.logger.info('[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j', requestResource, allowedRoles, scopes);
             // Verify static roles
             if (((_a = (0, intersection_1.default)(this.alwaysAllowRoles, roleIdentifiers)) === null || _a === void 0 ? void 0 : _a.length) > 0 ||
                 ((_b = (0, intersection_1.default)(allowedRoles, roleIdentifiers)) === null || _b === void 0 ? void 0 : _b.length) > 0) {
@@ -101,7 +101,12 @@ let AuthorizeProvider = class AuthorizeProvider {
             }
             // Authorize by role and user permissions
             const authorizeDecision = yield this.authorizePermission(userId, requestResource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
-            return authorizeDecision ? authorization_1.AuthorizationDecision.ALLOW : authorization_1.AuthorizationDecision.DENY;
+            const rs = authorizeDecision ? authorization_1.AuthorizationDecision.ALLOW : authorization_1.AuthorizationDecision.DENY;
+            if (!process.env.DEBUG) {
+                return rs;
+            }
+            this.logger.debug('[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j | Took: %d(ms)', requestResource, allowedRoles, scopes, new Date().getTime() - t);
+            return rs;
         });
     }
 };

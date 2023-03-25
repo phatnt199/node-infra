@@ -53,6 +53,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
 
   // -------------------------------------------------------------------------------------------------------------------
   async authorize(context: AuthorizationContext, metadata: AuthorizationMetadata): Promise<AuthorizationDecision> {
+    const t = new Date().getTime();
     if (context?.principals.length <= 0) {
       return AuthorizationDecision.DENY;
     }
@@ -82,12 +83,6 @@ export class AuthorizeProvider implements Provider<Authorizer> {
 
     const { resource, allowedRoles = [], scopes } = metadata;
     const requestResource = resource ?? context.resource;
-    this.logger.info(
-      '[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j',
-      requestResource,
-      allowedRoles,
-      scopes,
-    );
 
     // Verify static roles
     if (
@@ -104,6 +99,19 @@ export class AuthorizeProvider implements Provider<Authorizer> {
       scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
     );
 
-    return authorizeDecision ? AuthorizationDecision.ALLOW : AuthorizationDecision.DENY;
+    const rs = authorizeDecision ? AuthorizationDecision.ALLOW : AuthorizationDecision.DENY;
+
+    if (!process.env.DEBUG) {
+      return rs;
+    }
+
+    this.logger.debug(
+      '[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j | Took: %d(ms)',
+      requestResource,
+      allowedRoles,
+      scopes,
+      new Date().getTime() - t,
+    );
+    return rs;
   }
 }
