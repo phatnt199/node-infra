@@ -1,4 +1,4 @@
-import { Adapter, Enforcer, newCachedEnforcer } from 'casbin';
+import { Adapter, Enforcer, newEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 import { getError } from '@/utilities';
@@ -40,7 +40,7 @@ export class EnforcerService {
     }
 
     this.adapter = new CasbinLBAdapter(this.datasource);
-    this.enforcer = await newCachedEnforcer(this.confPath, this.adapter);
+    this.enforcer = await newEnforcer(this.confPath, this.adapter);
 
     await this.enforcer.loadPolicy();
     return this.enforcer;
