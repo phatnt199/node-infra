@@ -102,9 +102,6 @@ let AuthorizeProvider = class AuthorizeProvider {
             // Authorize by role and user permissions
             const authorizeDecision = yield this.authorizePermission(userId, requestResource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
             const rs = authorizeDecision ? authorization_1.AuthorizationDecision.ALLOW : authorization_1.AuthorizationDecision.DENY;
-            if (!process.env.DEBUG) {
-                return rs;
-            }
             this.logger.debug('[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j | Took: %d(ms)', requestResource, allowedRoles, scopes, new Date().getTime() - t);
             return rs;
         });

@@ -13,7 +13,9 @@ const common_1 = require("../common");
 const LOGGER_FOLDER_PATH = (_a = process.env.LOGGER_FOLDER_PATH) !== null && _a !== void 0 ? _a : './';
 const LOG_ENVIRONMENTS = new Set(['development', 'alpha', 'beta', 'staging']);
 const LOGGER_PREFIX = common_1.App.APPLICATION_NAME;
-const consoleLogTransport = new winston_1.transports.Console({});
+const consoleLogTransport = new winston_1.transports.Console({
+    level: 'debug',
+});
 const infoLogTransport = new winston_1.transports.DailyRotateFile({
     frequency: '1h',
     maxSize: '100m',
@@ -68,6 +70,9 @@ class ApplicationLogger {
         }
         if (!exports.applicationLogger) {
             throw new Error('Invalid logger instance!');
+        }
+        if (!process.env.DEBUG) {
+            return;
         }
         const enhanced = this._enhanceMessage(this.scopes, message);
         exports.applicationLogger.log('debug', enhanced, ...args);

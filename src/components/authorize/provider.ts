@@ -101,10 +101,6 @@ export class AuthorizeProvider implements Provider<Authorizer> {
 
     const rs = authorizeDecision ? AuthorizationDecision.ALLOW : AuthorizationDecision.DENY;
 
-    if (!process.env.DEBUG) {
-      return rs;
-    }
-
     this.logger.debug(
       '[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j | Took: %d(ms)',
       requestResource,

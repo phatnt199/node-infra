@@ -10,7 +10,9 @@ const LOGGER_FOLDER_PATH = process.env.LOGGER_FOLDER_PATH ?? './';
 const LOG_ENVIRONMENTS = new Set(['development', 'alpha', 'beta', 'staging']);
 const LOGGER_PREFIX = App.APPLICATION_NAME;
 
-const consoleLogTransport = new transports.Console({});
+const consoleLogTransport = new transports.Console({
+  level: 'debug',
+});
 const infoLogTransport = new transports.DailyRotateFile({
   frequency: '1h',
   maxSize: '100m',
@@ -88,6 +90,10 @@ export class ApplicationLogger {
 
     if (!applicationLogger) {
       throw new Error('Invalid logger instance!');
+    }
+
+    if (!process.env.DEBUG) {
+      return;
     }
 
     const enhanced = this._enhanceMessage(this.scopes, message);
