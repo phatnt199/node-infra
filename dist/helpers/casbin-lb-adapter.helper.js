@@ -55,13 +55,15 @@ class CasbinLBAdapter {
                     break;
                 }
             }
-            const [permission, permissionMapping] = yield Promise.all([
+            const [permissionRs, permissionMappingRs] = yield Promise.all([
                 this.datasource.execute(`SELECT id, code, name FROM public."Permission" WHERE id = ${permissionId}`),
                 this.datasource.execute(`SELECT id, effect FROM public."PermissionMapping" WHERE ${permissionMappingCondition}`),
             ]);
-            if (!permission || permissionMapping) {
+            if (!(permissionRs === null || permissionRs === void 0 ? void 0 : permissionRs.length) || !(permissionMappingRs === null || permissionMappingRs === void 0 ? void 0 : permissionMappingRs.length)) {
                 return null;
             }
+            const [permission] = permissionRs;
+            const [permissionMapping] = permissionMappingRs;
             rs = [...rs, (_a = permission.code) === null || _a === void 0 ? void 0 : _a.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
             return rs.join(',');
         });

@@ -49,14 +49,17 @@ export class CasbinLBAdapter implements FilteredAdapter {
       }
     }
 
-    const [permission, permissionMapping] = await Promise.all([
+    const [permissionRs, permissionMappingRs] = await Promise.all([
       this.datasource.execute(`SELECT id, code, name FROM public."Permission" WHERE id = ${permissionId}`),
       this.datasource.execute(`SELECT id, effect FROM public."PermissionMapping" WHERE ${permissionMappingCondition}`),
     ]);
 
-    if (!permission || permissionMapping) {
+    if (!permissionRs?.length || !permissionMappingRs?.length) {
       return null;
     }
+
+    const [permission] = permissionRs;
+    const [permissionMapping] = permissionMappingRs;
 
     rs = [...rs, permission.code?.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
     return rs.join(',');
