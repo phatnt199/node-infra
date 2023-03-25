@@ -128,7 +128,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
       }
 
       Helper.loadPolicyLine(policyLine, model);
-      this.logger.info('[loadFilteredPolicy] Load new policy: ', policyLine);
+      this.logger.info('[loadFilteredPolicy] Load policy: %s', policyLine);
     }
   }
 
@@ -151,7 +151,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
       }
 
       Helper.loadPolicyLine(policyLine, model);
-      this.logger.info('[loadPolicy] Load new policy: ', policyLine);
+      this.logger.info('[loadPolicy] Load policy: %s', policyLine);
     }
   }
 

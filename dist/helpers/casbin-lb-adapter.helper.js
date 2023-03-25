@@ -121,7 +121,7 @@ class CasbinLBAdapter {
                     continue;
                 }
                 casbin_1.Helper.loadPolicyLine(policyLine, model);
-                this.logger.info('[loadFilteredPolicy] Load new policy: ', policyLine);
+                this.logger.info('[loadFilteredPolicy] Load policy: %s', policyLine);
             }
         });
     }
@@ -143,7 +143,7 @@ class CasbinLBAdapter {
                     continue;
                 }
                 casbin_1.Helper.loadPolicyLine(policyLine, model);
-                this.logger.info('[loadPolicy] Load new policy: ', policyLine);
+                this.logger.info('[loadPolicy] Load policy: %s', policyLine);
             }
         });
     }
