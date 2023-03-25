@@ -45,7 +45,7 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
             // Datasource
             core_1.Binding.bind(common_1.AuthorizerKeys.AUTHORIZE_DATASOURCE).to(null),
             // Configure path
-            core_1.Binding.bind(common_1.AuthorizerKeys.CONFIGURE_PATH).to(authorizeConfPath),
+            core_1.Binding.bind(common_1.AuthorizerKeys.CONFIGURE_OPTIONS).to({ confPath: authorizeConfPath, useCache: false }),
         ];
         this.binding();
     }

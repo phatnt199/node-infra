@@ -18,7 +18,7 @@ export class AuthorizerKeys {
   static readonly ENFORCER = '@app/authorize/enforcer';
   static readonly ALWAYS_ALLOW_ROLES = '@app/authorize/always_allow_roles';
   static readonly AUTHORIZE_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
-  static readonly CONFIGURE_PATH = '@app/authorize/configure_path';
+  static readonly CONFIGURE_OPTIONS = '@app/authorize/configure_options';
 }
     
       

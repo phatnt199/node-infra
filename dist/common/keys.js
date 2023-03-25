@@ -20,5 +20,5 @@ AuthorizerKeys.PROVIDER = '@app/authorize/provider';
 AuthorizerKeys.ENFORCER = '@app/authorize/enforcer';
 AuthorizerKeys.ALWAYS_ALLOW_ROLES = '@app/authorize/always_allow_roles';
 AuthorizerKeys.AUTHORIZE_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
-AuthorizerKeys.CONFIGURE_PATH = '@app/authorize/configure_path';
+AuthorizerKeys.CONFIGURE_OPTIONS = '@app/authorize/configure_options';
 //# sourceMappingURL=keys.js.map

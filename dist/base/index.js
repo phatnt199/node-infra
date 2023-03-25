@@ -20,5 +20,6 @@ __exportStar(require("./base.controller"), exports);
 __exportStar(require("./base.datasource"), exports);
 __exportStar(require("./base.model"), exports);
 __exportStar(require("./base.repository"), exports);
+__exportStar(require("./base.sequence"), exports);
 __exportStar(require("./base.service"), exports);
 //# sourceMappingURL=index.js.map

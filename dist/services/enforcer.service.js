@@ -34,8 +34,8 @@ const common_1 = require("../common");
 const __1 = require("..");
 const core_1 = require("@loopback/core");
 let EnforcerService = EnforcerService_1 = class EnforcerService {
-    constructor(confPath, dataSource) {
-        this.confPath = confPath;
+    constructor(options, dataSource) {
+        this.options = options;
         this.dataSource = dataSource;
         this.logger = __1.LoggerFactory.getLogger([EnforcerService_1.name]);
     }
@@ -44,22 +44,28 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
             if (this.enforcer) {
                 return this.enforcer;
             }
-            if (!this.confPath || (0, isEmpty_1.default)(this.confPath)) {
+            const { confPath, useCache } = this.options;
+            if (!confPath || (0, isEmpty_1.default)(confPath)) {
                 throw (0, utilities_1.getError)({
                     statusCode: 500,
                     message: '[getEnforcer] Invalid enforcer configuration path!',
                 });
             }
-            if (!fs_1.default.existsSync(this.confPath)) {
+            if (!fs_1.default.existsSync(confPath)) {
                 throw (0, utilities_1.getError)({
                     statusCode: 500,
                     message: '[getEnforcer] Enforcer configuration path is not existed!',
                 });
             }
-            this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', this.confPath, this.dataSource.name);
-            const casbinAdapter = new __1.CasbinLBAdapter(this.dataSource);
-            this.enforcer = yield (0, casbin_1.newCachedEnforcer)(this.confPath, casbinAdapter);
-            this.logger.info('[getEnforcer] Created new enforcer | Configure path: %s', this.confPath);
+            this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', confPath, this.dataSource.name);
+            const lbAdapter = new __1.CasbinLBAdapter(this.dataSource);
+            if (useCache) {
+                this.enforcer = yield (0, casbin_1.newCachedEnforcer)(confPath, lbAdapter);
+            }
+            else {
+                this.enforcer = yield (0, casbin_1.newEnforcer)(confPath, lbAdapter);
+            }
+            this.logger.info('[getEnforcer] Created new enforcer | Configure path: %s', confPath);
             return this.enforcer;
         });
     }
@@ -81,9 +87,9 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
 };
 EnforcerService = EnforcerService_1 = __decorate([
     (0, core_1.injectable)({ scope: core_1.BindingScope.SINGLETON }),
-    __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.CONFIGURE_PATH)),
+    __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.CONFIGURE_OPTIONS)),
     __param(1, (0, core_1.inject)(common_1.AuthorizerKeys.AUTHORIZE_DATASOURCE)),
-    __metadata("design:paramtypes", [String, __1.BaseDataSource])
+    __metadata("design:paramtypes", [Object, __1.BaseDataSource])
 ], EnforcerService);
 exports.EnforcerService = EnforcerService;
 //# sourceMappingURL=enforcer.service.js.map

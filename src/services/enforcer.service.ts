@@ -1,4 +1,4 @@
-import { Enforcer, newCachedEnforcer } from 'casbin';
+import { Enforcer, newCachedEnforcer, newEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 import { getError } from '@/utilities';
@@ -13,7 +13,7 @@ export class EnforcerService {
   private enforcer: Enforcer;
 
   constructor(
-    @inject(AuthorizerKeys.CONFIGURE_PATH) protected confPath: string,
+    @inject(AuthorizerKeys.CONFIGURE_OPTIONS) protected options: { confPath: string; useCache?: boolean },
     @inject(AuthorizerKeys.AUTHORIZE_DATASOURCE) protected dataSource: BaseDataSource,
   ) {
     this.logger = LoggerFactory.getLogger([EnforcerService.name]);
@@ -24,14 +24,16 @@ export class EnforcerService {
       return this.enforcer;
     }
 
-    if (!this.confPath || isEmpty(this.confPath)) {
+    const { confPath, useCache } = this.options;
+
+    if (!confPath || isEmpty(confPath)) {
       throw getError({
         statusCode: 500,
         message: '[getEnforcer] Invalid enforcer configuration path!',
       });
     }
 
-    if (!fs.existsSync(this.confPath)) {
+    if (!fs.existsSync(confPath)) {
       throw getError({
         statusCode: 500,
         message: '[getEnforcer] Enforcer configuration path is not existed!',
@@ -40,14 +42,19 @@ export class EnforcerService {
 
     this.logger.info(
       '[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s',
-      this.confPath,
+      confPath,
       this.dataSource.name,
     );
 
-    const casbinAdapter = new CasbinLBAdapter(this.dataSource);
-    this.enforcer = await newCachedEnforcer(this.confPath, casbinAdapter);
+    const lbAdapter = new CasbinLBAdapter(this.dataSource);
 
-    this.logger.info('[getEnforcer] Created new enforcer | Configure path: %s', this.confPath);
+    if (useCache) {
+      this.enforcer = await newCachedEnforcer(confPath, lbAdapter);
+    } else {
+      this.enforcer = await newEnforcer(confPath, lbAdapter);
+    }
+
+    this.logger.info('[getEnforcer] Created new enforcer | Configure path: %s', confPath);
     return this.enforcer;
   }
 
@@ -67,16 +74,3 @@ export class EnforcerService {
     return enforcer;
   }
 }
-    
-      
-      
-      
-        
-      
-      
-        
-        
-        
-      
-    
-    

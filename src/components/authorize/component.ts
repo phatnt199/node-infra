@@ -35,7 +35,7 @@ export class AuthorizeComponent extends BaseComponent {
     Binding.bind(AuthorizerKeys.AUTHORIZE_DATASOURCE).to(null),
 
     // Configure path
-    Binding.bind(AuthorizerKeys.CONFIGURE_PATH).to(authorizeConfPath),
+    Binding.bind(AuthorizerKeys.CONFIGURE_OPTIONS).to({ confPath: authorizeConfPath, useCache: false }),
   ];
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
