@@ -3,14 +3,15 @@ import { AuthorizationContext, AuthorizationDecision, AuthorizationMetadata, Aut
 import { Provider } from '@loopback/core';
 export declare class AuthorizeProvider implements Provider<Authorizer> {
     private enforcerService;
+    private alwaysAllowRoles;
     private logger;
-    constructor(enforcerService: EnforcerService);
+    constructor(enforcerService: EnforcerService, alwaysAllowRoles: string[]);
     value(): Authorizer<AuthorizationMetadata>;
     normalizeEnforcePayload(subject: string, object: string, action: string): {
         subject: string;
         object: string;
         action: string;
     };
-    authorizeUserPermission(userId: number, object: string, action: string): Promise<boolean>;
+    authorizePermission(userId: number, object: string, action: string): Promise<boolean>;
     authorize(context: AuthorizationContext, metadata: AuthorizationMetadata): Promise<AuthorizationDecision>;
 }

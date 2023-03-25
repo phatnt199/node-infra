@@ -100,6 +100,9 @@ class CasbinLBAdapter {
         return __awaiter(this, void 0, void 0, function* () {
             const { userId, roleId, permissionId } = rule;
             let rs = '';
+            if (!userId && !roleId) {
+                return rs;
+            }
             if (userId) {
                 rs = yield this.getRule({ id: userId, permissionId, modelType: EnforcerDefinitions.PREFIX_USER });
                 return rs;
@@ -136,11 +139,13 @@ class CasbinLBAdapter {
                 });
             }
             const aclQueries = [];
+            // Load user permission policies
+            aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`));
+            // Load role permission policies
             const userRoles = yield this.datasource.execute(`SELECT * FROM public."UserRole" WHERE ${whereCondition}`);
             for (const userRole of userRoles) {
                 aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE role_id = ${userRole.principal_id}`));
             }
-            aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`));
             const aclRs = yield Promise.all(aclQueries);
             const acls = (0, flatten_1.default)(aclRs);
             const policyLineRs = yield Promise.all(acls.map(acl => {
@@ -150,14 +155,16 @@ class CasbinLBAdapter {
                     permissionId: (0, get_1.default)(acl, 'permission_id'),
                 });
             }));
+            // Load policy lines
             const policyLines = (0, flatten_1.default)(policyLineRs);
             for (const policyLine of policyLines) {
                 if (!policyLine || (0, isEmpty_1.default)(policyLine)) {
                     continue;
                 }
                 casbin_1.Helper.loadPolicyLine(policyLine, model);
-                this.logger.info('[loadFilteredPolicy] Load policy: %s', policyLine);
+                // this.logger.info('[loadFilteredPolicy] Load policy: %s', policyLine);
             }
+            // Load group lines
             for (const userRole of userRoles) {
                 const groupLine = this.generateGroupLine({
                     userId: (0, get_1.default)(userRole, 'user_id'),
@@ -167,7 +174,7 @@ class CasbinLBAdapter {
                     continue;
                 }
                 casbin_1.Helper.loadPolicyLine(groupLine, model);
-                this.logger.info('[loadFilteredPolicy] Load groupLine: %s', groupLine);
+                // this.logger.info('[loadFilteredPolicy] Load groupLine: %s', groupLine);
             }
         });
     }

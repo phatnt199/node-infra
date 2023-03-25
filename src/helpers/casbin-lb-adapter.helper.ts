@@ -101,6 +101,10 @@ export class CasbinLBAdapter implements FilteredAdapter {
     const { userId, roleId, permissionId } = rule;
     let rs: string | null = '';
 
+    if (!userId && !roleId) {
+      return rs;
+    }
+
     if (userId) {
       rs = await this.getRule({ id: userId, permissionId, modelType: EnforcerDefinitions.PREFIX_USER });
       return rs;
@@ -139,13 +143,16 @@ export class CasbinLBAdapter implements FilteredAdapter {
     }
 
     const aclQueries = [];
+    // Load user permission policies
+    aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`));
+
+    // Load role permission policies
     const userRoles = await this.datasource.execute(`SELECT * FROM public."UserRole" WHERE ${whereCondition}`);
     for (const userRole of userRoles) {
       aclQueries.push(
         this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE role_id = ${userRole.principal_id}`),
       );
     }
-    aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`));
 
     const aclRs = await Promise.all(aclQueries);
     const acls = flatten(aclRs);
@@ -159,6 +166,8 @@ export class CasbinLBAdapter implements FilteredAdapter {
         });
       }),
     );
+
+    // Load policy lines
     const policyLines = flatten(policyLineRs);
     for (const policyLine of policyLines) {
       if (!policyLine || isEmpty(policyLine)) {
@@ -166,9 +175,10 @@ export class CasbinLBAdapter implements FilteredAdapter {
       }
 
       Helper.loadPolicyLine(policyLine, model);
-      this.logger.info('[loadFilteredPolicy] Load policy: %s', policyLine);
+      // this.logger.info('[loadFilteredPolicy] Load policy: %s', policyLine);
     }
 
+    // Load group lines
     for (const userRole of userRoles) {
       const groupLine = this.generateGroupLine({
         userId: get(userRole, 'user_id'),
@@ -180,7 +190,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
       }
 
       Helper.loadPolicyLine(groupLine, model);
-      this.logger.info('[loadFilteredPolicy] Load groupLine: %s', groupLine);
+      // this.logger.info('[loadFilteredPolicy] Load groupLine: %s', groupLine);
     }
   }
 

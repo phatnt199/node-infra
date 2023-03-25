@@ -18,6 +18,7 @@ AuthorizerKeys.USER_ROLE_REPOSITORY = '@app/authorize/component/repositories/use
 // -----------------------------------------------------------------------------
 AuthorizerKeys.PROVIDER = '@app/authorize/provider';
 AuthorizerKeys.ENFORCER = '@app/authorize/enforcer';
+AuthorizerKeys.ALWAYS_ALLOW_ROLES = '@app/authorize/always_allow_roles';
 AuthorizerKeys.ADAPTER_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
 AuthorizerKeys.CONFIGURE_PATH = '@app/authorize/configure_path';
 //# sourceMappingURL=keys.js.map
