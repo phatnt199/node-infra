@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CasbinLBAdapter = exports.EnforcerDefinitions = void 0;
 const casbin_1 = require("casbin");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
+const get_1 = __importDefault(require("lodash/get"));
 const logger_helper_1 = require("./logger.helper");
 class EnforcerDefinitions {
 }
@@ -55,7 +56,7 @@ class CasbinLBAdapter {
                 return null;
             }
             const permission = yield this.datasource.execute(`SELECT id, code, name FROM public."Permission" WHERE id = ${permissionId} `);
-            const permissionMapping = yield this.datasource.execute(`SELECT id, user_id, role_id, permission_id FROM public."PermissionMapping" WHERE permission_id = ${permissionId}`);
+            const permissionMapping = yield this.datasource.execute(`SELECT id, user_id, role_id, permission_id, effect FROM public."PermissionMapping" WHERE permission_id = ${permissionId}`);
             rs = [...rs, (_a = permission.code) === null || _a === void 0 ? void 0 : _a.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
             return rs.join(',');
         });
@@ -131,7 +132,11 @@ class CasbinLBAdapter {
         return __awaiter(this, void 0, void 0, function* () {
             const acls = yield this.datasource.execute('SELECT * FROM public."PermissionMapping"');
             for (const acl of acls) {
-                const policyLine = yield this.generatePolicyLine(acl);
+                const policyLine = yield this.generatePolicyLine({
+                    userId: (0, get_1.default)(acl, 'user_id'),
+                    roleId: (0, get_1.default)(acl, 'role_id'),
+                    permissionId: (0, get_1.default)(acl, 'permission_id'),
+                });
                 if (!policyLine || (0, isEmpty_1.default)(policyLine)) {
                     continue;
                 }

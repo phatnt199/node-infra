@@ -1,5 +1,6 @@
 import { FilteredAdapter, Model, Helper } from 'casbin';
 import isEmpty from 'lodash/isEmpty';
+import get from 'lodash/get';
 import { BaseDataSource } from '@/base/base.datasource';
 import { ApplicationLogger, LoggerFactory } from './logger.helper';
 
@@ -54,7 +55,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
     );
 
     const permissionMapping = await this.datasource.execute(
-      `SELECT id, user_id, role_id, permission_id FROM public."PermissionMapping" WHERE permission_id = ${permissionId}`,
+      `SELECT id, user_id, role_id, permission_id, effect FROM public."PermissionMapping" WHERE permission_id = ${permissionId}`,
     );
     rs = [...rs, permission.code?.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
     return rs.join(',');
@@ -139,7 +140,11 @@ export class CasbinLBAdapter implements FilteredAdapter {
     const acls = await this.datasource.execute('SELECT * FROM public."PermissionMapping"');
 
     for (const acl of acls) {
-      const policyLine = await this.generatePolicyLine(acl);
+      const policyLine = await this.generatePolicyLine({
+        userId: get(acl, 'user_id'),
+        roleId: get(acl, 'role_id'),
+        permissionId: get(acl, 'permission_id'),
+      });
       if (!policyLine || isEmpty(policyLine)) {
         continue;
       }
