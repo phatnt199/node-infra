@@ -1,6 +1,7 @@
 import { AuthorizerKeys, FixedUserRoles } from '@/common';
 import { ApplicationLogger, EnforcerDefinitions, LoggerFactory } from '@/helpers';
 import { EnforcerService } from '@/services';
+import { int } from '@/utilities';
 import {
   AuthorizationContext,
   AuthorizationDecision,
@@ -8,6 +9,7 @@ import {
   Authorizer,
 } from '@loopback/authorization';
 import { inject, Provider } from '@loopback/core';
+import isEmpty from 'lodash/isEmpty';
 import intersection from 'lodash/intersection';
 
 export class AuthorizeProvider implements Provider<Authorizer> {
@@ -31,27 +33,19 @@ export class AuthorizeProvider implements Provider<Authorizer> {
   }
 
   // -------------------------------------------------------------------------------------------------------------------
-  async authorizeRolePermission(roles: string[], object: string, action: string): Promise<boolean> {
+  async authorizeRolePermission(roleIds: number[], object: string, action: string): Promise<boolean> {
     let rs = false;
 
-    this.logger.info('[authorizeRolePermission] Roles: %j | Object: %s | Action: %s', roles, object, action);
-    for (const role of roles) {
-      const roleParts = role.split('|');
-      if (roleParts.length < 2) {
-        this.logger.info('[authorizeRolePermission] Skip authorization for INVALID role parts!');
-        continue;
-      }
-
-      const [roleId] = roleParts;
+    this.logger.info('[authorizeRolePermission] RoleIds: %j | Object: %s | Action: %s', roleIds, object, action);
+    for (const roleId of roleIds) {
       const enforcer = await this.enforcerService.getTypeEnforcer('Role', roleId);
       if (!enforcer) {
         this.logger.info('[authorizeRolePermission] Skip authorization for NULL enforcer!');
         continue;
       }
 
-      const subject = `${EnforcerDefinitions.PREFIX_ROLE}_${roleParts[0]}`;
+      const subject = `${EnforcerDefinitions.PREFIX_ROLE}_${roleId}`;
       const enforcePayload = this.normalizeEnforcePayload(subject, object, action);
-      console.log(enforcePayload);
       rs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
 
       if (rs) {
@@ -84,7 +78,23 @@ export class AuthorizeProvider implements Provider<Authorizer> {
       return AuthorizationDecision.DENY;
     }
 
-    const { userId, roles } = context.principals[0];
+    const { userId, roles: encodedRoles } = context.principals[0];
+    const roleIds: number[] = [];
+    const roleIdentifiers: string[] = [];
+    const roles: { id: number; identifier: string }[] = [];
+
+    for (const encodedRole of encodedRoles) {
+      if (!encodedRole || isEmpty(encodedRole)) {
+        continue;
+      }
+
+      const [roleId, roleIdentifier] = encodedRole.split('|');
+
+      const id = int(roleId);
+      roleIds.push(id);
+      roleIdentifiers.push(roleIdentifier);
+      roles.push({ id, identifier: roleIdentifier });
+    }
 
     // DENY all unknown user and unknow roles
     if (!userId || !roles?.length) {
@@ -92,7 +102,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     }
 
     // ALLOW SUPER_ADMIN and ADMIN roles
-    if (intersection(FixedUserRoles.FULL_AUTHORIZE_ROLES, roles)?.length > 0) {
+    if (intersection(FixedUserRoles.FULL_AUTHORIZE_ROLES, roleIdentifiers)?.length > 0) {
       return AuthorizationDecision.ALLOW;
     }
 
@@ -105,14 +115,14 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     );
 
     // ALLOW pre-defined roles
-    if (intersection(allowedRoles, roles)?.length > 0) {
+    if (intersection(allowedRoles, roleIdentifiers)?.length > 0) {
       return AuthorizationDecision.ALLOW;
     }
 
     // Authorize with role permissions
     const roleAuthorizeDecision = await this.authorizeRolePermission(
-      roles,
-      context.resource,
+      roleIds,
+      resource ?? context.resource,
       scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
     );
 
