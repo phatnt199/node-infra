@@ -24,9 +24,9 @@ EnforcerDefinitions.ACTION_EXECUTE = 'execute';
 EnforcerDefinitions.ACTION_READ = 'read';
 EnforcerDefinitions.ACTION_WRITE = 'write';
 EnforcerDefinitions.PREFIX_USER = 'user';
-EnforcerDefinitions.PTYPE_USER = 'p';
 EnforcerDefinitions.PREFIX_ROLE = 'role';
-EnforcerDefinitions.PTYPE_ROLE = 'g';
+EnforcerDefinitions.PTYPE_POLICY = 'p';
+EnforcerDefinitions.PTYPE_GROUP = 'g';
 // -----------------------------------------------------------------------------------------
 class CasbinLBAdapter {
     constructor(datasource) {
@@ -37,17 +37,17 @@ class CasbinLBAdapter {
     getRule(opts) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const { id, permissionId, pType } = opts;
+            const { id, permissionId, modelType } = opts;
             let rs = [];
             let permissionMappingCondition = '';
-            switch (pType) {
-                case EnforcerDefinitions.PTYPE_USER: {
-                    rs = [EnforcerDefinitions.PTYPE_USER, `${EnforcerDefinitions.PREFIX_USER}_${id}`];
+            switch (modelType) {
+                case EnforcerDefinitions.PREFIX_USER: {
+                    rs = [EnforcerDefinitions.PREFIX_ROLE, `${EnforcerDefinitions.PREFIX_USER}_${id}`];
                     permissionMappingCondition = `user_id = ${id} AND permission_id = ${permissionId}`;
                     break;
                 }
-                case EnforcerDefinitions.PTYPE_ROLE: {
-                    rs = [EnforcerDefinitions.PTYPE_ROLE, `${EnforcerDefinitions.PREFIX_ROLE}_${id}`];
+                case EnforcerDefinitions.PREFIX_ROLE: {
+                    rs = [EnforcerDefinitions.PTYPE_POLICY, `${EnforcerDefinitions.PREFIX_ROLE}_${id}`];
                     permissionMappingCondition = `role_id = ${id} AND permission_id = ${permissionId}`;
                     break;
                 }
@@ -99,10 +99,10 @@ class CasbinLBAdapter {
             const { userId, roleId, permissionId } = rule;
             let rs = '';
             if (userId) {
-                rs = yield this.getRule({ id: userId, permissionId, pType: EnforcerDefinitions.PTYPE_USER });
+                rs = yield this.getRule({ id: userId, permissionId, modelType: EnforcerDefinitions.PREFIX_USER });
                 return rs;
             }
-            rs = yield this.getRule({ id: roleId, permissionId, pType: EnforcerDefinitions.PTYPE_ROLE });
+            rs = yield this.getRule({ id: roleId, permissionId, modelType: EnforcerDefinitions.PREFIX_ROLE });
             return rs;
         });
     }
@@ -177,11 +177,11 @@ class CasbinLBAdapter {
     removeFilteredPolicy(sec, ptype, fieldIndex, ...fieldValues) {
         return __awaiter(this, void 0, void 0, function* () {
             switch (ptype) {
-                case EnforcerDefinitions.PTYPE_USER: {
+                case EnforcerDefinitions.PREFIX_USER: {
                     // Remove user policy
                     break;
                 }
-                case EnforcerDefinitions.PTYPE_ROLE: {
+                case EnforcerDefinitions.PREFIX_ROLE: {
                     // Remove role policy
                     break;
                 }

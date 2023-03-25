@@ -9,9 +9,9 @@ export class EnforcerDefinitions {
   static readonly ACTION_READ = 'read';
   static readonly ACTION_WRITE = 'write';
   static readonly PREFIX_USER = 'user';
-  static readonly PTYPE_USER = 'p';
   static readonly PREFIX_ROLE = 'role';
-  static readonly PTYPE_ROLE = 'g';
+  static readonly PTYPE_POLICY = 'p';
+  static readonly PTYPE_GROUP = 'g';
 }
 
 export interface EnforcerFilterValue {
@@ -28,19 +28,19 @@ export class CasbinLBAdapter implements FilteredAdapter {
   }
 
   // -----------------------------------------------------------------------------------------
-  async getRule(opts: { id: number; permissionId: number; pType: string }): Promise<string | null> {
-    const { id, permissionId, pType } = opts;
+  async getRule(opts: { id: number; permissionId: number; modelType: string }): Promise<string | null> {
+    const { id, permissionId, modelType } = opts;
     let rs: string[] = [];
 
     let permissionMappingCondition = '';
-    switch (pType) {
-      case EnforcerDefinitions.PTYPE_USER: {
-        rs = [EnforcerDefinitions.PTYPE_USER, `${EnforcerDefinitions.PREFIX_USER}_${id}`];
+    switch (modelType) {
+      case EnforcerDefinitions.PREFIX_USER: {
+        rs = [EnforcerDefinitions.PREFIX_ROLE, `${EnforcerDefinitions.PREFIX_USER}_${id}`];
         permissionMappingCondition = `user_id = ${id} AND permission_id = ${permissionId}`;
         break;
       }
-      case EnforcerDefinitions.PTYPE_ROLE: {
-        rs = [EnforcerDefinitions.PTYPE_ROLE, `${EnforcerDefinitions.PREFIX_ROLE}_${id}`];
+      case EnforcerDefinitions.PREFIX_ROLE: {
+        rs = [EnforcerDefinitions.PTYPE_POLICY, `${EnforcerDefinitions.PREFIX_ROLE}_${id}`];
         permissionMappingCondition = `role_id = ${id} AND permission_id = ${permissionId}`;
         break;
       }
@@ -100,11 +100,11 @@ export class CasbinLBAdapter implements FilteredAdapter {
     let rs: string | null = '';
 
     if (userId) {
-      rs = await this.getRule({ id: userId, permissionId, pType: EnforcerDefinitions.PTYPE_USER });
+      rs = await this.getRule({ id: userId, permissionId, modelType: EnforcerDefinitions.PREFIX_USER });
       return rs;
     }
 
-    rs = await this.getRule({ id: roleId, permissionId, pType: EnforcerDefinitions.PTYPE_ROLE });
+    rs = await this.getRule({ id: roleId, permissionId, modelType: EnforcerDefinitions.PREFIX_ROLE });
     return rs;
   }
 
@@ -178,11 +178,11 @@ export class CasbinLBAdapter implements FilteredAdapter {
   // -----------------------------------------------------------------------------------------
   async removeFilteredPolicy(sec: string, ptype: string, fieldIndex: number, ...fieldValues: string[]): Promise<void> {
     switch (ptype) {
-      case EnforcerDefinitions.PTYPE_USER: {
+      case EnforcerDefinitions.PREFIX_USER: {
         // Remove user policy
         break;
       }
-      case EnforcerDefinitions.PTYPE_ROLE: {
+      case EnforcerDefinitions.PREFIX_ROLE: {
         // Remove role policy
         break;
       }

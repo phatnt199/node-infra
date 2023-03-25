@@ -5,9 +5,9 @@ export declare class EnforcerDefinitions {
     static readonly ACTION_READ = "read";
     static readonly ACTION_WRITE = "write";
     static readonly PREFIX_USER = "user";
-    static readonly PTYPE_USER = "p";
     static readonly PREFIX_ROLE = "role";
-    static readonly PTYPE_ROLE = "g";
+    static readonly PTYPE_POLICY = "p";
+    static readonly PTYPE_GROUP = "g";
 }
 export interface EnforcerFilterValue {
     principalType: string;
@@ -20,7 +20,7 @@ export declare class CasbinLBAdapter implements FilteredAdapter {
     getRule(opts: {
         id: number;
         permissionId: number;
-        pType: string;
+        modelType: string;
     }): Promise<string | null>;
     getFilterCondition(filter: EnforcerFilterValue): string | null;
     generatePolicyLine(rule: {
