@@ -32,13 +32,16 @@ export class CasbinLBAdapter implements FilteredAdapter {
     const { id, permissionId, pType } = opts;
     let rs: string[] = [];
 
+    let permissionMappingCondition = '';
     switch (pType) {
       case EnforcerDefinitions.PTYPE_USER: {
         rs = [EnforcerDefinitions.PTYPE_USER, `${EnforcerDefinitions.PREFIX_USER}_${id}`];
+        permissionMappingCondition = `user_id = ${id} AND permission_id = ${permissionId}`;
         break;
       }
       case EnforcerDefinitions.PTYPE_ROLE: {
         rs = [EnforcerDefinitions.PTYPE_ROLE, `${EnforcerDefinitions.PREFIX_ROLE}_${id}`];
+        permissionMappingCondition = `role_id = ${id} AND permission_id = ${permissionId}`;
         break;
       }
       default: {
@@ -46,17 +49,15 @@ export class CasbinLBAdapter implements FilteredAdapter {
       }
     }
 
-    if (rs.length < 2) {
+    const [permission, permissionMapping] = await Promise.all([
+      this.datasource.execute(`SELECT id, code, name FROM public."Permission" WHERE id = ${permissionId}`),
+      this.datasource.execute(`SELECT id, effect FROM public."PermissionMapping" WHERE ${permissionMappingCondition}`),
+    ]);
+
+    if (!permission || permissionMapping) {
       return null;
     }
 
-    const permission = await this.datasource.execute(
-      `SELECT id, code, name FROM public."Permission" WHERE id = ${permissionId} `,
-    );
-
-    const permissionMapping = await this.datasource.execute(
-      `SELECT id, user_id, role_id, permission_id, effect FROM public."PermissionMapping" WHERE permission_id = ${permissionId}`,
-    );
     rs = [...rs, permission.code?.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
     return rs.join(',');
   }

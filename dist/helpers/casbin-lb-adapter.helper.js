@@ -39,24 +39,29 @@ class CasbinLBAdapter {
         return __awaiter(this, void 0, void 0, function* () {
             const { id, permissionId, pType } = opts;
             let rs = [];
+            let permissionMappingCondition = '';
             switch (pType) {
                 case EnforcerDefinitions.PTYPE_USER: {
                     rs = [EnforcerDefinitions.PTYPE_USER, `${EnforcerDefinitions.PREFIX_USER}_${id}`];
+                    permissionMappingCondition = `user_id = ${id} AND permission_id = ${permissionId}`;
                     break;
                 }
                 case EnforcerDefinitions.PTYPE_ROLE: {
                     rs = [EnforcerDefinitions.PTYPE_ROLE, `${EnforcerDefinitions.PREFIX_ROLE}_${id}`];
+                    permissionMappingCondition = `role_id = ${id} AND permission_id = ${permissionId}`;
                     break;
                 }
                 default: {
                     break;
                 }
             }
-            if (rs.length < 2) {
+            const [permission, permissionMapping] = yield Promise.all([
+                this.datasource.execute(`SELECT id, code, name FROM public."Permission" WHERE id = ${permissionId}`),
+                this.datasource.execute(`SELECT id, effect FROM public."PermissionMapping" WHERE ${permissionMappingCondition}`),
+            ]);
+            if (!permission || permissionMapping) {
                 return null;
             }
-            const permission = yield this.datasource.execute(`SELECT id, code, name FROM public."Permission" WHERE id = ${permissionId} `);
-            const permissionMapping = yield this.datasource.execute(`SELECT id, user_id, role_id, permission_id, effect FROM public."PermissionMapping" WHERE permission_id = ${permissionId}`);
             rs = [...rs, (_a = permission.code) === null || _a === void 0 ? void 0 : _a.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
             return rs.join(',');
         });
