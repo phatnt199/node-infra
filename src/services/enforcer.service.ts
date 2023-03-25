@@ -4,7 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import { getError } from '@/utilities';
 import { AuthorizerKeys, IdType } from '@/common';
 import { ApplicationLogger, BaseDataSource, CasbinLBAdapter, LoggerFactory, EnforcerFilterValue } from '..';
-import { BindingScope, Getter, inject, injectable } from '@loopback/core';
+import { BindingScope, inject, injectable } from '@loopback/core';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class EnforcerService {
@@ -14,7 +14,7 @@ export class EnforcerService {
 
   constructor(
     @inject(AuthorizerKeys.CONFIGURE_PATH) protected confPath: string,
-    @inject.getter(AuthorizerKeys.AUTHORIZE_DATASOURCE) protected dataSourceResolver: Getter<BaseDataSource>,
+    @inject(AuthorizerKeys.AUTHORIZE_DATASOURCE) protected dataSource: BaseDataSource,
   ) {
     this.logger = LoggerFactory.getLogger([EnforcerService.name]);
   }
@@ -38,14 +38,13 @@ export class EnforcerService {
       });
     }
 
-    const datasource = await this.dataSourceResolver();
     this.logger.info(
       '[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s',
       this.confPath,
-      datasource.name,
+      this.dataSource.name,
     );
 
-    const casbinAdapter = new CasbinLBAdapter(datasource);
+    const casbinAdapter = new CasbinLBAdapter(this.dataSource);
     this.enforcer = await newEnforcer(this.confPath, casbinAdapter);
 
     this.logger.info('[getEnforcer] Created new enforcer | Configure path: %s', this.confPath);
