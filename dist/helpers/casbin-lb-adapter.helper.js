@@ -162,7 +162,7 @@ class CasbinLBAdapter {
                     continue;
                 }
                 casbin_1.Helper.loadPolicyLine(policyLine, model);
-                // this.logger.info('[loadFilteredPolicy] Load policy: %s', policyLine);
+                this.logger.debug('[loadFilteredPolicy] Load policy: %s', policyLine);
             }
             // Load group lines
             for (const userRole of userRoles) {
@@ -174,7 +174,7 @@ class CasbinLBAdapter {
                     continue;
                 }
                 casbin_1.Helper.loadPolicyLine(groupLine, model);
-                // this.logger.info('[loadFilteredPolicy] Load groupLine: %s', groupLine);
+                this.logger.debug('[loadFilteredPolicy] Load groupLine: %s', groupLine);
             }
         });
     }

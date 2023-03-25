@@ -54,7 +54,7 @@ export class EnforcerService {
       this.enforcer = await newEnforcer(confPath, lbAdapter);
     }
 
-    this.logger.info('[getEnforcer] Created new enforcer | Configure path: %s', confPath);
+    this.logger.debug('[getEnforcer] Created new enforcer | Configure path: %s', confPath);
     return this.enforcer;
   }
 

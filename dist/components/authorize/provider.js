@@ -57,7 +57,7 @@ let AuthorizeProvider = class AuthorizeProvider {
             let rs = false;
             const enforcer = yield this.enforcerService.getTypeEnforcer(userId);
             if (!enforcer) {
-                this.logger.info('[authorizePermission] Skip authorization for NULL enforcer!');
+                this.logger.debug('[authorizePermission] Skip authorization for NULL enforcer!');
                 return rs;
             }
             const subject = `${helpers_1.EnforcerDefinitions.PREFIX_USER}_${userId}`;

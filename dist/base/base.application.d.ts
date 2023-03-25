@@ -272,6 +272,8 @@ export declare abstract class BaseApplication extends BaseApplication_base imple
     protected logger: ApplicationLogger;
     models: Set<string>;
     constructor(options?: ApplicationConfig);
+    abstract staticConfigure(): void;
+    abstract getProjectRoot(): string;
     abstract validateEnv(): EnvironmentValidationResult;
     abstract declareModels(): Set<string>;
     abstract preConfigure(): void;

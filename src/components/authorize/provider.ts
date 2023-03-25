@@ -41,7 +41,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     const enforcer = await this.enforcerService.getTypeEnforcer(userId);
 
     if (!enforcer) {
-      this.logger.info('[authorizePermission] Skip authorization for NULL enforcer!');
+      this.logger.debug('[authorizePermission] Skip authorization for NULL enforcer!');
       return rs;
     }
 

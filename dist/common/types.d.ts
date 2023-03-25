@@ -2,6 +2,8 @@ import { BaseIdEntity, BaseTzEntity } from '../base';
 import { Count, DataObject, Entity, Options, Where } from '@loopback/repository';
 export interface IApplication {
     models: Set<string>;
+    staticConfigure(): void;
+    getProjectRoot(): string;
     preConfigure(): void;
     postConfigure(): void;
 }

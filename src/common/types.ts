@@ -3,6 +3,8 @@ import { Count, DataObject, Entity, Options, Where } from '@loopback/repository'
 
 export interface IApplication {
   models: Set<string>;
+  staticConfigure(): void;
+  getProjectRoot(): string;
   preConfigure(): void;
   postConfigure(): void;
 }
@@ -53,10 +55,10 @@ export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepos
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IService {}
+export interface IService { }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IController {}
+export interface IController { }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface EnvironmentValidationResult {

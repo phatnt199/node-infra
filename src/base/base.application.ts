@@ -3,6 +3,7 @@ import { ApplicationConfig } from '@loopback/core';
 import { RepositoryMixin } from '@loopback/repository';
 import { RestApplication } from '@loopback/rest';
 import { ServiceMixin } from '@loopback/service-proxy';
+import { CrudRestComponent } from '@loopback/rest-crud';
 import { EnvironmentValidationResult, IApplication } from '@/common/types';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 
@@ -19,6 +20,9 @@ export abstract class BaseApplication
     this.logger = LoggerFactory.getLogger(['Application']);
 
     this.sequence(BaseApplicationSequence);
+    this.staticConfigure();
+    this.projectRoot = this.getProjectRoot();
+    this.component(CrudRestComponent);
 
     const applicationEnv = process.env.NODE_ENV ?? 'unknown';
     this.logger.info(' Starting application with ENV "%s"...', applicationEnv);
@@ -44,6 +48,8 @@ export abstract class BaseApplication
     this.postConfigure();
   }
 
+  abstract staticConfigure(): void;
+  abstract getProjectRoot(): string;
   abstract validateEnv(): EnvironmentValidationResult;
   abstract declareModels(): Set<string>;
   abstract preConfigure(): void;

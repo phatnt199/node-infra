@@ -5,6 +5,7 @@ const boot_1 = require("@loopback/boot");
 const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
 const service_proxy_1 = require("@loopback/service-proxy");
+const rest_crud_1 = require("@loopback/rest-crud");
 const helpers_1 = require("../helpers");
 const base_sequence_1 = require("./base.sequence");
 class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceMixin)((0, repository_1.RepositoryMixin)(rest_1.RestApplication))) {
@@ -13,6 +14,9 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
         super(options);
         this.logger = helpers_1.LoggerFactory.getLogger(['Application']);
         this.sequence(base_sequence_1.BaseApplicationSequence);
+        this.staticConfigure();
+        this.projectRoot = this.getProjectRoot();
+        this.component(rest_crud_1.CrudRestComponent);
         const applicationEnv = (_a = process.env.NODE_ENV) !== null && _a !== void 0 ? _a : 'unknown';
         this.logger.info(' Starting application with ENV "%s"...', applicationEnv);
         // Validate whole application environment args.
