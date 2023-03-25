@@ -135,11 +135,12 @@ class CasbinLBAdapter {
                     message: '[loadFilteredPolicy] Invalid where condition to filter policy!',
                 });
             }
-            const aclQueries = [this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`)];
+            const aclQueries = [];
             const userRoles = yield this.datasource.execute(`SELECT * FROM public."UserRole" WHERE ${whereCondition}`);
             for (const userRole of userRoles) {
                 aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE role_id = ${userRole.principal_id}`));
             }
+            aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`));
             const aclRs = yield Promise.all(aclQueries);
             const acls = (0, flatten_1.default)(aclRs);
             const policyLineRs = yield Promise.all(acls.map(acl => {

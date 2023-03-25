@@ -138,24 +138,27 @@ export class CasbinLBAdapter implements FilteredAdapter {
       });
     }
 
-    const aclQueries = [this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`)];
+    const aclQueries = [];
     const userRoles = await this.datasource.execute(`SELECT * FROM public."UserRole" WHERE ${whereCondition}`);
     for (const userRole of userRoles) {
       aclQueries.push(
         this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE role_id = ${userRole.principal_id}`),
       );
     }
+    aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`));
 
     const aclRs = await Promise.all(aclQueries);
     const acls = flatten(aclRs);
 
-    const policyLineRs = await Promise.all(acls.map(acl => {
-      return this.generatePolicyLine({
-        userId: get(acl, 'user_id'),
-        roleId: get(acl, 'role_id'),
-        permissionId: get(acl, 'permission_id'),
-      })
-    }))
+    const policyLineRs = await Promise.all(
+      acls.map(acl => {
+        return this.generatePolicyLine({
+          userId: get(acl, 'user_id'),
+          roleId: get(acl, 'role_id'),
+          permissionId: get(acl, 'permission_id'),
+        });
+      }),
+    );
     const policyLines = flatten(policyLineRs);
     for (const policyLine of policyLines) {
       if (!policyLine || isEmpty(policyLine)) {

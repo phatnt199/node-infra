@@ -215,7 +215,10 @@ const defineUserRole = () => {
         }
     }
     __decorate([
-        (0, repository_1.property)({ type: 'number' }),
+        (0, repository_1.property)({
+            type: 'number',
+            postgresql: { columnName: 'user_id' },
+        }),
         __metadata("design:type", Number)
     ], UserRole.prototype, "userId", void 0);
     return UserRole;
