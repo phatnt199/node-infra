@@ -5,6 +5,10 @@ import { RestApplication } from '@loopback/rest';
 import { ServiceMixin } from '@loopback/service-proxy';
 import { EnvironmentValidationResult, IApplication } from '@/common/types';
 import { applicationLogger } from '@/helpers';
+import { CrudRestComponent } from '@loopback/rest-crud';
+import { BaseApplicationSequence } from './base.sequence';
+
+import path from 'path';
 
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
@@ -13,6 +17,15 @@ export abstract class BaseApplication
 
   constructor(options: ApplicationConfig = {}) {
     super(options);
+
+    // Set up the custom sequence
+    this.sequence(BaseApplicationSequence);
+
+    // Set up default home page
+    this.static('/', path.join(__dirname, '../public'));
+    this.projectRoot = __dirname;
+    this.component(CrudRestComponent);
+
     const applicationEnv = process.env.NODE_ENV ?? 'unknown';
     applicationLogger.log('info', '[application] Starting application with ENV "%s"...', applicationEnv);
 

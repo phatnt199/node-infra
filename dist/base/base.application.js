@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseApplication = void 0;
 const boot_1 = require("@loopback/boot");
@@ -6,10 +9,19 @@ const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
 const service_proxy_1 = require("@loopback/service-proxy");
 const helpers_1 = require("../helpers");
+const rest_crud_1 = require("@loopback/rest-crud");
+const base_sequence_1 = require("./base.sequence");
+const path_1 = __importDefault(require("path"));
 class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceMixin)((0, repository_1.RepositoryMixin)(rest_1.RestApplication))) {
     constructor(options = {}) {
         var _a, _b;
         super(options);
+        // Set up the custom sequence
+        this.sequence(base_sequence_1.BaseApplicationSequence);
+        // Set up default home page
+        this.static('/', path_1.default.join(__dirname, '../public'));
+        this.projectRoot = __dirname;
+        this.component(rest_crud_1.CrudRestComponent);
         const applicationEnv = (_a = process.env.NODE_ENV) !== null && _a !== void 0 ? _a : 'unknown';
         helpers_1.applicationLogger.log('info', '[application] Starting application with ENV "%s"...', applicationEnv);
         // Validate whole application environment args.
