@@ -1,4 +1,4 @@
-import { Adapter, Enforcer, newEnforcer } from 'casbin';
+import { Enforcer, newEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 import { getError } from '@/utilities';
@@ -11,7 +11,6 @@ export class EnforcerService {
   private logger: ApplicationLogger;
 
   private enforcer: Enforcer;
-  private adapter: Adapter;
 
   constructor(
     @inject(AuthorizerKeys.CONFIGURE_PATH) protected confPath: string,
@@ -39,10 +38,11 @@ export class EnforcerService {
       });
     }
 
-    this.adapter = new CasbinLBAdapter(this.datasource);
-    this.enforcer = await newEnforcer(this.confPath, this.adapter);
+    this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', this.confPath, this.datasource);
+    const casbinAdapter = new CasbinLBAdapter(this.datasource);
+    this.enforcer = await newEnforcer(this.confPath, casbinAdapter);
 
-    await this.enforcer.loadPolicy();
+    this.logger.info('[getEnforcer] Created new enforcer | Configure path: %s', this.confPath);
     return this.enforcer;
   }
 
