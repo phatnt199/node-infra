@@ -51,31 +51,33 @@ let AuthorizeProvider = class AuthorizeProvider {
         };
     }
     // -------------------------------------------------------------------------------------------------------------------
-    authorizeRolePermission(roleIds, object, action) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let rs = false;
-            this.logger.info('[authorizeRolePermission] RoleIds: %j | Object: %s | Action: %s', roleIds, object, action);
-            for (const roleId of roleIds) {
-                const enforcer = yield this.enforcerService.getTypeEnforcer('Role', roleId);
-                if (!enforcer) {
-                    this.logger.info('[authorizeRolePermission] Skip authorization for NULL enforcer!');
-                    continue;
-                }
-                const subject = `${helpers_1.EnforcerDefinitions.PREFIX_ROLE}_${roleId}`;
-                const enforcePayload = this.normalizeEnforcePayload(subject, object, action);
-                rs = yield enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
-                if (rs) {
-                    break;
-                }
-            }
-            return rs;
-        });
-    }
+    /* async authorizeRolePermission(roleIds: number[], object: string, action: string): Promise<boolean> {
+      let rs = false;
+  
+      this.logger.info('[authorizeRolePermission] RoleIds: %j | Object: %s | Action: %s', roleIds, object, action);
+      for (const roleId of roleIds) {
+        const enforcer = await this.enforcerService.getTypeEnforcer('Role', roleId);
+        if (!enforcer) {
+          this.logger.info('[authorizeRolePermission] Skip authorization for NULL enforcer!');
+          continue;
+        }
+  
+        const subject = `${EnforcerDefinitions.PREFIX_ROLE}_${roleId}`;
+        const enforcePayload = this.normalizeEnforcePayload(subject, object, action);
+        rs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
+  
+        if (rs) {
+          break;
+        }
+      }
+  
+      return rs;
+    } */
     // -------------------------------------------------------------------------------------------------------------------
     authorizeUserPermission(userId, object, action) {
         return __awaiter(this, void 0, void 0, function* () {
             let rs = false;
-            const enforcer = yield this.enforcerService.getTypeEnforcer('User', userId);
+            const enforcer = yield this.enforcerService.getTypeEnforcer(userId);
             if (!enforcer) {
                 this.logger.info('[authorizeUserPermission] Skip authorization for NULL enforcer!');
                 return rs;
@@ -88,7 +90,7 @@ let AuthorizeProvider = class AuthorizeProvider {
     }
     // -------------------------------------------------------------------------------------------------------------------
     authorize(context, metadata) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             if ((context === null || context === void 0 ? void 0 : context.principals.length) <= 0) {
                 return authorization_1.AuthorizationDecision.DENY;
@@ -123,13 +125,18 @@ let AuthorizeProvider = class AuthorizeProvider {
                 return authorization_1.AuthorizationDecision.ALLOW;
             }
             // Authorize with role permissions
-            const roleAuthorizeDecision = yield this.authorizeRolePermission(roleIds, requestResource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
+            /* const roleAuthorizeDecision = await this.authorizeRolePermission(
+              roleIds,
+              requestResource,
+              scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
+            );
+        
             if (roleAuthorizeDecision) {
-                return authorization_1.AuthorizationDecision.ALLOW;
-            }
+              return AuthorizationDecision.ALLOW;
+            } */
             // Authorize with user permissions
-            const userAuthorizeDecision = yield this.authorizeUserPermission(userId, requestResource, (_d = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _d !== void 0 ? _d : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
-            return userAuthorizeDecision ? authorization_1.AuthorizationDecision.ALLOW : authorization_1.AuthorizationDecision.DENY;
+            const authorizeDecision = yield this.authorizeUserPermission(userId, requestResource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
+            return authorizeDecision ? authorization_1.AuthorizationDecision.ALLOW : authorization_1.AuthorizationDecision.DENY;
         });
     }
 };

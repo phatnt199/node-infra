@@ -38,7 +38,11 @@ export class EnforcerService {
       });
     }
 
-    this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', this.confPath, this.datasource.name);
+    this.logger.info(
+      '[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s',
+      this.confPath,
+      this.datasource.name,
+    );
     const casbinAdapter = new CasbinLBAdapter(this.datasource);
     this.enforcer = await newEnforcer(this.confPath, casbinAdapter);
 
@@ -47,14 +51,14 @@ export class EnforcerService {
   }
 
   // -----------------------------------------------------------------------------------------
-  async getTypeEnforcer(pType: string, id: IdType): Promise<Enforcer | null> {
+  async getTypeEnforcer(id: IdType): Promise<Enforcer | null> {
     const enforcer = await this.getEnforcer();
     if (!enforcer) {
       return null;
     }
 
     const filterValue: EnforcerFilterValue = {
-      principalType: pType,
+      principalType: 'User',
       principalValue: id,
     };
 

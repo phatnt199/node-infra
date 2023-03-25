@@ -15,8 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CasbinLBAdapter = exports.EnforcerDefinitions = void 0;
 const casbin_1 = require("casbin");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
+const flatten_1 = __importDefault(require("lodash/flatten"));
 const get_1 = __importDefault(require("lodash/get"));
 const logger_helper_1 = require("./logger.helper");
+const __1 = require("..");
 class EnforcerDefinitions {
 }
 exports.EnforcerDefinitions = EnforcerDefinitions;
@@ -65,7 +67,7 @@ class CasbinLBAdapter {
             const [permission] = permissionRs;
             const [permissionMapping] = permissionMappingRs;
             rs = [...rs, (_a = permission.code) === null || _a === void 0 ? void 0 : _a.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
-            return rs.join(',');
+            return rs.join(', ');
         });
     }
     // -----------------------------------------------------------------------------------------
@@ -107,28 +109,64 @@ class CasbinLBAdapter {
         });
     }
     // -----------------------------------------------------------------------------------------
+    generateGroupLine(rule) {
+        const { userId, roleId } = rule;
+        const rs = [
+            EnforcerDefinitions.PTYPE_GROUP,
+            `${EnforcerDefinitions.PREFIX_USER}_${userId}`,
+            `${EnforcerDefinitions.PREFIX_ROLE}_${roleId}`,
+        ];
+        return rs.join(',');
+    }
+    // -----------------------------------------------------------------------------------------
     loadFilteredPolicy(model, filter) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            if (((_a = filter === null || filter === void 0 ? void 0 : filter.principalType) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === 'role') {
+                throw (0, __1.getError)({
+                    statusCode: 500,
+                    message: '[loadFilteredPolicy] Only "User" is allowed for filter principal type!',
+                });
+            }
             const whereCondition = this.getFilterCondition(filter);
             if (!whereCondition) {
-                return;
+                throw (0, __1.getError)({
+                    statusCode: 500,
+                    message: '[loadFilteredPolicy] Invalid where condition to filter policy!',
+                });
             }
-            const sql = `SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`;
-            const acls = yield this.datasource.execute(sql);
-            if ((acls === null || acls === void 0 ? void 0 : acls.length) <= 0) {
-                return;
+            const aclQueries = [this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`)];
+            const userRoles = yield this.datasource.execute(`SELECT * FROM public."UserRole" WHERE ${whereCondition}`);
+            for (const userRole of userRoles) {
+                aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE role_id = ${userRole.principal_id}`));
             }
-            for (const acl of acls) {
-                const policyLine = yield this.generatePolicyLine({
+            const aclRs = yield Promise.all(aclQueries);
+            const acls = (0, flatten_1.default)(aclRs);
+            const policyLineRs = yield Promise.all(acls.map(acl => {
+                return this.generatePolicyLine({
                     userId: (0, get_1.default)(acl, 'user_id'),
                     roleId: (0, get_1.default)(acl, 'role_id'),
                     permissionId: (0, get_1.default)(acl, 'permission_id'),
                 });
+            }));
+            const policyLines = (0, flatten_1.default)(policyLineRs);
+            for (const policyLine of policyLines) {
                 if (!policyLine || (0, isEmpty_1.default)(policyLine)) {
                     continue;
                 }
                 casbin_1.Helper.loadPolicyLine(policyLine, model);
                 this.logger.info('[loadFilteredPolicy] Load policy: %s', policyLine);
+            }
+            for (const userRole of userRoles) {
+                const groupLine = this.generateGroupLine({
+                    userId: (0, get_1.default)(userRole, 'user_id'),
+                    roleId: (0, get_1.default)(userRole, 'principal_id'),
+                });
+                if (!groupLine || (0, isEmpty_1.default)(groupLine)) {
+                    continue;
+                }
+                casbin_1.Helper.loadPolicyLine(groupLine, model);
+                this.logger.info('[loadFilteredPolicy] Load groupLine: %s', groupLine);
             }
         });
     }
@@ -137,21 +175,23 @@ class CasbinLBAdapter {
         return true;
     }
     // -----------------------------------------------------------------------------------------
-    loadPolicy(model) {
+    loadPolicy(_) {
         return __awaiter(this, void 0, void 0, function* () {
-            const acls = yield this.datasource.execute('SELECT * FROM public."PermissionMapping"');
+            /* const acls = await this.datasource.execute('SELECT * FROM public."PermissionMapping"');
             for (const acl of acls) {
-                const policyLine = yield this.generatePolicyLine({
-                    userId: (0, get_1.default)(acl, 'user_id'),
-                    roleId: (0, get_1.default)(acl, 'role_id'),
-                    permissionId: (0, get_1.default)(acl, 'permission_id'),
-                });
-                if (!policyLine || (0, isEmpty_1.default)(policyLine)) {
-                    continue;
-                }
-                casbin_1.Helper.loadPolicyLine(policyLine, model);
-                this.logger.info('[loadPolicy] Load policy: %s', policyLine);
-            }
+              const policyLine = await this.generatePolicyLine({
+                userId: get(acl, 'user_id'),
+                roleId: get(acl, 'role_id'),
+                permissionId: get(acl, 'permission_id'),
+              });
+              if (!policyLine || isEmpty(policyLine)) {
+                continue;
+              }
+        
+              Helper.loadPolicyLine(policyLine, model);
+              this.logger.info('[loadPolicy] Load policy: %s', policyLine);
+            } */
+            return;
         });
     }
     // -----------------------------------------------------------------------------------------

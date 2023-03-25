@@ -33,7 +33,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
   }
 
   // -------------------------------------------------------------------------------------------------------------------
-  async authorizeRolePermission(roleIds: number[], object: string, action: string): Promise<boolean> {
+  /* async authorizeRolePermission(roleIds: number[], object: string, action: string): Promise<boolean> {
     let rs = false;
 
     this.logger.info('[authorizeRolePermission] RoleIds: %j | Object: %s | Action: %s', roleIds, object, action);
@@ -54,12 +54,12 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     }
 
     return rs;
-  }
+  } */
 
   // -------------------------------------------------------------------------------------------------------------------
   async authorizeUserPermission(userId: number, object: string, action: string): Promise<boolean> {
     let rs = false;
-    const enforcer = await this.enforcerService.getTypeEnforcer('User', userId);
+    const enforcer = await this.enforcerService.getTypeEnforcer(userId);
 
     if (!enforcer) {
       this.logger.info('[authorizeUserPermission] Skip authorization for NULL enforcer!');
@@ -121,7 +121,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     }
 
     // Authorize with role permissions
-    const roleAuthorizeDecision = await this.authorizeRolePermission(
+    /* const roleAuthorizeDecision = await this.authorizeRolePermission(
       roleIds,
       requestResource,
       scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
@@ -129,15 +129,15 @@ export class AuthorizeProvider implements Provider<Authorizer> {
 
     if (roleAuthorizeDecision) {
       return AuthorizationDecision.ALLOW;
-    }
+    } */
 
     // Authorize with user permissions
-    const userAuthorizeDecision = await this.authorizeUserPermission(
+    const authorizeDecision = await this.authorizeUserPermission(
       userId,
       requestResource,
       scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
     );
 
-    return userAuthorizeDecision ? AuthorizationDecision.ALLOW : AuthorizationDecision.DENY;
+    return authorizeDecision ? AuthorizationDecision.ALLOW : AuthorizationDecision.DENY;
   }
 }

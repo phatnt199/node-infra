@@ -11,7 +11,6 @@ export declare class AuthorizeProvider implements Provider<Authorizer> {
         object: string;
         action: string;
     };
-    authorizeRolePermission(roleIds: number[], object: string, action: string): Promise<boolean>;
     authorizeUserPermission(userId: number, object: string, action: string): Promise<boolean>;
     authorize(context: AuthorizationContext, metadata: AuthorizationMetadata): Promise<AuthorizationDecision>;
 }

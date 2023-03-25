@@ -8,5 +8,5 @@ export declare class EnforcerService {
     private enforcer;
     constructor(confPath: string, datasource: BaseDataSource);
     getEnforcer(): Promise<Enforcer>;
-    getTypeEnforcer(pType: string, id: IdType): Promise<Enforcer | null>;
+    getTypeEnforcer(id: IdType): Promise<Enforcer | null>;
 }

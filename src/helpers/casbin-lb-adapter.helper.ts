@@ -1,8 +1,10 @@
 import { FilteredAdapter, Model, Helper } from 'casbin';
 import isEmpty from 'lodash/isEmpty';
+import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import { BaseDataSource } from '@/base/base.datasource';
 import { ApplicationLogger, LoggerFactory } from './logger.helper';
+import { getError } from '..';
 
 export class EnforcerDefinitions {
   static readonly ACTION_EXECUTE = 'execute';
@@ -62,7 +64,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
     const [permissionMapping] = permissionMappingRs;
 
     rs = [...rs, permission.code?.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
-    return rs.join(',');
+    return rs.join(', ');
   }
 
   // -----------------------------------------------------------------------------------------
@@ -109,30 +111,73 @@ export class CasbinLBAdapter implements FilteredAdapter {
   }
 
   // -----------------------------------------------------------------------------------------
+  generateGroupLine(rule: { userId: number; roleId: number }) {
+    const { userId, roleId } = rule;
+    const rs = [
+      EnforcerDefinitions.PTYPE_GROUP,
+      `${EnforcerDefinitions.PREFIX_USER}_${userId}`,
+      `${EnforcerDefinitions.PREFIX_ROLE}_${roleId}`,
+    ];
+    return rs.join(',');
+  }
+
+  // -----------------------------------------------------------------------------------------
   async loadFilteredPolicy(model: Model, filter: EnforcerFilterValue): Promise<void> {
+    if (filter?.principalType?.toLowerCase() === 'role') {
+      throw getError({
+        statusCode: 500,
+        message: '[loadFilteredPolicy] Only "User" is allowed for filter principal type!',
+      });
+    }
+
     const whereCondition = this.getFilterCondition(filter);
     if (!whereCondition) {
-      return;
+      throw getError({
+        statusCode: 500,
+        message: '[loadFilteredPolicy] Invalid where condition to filter policy!',
+      });
     }
 
-    const sql = `SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`;
-    const acls = await this.datasource.execute(sql);
-    if (acls?.length <= 0) {
-      return;
+    const aclQueries = [this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`)];
+    const userRoles = await this.datasource.execute(`SELECT * FROM public."UserRole" WHERE ${whereCondition}`);
+    for (const userRole of userRoles) {
+      aclQueries.push(
+        this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE role_id = ${userRole.principal_id}`),
+      );
     }
 
-    for (const acl of acls) {
-      const policyLine = await this.generatePolicyLine({
+    const aclRs = await Promise.all(aclQueries);
+    const acls = flatten(aclRs);
+
+    const policyLineRs = await Promise.all(acls.map(acl => {
+      return this.generatePolicyLine({
         userId: get(acl, 'user_id'),
         roleId: get(acl, 'role_id'),
         permissionId: get(acl, 'permission_id'),
-      });
+      })
+    }))
+    const policyLines = flatten(policyLineRs);
+    for (const policyLine of policyLines) {
       if (!policyLine || isEmpty(policyLine)) {
         continue;
       }
 
       Helper.loadPolicyLine(policyLine, model);
       this.logger.info('[loadFilteredPolicy] Load policy: %s', policyLine);
+    }
+
+    for (const userRole of userRoles) {
+      const groupLine = this.generateGroupLine({
+        userId: get(userRole, 'user_id'),
+        roleId: get(userRole, 'principal_id'),
+      });
+
+      if (!groupLine || isEmpty(groupLine)) {
+        continue;
+      }
+
+      Helper.loadPolicyLine(groupLine, model);
+      this.logger.info('[loadFilteredPolicy] Load groupLine: %s', groupLine);
     }
   }
 
@@ -142,8 +187,8 @@ export class CasbinLBAdapter implements FilteredAdapter {
   }
 
   // -----------------------------------------------------------------------------------------
-  async loadPolicy(model: Model): Promise<void> {
-    const acls = await this.datasource.execute('SELECT * FROM public."PermissionMapping"');
+  async loadPolicy(_: Model): Promise<void> {
+    /* const acls = await this.datasource.execute('SELECT * FROM public."PermissionMapping"');
     for (const acl of acls) {
       const policyLine = await this.generatePolicyLine({
         userId: get(acl, 'user_id'),
@@ -156,7 +201,8 @@ export class CasbinLBAdapter implements FilteredAdapter {
 
       Helper.loadPolicyLine(policyLine, model);
       this.logger.info('[loadPolicy] Load policy: %s', policyLine);
-    }
+    } */
+    return;
   }
 
   // -----------------------------------------------------------------------------------------

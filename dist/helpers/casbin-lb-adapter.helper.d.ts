@@ -28,9 +28,13 @@ export declare class CasbinLBAdapter implements FilteredAdapter {
         roleId: number;
         permissionId: number;
     }): Promise<string | null>;
+    generateGroupLine(rule: {
+        userId: number;
+        roleId: number;
+    }): string;
     loadFilteredPolicy(model: Model, filter: EnforcerFilterValue): Promise<void>;
     isFiltered(): boolean;
-    loadPolicy(model: Model): Promise<void>;
+    loadPolicy(_: Model): Promise<void>;
     savePolicy(model: Model): Promise<boolean>;
     addPolicy(sec: string, ptype: string, rule: string[]): Promise<void>;
     removePolicy(sec: string, ptype: string, rule: string[]): Promise<void>;

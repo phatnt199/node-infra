@@ -64,14 +64,14 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
         });
     }
     // -----------------------------------------------------------------------------------------
-    getTypeEnforcer(pType, id) {
+    getTypeEnforcer(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const enforcer = yield this.getEnforcer();
             if (!enforcer) {
                 return null;
             }
             const filterValue = {
-                principalType: pType,
+                principalType: 'User',
                 principalValue: id,
             };
             yield enforcer.loadFilteredPolicy(filterValue);
