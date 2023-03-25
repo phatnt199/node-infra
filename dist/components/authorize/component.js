@@ -26,7 +26,7 @@ const services_1 = require("../../services");
 const common_1 = require("../../common");
 const repositories_1 = require("../../repositories");
 const path_1 = __importDefault(require("path"));
-const authorizeConfPath = path_1.default.resolve(__dirname, '../static/security/authorize_model.conf');
+const authorizeConfPath = path_1.default.resolve(__dirname, '../../../static/security/authorize_model.conf');
 let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthorizeComponent.name });

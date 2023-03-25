@@ -15,7 +15,7 @@ import { PermissionMappingRepository, PermissionRepository, RoleRepository, User
 
 import path from 'path';
 
-const authorizeConfPath = path.resolve(__dirname, '../static/security/authorize_model.conf');
+const authorizeConfPath = path.resolve(__dirname, '../../../static/security/authorize_model.conf');
 
 export class AuthorizeComponent extends BaseComponent {
   bindings: Binding[] = [
