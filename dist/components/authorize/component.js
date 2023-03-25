@@ -11,6 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizeComponent = void 0;
 const base_component_1 = require("../../base/base.component");
@@ -22,12 +25,13 @@ const provider_1 = require("./provider");
 const services_1 = require("../../services");
 const common_1 = require("../../common");
 const repositories_1 = require("../../repositories");
+const path_1 = __importDefault(require("path"));
+const authorizeConfPath = path_1.default.resolve(__dirname, '../static/security/authorize_model.conf');
 let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthorizeComponent.name });
         this.application = application;
         this.bindings = [
-            core_1.Binding.bind(common_1.AuthorizerKeys.APPLICATION_NAME).to(AuthorizeComponent.name),
             // Model bindings
             core_1.Binding.bind(common_1.AuthorizerKeys.ROLE_MODEL).toClass(authorize_1.Role),
             core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MODEL).toClass(authorize_1.Permission),
@@ -38,8 +42,10 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
             core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_REPOSITORY).toClass(repositories_1.PermissionRepository),
             core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MAPPING_REPOSITORY).toClass(repositories_1.PermissionMappingRepository),
             core_1.Binding.bind(common_1.AuthorizerKeys.USER_ROLE_REPOSITORY).toClass(repositories_1.UserRoleRepository),
-            core_1.Binding.bind(common_1.AuthorizerKeys.ADAPTER_DATASOURCE).to('datasources.postgres'),
-            core_1.Binding.bind(common_1.AuthorizerKeys.CONFIGURE_PATH).to('/'),
+            // Datasource
+            core_1.Binding.bind(common_1.AuthorizerKeys.AUTHORIZE_DATASOURCE).to(null),
+            // Configure path
+            core_1.Binding.bind(common_1.AuthorizerKeys.CONFIGURE_PATH).to(authorizeConfPath),
         ];
         this.binding();
     }
@@ -60,8 +66,7 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
         this.application.repository(repositories_1.UserRoleRepository);
     }
     binding() {
-        const applicationName = this.application.getSync(common_1.AuthorizerKeys.APPLICATION_NAME);
-        this.logger.info('[binding] Binding authorize for application %s...', applicationName);
+        this.logger.info('[binding] Binding authorize for application...');
         this.defineModels();
         this.defineRepositories();
         this.application.component(authorization_1.AuthorizationComponent);

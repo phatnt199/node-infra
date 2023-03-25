@@ -13,10 +13,12 @@ import { EnforcerService } from '@/services';
 import { AuthorizerKeys } from '@/common';
 import { PermissionMappingRepository, PermissionRepository, RoleRepository, UserRoleRepository } from '@/repositories';
 
+import path from 'path';
+
+const authorizeConfPath = path.resolve(__dirname, '../static/security/authorize_model.conf');
+
 export class AuthorizeComponent extends BaseComponent {
   bindings: Binding[] = [
-    Binding.bind(AuthorizerKeys.APPLICATION_NAME).to(AuthorizeComponent.name),
-
     // Model bindings
     Binding.bind(AuthorizerKeys.ROLE_MODEL).toClass(Role),
     Binding.bind(AuthorizerKeys.PERMISSION_MODEL).toClass(Permission),
@@ -29,8 +31,11 @@ export class AuthorizeComponent extends BaseComponent {
     Binding.bind(AuthorizerKeys.PERMISSION_MAPPING_REPOSITORY).toClass(PermissionMappingRepository),
     Binding.bind(AuthorizerKeys.USER_ROLE_REPOSITORY).toClass(UserRoleRepository),
 
-    Binding.bind(AuthorizerKeys.ADAPTER_DATASOURCE).to('datasources.postgres'),
-    Binding.bind(AuthorizerKeys.CONFIGURE_PATH).to('/'),
+    // Datasource
+    Binding.bind(AuthorizerKeys.AUTHORIZE_DATASOURCE).to(null),
+
+    // Configure path
+    Binding.bind(AuthorizerKeys.CONFIGURE_PATH).to(authorizeConfPath),
   ];
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
@@ -59,8 +64,7 @@ export class AuthorizeComponent extends BaseComponent {
   }
 
   binding() {
-    const applicationName = this.application.getSync<string>(AuthorizerKeys.APPLICATION_NAME);
-    this.logger.info('[binding] Binding authorize for application %s...', applicationName);
+    this.logger.info('[binding] Binding authorize for application...');
 
     this.defineModels();
     this.defineRepositories();

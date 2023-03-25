@@ -11,6 +11,6 @@ export declare class AuthorizerKeys {
     static readonly PROVIDER = "@app/authorize/provider";
     static readonly ENFORCER = "@app/authorize/enforcer";
     static readonly ALWAYS_ALLOW_ROLES = "@app/authorize/always_allow_roles";
-    static readonly ADAPTER_DATASOURCE = "@app/authorize/enforcer/adapter/datasource";
+    static readonly AUTHORIZE_DATASOURCE = "@app/authorize/enforcer/adapter/datasource";
     static readonly CONFIGURE_PATH = "@app/authorize/configure_path";
 }

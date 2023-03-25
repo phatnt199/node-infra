@@ -34,9 +34,9 @@ const common_1 = require("../common");
 const __1 = require("..");
 const core_1 = require("@loopback/core");
 let EnforcerService = EnforcerService_1 = class EnforcerService {
-    constructor(confPath, datasource) {
+    constructor(confPath, dataSourceResolver) {
         this.confPath = confPath;
-        this.datasource = datasource;
+        this.dataSourceResolver = dataSourceResolver;
         this.logger = __1.LoggerFactory.getLogger([EnforcerService_1.name]);
     }
     getEnforcer() {
@@ -56,8 +56,9 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
                     message: '[getEnforcer] Enforcer configuration path is not existed!',
                 });
             }
-            this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', this.confPath, this.datasource.name);
-            const casbinAdapter = new __1.CasbinLBAdapter(this.datasource);
+            const datasource = yield this.dataSourceResolver();
+            this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', this.confPath, datasource.name);
+            const casbinAdapter = new __1.CasbinLBAdapter(datasource);
             this.enforcer = yield (0, casbin_1.newEnforcer)(this.confPath, casbinAdapter);
             this.logger.info('[getEnforcer] Created new enforcer | Configure path: %s', this.confPath);
             return this.enforcer;
@@ -82,8 +83,8 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
 EnforcerService = EnforcerService_1 = __decorate([
     (0, core_1.injectable)({ scope: core_1.BindingScope.SINGLETON }),
     __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.CONFIGURE_PATH)),
-    __param(1, (0, core_1.inject)(`datasources.${process.env.DS_AUTHORIZE}`)),
-    __metadata("design:paramtypes", [String, __1.BaseDataSource])
+    __param(1, core_1.inject.getter(common_1.AuthorizerKeys.AUTHORIZE_DATASOURCE)),
+    __metadata("design:paramtypes", [String, Function])
 ], EnforcerService);
 exports.EnforcerService = EnforcerService;
 //# sourceMappingURL=enforcer.service.js.map

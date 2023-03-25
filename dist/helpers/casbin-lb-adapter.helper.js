@@ -32,8 +32,8 @@ EnforcerDefinitions.PTYPE_GROUP = 'g';
 // -----------------------------------------------------------------------------------------
 class CasbinLBAdapter {
     constructor(datasource) {
-        this.datasource = datasource;
         this.logger = logger_helper_1.LoggerFactory.getLogger([CasbinLBAdapter.name]);
+        this.datasource = datasource;
     }
     // -----------------------------------------------------------------------------------------
     getRule(opts) {

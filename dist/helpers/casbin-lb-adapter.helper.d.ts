@@ -14,8 +14,8 @@ export interface EnforcerFilterValue {
     principalValue: string | number | object;
 }
 export declare class CasbinLBAdapter implements FilteredAdapter {
-    private datasource;
     private logger;
+    private datasource;
     constructor(datasource: BaseDataSource);
     getRule(opts: {
         id: number;

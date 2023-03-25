@@ -24,9 +24,11 @@ export interface EnforcerFilterValue {
 // -----------------------------------------------------------------------------------------
 export class CasbinLBAdapter implements FilteredAdapter {
   private logger: ApplicationLogger;
+  private datasource: BaseDataSource;
 
-  constructor(private datasource: BaseDataSource) {
+  constructor(datasource: BaseDataSource) {
     this.logger = LoggerFactory.getLogger([CasbinLBAdapter.name]);
+    this.datasource = datasource;
   }
 
   // -----------------------------------------------------------------------------------------
