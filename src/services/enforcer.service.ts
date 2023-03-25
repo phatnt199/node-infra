@@ -1,4 +1,4 @@
-import { Enforcer, newEnforcer } from 'casbin';
+import { Enforcer, newCachedEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 import { getError } from '@/utilities';
@@ -45,7 +45,7 @@ export class EnforcerService {
     );
 
     const casbinAdapter = new CasbinLBAdapter(this.dataSource);
-    this.enforcer = await newEnforcer(this.confPath, casbinAdapter);
+    this.enforcer = await newCachedEnforcer(this.confPath, casbinAdapter);
 
     this.logger.info('[getEnforcer] Created new enforcer | Configure path: %s', this.confPath);
     return this.enforcer;
@@ -67,3 +67,16 @@ export class EnforcerService {
     return enforcer;
   }
 }
+    
+      
+      
+      
+        
+      
+      
+        
+        
+        
+      
+    
+    

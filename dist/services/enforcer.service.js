@@ -58,7 +58,7 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
             }
             this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', this.confPath, this.dataSource.name);
             const casbinAdapter = new __1.CasbinLBAdapter(this.dataSource);
-            this.enforcer = yield (0, casbin_1.newEnforcer)(this.confPath, casbinAdapter);
+            this.enforcer = yield (0, casbin_1.newCachedEnforcer)(this.confPath, casbinAdapter);
             this.logger.info('[getEnforcer] Created new enforcer | Configure path: %s', this.confPath);
             return this.enforcer;
         });
