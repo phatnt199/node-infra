@@ -42,7 +42,7 @@ class CasbinLBAdapter {
             let permissionMappingCondition = '';
             switch (modelType) {
                 case EnforcerDefinitions.PREFIX_USER: {
-                    rs = [EnforcerDefinitions.PREFIX_ROLE, `${EnforcerDefinitions.PREFIX_USER}_${id}`];
+                    rs = [EnforcerDefinitions.PTYPE_POLICY, `${EnforcerDefinitions.PREFIX_USER}_${id}`];
                     permissionMappingCondition = `user_id = ${id} AND permission_id = ${permissionId}`;
                     break;
                 }
