@@ -10,14 +10,11 @@ const rest_1 = require("@loopback/rest");
 const service_proxy_1 = require("@loopback/service-proxy");
 const helpers_1 = require("../helpers");
 const rest_crud_1 = require("@loopback/rest-crud");
-const base_sequence_1 = require("./base.sequence");
 const path_1 = __importDefault(require("path"));
 class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceMixin)((0, repository_1.RepositoryMixin)(rest_1.RestApplication))) {
     constructor(options = {}) {
         var _a, _b;
         super(options);
-        // Set up the custom sequence
-        this.sequence(base_sequence_1.BaseApplicationSequence);
         // Set up default home page
         this.static('/', path_1.default.join(__dirname, '../public'));
         this.projectRoot = __dirname;

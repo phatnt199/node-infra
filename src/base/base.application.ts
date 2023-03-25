@@ -6,7 +6,6 @@ import { ServiceMixin } from '@loopback/service-proxy';
 import { EnvironmentValidationResult, IApplication } from '@/common/types';
 import { applicationLogger } from '@/helpers';
 import { CrudRestComponent } from '@loopback/rest-crud';
-import { BaseApplicationSequence } from './base.sequence';
 
 import path from 'path';
 
@@ -17,9 +16,6 @@ export abstract class BaseApplication
 
   constructor(options: ApplicationConfig = {}) {
     super(options);
-
-    // Set up the custom sequence
-    this.sequence(BaseApplicationSequence);
 
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
