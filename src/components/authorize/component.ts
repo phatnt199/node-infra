@@ -41,7 +41,7 @@ export class AuthorizeComponent extends BaseComponent {
     Binding.bind(AuthorizerKeys.USER_ROLE_REPOSITORY).toClass(UserRoleRepository),
 
     // Datasource
-    Binding.bind(AuthorizerKeys.AUTHORIZE_DATASOURCE).to(null),
+    // Binding.bind(AuthorizerKeys.AUTHORIZE_DATASOURCE).to(null),
 
     // Configure path
     Binding.bind(AuthorizerKeys.CONFIGURE_OPTIONS).to({ confPath: authorizeConfPath, useCache: false }),
