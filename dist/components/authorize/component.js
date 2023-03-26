@@ -34,6 +34,7 @@ const provider_1 = require("./provider");
 const services_1 = require("../../services");
 const common_1 = require("../../common");
 const repositories_1 = require("../../repositories");
+const flatten_1 = __importDefault(require("lodash/flatten"));
 const path_1 = __importDefault(require("path"));
 const utilities_1 = require("../../utilities");
 const authorizeConfPath = path_1.default.resolve(__dirname, '../../../static/security/authorize_model.conf');
@@ -93,9 +94,10 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
           SELECT FROM information_schema.tables 
           WHERE table_schema='public' 
             AND table_name='${tableName}'
-        ) as isTableExisted`);
+        ) as "isTableExisted"`);
             });
-            const checkTableExistRs = yield Promise.all(checkTableExecutions);
+            const tableRs = yield Promise.all(checkTableExecutions);
+            const checkTableExistRs = (0, flatten_1.default)(tableRs);
             for (const rs of checkTableExistRs) {
                 if (!rs.isTableExisted) {
                     throw (0, utilities_1.getError)({
@@ -109,9 +111,9 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
           SELECT FROM information_schema.views 
           WHERE table_schema='public' 
             AND table_name='ViewAuthorizePolicy'
-        ) as isExisted`);
+        ) as "isViewExisted"`);
             for (const rs of checkAuthorizeViewRs) {
-                if (!rs.isExisted) {
+                if (!rs.isViewExisted) {
                     throw (0, utilities_1.getError)({
                         statusCode: 500,
                         message: '[verify] Essential view IS NOT EXISTS | Please check again (ViewAuthorizePolicy)',

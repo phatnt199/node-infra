@@ -19,6 +19,7 @@ import {
   ViewAuthorizePolicyRepository,
 } from '@/repositories';
 
+import flatten from 'lodash/flatten';
 import path from 'path';
 import { BaseDataSource } from '@/base/base.datasource';
 import { getError } from '@/utilities';
@@ -90,10 +91,11 @@ export class AuthorizeComponent extends BaseComponent {
           SELECT FROM information_schema.tables 
           WHERE table_schema='public' 
             AND table_name='${tableName}'
-        ) as isTableExisted`);
+        ) as "isTableExisted"`);
     });
 
-    const checkTableExistRs = await Promise.all(checkTableExecutions);
+    const tableRs = await Promise.all(checkTableExecutions);
+    const checkTableExistRs = flatten(tableRs);
     for (const rs of checkTableExistRs) {
       if (!rs.isTableExisted) {
         throw getError({
@@ -104,14 +106,14 @@ export class AuthorizeComponent extends BaseComponent {
       }
     }
 
-    const checkAuthorizeViewRs = await datasource.execute(`
+    const checkAuthorizeViewRs= await datasource.execute(`
         SELECT EXISTS (
           SELECT FROM information_schema.views 
           WHERE table_schema='public' 
             AND table_name='ViewAuthorizePolicy'
-        ) as isExisted`);
+        ) as "isViewExisted"`);
     for (const rs of checkAuthorizeViewRs) {
-      if (!rs.isExisted) {
+      if (!rs.isViewExisted) {
         throw getError({
           statusCode: 500,
           message: '[verify] Essential view IS NOT EXISTS | Please check again (ViewAuthorizePolicy)',
