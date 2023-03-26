@@ -7,5 +7,6 @@ export declare class AuthorizeComponent extends BaseComponent {
     constructor(application: BaseApplication);
     defineModels(): void;
     defineRepositories(): void;
+    verify(): Promise<void>;
     binding(): void;
 }

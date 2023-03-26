@@ -11,6 +11,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -26,6 +35,7 @@ const services_1 = require("../../services");
 const common_1 = require("../../common");
 const repositories_1 = require("../../repositories");
 const path_1 = __importDefault(require("path"));
+const utilities_1 = require("../../utilities");
 const authorizeConfPath = path_1.default.resolve(__dirname, '../../../static/security/authorize_model.conf');
 let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseComponent {
     constructor(application) {
@@ -68,17 +78,65 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
         this.application.repository(repositories_1.UserRoleRepository);
         this.application.repository(repositories_1.ViewAuthorizePolicyRepository);
     }
-    binding() {
-        this.logger.info('[binding] Binding authorize for application...');
-        this.defineModels();
-        this.defineRepositories();
-        this.application.component(authorization_1.AuthorizationComponent);
-        this.application.bind(common_1.AuthorizerKeys.ENFORCER).toInjectable(services_1.EnforcerService);
-        this.application.configure(authorization_1.AuthorizationBindings.COMPONENT).to({
-            precedence: authorization_1.AuthorizationDecision.DENY,
-            defaultDecision: authorization_1.AuthorizationDecision.DENY,
+    verify() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const datasource = this.application.getSync(common_1.AuthorizerKeys.AUTHORIZE_DATASOURCE);
+            if (!datasource) {
+                throw (0, utilities_1.getError)({
+                    statusCode: 500,
+                    message: `[verify] Invalid binding datasource to key ${common_1.AuthorizerKeys.AUTHORIZE_DATASOURCE}`,
+                });
+            }
+            const checkTableExecutions = ['Role', 'Permission', 'UserRole', 'PermissionMapping'].map(tableName => {
+                return datasource.execute(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema='public' 
+            AND table_name='${tableName}'
+        ) as isTableExisted`);
+            });
+            const checkTableExistRs = yield Promise.all(checkTableExecutions);
+            for (const rs of checkTableExistRs) {
+                if (!rs.isTableExisted) {
+                    throw (0, utilities_1.getError)({
+                        statusCode: 500,
+                        message: '[verify] Essential table IS NOT EXISTS | Please check again (Role, Permission, UserRole and PermissionMapping)',
+                    });
+                }
+            }
+            const checkAuthorizeViewRs = yield datasource.execute(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.views 
+          WHERE table_schema='public' 
+            AND table_name='ViewAuthorizePolicy'
+        ) as isExisted`);
+            for (const rs of checkAuthorizeViewRs) {
+                if (!rs.isExisted) {
+                    throw (0, utilities_1.getError)({
+                        statusCode: 500,
+                        message: '[verify] Essential view IS NOT EXISTS | Please check again (ViewAuthorizePolicy)',
+                    });
+                }
+            }
         });
-        this.application.bind(common_1.AuthorizerKeys.PROVIDER).toProvider(provider_1.AuthorizeProvider).tag(authorization_1.AuthorizationTags.AUTHORIZER);
+    }
+    binding() {
+        this.verify()
+            .then(() => {
+            this.logger.info('[binding] Binding authorize for application...');
+            this.defineModels();
+            this.defineRepositories();
+            this.application.component(authorization_1.AuthorizationComponent);
+            this.application.bind(common_1.AuthorizerKeys.ENFORCER).toInjectable(services_1.EnforcerService);
+            this.application.configure(authorization_1.AuthorizationBindings.COMPONENT).to({
+                precedence: authorization_1.AuthorizationDecision.DENY,
+                defaultDecision: authorization_1.AuthorizationDecision.DENY,
+            });
+            this.application.bind(common_1.AuthorizerKeys.PROVIDER).toProvider(provider_1.AuthorizeProvider).tag(authorization_1.AuthorizationTags.AUTHORIZER);
+        })
+            .catch(error => {
+            throw error;
+        });
     }
 };
 AuthorizeComponent = __decorate([

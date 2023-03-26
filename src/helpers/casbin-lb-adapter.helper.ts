@@ -5,7 +5,7 @@ import get from 'lodash/get';
 import { BaseDataSource } from '@/base/base.datasource';
 import { ApplicationLogger, LoggerFactory } from './logger.helper';
 import { getError } from '..';
-import { EnforcerDefinitions } from '@/common/constants'
+import { EnforcerDefinitions } from '@/common/constants';
 
 export interface EnforcerFilterValue {
   principalType: string;

@@ -11,9 +11,17 @@ import {
 import { AuthorizeProvider } from './provider';
 import { EnforcerService } from '@/services';
 import { AuthorizerKeys } from '@/common';
-import { PermissionMappingRepository, PermissionRepository, RoleRepository, UserRoleRepository, ViewAuthorizePolicyRepository } from '@/repositories';
+import {
+  PermissionMappingRepository,
+  PermissionRepository,
+  RoleRepository,
+  UserRoleRepository,
+  ViewAuthorizePolicyRepository,
+} from '@/repositories';
 
 import path from 'path';
+import { BaseDataSource } from '@/base/base.datasource';
+import { getError } from '@/utilities';
 
 const authorizeConfPath = path.resolve(__dirname, '../../../static/security/authorize_model.conf');
 
@@ -66,20 +74,72 @@ export class AuthorizeComponent extends BaseComponent {
     this.application.repository(ViewAuthorizePolicyRepository);
   }
 
-  binding() {
-    this.logger.info('[binding] Binding authorize for application...');
+  async verify() {
+    const datasource = this.application.getSync<BaseDataSource>(AuthorizerKeys.AUTHORIZE_DATASOURCE);
 
-    this.defineModels();
-    this.defineRepositories();
+    if (!datasource) {
+      throw getError({
+        statusCode: 500,
+        message: `[verify] Invalid binding datasource to key ${AuthorizerKeys.AUTHORIZE_DATASOURCE}`,
+      });
+    }
 
-    this.application.component(AuthorizationComponent);
-    this.application.bind(AuthorizerKeys.ENFORCER).toInjectable(EnforcerService);
-
-    this.application.configure(AuthorizationBindings.COMPONENT).to({
-      precedence: AuthorizationDecision.DENY,
-      defaultDecision: AuthorizationDecision.DENY,
+    const checkTableExecutions = ['Role', 'Permission', 'UserRole', 'PermissionMapping'].map(tableName => {
+      return datasource.execute(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema='public' 
+            AND table_name='${tableName}'
+        ) as isTableExisted`);
     });
 
-    this.application.bind(AuthorizerKeys.PROVIDER).toProvider(AuthorizeProvider).tag(AuthorizationTags.AUTHORIZER);
+    const checkTableExistRs = await Promise.all(checkTableExecutions);
+    for (const rs of checkTableExistRs) {
+      if (!rs.isTableExisted) {
+        throw getError({
+          statusCode: 500,
+          message:
+            '[verify] Essential table IS NOT EXISTS | Please check again (Role, Permission, UserRole and PermissionMapping)',
+        });
+      }
+    }
+
+    const checkAuthorizeViewRs = await datasource.execute(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.views 
+          WHERE table_schema='public' 
+            AND table_name='ViewAuthorizePolicy'
+        ) as isExisted`);
+    for (const rs of checkAuthorizeViewRs) {
+      if (!rs.isExisted) {
+        throw getError({
+          statusCode: 500,
+          message: '[verify] Essential view IS NOT EXISTS | Please check again (ViewAuthorizePolicy)',
+        });
+      }
+    }
+  }
+
+  binding() {
+    this.verify()
+      .then(() => {
+        this.logger.info('[binding] Binding authorize for application...');
+
+        this.defineModels();
+        this.defineRepositories();
+
+        this.application.component(AuthorizationComponent);
+        this.application.bind(AuthorizerKeys.ENFORCER).toInjectable(EnforcerService);
+
+        this.application.configure(AuthorizationBindings.COMPONENT).to({
+          precedence: AuthorizationDecision.DENY,
+          defaultDecision: AuthorizationDecision.DENY,
+        });
+
+        this.application.bind(AuthorizerKeys.PROVIDER).toProvider(AuthorizeProvider).tag(AuthorizationTags.AUTHORIZER);
+      })
+      .catch(error => {
+        throw error;
+      });
   }
 }
