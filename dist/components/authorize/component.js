@@ -123,11 +123,11 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
         });
     }
     binding() {
+        this.defineModels();
+        this.defineRepositories();
         this.verify()
             .then(() => {
             this.logger.info('[binding] Binding authorize for application...');
-            this.defineModels();
-            this.defineRepositories();
             this.application.component(authorization_1.AuthorizationComponent);
             this.application.bind(common_1.AuthorizerKeys.ENFORCER).toInjectable(services_1.EnforcerService);
             this.application.configure(authorization_1.AuthorizationBindings.COMPONENT).to({

@@ -106,7 +106,7 @@ export class AuthorizeComponent extends BaseComponent {
       }
     }
 
-    const checkAuthorizeViewRs= await datasource.execute(`
+    const checkAuthorizeViewRs = await datasource.execute(`
         SELECT EXISTS (
           SELECT FROM information_schema.views 
           WHERE table_schema='public' 
@@ -123,13 +123,12 @@ export class AuthorizeComponent extends BaseComponent {
   }
 
   binding() {
+    this.defineModels();
+    this.defineRepositories();
+
     this.verify()
       .then(() => {
         this.logger.info('[binding] Binding authorize for application...');
-
-        this.defineModels();
-        this.defineRepositories();
-
         this.application.component(AuthorizationComponent);
         this.application.bind(AuthorizerKeys.ENFORCER).toInjectable(EnforcerService);
 
