@@ -1,8 +1,8 @@
 import { BaseDataSource } from '@/base/base.datasource';
 import { BaseTzEntity } from '@/base/base.model';
-import { TzCrudRepository } from '@/base/base.repository';
+import { TzCrudRepository, ViewRepository } from '@/base/base.repository';
 import { EntityClassType } from '@/common';
-import { Permission, PermissionMapping, Role, UserRole } from '@/models';
+import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from '@/models';
 import { inject } from '@loopback/core';
 
 const DS_AUTHORIZE = process.env.DS_AUTHORIZE;
@@ -24,7 +24,7 @@ export class RoleRepository extends AbstractAuthorizeRepository<Role> {
     super(Role, dataSource);
   }
 
-  bindingRelations(): void { }
+  bindingRelations(): void {}
 }
 
 // ----------------------------------------------------------------------------
@@ -33,7 +33,7 @@ export class PermissionRepository extends AbstractAuthorizeRepository<Permission
     super(Permission, dataSource);
   }
 
-  bindingRelations(): void { }
+  bindingRelations(): void {}
 }
 
 // ----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ export class PermissionMappingRepository extends AbstractAuthorizeRepository<Per
     super(PermissionMapping, dataSource);
   }
 
-  bindingRelations(): void { }
+  bindingRelations(): void {}
 }
 
 // ----------------------------------------------------------------------------
@@ -51,5 +51,12 @@ export class UserRoleRepository extends AbstractAuthorizeRepository<UserRole> {
     super(UserRole, dataSource);
   }
 
-  bindingRelations(): void { }
+  bindingRelations(): void {}
+}
+
+// ----------------------------------------------------------------------------
+export class ViewAuthorizePolicyRepository extends ViewRepository<ViewAuthorizePolicy> {
+  constructor(@inject(`datasources.${DS_AUTHORIZE}`) dataSource: BaseDataSource) {
+    super(ViewAuthorizePolicy, dataSource);
+  }
 }

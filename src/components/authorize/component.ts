@@ -1,7 +1,7 @@
 import { BaseComponent } from '@/base/base.component';
 import { Binding, CoreBindings, inject } from '@loopback/core';
 import { BaseApplication } from '@/base/base.application';
-import { Role, Permission, PermissionMapping, UserRole } from '@/models/authorize';
+import { Role, Permission, PermissionMapping, UserRole, ViewAuthorizePolicy } from '@/models/authorize';
 import {
   AuthorizationBindings,
   AuthorizationComponent,
@@ -11,7 +11,7 @@ import {
 import { AuthorizeProvider } from './provider';
 import { EnforcerService } from '@/services';
 import { AuthorizerKeys } from '@/common';
-import { PermissionMappingRepository, PermissionRepository, RoleRepository, UserRoleRepository } from '@/repositories';
+import { PermissionMappingRepository, PermissionRepository, RoleRepository, UserRoleRepository, ViewAuthorizePolicyRepository } from '@/repositories';
 
 import path from 'path';
 
@@ -49,11 +49,13 @@ export class AuthorizeComponent extends BaseComponent {
     this.application.model(Permission);
     this.application.model(PermissionMapping);
     this.application.model(UserRole);
+    this.application.model(ViewAuthorizePolicy);
 
     this.application.models.add(Role.name);
     this.application.models.add(Permission.name);
     this.application.models.add(PermissionMapping.name);
     this.application.models.add(UserRole.name);
+    this.application.models.add(ViewAuthorizePolicy.name);
   }
 
   defineRepositories() {
@@ -61,6 +63,7 @@ export class AuthorizeComponent extends BaseComponent {
     this.application.repository(PermissionRepository);
     this.application.repository(PermissionMappingRepository);
     this.application.repository(UserRoleRepository);
+    this.application.repository(ViewAuthorizePolicyRepository);
   }
 
   binding() {

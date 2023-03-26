@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserRoleRepository = exports.PermissionMappingRepository = exports.PermissionRepository = exports.RoleRepository = exports.AbstractAuthorizeRepository = void 0;
+exports.ViewAuthorizePolicyRepository = exports.UserRoleRepository = exports.PermissionMappingRepository = exports.PermissionRepository = exports.RoleRepository = exports.AbstractAuthorizeRepository = void 0;
 const base_datasource_1 = require("../base/base.datasource");
 const base_repository_1 = require("../base/base.repository");
 const models_1 = require("../models");
@@ -74,4 +74,15 @@ UserRoleRepository = __decorate([
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], UserRoleRepository);
 exports.UserRoleRepository = UserRoleRepository;
+// ----------------------------------------------------------------------------
+let ViewAuthorizePolicyRepository = class ViewAuthorizePolicyRepository extends base_repository_1.ViewRepository {
+    constructor(dataSource) {
+        super(models_1.ViewAuthorizePolicy, dataSource);
+    }
+};
+ViewAuthorizePolicyRepository = __decorate([
+    __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
+    __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
+], ViewAuthorizePolicyRepository);
+exports.ViewAuthorizePolicyRepository = ViewAuthorizePolicyRepository;
 //# sourceMappingURL=authorize.repository.js.map

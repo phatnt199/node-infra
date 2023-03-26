@@ -14,10 +14,5 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./defs"), exports);
-__exportStar(require("./role.model"), exports);
-__exportStar(require("./permission.model"), exports);
-__exportStar(require("./permission-mapping.model"), exports);
-__exportStar(require("./user-role.model"), exports);
-__exportStar(require("./view-authorize-policy.model"), exports);
+__exportStar(require("./0000-create-view-policy"), exports);
 //# sourceMappingURL=index.js.map

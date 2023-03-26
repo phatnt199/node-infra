@@ -54,16 +54,19 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
         this.application.model(authorize_1.Permission);
         this.application.model(authorize_1.PermissionMapping);
         this.application.model(authorize_1.UserRole);
+        this.application.model(authorize_1.ViewAuthorizePolicy);
         this.application.models.add(authorize_1.Role.name);
         this.application.models.add(authorize_1.Permission.name);
         this.application.models.add(authorize_1.PermissionMapping.name);
         this.application.models.add(authorize_1.UserRole.name);
+        this.application.models.add(authorize_1.ViewAuthorizePolicy.name);
     }
     defineRepositories() {
         this.application.repository(repositories_1.RoleRepository);
         this.application.repository(repositories_1.PermissionRepository);
         this.application.repository(repositories_1.PermissionMappingRepository);
         this.application.repository(repositories_1.UserRoleRepository);
+        this.application.repository(repositories_1.ViewAuthorizePolicyRepository);
     }
     binding() {
         this.logger.info('[binding] Binding authorize for application...');

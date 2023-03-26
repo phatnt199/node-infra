@@ -3,6 +3,7 @@ export * from './common';
 export * from './components';
 export * from './helpers';
 export * from './migrations';
+export * from './migrations/authorize';
 export * from './mixins';
 export * from './models';
 export * from './repositories';
