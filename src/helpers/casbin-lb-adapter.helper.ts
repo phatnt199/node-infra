@@ -127,48 +127,36 @@ export class CasbinLBAdapter implements FilteredAdapter {
       });
     }
 
-    const whereCondition = this.getFilterCondition(filter);
-    if (!whereCondition) {
-      throw getError({
-        statusCode: 500,
-        message: '[loadFilteredPolicy] Invalid where condition to filter policy!',
-      });
-    }
-
     const aclQueries = [];
     // Load user permission policies
-    aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`));
+    const userPermissionExecution = this.datasource.execute(
+      `SELECT * FROM public."ViewAuthorizePolicy" WHERE subject=$1`,
+      [`user_${filter.principalValue}`],
+    );
+    aclQueries.push(userPermissionExecution);
 
     // Load role permission policies
-    const userRoles = await this.datasource.execute(`SELECT * FROM public."UserRole" WHERE ${whereCondition}`);
+    const userRoles = await this.datasource.execute(`SELECT * FROM public."UserRole" WHERE user_id=$1`, [
+      filter.principalValue,
+    ]);
     for (const userRole of userRoles) {
-      aclQueries.push(
-        this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE role_id = ${userRole.principal_id}`),
-      );
+      const execution = this.datasource.execute(`SELECT * FROM public."ViewAuthorizePolicy" WHERE subject=$1`, [
+        `role_${userRole.principal_id}`,
+      ]);
+      aclQueries.push(execution);
     }
 
-    const aclRs = await Promise.all(aclQueries);
-    const acls = flatten(aclRs);
-
-    const policyLineRs = await Promise.all(
-      acls.map(acl => {
-        return this.generatePolicyLine({
-          userId: get(acl, 'user_id'),
-          roleId: get(acl, 'role_id'),
-          permissionId: get(acl, 'permission_id'),
-        });
-      }),
-    );
-
     // Load policy lines
-    const policyLines = flatten(policyLineRs);
-    for (const policyLine of policyLines) {
-      if (!policyLine || isEmpty(policyLine)) {
+    const policyRs = flatten(await Promise.all(aclQueries));
+    for (const el of policyRs) {
+      if (!el) {
         continue;
       }
 
-      Helper.loadPolicyLine(policyLine, model);
-      this.logger.debug('[loadFilteredPolicy] Load policy: %s', policyLine);
+      for (const policyLine of el.policies) {
+        Helper.loadPolicyLine(policyLine, model);
+        this.logger.debug('[loadFilteredPolicy] Load policy: %s', policyLine);
+      }
     }
 
     // Load group lines

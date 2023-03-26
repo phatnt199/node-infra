@@ -125,6 +125,9 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
     binding() {
         this.defineModels();
         this.defineRepositories();
+        if (process.env.RUN_MODE === 'migrate') {
+            return;
+        }
         this.verify()
             .then(() => {
             this.logger.info('[binding] Binding authorize for application...');

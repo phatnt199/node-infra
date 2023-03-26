@@ -126,6 +126,10 @@ export class AuthorizeComponent extends BaseComponent {
     this.defineModels();
     this.defineRepositories();
 
+    if (process.env.RUN_MODE === 'migrate') {
+      return;
+    }
+
     this.verify()
       .then(() => {
         this.logger.info('[binding] Binding authorize for application...');

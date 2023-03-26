@@ -122,38 +122,30 @@ class CasbinLBAdapter {
                     message: '[loadFilteredPolicy] Only "User" is allowed for filter principal type!',
                 });
             }
-            const whereCondition = this.getFilterCondition(filter);
-            if (!whereCondition) {
-                throw (0, __1.getError)({
-                    statusCode: 500,
-                    message: '[loadFilteredPolicy] Invalid where condition to filter policy!',
-                });
-            }
             const aclQueries = [];
             // Load user permission policies
-            aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE ${whereCondition}`));
+            const userPermissionExecution = this.datasource.execute(`SELECT * FROM public."ViewAuthorizePolicy" WHERE subject=$1`, [`user_${filter.principalValue}`]);
+            aclQueries.push(userPermissionExecution);
             // Load role permission policies
-            const userRoles = yield this.datasource.execute(`SELECT * FROM public."UserRole" WHERE ${whereCondition}`);
+            const userRoles = yield this.datasource.execute(`SELECT * FROM public."UserRole" WHERE user_id=$1`, [
+                filter.principalValue,
+            ]);
             for (const userRole of userRoles) {
-                aclQueries.push(this.datasource.execute(`SELECT * FROM public."PermissionMapping" WHERE role_id = ${userRole.principal_id}`));
+                const execution = this.datasource.execute(`SELECT * FROM public."ViewAuthorizePolicy" WHERE subject=$1`, [
+                    `role_${userRole.principal_id}`,
+                ]);
+                aclQueries.push(execution);
             }
-            const aclRs = yield Promise.all(aclQueries);
-            const acls = (0, flatten_1.default)(aclRs);
-            const policyLineRs = yield Promise.all(acls.map(acl => {
-                return this.generatePolicyLine({
-                    userId: (0, get_1.default)(acl, 'user_id'),
-                    roleId: (0, get_1.default)(acl, 'role_id'),
-                    permissionId: (0, get_1.default)(acl, 'permission_id'),
-                });
-            }));
             // Load policy lines
-            const policyLines = (0, flatten_1.default)(policyLineRs);
-            for (const policyLine of policyLines) {
-                if (!policyLine || (0, isEmpty_1.default)(policyLine)) {
+            const policyRs = (0, flatten_1.default)(yield Promise.all(aclQueries));
+            for (const el of policyRs) {
+                if (!el) {
                     continue;
                 }
-                casbin_1.Helper.loadPolicyLine(policyLine, model);
-                this.logger.debug('[loadFilteredPolicy] Load policy: %s', policyLine);
+                for (const policyLine of el.policies) {
+                    casbin_1.Helper.loadPolicyLine(policyLine, model);
+                    this.logger.debug('[loadFilteredPolicy] Load policy: %s', policyLine);
+                }
             }
             // Load group lines
             for (const userRole of userRoles) {
