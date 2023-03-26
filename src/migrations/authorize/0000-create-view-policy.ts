@@ -1,10 +1,13 @@
 import { BaseDataSource } from '@/base/base.datasource';
 import { applicationLogger } from '@/helpers';
 import { EnforcerDefinitions } from '@/common/constants';
+import { BaseApplication } from '@/base/base.application';
+import { getError } from '@/utilities';
+import isEmpty from 'lodash/isEmpty';
 
 const sqls = [
-  `
-  CREATE OR REPLACE VIEW "ViewAuthorizePolicy"
+  'DROP VIEW IF EXISTS "ViewAuthorizePolicy";',
+  `CREATE OR REPLACE VIEW "ViewAuthorizePolicy"
   AS (
   SELECT 
       uuid_generate_v4() as id,
@@ -38,11 +41,21 @@ const sqls = [
   ) AS t GROUP BY t.subject_type, t.subject_id, subject);`,
 ];
 
-export const createViewPolicy = {
+export const createViewPolicy = (opts: { datasourceKey: string }) => ({
   name: __filename.slice(__dirname.length + 1),
-  fn: async (_: any, datasource: BaseDataSource) => {
-  
-    console.log(EnforcerDefinitions.PREFIX_ROLE, EnforcerDefinitions.PREFIX_USER, EnforcerDefinitions.ACTION_EXECUTE)
+  fn: async (application: BaseApplication) => {
+    if (!opts.datasourceKey || isEmpty(opts.datasourceKey)) {
+      throw getError({ statusCode: 500, message: '[createViewPolicy] Invalid datasourceKey to execute migration!' });
+    }
+
+    const { datasourceKey } = opts;
+    const datasource = application.getSync<BaseDataSource>(datasourceKey);
+    if (!datasource) {
+      throw getError({
+        statusCode: 500,
+        message: `[createViewPolicy] Cannot find datasource with key ${datasourceKey} to execute migration!`,
+      });
+    }
 
     for (const sql of sqls) {
       applicationLogger.info('[creatViewPolicy] START | Execute SQL: %s', sql);
@@ -50,4 +63,4 @@ export const createViewPolicy = {
       applicationLogger.info('[createViewPolicy] DONE | Execute SQL: %s', sql);
     }
   },
-};
+});

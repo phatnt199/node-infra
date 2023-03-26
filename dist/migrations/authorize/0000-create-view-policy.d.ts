@@ -1,5 +1,7 @@
-import { BaseDataSource } from '../../base/base.datasource';
-export declare const createViewPolicy: {
+import { BaseApplication } from '../../base/base.application';
+export declare const createViewPolicy: (opts: {
+    datasourceKey: string;
+}) => {
     name: string;
-    fn: (_: any, datasource: BaseDataSource) => Promise<void>;
+    fn: (application: BaseApplication) => Promise<void>;
 };

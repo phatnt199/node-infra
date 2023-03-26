@@ -66,5 +66,6 @@ export type MigrationProcess = {
     fn: Function;
     options?: {
         alwaysRun?: boolean;
+        [key: string | symbol]: any;
     };
 };
