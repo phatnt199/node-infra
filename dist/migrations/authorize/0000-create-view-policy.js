@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.createViewPolicy = void 0;
 const helpers_1 = require("../../helpers");
 const sqls = [
     `CREATE OR REPLACE VIEW "ViewAuthorizePolicy"
@@ -44,7 +45,7 @@ const sqls = [
       FROM "PermissionMapping" AS pm INNER JOIN "Permission" AS p ON pm.permission_id = p.id
   ) AS p GROUP BY p.subject_type, p.subject_id, subject);`,
 ];
-exports.default = {
+exports.createViewPolicy = {
     name: __filename.slice(__dirname.length + 1),
     fn: (_, datasource) => __awaiter(void 0, void 0, void 0, function* () {
         for (const sql of sqls) {

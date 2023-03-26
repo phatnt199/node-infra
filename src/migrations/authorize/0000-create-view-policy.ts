@@ -36,7 +36,7 @@ const sqls = [
   ) AS p GROUP BY p.subject_type, p.subject_id, subject);`,
 ];
 
-export default {
+export const createViewPolicy = {
   name: __filename.slice(__dirname.length + 1),
   fn: async (_: any, datasource: BaseDataSource) => {
     for (const sql of sqls) {
