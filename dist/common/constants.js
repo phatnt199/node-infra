@@ -2,7 +2,7 @@
 var _a;
 var _b, _c, _d;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.FixedUserRoles = exports.ApplicationRoles = exports.Formatters = exports.App = void 0;
+exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EnforcerDefinitions = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.FixedUserRoles = exports.ApplicationRoles = exports.Formatters = exports.App = void 0;
 class App {
 }
 exports.App = App;
@@ -59,6 +59,16 @@ EntityRelations.HAS_ONE = 'hasOne';
 EntityRelations.HAS_MANY = 'hasMany';
 EntityRelations.HAS_MANY_THROUGH = 'hasManyThrough';
 EntityRelations.TYPE_SET = new Set([_c.BELONGS_TO, _c.HAS_ONE, _c.HAS_MANY, _c.HAS_MANY_THROUGH]);
+class EnforcerDefinitions {
+}
+exports.EnforcerDefinitions = EnforcerDefinitions;
+EnforcerDefinitions.ACTION_EXECUTE = 'execute';
+EnforcerDefinitions.ACTION_READ = 'read';
+EnforcerDefinitions.ACTION_WRITE = 'write';
+EnforcerDefinitions.PREFIX_USER = 'user';
+EnforcerDefinitions.PREFIX_ROLE = 'role';
+EnforcerDefinitions.PTYPE_POLICY = 'p';
+EnforcerDefinitions.PTYPE_GROUP = 'g';
 class UserTypes {
     static isValid(orgType) {
         return this.TYPE_SET.has(orgType);

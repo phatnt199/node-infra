@@ -12,23 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CasbinLBAdapter = exports.EnforcerDefinitions = void 0;
+exports.CasbinLBAdapter = void 0;
 const casbin_1 = require("casbin");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const flatten_1 = __importDefault(require("lodash/flatten"));
 const get_1 = __importDefault(require("lodash/get"));
 const logger_helper_1 = require("./logger.helper");
 const __1 = require("..");
-class EnforcerDefinitions {
-}
-exports.EnforcerDefinitions = EnforcerDefinitions;
-EnforcerDefinitions.ACTION_EXECUTE = 'execute';
-EnforcerDefinitions.ACTION_READ = 'read';
-EnforcerDefinitions.ACTION_WRITE = 'write';
-EnforcerDefinitions.PREFIX_USER = 'user';
-EnforcerDefinitions.PREFIX_ROLE = 'role';
-EnforcerDefinitions.PTYPE_POLICY = 'p';
-EnforcerDefinitions.PTYPE_GROUP = 'g';
+const constants_1 = require("../common/constants");
 // -----------------------------------------------------------------------------------------
 class CasbinLBAdapter {
     constructor(datasource) {
@@ -43,13 +34,13 @@ class CasbinLBAdapter {
             let rs = [];
             let permissionMappingCondition = '';
             switch (modelType) {
-                case EnforcerDefinitions.PREFIX_USER: {
-                    rs = [EnforcerDefinitions.PTYPE_POLICY, `${EnforcerDefinitions.PREFIX_USER}_${id}`];
+                case constants_1.EnforcerDefinitions.PREFIX_USER: {
+                    rs = [constants_1.EnforcerDefinitions.PTYPE_POLICY, `${constants_1.EnforcerDefinitions.PREFIX_USER}_${id}`];
                     permissionMappingCondition = `user_id = ${id} AND permission_id = ${permissionId}`;
                     break;
                 }
-                case EnforcerDefinitions.PREFIX_ROLE: {
-                    rs = [EnforcerDefinitions.PTYPE_POLICY, `${EnforcerDefinitions.PREFIX_ROLE}_${id}`];
+                case constants_1.EnforcerDefinitions.PREFIX_ROLE: {
+                    rs = [constants_1.EnforcerDefinitions.PTYPE_POLICY, `${constants_1.EnforcerDefinitions.PREFIX_ROLE}_${id}`];
                     permissionMappingCondition = `role_id = ${id} AND permission_id = ${permissionId}`;
                     break;
                 }
@@ -66,7 +57,7 @@ class CasbinLBAdapter {
             }
             const [permission] = permissionRs;
             const [permissionMapping] = permissionMappingRs;
-            rs = [...rs, (_a = permission.code) === null || _a === void 0 ? void 0 : _a.toLowerCase(), EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
+            rs = [...rs, (_a = permission.code) === null || _a === void 0 ? void 0 : _a.toLowerCase(), constants_1.EnforcerDefinitions.ACTION_EXECUTE, permissionMapping.effect];
             return rs.join(', ');
         });
     }
@@ -104,10 +95,10 @@ class CasbinLBAdapter {
                 return rs;
             }
             if (userId) {
-                rs = yield this.getRule({ id: userId, permissionId, modelType: EnforcerDefinitions.PREFIX_USER });
+                rs = yield this.getRule({ id: userId, permissionId, modelType: constants_1.EnforcerDefinitions.PREFIX_USER });
                 return rs;
             }
-            rs = yield this.getRule({ id: roleId, permissionId, modelType: EnforcerDefinitions.PREFIX_ROLE });
+            rs = yield this.getRule({ id: roleId, permissionId, modelType: constants_1.EnforcerDefinitions.PREFIX_ROLE });
             return rs;
         });
     }
@@ -115,9 +106,9 @@ class CasbinLBAdapter {
     generateGroupLine(rule) {
         const { userId, roleId } = rule;
         const rs = [
-            EnforcerDefinitions.PTYPE_GROUP,
-            `${EnforcerDefinitions.PREFIX_USER}_${userId}`,
-            `${EnforcerDefinitions.PREFIX_ROLE}_${roleId}`,
+            constants_1.EnforcerDefinitions.PTYPE_GROUP,
+            `${constants_1.EnforcerDefinitions.PREFIX_USER}_${userId}`,
+            `${constants_1.EnforcerDefinitions.PREFIX_ROLE}_${roleId}`,
         ];
         return rs.join(',');
     }
@@ -225,11 +216,11 @@ class CasbinLBAdapter {
     removeFilteredPolicy(sec, ptype, fieldIndex, ...fieldValues) {
         return __awaiter(this, void 0, void 0, function* () {
             switch (ptype) {
-                case EnforcerDefinitions.PREFIX_USER: {
+                case constants_1.EnforcerDefinitions.PREFIX_USER: {
                     // Remove user policy
                     break;
                 }
-                case EnforcerDefinitions.PREFIX_ROLE: {
+                case constants_1.EnforcerDefinitions.PREFIX_ROLE: {
                     // Remove role policy
                     break;
                 }

@@ -48,7 +48,7 @@ let AuthorizeProvider = class AuthorizeProvider {
         return {
             subject: (subject === null || subject === void 0 ? void 0 : subject.toLowerCase()) || '',
             object: (_b = (_a = ((object === null || object === void 0 ? void 0 : object.toLowerCase()) || '')) === null || _a === void 0 ? void 0 : _a.replace(/controller/g, '')) === null || _b === void 0 ? void 0 : _b.replace(/.prototype/g, ''),
-            action: (action === null || action === void 0 ? void 0 : action.toLowerCase()) || helpers_1.EnforcerDefinitions.ACTION_EXECUTE,
+            action: (action === null || action === void 0 ? void 0 : action.toLowerCase()) || common_1.EnforcerDefinitions.ACTION_EXECUTE,
         };
     }
     // -------------------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ let AuthorizeProvider = class AuthorizeProvider {
                 this.logger.debug('[authorizePermission] Skip authorization for NULL enforcer!');
                 return rs;
             }
-            const subject = `${helpers_1.EnforcerDefinitions.PREFIX_USER}_${userId}`;
+            const subject = `${common_1.EnforcerDefinitions.PREFIX_USER}_${userId}`;
             const enforcePayload = this.normalizeEnforcePayload(subject, object, action);
             rs = yield enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
             return rs;
@@ -100,7 +100,7 @@ let AuthorizeProvider = class AuthorizeProvider {
                 return authorization_1.AuthorizationDecision.ALLOW;
             }
             // Authorize by role and user permissions
-            const authorizeDecision = yield this.authorizePermission(userId, requestResource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : helpers_1.EnforcerDefinitions.ACTION_EXECUTE);
+            const authorizeDecision = yield this.authorizePermission(userId, requestResource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : common_1.EnforcerDefinitions.ACTION_EXECUTE);
             const rs = authorizeDecision ? authorization_1.AuthorizationDecision.ALLOW : authorization_1.AuthorizationDecision.DENY;
             this.logger.debug('[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j | Took: %d(ms)', requestResource, allowedRoles, scopes, new Date().getTime() - t);
             return rs;

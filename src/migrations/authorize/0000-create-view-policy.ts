@@ -1,8 +1,10 @@
 import { BaseDataSource } from '@/base/base.datasource';
-import { applicationLogger, EnforcerDefinitions } from '@/helpers';
+import { applicationLogger } from '@/helpers';
+import { EnforcerDefinitions } from '@/common/constants'
 
 const sqls = [
-  `CREATE OR REPLACE VIEW "ViewAuthorizePolicy"
+  `
+  CREATE OR REPLACE VIEW "ViewAuthorizePolicy"
   AS (
   SELECT 
       uuid_generate_v4() as id,
@@ -27,9 +29,9 @@ const sqls = [
           p.code AS permision_code,
           (CASE
               WHEN user_id IS NOT NULL THEN
-                  'p,user_' || user_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE}, ' || effect
+                  'p,user_' || user_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE},' || effect
               WHEN role_id IS NOT NULL THEN
-                  'p,role_' || role_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE}, ' || effect
+                  'p,role_' || role_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE},' || effect
               ELSE NULL
           END) AS policy
       FROM "PermissionMapping" AS pm INNER JOIN "Permission" AS p ON pm.permission_id = p.id
