@@ -18,16 +18,16 @@ const sqls = [
   AS (
   SELECT 
       uuid_generate_v4() as id,
-      (p.subject_type || '_' || p.subject_id) as subject,
-      p.subject_type,
-      p.subject_id, 
-      json_agg(p.policy)::JSONB as policies
+      (t.subject_type || '_' || t.subject_id) as subject,
+      t.subject_type,
+      t.subject_id, 
+      json_agg(t.policy)::JSONB as policies
   FROM (
       SELECT 
           pm.id as id,
           (CASE 
-              WHEN user_id IS NOT NULL THEN 'user'
-              WHEN role_id IS NOT NULL THEN 'role'
+              WHEN user_id IS NOT NULL THEN '${constants_1.EnforcerDefinitions.PREFIX_USER}'
+              WHEN role_id IS NOT NULL THEN '${constants_1.EnforcerDefinitions.PREFIX_ROLE}'
               ELSE NULL
           END) AS subject_type,
           (CASE 
@@ -39,17 +39,18 @@ const sqls = [
           p.code AS permision_code,
           (CASE
               WHEN user_id IS NOT NULL THEN
-                  'p,user_' || user_id || ',' || LOWER(p.code) || ',${constants_1.EnforcerDefinitions.ACTION_EXECUTE},' || effect
+                  'p,${constants_1.EnforcerDefinitions.PREFIX_USER}_' || user_id || ',' || LOWER(p.code) || ',${constants_1.EnforcerDefinitions.ACTION_EXECUTE},' || effect
               WHEN role_id IS NOT NULL THEN
-                  'p,role_' || role_id || ',' || LOWER(p.code) || ',${constants_1.EnforcerDefinitions.ACTION_EXECUTE},' || effect
+                  'p,${constants_1.EnforcerDefinitions.PREFIX_ROLE}_' || role_id || ',' || LOWER(p.code) || ',${constants_1.EnforcerDefinitions.ACTION_EXECUTE},' || effect
               ELSE NULL
           END) AS policy
       FROM "PermissionMapping" AS pm INNER JOIN "Permission" AS p ON pm.permission_id = p.id
-  ) AS p GROUP BY p.subject_type, p.subject_id, subject);`,
+  ) AS t GROUP BY t.subject_type, t.subject_id, subject);`,
 ];
 exports.createViewPolicy = {
     name: __filename.slice(__dirname.length + 1),
     fn: (_, datasource) => __awaiter(void 0, void 0, void 0, function* () {
+        console.log(constants_1.EnforcerDefinitions.PREFIX_ROLE, constants_1.EnforcerDefinitions.PREFIX_USER, constants_1.EnforcerDefinitions.ACTION_EXECUTE);
         for (const sql of sqls) {
             helpers_1.applicationLogger.info('[creatViewPolicy] START | Execute SQL: %s', sql);
             yield datasource.execute(sql);

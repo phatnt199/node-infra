@@ -1,6 +1,6 @@
 import { BaseDataSource } from '@/base/base.datasource';
 import { applicationLogger } from '@/helpers';
-import { EnforcerDefinitions } from '@/common/constants'
+import { EnforcerDefinitions } from '@/common/constants';
 
 const sqls = [
   `
@@ -8,16 +8,16 @@ const sqls = [
   AS (
   SELECT 
       uuid_generate_v4() as id,
-      (p.subject_type || '_' || p.subject_id) as subject,
-      p.subject_type,
-      p.subject_id, 
-      json_agg(p.policy)::JSONB as policies
+      (t.subject_type || '_' || t.subject_id) as subject,
+      t.subject_type,
+      t.subject_id, 
+      json_agg(t.policy)::JSONB as policies
   FROM (
       SELECT 
           pm.id as id,
           (CASE 
-              WHEN user_id IS NOT NULL THEN 'user'
-              WHEN role_id IS NOT NULL THEN 'role'
+              WHEN user_id IS NOT NULL THEN '${EnforcerDefinitions.PREFIX_USER}'
+              WHEN role_id IS NOT NULL THEN '${EnforcerDefinitions.PREFIX_ROLE}'
               ELSE NULL
           END) AS subject_type,
           (CASE 
@@ -29,18 +29,21 @@ const sqls = [
           p.code AS permision_code,
           (CASE
               WHEN user_id IS NOT NULL THEN
-                  'p,user_' || user_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE},' || effect
+                  'p,${EnforcerDefinitions.PREFIX_USER}_' || user_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE},' || effect
               WHEN role_id IS NOT NULL THEN
-                  'p,role_' || role_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE},' || effect
+                  'p,${EnforcerDefinitions.PREFIX_ROLE}_' || role_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE},' || effect
               ELSE NULL
           END) AS policy
       FROM "PermissionMapping" AS pm INNER JOIN "Permission" AS p ON pm.permission_id = p.id
-  ) AS p GROUP BY p.subject_type, p.subject_id, subject);`,
+  ) AS t GROUP BY t.subject_type, t.subject_id, subject);`,
 ];
 
 export const createViewPolicy = {
   name: __filename.slice(__dirname.length + 1),
   fn: async (_: any, datasource: BaseDataSource) => {
+  
+    console.log(EnforcerDefinitions.PREFIX_ROLE, EnforcerDefinitions.PREFIX_USER, EnforcerDefinitions.ACTION_EXECUTE)
+
     for (const sql of sqls) {
       applicationLogger.info('[creatViewPolicy] START | Execute SQL: %s', sql);
       await datasource.execute(sql);
