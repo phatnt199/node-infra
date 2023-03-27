@@ -1,5 +1,6 @@
 export class AuthenticateKeys {
   static readonly APPLICATION_SECRET = '@app/authenticate/application_secret'
+  static readonly TOKEN_OPTIONS = '@app/authenticate/token_options'
 }
 
 export class AuthorizerKeys {

@@ -5,6 +5,21 @@ export class App {
   static readonly DEFAULT_EXPLORER_PATH = '/explorer';
 }
 
+export class Authentication {
+  static readonly ACCESS_TOKEN_SECRET = 'token.secret';
+  static readonly ACCESS_TOKEN_EXPIRES_IN = 86400;
+  static readonly REFRESH_TOKEN_SECRET = 'refresh.secret';
+  static readonly REFRESH_TOKEN_EXPIRES_IN = 86400;
+
+  // Jwt
+  static readonly TYPE_BASIC = 'Basic';
+  static readonly TYPE_BEARER = 'Bearer';
+
+  // Strategy
+  static readonly STRATEGY_BASIC = 'basic';
+  static readonly STRATEGY_JWT = 'jwt';
+}
+
 export class Formatters {
   static readonly DATE_TIME = 'YYYY-MM-DD HH:mm:ss';
   static readonly DATE_1 = 'YYYY-MM-DD';

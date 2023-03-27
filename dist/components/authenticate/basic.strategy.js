@@ -21,45 +21,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JWTAuthenticationStrategy = void 0;
+exports.BasicAuthenticationStrategy = void 0;
+const services_1 = require("../../services");
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
-const utilities_1 = require("../../utilities");
-const services_1 = require("../../services");
-let JWTAuthenticationStrategy = class JWTAuthenticationStrategy {
+let BasicAuthenticationStrategy = class BasicAuthenticationStrategy {
     constructor(service) {
         this.service = service;
-        this.name = 'jwt';
+        this.name = 'basic';
     }
     extractCredentials(request) {
         if (!request.headers.authorization) {
-            throw (0, utilities_1.getError)({
-                statusCode: 401,
-                message: 'Unauthorized user! Missing authorization header',
-            });
+            throw new rest_1.HttpErrors.Unauthorized(`Authorization header not found.`);
         }
         const authHeaderValue = request.headers.authorization;
-        if (!authHeaderValue.startsWith('Bearer')) {
-            throw (0, utilities_1.getError)({
-                statusCode: 401,
-                message: 'Unauthorized user! Invalid schema of request token!',
-            });
+        if (!authHeaderValue.startsWith('Basic')) {
+            throw new rest_1.HttpErrors.Unauthorized(`Authorization header is not of type 'Basic'.`);
         }
         const parts = authHeaderValue.split(' ');
         if (parts.length !== 2)
             throw new rest_1.HttpErrors.Unauthorized(`Authorization header value has too many parts. It must follow the pattern: 'Bearer xx.yy.zz' where xx.yy.zz is a valid JWT token.`);
-        return { type: parts[0], token: parts[1] };
+        const token = parts[1];
+        const credential = Buffer.from(token, 'base64').toString();
+        const [username, password] = (credential === null || credential === void 0 ? void 0 : credential.split(':')) || [];
+        return { username, password };
     }
     authenticate(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const token = this.extractCredentials(request);
-            return this.service.verify(token);
+            const credential = this.extractCredentials(request);
+            const rs = yield this.service.verify(credential);
+            return rs;
         });
     }
 };
-JWTAuthenticationStrategy = __decorate([
-    __param(0, (0, core_1.inject)('services.JWTTokenService')),
-    __metadata("design:paramtypes", [services_1.JWTTokenService])
-], JWTAuthenticationStrategy);
-exports.JWTAuthenticationStrategy = JWTAuthenticationStrategy;
-//# sourceMappingURL=jwt.strategy.js.map
+BasicAuthenticationStrategy = __decorate([
+    __param(0, (0, core_1.inject)('services.BasicAuthenticationService')),
+    __metadata("design:paramtypes", [services_1.BasicAuthenticationService])
+], BasicAuthenticationStrategy);
+exports.BasicAuthenticationStrategy = BasicAuthenticationStrategy;
+//# sourceMappingURL=basic.strategy.js.map

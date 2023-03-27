@@ -1,8 +1,8 @@
-/* import { inject } from '@loopback/core';
+import { inject } from '@loopback/core';
 import { HttpErrors, Request } from '@loopback/rest';
-import { JWTTokenService } from '@/services';
 import { AuthenticationStrategy } from '@loopback/authentication';
 import { getError } from '@/utilities';
+import { JWTTokenService } from '@/services';
 
 export class JWTAuthenticationStrategy implements AuthenticationStrategy {
   name = 'jwt';
@@ -37,4 +37,4 @@ export class JWTAuthenticationStrategy implements AuthenticationStrategy {
     const token = this.extractCredentials(request);
     return this.service.verify(token);
   }
-} */
+}

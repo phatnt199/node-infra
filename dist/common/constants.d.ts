@@ -4,6 +4,16 @@ export declare class App {
     static readonly DEFAULT_LOCALE = "en.UTF-8";
     static readonly DEFAULT_EXPLORER_PATH = "/explorer";
 }
+export declare class Authentication {
+    static readonly ACCESS_TOKEN_SECRET = "token.secret";
+    static readonly ACCESS_TOKEN_EXPIRES_IN = 86400;
+    static readonly REFRESH_TOKEN_SECRET = "refresh.secret";
+    static readonly REFRESH_TOKEN_EXPIRES_IN = 86400;
+    static readonly TYPE_BASIC = "Basic";
+    static readonly TYPE_BEARER = "Bearer";
+    static readonly STRATEGY_BASIC = "basic";
+    static readonly STRATEGY_JWT = "jwt";
+}
 export declare class Formatters {
     static readonly DATE_TIME = "YYYY-MM-DD HH:mm:ss";
     static readonly DATE_1 = "YYYY-MM-DD";

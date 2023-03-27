@@ -19,6 +19,9 @@ const utilities_1 = require("../../utilities");
 const authentication_1 = require("@loopback/authentication");
 const authentication_jwt_1 = require("@loopback/authentication-jwt");
 const core_1 = require("@loopback/core");
+const jwt_strategy_1 = require("./jwt.strategy");
+const basic_strategy_1 = require("./basic.strategy");
+const common_1 = require("../../common");
 let AuthenticateComponent = class AuthenticateComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthenticateComponent.name });
@@ -36,13 +39,14 @@ let AuthenticateComponent = class AuthenticateComponent extends base_component_1
         this.logger.info('[binding] Binding authenticate for application...');
         this.application.component(authentication_1.AuthenticationComponent);
         this.application.component(authentication_jwt_1.JWTAuthenticationComponent);
-        /* registerAuthenticationStrategy(this.application, JWTAuthenticationStrategy);
-        // registerAuthenticationStrategy(this, BasicAuthenticationStrategy);
-    
-        this.bind(TokenServiceBindings.TOKEN_SECRET).to(Authentication.ACCESS_TOKEN_SECRET);
-        this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(Authentication.ACCESS_TOKEN_EXPIRES_IN.toString());
-        this.bind(RefreshTokenServiceBindings.REFRESH_SECRET).to(Authentication.REFRESH_TOKEN_SECRET);
-        this.bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(Authentication.REFRESH_TOKEN_EXPIRES_IN.toString()); */
+        (0, authentication_1.registerAuthenticationStrategy)(this.application, jwt_strategy_1.JWTAuthenticationStrategy);
+        (0, authentication_1.registerAuthenticationStrategy)(this.application, basic_strategy_1.BasicAuthenticationStrategy);
+        const tokenOptions = this.application.getSync(common_1.AuthenticateKeys.TOKEN_OPTIONS);
+        const { tokenSecret = common_1.Authentication.ACCESS_TOKEN_SECRET, tokenExpiresIn = common_1.Authentication.ACCESS_TOKEN_EXPIRES_IN, refreshSecret = common_1.Authentication.REFRESH_TOKEN_SECRET, refreshExpiresIn = common_1.Authentication.REFRESH_TOKEN_EXPIRES_IN, } = tokenOptions;
+        this.application.bind(authentication_jwt_1.TokenServiceBindings.TOKEN_SECRET).to(tokenSecret);
+        this.application.bind(authentication_jwt_1.TokenServiceBindings.TOKEN_EXPIRES_IN).to(tokenExpiresIn.toString());
+        this.application.bind(authentication_jwt_1.RefreshTokenServiceBindings.REFRESH_SECRET).to(refreshSecret);
+        this.application.bind(authentication_jwt_1.RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(refreshExpiresIn === null || refreshExpiresIn === void 0 ? void 0 : refreshExpiresIn.toString());
     }
 };
 AuthenticateComponent = __decorate([

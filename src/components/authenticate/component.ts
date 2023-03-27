@@ -1,9 +1,16 @@
 import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
 import { getError } from '@/utilities';
-import { AuthenticationComponent } from '@loopback/authentication';
-import { JWTAuthenticationComponent } from '@loopback/authentication-jwt';
+import { AuthenticationComponent, registerAuthenticationStrategy } from '@loopback/authentication';
+import {
+  JWTAuthenticationComponent,
+  RefreshTokenServiceBindings,
+  TokenServiceBindings,
+} from '@loopback/authentication-jwt';
 import { Binding, CoreBindings, inject } from '@loopback/core';
+import { JWTAuthenticationStrategy } from './jwt.strategy';
+import { BasicAuthenticationStrategy } from './basic.strategy';
+import { AuthenticateKeys, Authentication } from '@/common';
 
 export class AuthenticateComponent extends BaseComponent {
   bindings: Binding[] = [];
@@ -24,12 +31,25 @@ export class AuthenticateComponent extends BaseComponent {
 
     this.application.component(AuthenticationComponent);
     this.application.component(JWTAuthenticationComponent);
-    /* registerAuthenticationStrategy(this.application, JWTAuthenticationStrategy);
-    // registerAuthenticationStrategy(this, BasicAuthenticationStrategy);
+    registerAuthenticationStrategy(this.application, JWTAuthenticationStrategy);
+    registerAuthenticationStrategy(this.application, BasicAuthenticationStrategy);
 
-    this.bind(TokenServiceBindings.TOKEN_SECRET).to(Authentication.ACCESS_TOKEN_SECRET);
-    this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(Authentication.ACCESS_TOKEN_EXPIRES_IN.toString());
-    this.bind(RefreshTokenServiceBindings.REFRESH_SECRET).to(Authentication.REFRESH_TOKEN_SECRET);
-    this.bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(Authentication.REFRESH_TOKEN_EXPIRES_IN.toString()); */
+    const tokenOptions = this.application.getSync<{
+      tokenSecret: string;
+      tokenExpiresIn: number;
+      refreshSecret: string;
+      refreshExpiresIn: number;
+    }>(AuthenticateKeys.TOKEN_OPTIONS);
+
+    const {
+      tokenSecret = Authentication.ACCESS_TOKEN_SECRET,
+      tokenExpiresIn = Authentication.ACCESS_TOKEN_EXPIRES_IN,
+      refreshSecret = Authentication.REFRESH_TOKEN_SECRET,
+      refreshExpiresIn = Authentication.REFRESH_TOKEN_EXPIRES_IN,
+    } = tokenOptions;
+    this.application.bind(TokenServiceBindings.TOKEN_SECRET).to(tokenSecret);
+    this.application.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(tokenExpiresIn.toString());
+    this.application.bind(RefreshTokenServiceBindings.REFRESH_SECRET).to(refreshSecret);
+    this.application.bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(refreshExpiresIn?.toString());
   }
 }

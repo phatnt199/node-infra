@@ -2,7 +2,7 @@
 var _a;
 var _b, _c, _d;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EnforcerDefinitions = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.FixedUserRoles = exports.ApplicationRoles = exports.Formatters = exports.App = void 0;
+exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EnforcerDefinitions = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.FixedUserRoles = exports.ApplicationRoles = exports.Formatters = exports.Authentication = exports.App = void 0;
 class App {
 }
 exports.App = App;
@@ -10,6 +10,19 @@ App.APPLICATION_NAME = (_a = process.env.APPLICATION_NAME) !== null && _a !== vo
 App.TIME_OFFSET = '+07:00';
 App.DEFAULT_LOCALE = 'en.UTF-8';
 App.DEFAULT_EXPLORER_PATH = '/explorer';
+class Authentication {
+}
+exports.Authentication = Authentication;
+Authentication.ACCESS_TOKEN_SECRET = 'token.secret';
+Authentication.ACCESS_TOKEN_EXPIRES_IN = 86400;
+Authentication.REFRESH_TOKEN_SECRET = 'refresh.secret';
+Authentication.REFRESH_TOKEN_EXPIRES_IN = 86400;
+// Jwt
+Authentication.TYPE_BASIC = 'Basic';
+Authentication.TYPE_BEARER = 'Bearer';
+// Strategy
+Authentication.STRATEGY_BASIC = 'basic';
+Authentication.STRATEGY_JWT = 'jwt';
 class Formatters {
 }
 exports.Formatters = Formatters;

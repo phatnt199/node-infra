@@ -5,6 +5,7 @@ class AuthenticateKeys {
 }
 exports.AuthenticateKeys = AuthenticateKeys;
 AuthenticateKeys.APPLICATION_SECRET = '@app/authenticate/application_secret';
+AuthenticateKeys.TOKEN_OPTIONS = '@app/authenticate/token_options';
 class AuthorizerKeys {
 }
 exports.AuthorizerKeys = AuthorizerKeys;
