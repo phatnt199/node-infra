@@ -1,5 +1,6 @@
 import { BaseIdEntity, BaseTzEntity } from '../base';
 import { Count, DataObject, Entity, Options, Where } from '@loopback/repository';
+import { UserProfile } from '@loopback/security';
 export interface IApplication {
     models: Set<string>;
     staticConfigure(): void;
@@ -69,3 +70,13 @@ export type MigrationProcess = {
         [key: string | symbol]: any;
     };
 };
+export interface JWTTokenPayload extends UserProfile {
+    userId: IdType;
+    roles: {
+        id: IdType;
+        identifier: string;
+        priority: number;
+    }[];
+}
+export interface TokenPayload extends JWTTokenPayload {
+}

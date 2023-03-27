@@ -364,7 +364,7 @@ const defineAssociateController = (opts) => {
     const BaseClass = baseClass !== null && baseClass !== void 0 ? baseClass : BaseController;
     class AssociationController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
-            super({ scope: `AssociationController.${relationName}` });
+            super(sourceRepository, targetRepository);
             if (!sourceRepository) {
                 throw (0, utilities_1.getError)({
                     statusCode: 500,

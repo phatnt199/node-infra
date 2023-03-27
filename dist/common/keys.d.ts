@@ -1,3 +1,6 @@
+export declare class AuthenticateKeys {
+    static readonly APPLICATION_SECRET = "@app/authenticate/application_secret";
+}
 export declare class AuthorizerKeys {
     static readonly APPLICATION_NAME = "@app/authorize/component/application_name";
     static readonly ROLE_MODEL = "@app/authorize/component/models/user";

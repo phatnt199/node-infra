@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthorizerKeys = void 0;
+exports.AuthorizerKeys = exports.AuthenticateKeys = void 0;
+class AuthenticateKeys {
+}
+exports.AuthenticateKeys = AuthenticateKeys;
+AuthenticateKeys.APPLICATION_SECRET = '@app/authenticate/application_secret';
 class AuthorizerKeys {
 }
 exports.AuthorizerKeys = AuthorizerKeys;

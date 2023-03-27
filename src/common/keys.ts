@@ -1,3 +1,7 @@
+export class AuthenticateKeys {
+  static readonly APPLICATION_SECRET = '@app/authenticate/application_secret'
+}
+
 export class AuthorizerKeys {
   static readonly APPLICATION_NAME = '@app/authorize/component/application_name';
 
@@ -20,25 +24,3 @@ export class AuthorizerKeys {
   static readonly AUTHORIZE_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
   static readonly CONFIGURE_OPTIONS = '@app/authorize/configure_options';
 }
-    
-      
-    
-    
-      
-      
-      
-    
-  
-    
-    
-      
-        
-      
-      
-      
-      
-      
-        
-        
-      
-      

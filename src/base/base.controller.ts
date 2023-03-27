@@ -304,13 +304,13 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
       targetRepository: AbstractTzRepository<T, EntityRelation>,
     ) {
       super({ scope: `ViewController.${relationName}` });
+
       if (!sourceRepository) {
         throw getError({
           statusCode: 500,
           message: '[defineRelationViewController] Invalid source repository!',
         });
       }
-
       this.sourceRepository = sourceRepository;
 
       if (!targetRepository) {
@@ -377,7 +377,7 @@ export const defineAssociateController = <
       sourceRepository: AbstractTzRepository<S, EntityRelation>,
       targetRepository: AbstractTzRepository<T, EntityRelation>,
     ) {
-      super({ scope: `AssociationController.${relationName}` });
+      super(sourceRepository, targetRepository);
 
       if (!sourceRepository) {
         throw getError({

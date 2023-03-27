@@ -95,7 +95,7 @@ let BaseApplicationSequence = class BaseApplicationSequence {
                 this.logger.debug('[handle] Sent response... | Took: %d(ms)', new Date().getTime() - pT);
             }
             catch (error) {
-                console.error(error);
+                // console.error(error);
                 this.logger.error('[handle] ERROR | Error: %s', error);
                 this.reject(context, error);
             }

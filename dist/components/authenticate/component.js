@@ -12,24 +12,42 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthorizeComponent = void 0;
+exports.AuthenticateComponent = void 0;
 const base_application_1 = require("../../base/base.application");
 const base_component_1 = require("../../base/base.component");
+const utilities_1 = require("../../utilities");
+const authentication_1 = require("@loopback/authentication");
+const authentication_jwt_1 = require("@loopback/authentication-jwt");
 const core_1 = require("@loopback/core");
-let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseComponent {
+let AuthenticateComponent = class AuthenticateComponent extends base_component_1.BaseComponent {
     constructor(application) {
-        super({ scope: AuthorizeComponent.name });
+        super({ scope: AuthenticateComponent.name });
         this.application = application;
         this.bindings = [];
         this.binding();
     }
     binding() {
+        if (!this.application) {
+            throw (0, utilities_1.getError)({
+                statusCode: 500,
+                message: '[binding] Invalid application to bind AuthenticateComponent',
+            });
+        }
         this.logger.info('[binding] Binding authenticate for application...');
+        this.application.component(authentication_1.AuthenticationComponent);
+        this.application.component(authentication_jwt_1.JWTAuthenticationComponent);
+        /* registerAuthenticationStrategy(this.application, JWTAuthenticationStrategy);
+        // registerAuthenticationStrategy(this, BasicAuthenticationStrategy);
+    
+        this.bind(TokenServiceBindings.TOKEN_SECRET).to(Authentication.ACCESS_TOKEN_SECRET);
+        this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(Authentication.ACCESS_TOKEN_EXPIRES_IN.toString());
+        this.bind(RefreshTokenServiceBindings.REFRESH_SECRET).to(Authentication.REFRESH_TOKEN_SECRET);
+        this.bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(Authentication.REFRESH_TOKEN_EXPIRES_IN.toString()); */
     }
 };
-AuthorizeComponent = __decorate([
+AuthenticateComponent = __decorate([
     __param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
     __metadata("design:paramtypes", [base_application_1.BaseApplication])
-], AuthorizeComponent);
-exports.AuthorizeComponent = AuthorizeComponent;
+], AuthenticateComponent);
+exports.AuthenticateComponent = AuthenticateComponent;
 //# sourceMappingURL=component.js.map
