@@ -26,10 +26,11 @@ const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
 const utilities_1 = require("../../utilities");
 const services_1 = require("../../services");
+const common_1 = require("../../common");
 let JWTAuthenticationStrategy = class JWTAuthenticationStrategy {
     constructor(service) {
         this.service = service;
-        this.name = 'jwt';
+        this.name = common_1.Authentication.STRATEGY_JWT;
     }
     extractCredentials(request) {
         if (!request.headers.authorization) {
@@ -39,7 +40,7 @@ let JWTAuthenticationStrategy = class JWTAuthenticationStrategy {
             });
         }
         const authHeaderValue = request.headers.authorization;
-        if (!authHeaderValue.startsWith('Bearer')) {
+        if (!authHeaderValue.startsWith(common_1.Authentication.TYPE_BEARER)) {
             throw (0, utilities_1.getError)({
                 statusCode: 401,
                 message: 'Unauthorized user! Invalid schema of request token!',

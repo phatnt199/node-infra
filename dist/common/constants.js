@@ -10,6 +10,7 @@ App.APPLICATION_NAME = (_a = process.env.APPLICATION_NAME) !== null && _a !== vo
 App.TIME_OFFSET = '+07:00';
 App.DEFAULT_LOCALE = 'en.UTF-8';
 App.DEFAULT_EXPLORER_PATH = '/explorer';
+App.SECRET = 'application.secret';
 class Authentication {
 }
 exports.Authentication = Authentication;

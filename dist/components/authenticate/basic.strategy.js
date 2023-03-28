@@ -22,13 +22,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BasicAuthenticationStrategy = void 0;
+const common_1 = require("../../common");
 const services_1 = require("../../services");
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
 let BasicAuthenticationStrategy = class BasicAuthenticationStrategy {
     constructor(service) {
         this.service = service;
-        this.name = 'basic';
+        this.name = common_1.Authentication.TYPE_BASIC;
     }
     extractCredentials(request) {
         if (!request.headers.authorization) {
@@ -39,8 +40,9 @@ let BasicAuthenticationStrategy = class BasicAuthenticationStrategy {
             throw new rest_1.HttpErrors.Unauthorized(`Authorization header is not of type 'Basic'.`);
         }
         const parts = authHeaderValue.split(' ');
-        if (parts.length !== 2)
-            throw new rest_1.HttpErrors.Unauthorized(`Authorization header value has too many parts. It must follow the pattern: 'Bearer xx.yy.zz' where xx.yy.zz is a valid JWT token.`);
+        if (parts.length !== 2) {
+            throw new rest_1.HttpErrors.Unauthorized('Invalid basic authentication header');
+        }
         const token = parts[1];
         const credential = Buffer.from(token, 'base64').toString();
         const [username, password] = (credential === null || credential === void 0 ? void 0 : credential.split(':')) || [];

@@ -3,9 +3,10 @@ import { HttpErrors, Request } from '@loopback/rest';
 import { AuthenticationStrategy } from '@loopback/authentication';
 import { getError } from '@/utilities';
 import { JWTTokenService } from '@/services';
+import { Authentication } from '@/common';
 
 export class JWTAuthenticationStrategy implements AuthenticationStrategy {
-  name = 'jwt';
+  name = Authentication.STRATEGY_JWT;
 
   constructor(@inject('services.JWTTokenService') private service: JWTTokenService) { }
 
@@ -18,7 +19,7 @@ export class JWTAuthenticationStrategy implements AuthenticationStrategy {
     }
 
     const authHeaderValue = request.headers.authorization;
-    if (!authHeaderValue.startsWith('Bearer')) {
+    if (!authHeaderValue.startsWith(Authentication.TYPE_BEARER)) {
       throw getError({
         statusCode: 401,
         message: 'Unauthorized user! Invalid schema of request token!',

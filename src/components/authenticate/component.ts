@@ -10,10 +10,18 @@ import {
 import { Binding, CoreBindings, inject } from '@loopback/core';
 import { JWTAuthenticationStrategy } from './jwt.strategy';
 import { BasicAuthenticationStrategy } from './basic.strategy';
-import { AuthenticateKeys, Authentication } from '@/common';
+import { App, AuthenticateKeys, Authentication } from '@/common';
 
 export class AuthenticateComponent extends BaseComponent {
-  bindings: Binding[] = [];
+  bindings: Binding[] = [
+    Binding.bind(AuthenticateKeys.APPLICATION_SECRET).to(App.SECRET),
+    Binding.bind(AuthenticateKeys.TOKEN_OPTIONS).to({
+      tokenSecret: Authentication.ACCESS_TOKEN_SECRET,
+      tokenExpiresIn: Authentication.ACCESS_TOKEN_EXPIRES_IN,
+      refreshSecret: Authentication.REFRESH_TOKEN_SECRET,
+      refreshExpiresIn: Authentication.REFRESH_TOKEN_EXPIRES_IN,
+    }),
+  ];
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
     super({ scope: AuthenticateComponent.name });

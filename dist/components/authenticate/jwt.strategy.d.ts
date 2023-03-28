@@ -10,5 +10,5 @@ export declare class JWTAuthenticationStrategy implements AuthenticationStrategy
         type: string;
         token: string;
     };
-    authenticate(request: Request): Promise<import("../..").JWTTokenPayload>;
+    authenticate(request: Request): Promise<import("../../common").JWTTokenPayload>;
 }

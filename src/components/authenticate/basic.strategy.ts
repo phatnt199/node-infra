@@ -1,10 +1,11 @@
+import { Authentication } from '@/common';
 import { BasicAuthenticationService } from '@/services';
 import { AuthenticationStrategy } from '@loopback/authentication';
 import { inject } from '@loopback/core';
 import { HttpErrors, Request } from '@loopback/rest';
 
 export class BasicAuthenticationStrategy implements AuthenticationStrategy {
-  name = 'basic';
+  name = Authentication.TYPE_BASIC;
 
   constructor(@inject('services.BasicAuthenticationService') private service: BasicAuthenticationService) { }
 
@@ -20,10 +21,10 @@ export class BasicAuthenticationStrategy implements AuthenticationStrategy {
     }
 
     const parts = authHeaderValue.split(' ');
-    if (parts.length !== 2)
-      throw new HttpErrors.Unauthorized(
-        `Authorization header value has too many parts. It must follow the pattern: 'Bearer xx.yy.zz' where xx.yy.zz is a valid JWT token.`,
-      );
+    if (parts.length !== 2){
+      throw new HttpErrors.Unauthorized('Invalid basic authentication header');
+    }
+
     const token = parts[1];
     const credential = Buffer.from(token, 'base64').toString();
     const [username, password] = credential?.split(':') || [];

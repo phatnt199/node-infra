@@ -3,6 +3,7 @@ export class App {
   static readonly TIME_OFFSET = '+07:00';
   static readonly DEFAULT_LOCALE = 'en.UTF-8';
   static readonly DEFAULT_EXPLORER_PATH = '/explorer';
+  static readonly SECRET = 'application.secret'
 }
 
 export class Authentication {

@@ -26,7 +26,15 @@ let AuthenticateComponent = class AuthenticateComponent extends base_component_1
     constructor(application) {
         super({ scope: AuthenticateComponent.name });
         this.application = application;
-        this.bindings = [];
+        this.bindings = [
+            core_1.Binding.bind(common_1.AuthenticateKeys.APPLICATION_SECRET).to(common_1.App.SECRET),
+            core_1.Binding.bind(common_1.AuthenticateKeys.TOKEN_OPTIONS).to({
+                tokenSecret: common_1.Authentication.ACCESS_TOKEN_SECRET,
+                tokenExpiresIn: common_1.Authentication.ACCESS_TOKEN_EXPIRES_IN,
+                refreshSecret: common_1.Authentication.REFRESH_TOKEN_SECRET,
+                refreshExpiresIn: common_1.Authentication.REFRESH_TOKEN_EXPIRES_IN,
+            }),
+        ];
         this.binding();
     }
     binding() {
