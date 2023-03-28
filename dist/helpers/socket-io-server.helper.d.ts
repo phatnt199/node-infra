@@ -1,12 +1,14 @@
+/// <reference types="node" />
 import { Socket as IOSocket } from 'socket.io';
-import { Handshake } from 'socket.io/dist/socket';
 import Redis from 'ioredis';
-import { BaseApplication } from '..';
+import { Server } from 'http';
+import { Handshake } from 'socket.io/dist/socket';
 export interface ISocketIOServerOptions {
     identifier: string;
     useAuth: boolean;
     path?: string;
-    application: BaseApplication;
+    port?: number;
+    server: Server;
     redisConnection: Redis;
     authenticateFn: (args: Handshake) => Promise<boolean>;
     defaultRooms?: string[];
@@ -18,15 +20,18 @@ export declare class SocketIOServerHelper {
     private authenticateFn;
     private defaultRooms;
     private io;
-    private emitter?;
-    private application;
+    private emitter;
+    private server;
     private redisConnection;
     private clients;
     constructor(opts: ISocketIOServerOptions);
     configure(): void;
-    add(opts: {
+    onClientConnect(opts: {
         socket: IOSocket;
     }): Promise<void>;
+    onClientAuthenticated(opts: {
+        socket: IOSocket;
+    }): void;
     ping(opts: {
         socket: IOSocket;
         ignoreAuth: boolean;
@@ -35,8 +40,11 @@ export declare class SocketIOServerHelper {
         socket: IOSocket;
     }): void;
     send(opts: {
-        room: string;
-        payload: any;
+        destination: string;
+        payload: {
+            topic: string;
+            message: any;
+        };
         log?: boolean;
     }): void;
 }

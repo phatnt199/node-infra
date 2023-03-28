@@ -22,9 +22,9 @@ const rest_1 = require("@loopback/rest");
 const core_1 = require("@loopback/core");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const security_1 = require("@loopback/security");
-const crypto_utility_1 = require("../utilities/crypto.utility");
+const utilities_1 = require("../utilities");
 const base_service_1 = require("../base/base.service");
-const __1 = require("..");
+const common_1 = require("../common");
 let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_service_1.BaseService {
     constructor(applicationSecret, jwtSecret, jwtExpiresIn) {
         super({ scope: JWTTokenService_1.name });
@@ -36,21 +36,41 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
         return null;
     }
     // --------------------------------------------------------------------------------------
+    extractCredentials(request) {
+        if (!request.headers.authorization) {
+            throw (0, utilities_1.getError)({
+                statusCode: 401,
+                message: 'Unauthorized user! Missing authorization header',
+            });
+        }
+        const authHeaderValue = request.headers.authorization;
+        if (!authHeaderValue.startsWith(common_1.Authentication.TYPE_BEARER)) {
+            throw (0, utilities_1.getError)({
+                statusCode: 401,
+                message: 'Unauthorized user! Invalid schema of request token!',
+            });
+        }
+        const parts = authHeaderValue.split(' ');
+        if (parts.length !== 2)
+            throw new rest_1.HttpErrors.Unauthorized(`Authorization header value has too many parts. It must follow the pattern: 'Bearer xx.yy.zz' where xx.yy.zz is a valid JWT token.`);
+        return { type: parts[0], token: parts[1] };
+    }
+    // --------------------------------------------------------------------------------------
     encryptPayload(payload) {
-        const userKey = (0, crypto_utility_1.encrypt)('userId', this.applicationSecret);
-        const rolesKey = (0, crypto_utility_1.encrypt)('roles', this.applicationSecret);
+        const userKey = (0, utilities_1.encrypt)('userId', this.applicationSecret);
+        const rolesKey = (0, utilities_1.encrypt)('roles', this.applicationSecret);
         const { userId, roles } = payload;
         return {
-            [userKey]: (0, crypto_utility_1.encrypt)(userId, this.applicationSecret),
-            [rolesKey]: (0, crypto_utility_1.encrypt)(JSON.stringify(roles.map(el => `${el.id}|${el.identifier}`)), this.applicationSecret),
+            [userKey]: (0, utilities_1.encrypt)(userId, this.applicationSecret),
+            [rolesKey]: (0, utilities_1.encrypt)(JSON.stringify(roles.map(el => `${el.id}|${el.identifier}`)), this.applicationSecret),
         };
     }
     // --------------------------------------------------------------------------------------
     decryptPayload(decodedToken) {
         const rs = {};
         for (const encodedAttr in decodedToken) {
-            const attr = (0, crypto_utility_1.decrypt)(encodedAttr, this.applicationSecret);
-            const decryptedValue = (0, crypto_utility_1.decrypt)(decodedToken[encodedAttr], this.applicationSecret);
+            const attr = (0, utilities_1.decrypt)(encodedAttr, this.applicationSecret);
+            const decryptedValue = (0, utilities_1.decrypt)(decodedToken[encodedAttr], this.applicationSecret);
             switch (attr) {
                 case 'userId': {
                     rs.userId = parseInt(decryptedValue);
@@ -105,7 +125,7 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
 };
 JWTTokenService = JWTTokenService_1 = __decorate([
     (0, core_1.injectable)({ scope: core_1.BindingScope.SINGLETON }),
-    __param(0, (0, core_1.inject)(__1.AuthenticateKeys.APPLICATION_SECRET)),
+    __param(0, (0, core_1.inject)(common_1.AuthenticateKeys.APPLICATION_SECRET)),
     __param(1, (0, core_1.inject)(authentication_jwt_1.TokenServiceBindings.TOKEN_SECRET)),
     __param(2, (0, core_1.inject)(authentication_jwt_1.TokenServiceBindings.TOKEN_EXPIRES_IN)),
     __metadata("design:paramtypes", [String, String, String])

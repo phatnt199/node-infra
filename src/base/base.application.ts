@@ -8,6 +8,7 @@ import { EnvironmentValidationResult, IApplication } from '@/common/types';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 
 import { BaseApplicationSequence } from './base.sequence';
+import { RouteKeys } from '..';
 
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
@@ -19,7 +20,9 @@ export abstract class BaseApplication
     super(options);
     this.logger = LoggerFactory.getLogger(['Application']);
 
+    this.bind(RouteKeys.ALWAYS_ALLOW_PATHS).to([]);
     this.sequence(BaseApplicationSequence);
+
     this.staticConfigure();
     this.projectRoot = this.getProjectRoot();
     this.component(CrudRestComponent);

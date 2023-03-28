@@ -6,9 +6,5 @@ export declare class JWTAuthenticationStrategy implements AuthenticationStrategy
     private service;
     name: string;
     constructor(service: JWTTokenService);
-    extractCredentials(request: Request): {
-        type: string;
-        token: string;
-    };
     authenticate(request: Request): Promise<import("../../common").JWTTokenPayload>;
 }

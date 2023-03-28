@@ -5,9 +5,9 @@ import jwt from 'jsonwebtoken';
 
 import { securityId } from '@loopback/security';
 import { JWTTokenPayload } from '@/common/types';
-import { decrypt, encrypt } from '@/utilities/crypto.utility';
+import { decrypt, encrypt, getError } from '@/utilities';
 import { BaseService } from '@/base/base.service';
-import { AuthenticateKeys } from '..';
+import { AuthenticateKeys, Authentication } from '@/common';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class JWTTokenService extends BaseService {
@@ -21,6 +21,31 @@ export class JWTTokenService extends BaseService {
 
   getRepository() {
     return null;
+  }
+
+  // --------------------------------------------------------------------------------------
+  extractCredentials(request: { headers: any }): { type: string; token: string } {
+    if (!request.headers.authorization) {
+      throw getError({
+        statusCode: 401,
+        message: 'Unauthorized user! Missing authorization header',
+      });
+    }
+
+    const authHeaderValue = request.headers.authorization;
+    if (!authHeaderValue.startsWith(Authentication.TYPE_BEARER)) {
+      throw getError({
+        statusCode: 401,
+        message: 'Unauthorized user! Invalid schema of request token!',
+      });
+    }
+
+    const parts = authHeaderValue.split(' ');
+    if (parts.length !== 2)
+      throw new HttpErrors.Unauthorized(
+        `Authorization header value has too many parts. It must follow the pattern: 'Bearer xx.yy.zz' where xx.yy.zz is a valid JWT token.`,
+      );
+    return { type: parts[0], token: parts[1] };
   }
 
   // --------------------------------------------------------------------------------------

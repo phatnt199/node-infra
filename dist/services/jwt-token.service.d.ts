@@ -6,6 +6,12 @@ export declare class JWTTokenService extends BaseService {
     private jwtExpiresIn;
     constructor(applicationSecret: string, jwtSecret: string, jwtExpiresIn: string);
     getRepository(): null;
+    extractCredentials(request: {
+        headers: any;
+    }): {
+        type: string;
+        token: string;
+    };
     encryptPayload(payload: JWTTokenPayload): {
         [x: string]: string;
     };

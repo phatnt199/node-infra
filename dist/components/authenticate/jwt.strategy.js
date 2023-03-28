@@ -23,8 +23,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JWTAuthenticationStrategy = void 0;
 const core_1 = require("@loopback/core");
-const rest_1 = require("@loopback/rest");
-const utilities_1 = require("../../utilities");
 const services_1 = require("../../services");
 const common_1 = require("../../common");
 let JWTAuthenticationStrategy = class JWTAuthenticationStrategy {
@@ -32,28 +30,9 @@ let JWTAuthenticationStrategy = class JWTAuthenticationStrategy {
         this.service = service;
         this.name = common_1.Authentication.STRATEGY_JWT;
     }
-    extractCredentials(request) {
-        if (!request.headers.authorization) {
-            throw (0, utilities_1.getError)({
-                statusCode: 401,
-                message: 'Unauthorized user! Missing authorization header',
-            });
-        }
-        const authHeaderValue = request.headers.authorization;
-        if (!authHeaderValue.startsWith(common_1.Authentication.TYPE_BEARER)) {
-            throw (0, utilities_1.getError)({
-                statusCode: 401,
-                message: 'Unauthorized user! Invalid schema of request token!',
-            });
-        }
-        const parts = authHeaderValue.split(' ');
-        if (parts.length !== 2)
-            throw new rest_1.HttpErrors.Unauthorized(`Authorization header value has too many parts. It must follow the pattern: 'Bearer xx.yy.zz' where xx.yy.zz is a valid JWT token.`);
-        return { type: parts[0], token: parts[1] };
-    }
     authenticate(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const token = this.extractCredentials(request);
+            const token = this.service.extractCredentials(request);
             return this.service.verify(token);
         });
     }

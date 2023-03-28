@@ -1,20 +1,21 @@
 import { Server as IOServer, Socket as IOSocket } from 'socket.io';
-import { Handshake } from 'socket.io/dist/socket';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { Emitter } from '@socket.io/redis-emitter';
 import Redis from 'ioredis';
-import { createServer } from 'http';
 
 import { LoggerFactory, ApplicationLogger } from '@/helpers';
 import { getError } from '@/utilities';
 import { SocketIOConstants } from '@/common';
-import { BaseApplication } from '..';
+import { Server } from 'http';
+import isEmpty from 'lodash/isEmpty';
+import { Handshake } from 'socket.io/dist/socket';
 
 export interface ISocketIOServerOptions {
   identifier: string;
   useAuth: boolean;
   path?: string;
-  application: BaseApplication;
+  port?: number;
+  server: Server;
   redisConnection: Redis;
   authenticateFn: (args: Handshake) => Promise<boolean>;
   defaultRooms?: string[];
@@ -31,16 +32,18 @@ export class SocketIOServerHelper {
   private defaultRooms: string[];
 
   private io: IOServer;
-  private emitter?: Emitter;
-  private application: BaseApplication;
+  private emitter: Emitter;
+  private server: Server;
   private redisConnection: Redis;
+
   private clients: Record<
     string,
     {
       id: string;
       socket: IOSocket;
-      authenticated: boolean;
-      interval: any;
+      state: 'unauthorized' | 'authenticating' | 'authenticated';
+      interval?: NodeJS.Timeout;
+      authenticateTimeout: NodeJS.Timeout;
     }
   >;
 
@@ -48,18 +51,21 @@ export class SocketIOServerHelper {
     this.logger = LoggerFactory.getLogger([SocketIOServerHelper.name]);
     this.clients = {};
 
-    /* if (!server) {
-      this.logger.info('[io-server] Undefined server configuration to init socket!');
-      return;
-    }
-    this.logger.info('[io-server] Initialize SocketIO Server'); */
     this.identifier = opts.identifier;
     // this.useAuth = opts.useAuth;
     this.path = opts.path ?? '';
-    this.application = opts.application;
     this.redisConnection = opts.redisConnection;
     this.authenticateFn = opts.authenticateFn;
     this.defaultRooms = opts.defaultRooms ?? [SocketIOConstants.ROOM_DEFAULT, SocketIOConstants.ROOM_NOTIFICATION];
+
+    if (!opts.server) {
+      throw getError({
+        statusCode: 500,
+        message: '[SocketIOServerHelper] Invalid server and lb-application to initialize io-socket server!',
+      });
+    }
+
+    this.server = opts.server;
 
     // Establish redis connection
     if (!this.redisConnection) {
@@ -76,26 +82,22 @@ export class SocketIOServerHelper {
   configure() {
     this.logger.info('[configure][%s] Configuring IO Server', this.identifier);
 
-    if (!this.application) {
+    if (!this.server) {
       throw getError({
         statusCode: 500,
-        message: '[DANGER] Invalid application instance to init Socket.io server!',
+        message: '[DANGER] Invalid server instance to init Socket.io server!',
       });
     }
 
-    const server = createServer(this.application.requestHandler);
-    this.io = new IOServer(server, {
+    this.io = new IOServer(this.server, {
+      path: this.path ?? '',
       cors: {
         origin: '*',
-        methods: ['GET', 'POST'],
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
       },
-      path: this.path ?? '',
     });
-
-    // Configure socket.io authentication and authorization
-    /* if (this.useAuth) {
-      this.enableAuth();
-    } */
 
     // Configure socket.io redis adapter
     const pubConnection = this.redisConnection.duplicate();
@@ -113,97 +115,87 @@ export class SocketIOServerHelper {
 
     // Handle socket.io new connection
     this.io.on(SocketIOConstants.EVENT_CONNECT, async (socket: IOSocket) => {
-      await this.add({ socket });
+      await this.onClientConnect({ socket });
     });
 
-    server.listen(this.path, () => {
-      console.log(server);
-      this.logger.info('[configure] SocketIO Server READY!');
-    });
+    this.logger.info('[configure] SocketIO Server READY | Path: %s | Address: %j', this.path, this.server?.address());
+    this.logger.debug('[configure] Whether http listening: %s', this.server?.listening);
   }
 
   // -------------------------------------------------------------------------------------------------------------
-  /* enableAuth() {
-    this.logger.info('[io-server] Setting up QTS SocketIO Auth!');
-    IOAuth(this.io, {
-      authenticate: async (socket, raw, next) => {
-        const data = this.getRequestPayload(socket, raw);
-        this.logger.info(
-          '[io-server] Authenticating socket! Compress: %s | credentials: %j',
-          this.isCompress(socket),
-          data,
-        );
-        const { token, credentials, authenticationType = 'token' } = data || {};
-
-        switch (authenticationType) {
-          case 'token': {
-            const tokenCredentials = await getAuthToken({ app: this.app, token });
-
-            socket.authenticated = true;
-            next(null, tokenCredentials?.valid);
-            break;
-          }
-          case 'credentials': {
-            this.logger.info('[io-server] Authenticating user with credentials: %j', credentials);
-            if (isEmpty(credentials?.username) || isEmpty(credentials?.password)) {
-              next(null, false);
-              break;
-            }
-
-            const { User } = this.app.models;
-            const user = await User.findOne({ where: { username: credentials.username } });
-
-            if (!user) {
-              this.logger.info('[io-server] User is not existed!');
-              next(null, false);
-              break;
-            }
-
-            const isMatchedPassword = await user.hasPassword(credentials.password);
-            if (!isMatchedPassword) {
-              this.logger.info('[io-server] Invalid User Credentials!');
-              next(null, false);
-              break;
-            }
-
-            socket.authenticated = true;
-            next(null, true);
-
-            break;
-          }
-          default: {
-            this.logger.error('[io-server] Invalid authentication type!');
-            next(null, false);
-            break;
-          }
-        }
-      },
-    });
-  } */
-
-  // -------------------------------------------------------------------------------------------------------------
-  async add(opts: { socket: IOSocket }) {
+  async onClientConnect(opts: { socket: IOSocket }) {
     const { socket } = opts;
     if (!socket) {
-      this.logger.info('[add] Invalid new socket connection!');
+      this.logger.info('[onClientConnect] Invalid new socket connection!');
       return;
     }
 
     // Validate user identifier
     const { id, handshake } = socket;
-    const { auth: rawAuth, headers } = handshake;
-    this.logger.info('[add] New connection request with options: %j', { id, rawAuth, headers });
+    const { headers } = handshake;
+    this.logger.info('[onClientConnect] New connection request with options: %j', { id, headers });
 
-    const isValidConnection = await this.authenticateFn(handshake);
-    if (!isValidConnection) {
-      this.disconnect({ socket });
-      this.logger.error('[add] Connection: %s | Auth: %j | Empty new socket header origin!', id);
+    this.clients[id] = {
+      id,
+      socket,
+      state: 'unauthorized',
+      authenticateTimeout: setTimeout(() => {
+        if (this.clients[id]?.state === 'authenticated') {
+          return;
+        }
+
+        this.disconnect({ socket });
+      }, 2000),
+    };
+
+    socket.on(SocketIOConstants.EVENT_AUTHENTICATE, () => {
+      this.clients[id].state = 'authenticating';
+      this.authenticateFn(handshake)
+        .then(rs => {
+          // Invalid connection
+          if (!rs) {
+            this.clients[id].state = 'unauthorized';
+            this.disconnect({ socket });
+            return;
+          }
+
+          // Valid connection
+          this.onClientAuthenticated({ socket });
+        })
+        .catch(error => {
+          // Unexpected error while authenticating connection
+          this.clients[id].state = 'unauthorized';
+          this.logger.error(
+            '[onClientConnect] Connection: %s | Failed to authenticate new socket connection | Error: %s',
+            id,
+            error,
+          );
+          this.disconnect({ socket });
+        });
+    });
+  }
+
+  // -------------------------------------------------------------------------------------------------------------
+  onClientAuthenticated(opts: { socket: IOSocket }) {
+    const { socket } = opts;
+    if (!socket) {
+      this.logger.info('[onClientAuthenticated] Invalid new socket connection!');
       return;
     }
 
+    // Validate user identifier
+    const { id } = socket;
+    if (!this.clients[id]) {
+      this.logger.info('[onClientAuthenticated] Unknown client id %s to continue!', id);
+      this.disconnect({ socket });
+      return;
+    }
+    this.clients[id].state = 'authenticated';
+    this.ping({ socket, ignoreAuth: true });
+
     // Valid connection
     this.logger.info(
-      '[add] Connection: %s | Identifier: %s | CONNECTED | Time: %s',
+      '[onClientAuthenticated] Connection: %s | Identifier: %s | CONNECTED | Time: %s',
       id,
       this.identifier,
       new Date().toISOString(),
@@ -211,11 +203,11 @@ export class SocketIOServerHelper {
 
     Promise.all(this.defaultRooms.map((room: string) => socket.join(room)))
       .then(() => {
-        this.logger.info('[add] Connection %s joined all defaultRooms %s', id, this.defaultRooms);
+        this.logger.info('[onClientAuthenticated] Connection %s joined all defaultRooms %s', id, this.defaultRooms);
       })
       .catch(error => {
         this.logger.error(
-          '[add] Connection %s failed to join defaultRooms %s | Error: %s',
+          '[onClientAuthenticated] Connection %s failed to join defaultRooms %s | Error: %s',
           id,
           this.defaultRooms,
           error,
@@ -227,7 +219,7 @@ export class SocketIOServerHelper {
       this.disconnect({ socket });
     });
 
-    socket.on(SocketIOConstants.EVENT_PING, (payload: any) => {
+    socket.on(SocketIOConstants.EVENT_JOIN, (payload: any) => {
       const { rooms = [] } = payload || {};
       if (!rooms?.length) {
         return;
@@ -235,10 +227,16 @@ export class SocketIOServerHelper {
 
       Promise.all(rooms.map((room: string) => socket.join(room)))
         .then(() => {
-          this.logger.info('[add] Connection %s joined all rooms %s', id, rooms);
+          this.logger.info('[%s] Connection %s joined all rooms %s', SocketIOConstants.EVENT_JOIN, id, rooms);
         })
         .catch(error => {
-          this.logger.error('[add] Connection %s failed to join rooms %s | Error: %s', id, rooms, error);
+          this.logger.error(
+            '[%s] Connection %s failed to join rooms %s | Error: %s',
+            SocketIOConstants.EVENT_JOIN,
+            id,
+            rooms,
+            error,
+          );
         });
 
       this.logger.info('[%s] Connection: %s | JOIN Rooms: %j', SocketIOConstants.EVENT_JOIN, id, rooms);
@@ -252,24 +250,24 @@ export class SocketIOServerHelper {
 
       Promise.all(rooms.map((room: string) => socket.leave(room)))
         .then(() => {
-          this.logger.info('[add] Connection %s left all rooms %s', id, rooms);
+          this.logger.info('[%s] Connection %s left all rooms %s', SocketIOConstants.EVENT_LEAVE, id, rooms);
         })
         .catch(error => {
-          this.logger.error('[add] Connection %s failed to leave rooms %s | Error: %s', id, rooms, error);
+          this.logger.error(
+            '[%s] Connection %s failed to leave rooms %s | Error: %s',
+            SocketIOConstants.EVENT_LEAVE,
+            id,
+            rooms,
+            error,
+          );
         });
 
       this.logger.info('[%s] Connection: %s | LEAVE Rooms: %j', SocketIOConstants.EVENT_LEAVE, id, rooms);
     });
 
-    this.ping({ socket, ignoreAuth: true });
-    this.clients[id] = {
-      id,
-      socket,
-      authenticated: false,
-      interval: setInterval(() => {
-        this.ping({ socket, ignoreAuth: false });
-      }, 30000),
-    };
+    this.clients[id].interval = setInterval(() => {
+      this.ping({ socket, ignoreAuth: true });
+    }, 30000);
   }
 
   // -------------------------------------------------------------------------------------------------------------
@@ -282,15 +280,21 @@ export class SocketIOServerHelper {
     }
 
     const client = this.clients[socket.id];
-    if (!ignoreAuth && !client.authenticated) {
-      this.logger.info('[ping] Socket client is not authenticated | Authenticated: %s', client.authenticated);
+    if (!ignoreAuth && client.state !== 'authenticated') {
+      this.logger.info('[ping] Socket client is not authenticated | Authenticated: %s', client.state);
       this.disconnect({ socket });
       return;
     }
 
-    this.emitter?.emit(SocketIOConstants.ROOM_DEFAULT, {
-      message: SocketIOConstants.EVENT_PING,
-      time: new Date().toISOString(),
+    this.send({
+      destination: socket.id,
+      payload: {
+        topic: SocketIOConstants.EVENT_PING,
+        message: {
+          time: new Date().toISOString(),
+        },
+      },
+      // log: true,
     });
   }
 
@@ -304,7 +308,15 @@ export class SocketIOServerHelper {
     const { id } = socket;
 
     if (this.clients[id]) {
-      clearInterval(this.clients[id].interval);
+      const { interval, authenticateTimeout } = this.clients[id];
+      if (interval) {
+        clearInterval(interval);
+      }
+
+      if (authenticateTimeout) {
+        clearTimeout(authenticateTimeout);
+      }
+
       delete this.clients[id];
     }
 
@@ -313,8 +325,8 @@ export class SocketIOServerHelper {
   }
 
   // -------------------------------------------------------------------------------------------------------------
-  send(opts: { room: string; payload: any; log?: boolean }) {
-    const { room, payload, log } = opts;
+  send(opts: { destination: string; payload: { topic: string; message: any }; log?: boolean }) {
+    const { destination, payload, log } = opts;
     if (!payload) {
       return;
     }
@@ -324,16 +336,20 @@ export class SocketIOServerHelper {
       return;
     }
 
-    if (room) {
-      this.emitter?.to(room).emit(topic, message);
+    const sender = this.emitter.compress(true);
+
+    if (destination && !isEmpty(destination)) {
+      sender.to(destination).emit(topic, message);
     } else {
-      this.emitter?.emit(topic, message);
+      sender.emit(topic, message);
     }
 
-    if (log) {
-      this.logger.info(
-        `[send] Message has emitted! Room: ${room} | Topic: ${topic} | Message: ${JSON.stringify(message)}`,
-      );
+    if (!log) {
+      return;
     }
+
+    this.logger.info(
+      `[send] Message has emitted! To: ${destination} | Topic: ${topic} | Message: ${JSON.stringify(message)}`,
+    );
   }
 }
