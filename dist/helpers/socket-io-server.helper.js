@@ -55,7 +55,13 @@ class SocketIOServerHelper {
             });
         }
         const server = (0, http_1.createServer)(this.application.requestHandler);
-        this.io = new socket_io_1.Server(server, { path: (_a = this.path) !== null && _a !== void 0 ? _a : '' });
+        this.io = new socket_io_1.Server(server, {
+            cors: {
+                origin: '*',
+                methods: ['GET', 'POST'],
+            },
+            path: (_a = this.path) !== null && _a !== void 0 ? _a : '',
+        });
         // Configure socket.io authentication and authorization
         /* if (this.useAuth) {
           this.enableAuth();
@@ -75,7 +81,10 @@ class SocketIOServerHelper {
         this.io.on(common_1.SocketIOConstants.EVENT_CONNECT, (socket) => __awaiter(this, void 0, void 0, function* () {
             yield this.add({ socket });
         }));
-        this.logger.info('[configure] SocketIO Server READY!');
+        server.listen(this.path, () => {
+            console.log(server);
+            this.logger.info('[configure] SocketIO Server READY!');
+        });
     }
     // -------------------------------------------------------------------------------------------------------------
     /* enableAuth() {

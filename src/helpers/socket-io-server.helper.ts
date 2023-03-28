@@ -84,7 +84,13 @@ export class SocketIOServerHelper {
     }
 
     const server = createServer(this.application.requestHandler);
-    this.io = new IOServer(server, { path: this.path ?? '' });
+    this.io = new IOServer(server, {
+      cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+      },
+      path: this.path ?? '',
+    });
 
     // Configure socket.io authentication and authorization
     /* if (this.useAuth) {
@@ -110,7 +116,10 @@ export class SocketIOServerHelper {
       await this.add({ socket });
     });
 
-    this.logger.info('[configure] SocketIO Server READY!');
+    server.listen(this.path, () => {
+      console.log(server);
+      this.logger.info('[configure] SocketIO Server READY!');
+    });
   }
 
   // -------------------------------------------------------------------------------------------------------------

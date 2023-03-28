@@ -7,7 +7,7 @@ import { HttpErrors, Request } from '@loopback/rest';
 export class BasicAuthenticationStrategy implements AuthenticationStrategy {
   name = Authentication.TYPE_BASIC;
 
-  constructor(@inject('services.BasicTokenService') private service: BasicTokenService) { }
+  constructor(@inject('services.BasicTokenService') private service: BasicTokenService) {}
 
   extractCredentials(request: Request): { username: string; password: string } {
     if (!request.headers.authorization) {
@@ -21,7 +21,7 @@ export class BasicAuthenticationStrategy implements AuthenticationStrategy {
     }
 
     const parts = authHeaderValue.split(' ');
-    if (parts.length !== 2){
+    if (parts.length !== 2) {
       throw new HttpErrors.Unauthorized('Invalid basic authentication header');
     }
 
