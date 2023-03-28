@@ -63,3 +63,7 @@ node_modules.zip
 
 # Cache used by TypeScript's incremental build
 *.tsbuildinfo
+
+dist/tests/*
+src/tests/*
+

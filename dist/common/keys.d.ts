@@ -1,3 +1,6 @@
+export declare class RouteKeys {
+    static readonly ALWAYS_ALLOW_PATHS = "@app/application/always_allow_paths";
+}
 export declare class AuthenticateKeys {
     static readonly APPLICATION_SECRET = "@app/authenticate/application_secret";
     static readonly TOKEN_OPTIONS = "@app/authenticate/token_options";

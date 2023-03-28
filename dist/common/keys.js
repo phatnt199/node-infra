@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthorizerKeys = exports.AuthenticateKeys = void 0;
+exports.AuthorizerKeys = exports.AuthenticateKeys = exports.RouteKeys = void 0;
+class RouteKeys {
+}
+exports.RouteKeys = RouteKeys;
+RouteKeys.ALWAYS_ALLOW_PATHS = '@app/application/always_allow_paths';
 class AuthenticateKeys {
 }
 exports.AuthenticateKeys = AuthenticateKeys;

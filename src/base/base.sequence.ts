@@ -1,3 +1,4 @@
+import { RouteKeys } from '@/common/keys';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import {
   AuthenticateFn,
@@ -5,7 +6,7 @@ import {
   AUTHENTICATION_STRATEGY_NOT_FOUND,
   USER_PROFILE_NOT_FOUND,
 } from '@loopback/authentication';
-import { inject } from '@loopback/core';
+import { Getter, inject } from '@loopback/core';
 import {
   FindRoute,
   InvokeMethod,
@@ -31,6 +32,7 @@ export class BaseApplicationSequence implements SequenceHandler {
     @inject(AuthenticationBindings.AUTH_ACTION) protected authenticateFn: AuthenticateFn,
     @inject(SequenceActions.INVOKE_MIDDLEWARE, { optional: true })
     protected invokeMiddleware: InvokeMiddleware = () => false,
+    @inject.getter(RouteKeys.ALWAYS_ALLOW_PATHS) protected alwaysAllowPathGetter: Getter<string[]>,
   ) {
     this.logger = LoggerFactory.getLogger([BaseApplicationSequence.name]);
   }
@@ -66,6 +68,8 @@ export class BaseApplicationSequence implements SequenceHandler {
 
     const { request, response } = context;
     const { url } = request;
+    const requestUrl = decodeURIComponent(url);
+    const requestPath = requestUrl.slice(0, requestUrl.indexOf('?'));
 
     try {
       let pT = new Date().getTime();
@@ -81,10 +85,13 @@ export class BaseApplicationSequence implements SequenceHandler {
       const args = await this.parseParams(request, route);
       this.logger.debug('[handle] Parsed request agrs... | Took: %d(ms)', new Date().getTime() - pT);
 
-      pT = new Date().getTime();
-      await this.authenticate(request);
-      // await this.authorize(request);
-      this.logger.debug('[handle] Authenticated request... | Took: %d(ms)', new Date().getTime() - pT);
+      const alwaysAllowPaths = await this.alwaysAllowPathGetter();
+      if (!alwaysAllowPaths.includes(requestPath)) {
+        pT = new Date().getTime();
+        await this.authenticate(request);
+        // await this.authorize(request);
+        this.logger.debug('[handle] Authenticated request... | Took: %d(ms)', new Date().getTime() - pT);
+      }
 
       pT = new Date().getTime();
       const result = await this.invoke(route, args);
@@ -98,7 +105,7 @@ export class BaseApplicationSequence implements SequenceHandler {
       this.logger.error('[handle] ERROR | Error: %s', error);
       this.reject(context, error);
     } finally {
-      this.logger.info('[handle] DONE | Took: %d(ms) | Url: %s', new Date().getTime() - t, decodeURIComponent(url));
+      this.logger.info('[handle] DONE | Took: %d(ms) | Url: %s', new Date().getTime() - t, requestUrl);
     }
   }
 }

@@ -22,12 +22,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseApplicationSequence = void 0;
+const keys_1 = require("../common/keys");
 const helpers_1 = require("../helpers");
 const authentication_1 = require("@loopback/authentication");
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
 let BaseApplicationSequence = class BaseApplicationSequence {
-    constructor(findRoute, parseParams, invoke, send, reject, authenticateFn, invokeMiddleware = () => false) {
+    constructor(findRoute, parseParams, invoke, send, reject, authenticateFn, invokeMiddleware = () => false, alwaysAllowPathGetter) {
         this.findRoute = findRoute;
         this.parseParams = parseParams;
         this.invoke = invoke;
@@ -35,6 +36,7 @@ let BaseApplicationSequence = class BaseApplicationSequence {
         this.reject = reject;
         this.authenticateFn = authenticateFn;
         this.invokeMiddleware = invokeMiddleware;
+        this.alwaysAllowPathGetter = alwaysAllowPathGetter;
         this.logger = helpers_1.LoggerFactory.getLogger([BaseApplicationSequence.name]);
     }
     authenticate(request) {
@@ -71,6 +73,8 @@ let BaseApplicationSequence = class BaseApplicationSequence {
             const t = new Date().getTime();
             const { request, response } = context;
             const { url } = request;
+            const requestUrl = decodeURIComponent(url);
+            const requestPath = requestUrl.slice(0, requestUrl.indexOf('?'));
             try {
                 let pT = new Date().getTime();
                 const finished = yield this.invokeMiddleware(context);
@@ -83,10 +87,13 @@ let BaseApplicationSequence = class BaseApplicationSequence {
                 pT = new Date().getTime();
                 const args = yield this.parseParams(request, route);
                 this.logger.debug('[handle] Parsed request agrs... | Took: %d(ms)', new Date().getTime() - pT);
-                pT = new Date().getTime();
-                yield this.authenticate(request);
-                // await this.authorize(request);
-                this.logger.debug('[handle] Authenticated request... | Took: %d(ms)', new Date().getTime() - pT);
+                const alwaysAllowPaths = yield this.alwaysAllowPathGetter();
+                if (!alwaysAllowPaths.includes(requestPath)) {
+                    pT = new Date().getTime();
+                    yield this.authenticate(request);
+                    // await this.authorize(request);
+                    this.logger.debug('[handle] Authenticated request... | Took: %d(ms)', new Date().getTime() - pT);
+                }
                 pT = new Date().getTime();
                 const result = yield this.invoke(route, args);
                 this.logger.debug('[handle] Invoked request... | Took: %d(ms)', new Date().getTime() - pT);
@@ -100,7 +107,7 @@ let BaseApplicationSequence = class BaseApplicationSequence {
                 this.reject(context, error);
             }
             finally {
-                this.logger.info('[handle] DONE | Took: %d(ms) | Url: %s', new Date().getTime() - t, decodeURIComponent(url));
+                this.logger.info('[handle] DONE | Took: %d(ms) | Url: %s', new Date().getTime() - t, requestUrl);
             }
         });
     }
@@ -113,7 +120,8 @@ BaseApplicationSequence = __decorate([
     __param(4, (0, core_1.inject)(rest_1.SequenceActions.REJECT)),
     __param(5, (0, core_1.inject)(authentication_1.AuthenticationBindings.AUTH_ACTION)),
     __param(6, (0, core_1.inject)(rest_1.SequenceActions.INVOKE_MIDDLEWARE, { optional: true })),
-    __metadata("design:paramtypes", [Function, Function, Function, Function, Function, Function, Function])
+    __param(7, core_1.inject.getter(keys_1.RouteKeys.ALWAYS_ALLOW_PATHS)),
+    __metadata("design:paramtypes", [Function, Function, Function, Function, Function, Function, Function, Function])
 ], BaseApplicationSequence);
 exports.BaseApplicationSequence = BaseApplicationSequence;
 //# sourceMappingURL=base.sequence.js.map
