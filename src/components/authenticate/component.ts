@@ -11,6 +11,7 @@ import { Binding, CoreBindings, inject } from '@loopback/core';
 import { JWTAuthenticationStrategy } from './jwt.strategy';
 import { BasicAuthenticationStrategy } from './basic.strategy';
 import { App, AuthenticateKeys, Authentication } from '@/common';
+import { BasicTokenService, JWTTokenService } from '@/services';
 
 export class AuthenticateComponent extends BaseComponent {
   bindings: Binding[] = [
@@ -28,15 +29,12 @@ export class AuthenticateComponent extends BaseComponent {
     this.binding();
   }
 
-  binding() {
-    if (!this.application) {
-      throw getError({
-        statusCode: 500,
-        message: '[binding] Invalid application to bind AuthenticateComponent',
-      });
-    }
-    this.logger.info('[binding] Binding authenticate for application...');
+  defineServices() {
+    this.application.service(BasicTokenService);
+    this.application.service(JWTTokenService);
+  }
 
+  registerComponent() {
     this.application.component(AuthenticationComponent);
     this.application.component(JWTAuthenticationComponent);
     registerAuthenticationStrategy(this.application, JWTAuthenticationStrategy);
@@ -59,5 +57,18 @@ export class AuthenticateComponent extends BaseComponent {
     this.application.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(tokenExpiresIn.toString());
     this.application.bind(RefreshTokenServiceBindings.REFRESH_SECRET).to(refreshSecret);
     this.application.bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(refreshExpiresIn?.toString());
+  }
+
+  binding() {
+    if (!this.application) {
+      throw getError({
+        statusCode: 500,
+        message: '[binding] Invalid application to bind AuthenticateComponent',
+      });
+    }
+    this.logger.info('[binding] Binding authenticate for application...');
+
+    this.defineServices();
+    this.registerComponent();
   }
 }

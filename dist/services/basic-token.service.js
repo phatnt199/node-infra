@@ -9,13 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BasicAuthenticationService = void 0;
+exports.BasicTokenService = void 0;
 const base_service_1 = require("../base/base.service");
 const rest_1 = require("@loopback/rest");
 // import { securityId } from '@loopback/security';
-class BasicAuthenticationService extends base_service_1.BaseService {
+class BasicTokenService extends base_service_1.BaseService {
     constructor() {
-        super({ scope: BasicAuthenticationService.name });
+        super({ scope: BasicTokenService.name });
     }
     getRepository() {
         return null;
@@ -42,5 +42,5 @@ class BasicAuthenticationService extends base_service_1.BaseService {
         });
     }
 }
-exports.BasicAuthenticationService = BasicAuthenticationService;
+exports.BasicTokenService = BasicTokenService;
 //# sourceMappingURL=basic-token.service.js.map

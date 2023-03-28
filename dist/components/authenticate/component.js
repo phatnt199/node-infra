@@ -22,6 +22,7 @@ const core_1 = require("@loopback/core");
 const jwt_strategy_1 = require("./jwt.strategy");
 const basic_strategy_1 = require("./basic.strategy");
 const common_1 = require("../../common");
+const services_1 = require("../../services");
 let AuthenticateComponent = class AuthenticateComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthenticateComponent.name });
@@ -37,14 +38,11 @@ let AuthenticateComponent = class AuthenticateComponent extends base_component_1
         ];
         this.binding();
     }
-    binding() {
-        if (!this.application) {
-            throw (0, utilities_1.getError)({
-                statusCode: 500,
-                message: '[binding] Invalid application to bind AuthenticateComponent',
-            });
-        }
-        this.logger.info('[binding] Binding authenticate for application...');
+    defineServices() {
+        this.application.service(services_1.BasicTokenService);
+        this.application.service(services_1.JWTTokenService);
+    }
+    registerComponent() {
         this.application.component(authentication_1.AuthenticationComponent);
         this.application.component(authentication_jwt_1.JWTAuthenticationComponent);
         (0, authentication_1.registerAuthenticationStrategy)(this.application, jwt_strategy_1.JWTAuthenticationStrategy);
@@ -55,6 +53,17 @@ let AuthenticateComponent = class AuthenticateComponent extends base_component_1
         this.application.bind(authentication_jwt_1.TokenServiceBindings.TOKEN_EXPIRES_IN).to(tokenExpiresIn.toString());
         this.application.bind(authentication_jwt_1.RefreshTokenServiceBindings.REFRESH_SECRET).to(refreshSecret);
         this.application.bind(authentication_jwt_1.RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(refreshExpiresIn === null || refreshExpiresIn === void 0 ? void 0 : refreshExpiresIn.toString());
+    }
+    binding() {
+        if (!this.application) {
+            throw (0, utilities_1.getError)({
+                statusCode: 500,
+                message: '[binding] Invalid application to bind AuthenticateComponent',
+            });
+        }
+        this.logger.info('[binding] Binding authenticate for application...');
+        this.defineServices();
+        this.registerComponent();
     }
 };
 AuthenticateComponent = __decorate([

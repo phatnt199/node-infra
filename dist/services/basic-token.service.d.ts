@@ -1,5 +1,5 @@
 import { BaseService } from '../base/base.service';
-export declare class BasicAuthenticationService extends BaseService {
+export declare class BasicTokenService extends BaseService {
     constructor();
     getRepository(): null;
     verify(credential: {

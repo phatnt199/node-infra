@@ -1,5 +1,5 @@
 import { Authentication } from '@/common';
-import { BasicAuthenticationService } from '@/services';
+import { BasicTokenService } from '@/services';
 import { AuthenticationStrategy } from '@loopback/authentication';
 import { inject } from '@loopback/core';
 import { HttpErrors, Request } from '@loopback/rest';
@@ -7,7 +7,7 @@ import { HttpErrors, Request } from '@loopback/rest';
 export class BasicAuthenticationStrategy implements AuthenticationStrategy {
   name = Authentication.TYPE_BASIC;
 
-  constructor(@inject('services.BasicAuthenticationService') private service: BasicAuthenticationService) { }
+  constructor(@inject('services.BasicTokenService') private service: BasicTokenService) { }
 
   extractCredentials(request: Request): { username: string; password: string } {
     if (!request.headers.authorization) {
