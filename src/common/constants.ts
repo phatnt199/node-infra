@@ -3,7 +3,7 @@ export class App {
   static readonly TIME_OFFSET = '+07:00';
   static readonly DEFAULT_LOCALE = 'en.UTF-8';
   static readonly DEFAULT_EXPLORER_PATH = '/explorer';
-  static readonly SECRET = 'application.secret'
+  static readonly SECRET = 'application.secret';
 }
 
 export class Authentication {
@@ -98,6 +98,7 @@ export class SocketIOConstants {
   static readonly EVENT_JOIN = 'join';
   static readonly EVENT_LEAVE = 'leave';
   static readonly EVENT_AUTHENTICATE = 'authenticate';
+  static readonly EVENT_UNAUTHENTICATE = 'unauthenticated';
 
   static readonly ROOM_DEFAULT = 'io-default';
   static readonly ROOM_NOTIFICATION = 'io-notification';

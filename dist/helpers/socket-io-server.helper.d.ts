@@ -43,8 +43,9 @@ export declare class SocketIOServerHelper {
         destination: string;
         payload: {
             topic: string;
-            message: any;
+            data: any;
         };
         log?: boolean;
+        cb?: () => void;
     }): void;
 }

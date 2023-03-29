@@ -2,6 +2,8 @@ import { Server as IOServer, Socket as IOSocket } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { Emitter } from '@socket.io/redis-emitter';
 import Redis from 'ioredis';
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 import { LoggerFactory, ApplicationLogger } from '@/helpers';
 import { getError } from '@/utilities';
@@ -152,15 +154,28 @@ export class SocketIOServerHelper {
       this.clients[id].state = 'authenticating';
       this.authenticateFn(handshake)
         .then(rs => {
-          // Invalid connection
-          if (!rs) {
-            this.clients[id].state = 'unauthorized';
-            this.disconnect({ socket });
+          console.log(rs);
+          // Valid connection
+          if (rs) {
+            this.onClientAuthenticated({ socket });
             return;
           }
 
-          // Valid connection
-          this.onClientAuthenticated({ socket });
+          // Invalid connection
+          this.clients[id].state = 'unauthorized';
+          this.send({
+            destination: socket.id,
+            payload: {
+              topic: SocketIOConstants.EVENT_UNAUTHENTICATE,
+              data: {
+                message: 'Invalid token token authenticate! Please login again!',
+                time: new Date().toISOString(),
+              },
+            },
+            cb: () => {
+              this.disconnect({ socket });
+            },
+          });
         })
         .catch(error => {
           // Unexpected error while authenticating connection
@@ -170,7 +185,21 @@ export class SocketIOServerHelper {
             id,
             error,
           );
-          this.disconnect({ socket });
+
+          this.send({
+            destination: socket.id,
+            payload: {
+              topic: SocketIOConstants.EVENT_UNAUTHENTICATE,
+              data: {
+                message: 'Failed to authenticate connection! Please login again!',
+                time: new Date().toISOString(),
+              },
+            },
+            log: true,
+            cb: () => {
+              this.disconnect({ socket });
+            },
+          });
         });
     });
   }
@@ -290,7 +319,7 @@ export class SocketIOServerHelper {
       destination: socket.id,
       payload: {
         topic: SocketIOConstants.EVENT_PING,
-        message: {
+        data: {
           time: new Date().toISOString(),
         },
       },
@@ -325,31 +354,36 @@ export class SocketIOServerHelper {
   }
 
   // -------------------------------------------------------------------------------------------------------------
-  send(opts: { destination: string; payload: { topic: string; message: any }; log?: boolean }) {
-    const { destination, payload, log } = opts;
+  send(opts: { destination: string; payload: { topic: string; data: any }; log?: boolean; cb?: () => void }) {
+    const { destination, payload, log, cb } = opts;
     if (!payload) {
       return;
     }
 
-    const { topic, message } = payload;
-    if (!topic || !message) {
+    const { topic, data } = payload;
+    if (!topic || !data) {
       return;
     }
 
     const sender = this.emitter.compress(true);
 
     if (destination && !isEmpty(destination)) {
-      sender.to(destination).emit(topic, message);
+      sender.to(destination).emit(topic, data);
     } else {
-      sender.emit(topic, message);
+      sender.emit(topic, data);
     }
 
+    of('action_callback')
+      .pipe(delay(200))
+      .subscribe(() => {
+        cb?.();
+      });
     if (!log) {
       return;
     }
 
     this.logger.info(
-      `[send] Message has emitted! To: ${destination} | Topic: ${topic} | Message: ${JSON.stringify(message)}`,
+      `[send] Message has emitted! To: ${destination} | Topic: ${topic} | Message: ${JSON.stringify(data)}`,
     );
   }
 }

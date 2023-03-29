@@ -16,6 +16,8 @@ exports.SocketIOServerHelper = void 0;
 const socket_io_1 = require("socket.io");
 const redis_adapter_1 = require("@socket.io/redis-adapter");
 const redis_emitter_1 = require("@socket.io/redis-emitter");
+const rxjs_1 = require("rxjs");
+const operators_1 = require("rxjs/operators");
 const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
 const common_1 = require("../common");
@@ -113,20 +115,46 @@ class SocketIOServerHelper {
                 this.clients[id].state = 'authenticating';
                 this.authenticateFn(handshake)
                     .then(rs => {
-                    // Invalid connection
-                    if (!rs) {
-                        this.clients[id].state = 'unauthorized';
-                        this.disconnect({ socket });
+                    console.log(rs);
+                    // Valid connection
+                    if (rs) {
+                        this.onClientAuthenticated({ socket });
                         return;
                     }
-                    // Valid connection
-                    this.onClientAuthenticated({ socket });
+                    // Invalid connection
+                    this.clients[id].state = 'unauthorized';
+                    this.send({
+                        destination: socket.id,
+                        payload: {
+                            topic: common_1.SocketIOConstants.EVENT_UNAUTHENTICATE,
+                            data: {
+                                message: 'Invalid token token authenticate! Please login again!',
+                                time: new Date().toISOString(),
+                            },
+                        },
+                        cb: () => {
+                            this.disconnect({ socket });
+                        },
+                    });
                 })
                     .catch(error => {
                     // Unexpected error while authenticating connection
                     this.clients[id].state = 'unauthorized';
                     this.logger.error('[onClientConnect] Connection: %s | Failed to authenticate new socket connection | Error: %s', id, error);
-                    this.disconnect({ socket });
+                    this.send({
+                        destination: socket.id,
+                        payload: {
+                            topic: common_1.SocketIOConstants.EVENT_UNAUTHENTICATE,
+                            data: {
+                                message: 'Failed to authenticate connection! Please login again!',
+                                time: new Date().toISOString(),
+                            },
+                        },
+                        log: true,
+                        cb: () => {
+                            this.disconnect({ socket });
+                        },
+                    });
                 });
             });
         });
@@ -209,7 +237,7 @@ class SocketIOServerHelper {
             destination: socket.id,
             payload: {
                 topic: common_1.SocketIOConstants.EVENT_PING,
-                message: {
+                data: {
                     time: new Date().toISOString(),
                 },
             },
@@ -238,25 +266,30 @@ class SocketIOServerHelper {
     }
     // -------------------------------------------------------------------------------------------------------------
     send(opts) {
-        const { destination, payload, log } = opts;
+        const { destination, payload, log, cb } = opts;
         if (!payload) {
             return;
         }
-        const { topic, message } = payload;
-        if (!topic || !message) {
+        const { topic, data } = payload;
+        if (!topic || !data) {
             return;
         }
         const sender = this.emitter.compress(true);
         if (destination && !(0, isEmpty_1.default)(destination)) {
-            sender.to(destination).emit(topic, message);
+            sender.to(destination).emit(topic, data);
         }
         else {
-            sender.emit(topic, message);
+            sender.emit(topic, data);
         }
+        (0, rxjs_1.of)('action_callback')
+            .pipe((0, operators_1.delay)(200))
+            .subscribe(() => {
+            cb === null || cb === void 0 ? void 0 : cb();
+        });
         if (!log) {
             return;
         }
-        this.logger.info(`[send] Message has emitted! To: ${destination} | Topic: ${topic} | Message: ${JSON.stringify(message)}`);
+        this.logger.info(`[send] Message has emitted! To: ${destination} | Topic: ${topic} | Message: ${JSON.stringify(data)}`);
     }
 }
 exports.SocketIOServerHelper = SocketIOServerHelper;

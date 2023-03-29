@@ -29,3 +29,11 @@ export class AuthorizerKeys {
   static readonly AUTHORIZE_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
   static readonly CONFIGURE_OPTIONS = '@app/authorize/configure_options';
 }
+
+export class SocketIOKeys {
+  static readonly SOCKET_IO_INSTANCE = '@app/socket-io/instance';
+  static readonly IDENTIFIER = '@app/socket-io/identifier';
+  static readonly PATH = '@app/socket-io/path';
+  static readonly REDIS_CONNECTION = '@app/socket-io/redis-connection';
+  static readonly AUTHENTICATE_HANDLER = '@app/socket-io/authenticate-handler';
+}

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthorizerKeys = exports.AuthenticateKeys = exports.RouteKeys = void 0;
+exports.SocketIOKeys = exports.AuthorizerKeys = exports.AuthenticateKeys = exports.RouteKeys = void 0;
 class RouteKeys {
 }
 exports.RouteKeys = RouteKeys;
@@ -30,4 +30,12 @@ AuthorizerKeys.ENFORCER = '@app/authorize/enforcer';
 AuthorizerKeys.ALWAYS_ALLOW_ROLES = '@app/authorize/always_allow_roles';
 AuthorizerKeys.AUTHORIZE_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
 AuthorizerKeys.CONFIGURE_OPTIONS = '@app/authorize/configure_options';
+class SocketIOKeys {
+}
+exports.SocketIOKeys = SocketIOKeys;
+SocketIOKeys.SOCKET_IO_INSTANCE = '@app/socket-io/instance';
+SocketIOKeys.IDENTIFIER = '@app/socket-io/identifier';
+SocketIOKeys.PATH = '@app/socket-io/path';
+SocketIOKeys.REDIS_CONNECTION = '@app/socket-io/redis-connection';
+SocketIOKeys.AUTHENTICATE_HANDLER = '@app/socket-io/authenticate-handler';
 //# sourceMappingURL=keys.js.map
