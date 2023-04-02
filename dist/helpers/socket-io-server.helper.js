@@ -219,6 +219,17 @@ class SocketIOServerHelper {
         this.clients[id].interval = setInterval(() => {
             this.ping({ socket, ignoreAuth: true });
         }, 30000);
+        this.send({
+            destination: socket.id,
+            payload: {
+                topic: common_1.SocketIOConstants.EVENT_AUTHENTICATED,
+                data: {
+                    id: socket.id,
+                    time: new Date().toISOString(),
+                },
+            },
+            // log: true,
+        });
     }
     // -------------------------------------------------------------------------------------------------------------
     ping(opts) {
