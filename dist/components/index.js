@@ -18,4 +18,5 @@ __exportStar(require("./authorize/component"), exports);
 __exportStar(require("./authorize/provider"), exports);
 __exportStar(require("./authenticate/component"), exports);
 __exportStar(require("./socket-io/component"), exports);
+__exportStar(require("./migration/component"), exports);
 //# sourceMappingURL=index.js.map

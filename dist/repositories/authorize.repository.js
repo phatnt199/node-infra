@@ -11,13 +11,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ViewAuthorizePolicyRepository = exports.UserRoleRepository = exports.PermissionMappingRepository = exports.PermissionRepository = exports.RoleRepository = exports.AbstractAuthorizeRepository = void 0;
 const base_datasource_1 = require("../base/base.datasource");
 const base_repository_1 = require("../base/base.repository");
 const models_1 = require("../models");
 const core_1 = require("@loopback/core");
+const utilities_1 = require("../utilities");
+const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const DS_AUTHORIZE = process.env.DS_AUTHORIZE;
+if (!DS_AUTHORIZE || (0, isEmpty_1.default)(DS_AUTHORIZE)) {
+    throw (0, utilities_1.getError)({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
+}
 // ----------------------------------------------------------------------------
 class AbstractAuthorizeRepository extends base_repository_1.TzCrudRepository {
     constructor(entityClass, dataSource) {

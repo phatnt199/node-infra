@@ -4,8 +4,13 @@ import { TzCrudRepository, ViewRepository } from '@/base/base.repository';
 import { EntityClassType } from '@/common';
 import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from '@/models';
 import { inject } from '@loopback/core';
+import { getError } from '@/utilities';
+import isEmpty from 'lodash/isEmpty';
 
 const DS_AUTHORIZE = process.env.DS_AUTHORIZE;
+if (!DS_AUTHORIZE || isEmpty(DS_AUTHORIZE)) {
+  throw getError({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
+}
 
 // ----------------------------------------------------------------------------
 export abstract class AbstractAuthorizeRepository<T extends BaseTzEntity> extends TzCrudRepository<T> {
@@ -24,7 +29,7 @@ export class RoleRepository extends AbstractAuthorizeRepository<Role> {
     super(Role, dataSource);
   }
 
-  bindingRelations(): void {}
+  bindingRelations(): void { }
 }
 
 // ----------------------------------------------------------------------------
@@ -33,7 +38,7 @@ export class PermissionRepository extends AbstractAuthorizeRepository<Permission
     super(Permission, dataSource);
   }
 
-  bindingRelations(): void {}
+  bindingRelations(): void { }
 }
 
 // ----------------------------------------------------------------------------
@@ -42,7 +47,7 @@ export class PermissionMappingRepository extends AbstractAuthorizeRepository<Per
     super(PermissionMapping, dataSource);
   }
 
-  bindingRelations(): void {}
+  bindingRelations(): void { }
 }
 
 // ----------------------------------------------------------------------------
@@ -51,7 +56,7 @@ export class UserRoleRepository extends AbstractAuthorizeRepository<UserRole> {
     super(UserRole, dataSource);
   }
 
-  bindingRelations(): void {}
+  bindingRelations(): void { }
 }
 
 // ----------------------------------------------------------------------------

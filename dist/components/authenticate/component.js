@@ -61,7 +61,7 @@ let AuthenticateComponent = class AuthenticateComponent extends base_component_1
                 message: '[binding] Invalid application to bind AuthenticateComponent',
             });
         }
-        this.logger.info('[binding] Binding authenticate for application...');
+        this.logger.info('[binding] Binding authenticate component for application...');
         this.defineServices();
         this.registerComponent();
     }

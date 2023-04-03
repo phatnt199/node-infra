@@ -123,6 +123,7 @@ export class AuthorizeComponent extends BaseComponent {
   }
 
   binding() {
+    this.logger.info('[binding] Binding authorize component for application...');
     this.defineModels();
     this.defineRepositories();
 
@@ -132,7 +133,6 @@ export class AuthorizeComponent extends BaseComponent {
 
     this.verify()
       .then(() => {
-        this.logger.info('[binding] Binding authorize for application...');
         this.application.component(AuthorizationComponent);
         this.application.bind(AuthorizerKeys.ENFORCER).toInjectable(EnforcerService);
 

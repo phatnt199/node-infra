@@ -6,7 +6,7 @@ import { BaseApplication } from '@/base';
 
 export const migration = async (application: BaseApplication, migrationProcesses: Array<MigrationProcess>) => {
   logger.info('START | Migrate database');
-  const migrationRepository = application.getSync<MigrationRepository<Migration>>('repositories.MigrationRepository');
+  const migrationRepository = application.getSync<MigrationRepository>('repositories.MigrationRepository');
 
   for (const mirgation of migrationProcesses) {
     const { name, fn, options } = mirgation;

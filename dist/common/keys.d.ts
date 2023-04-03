@@ -28,3 +28,8 @@ export declare class SocketIOKeys {
     static readonly REDIS_CONNECTION = "@app/socket-io/redis-connection";
     static readonly AUTHENTICATE_HANDLER = "@app/socket-io/authenticate-handler";
 }
+export declare class MigrationKeys {
+    static readonly MIGRATION_MODEL = "@app/migration/component/models/migration";
+    static readonly MIGRATION_REPOSITORY = "@app/migration/component/repositories/migration";
+    static readonly MIGRATION_DATASOURCE = "@app/migration/datasource";
+}
