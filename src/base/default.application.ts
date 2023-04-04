@@ -59,6 +59,9 @@ export abstract class DefaultRestApplication extends BaseApplication {
     // Configuring datasources
     this.dataSource(PostgresDataSource);
 
+    // Migration
+    this.configureMigration();
+
     // controllers
     this.bootOptions = {
       controllers: {

@@ -51,6 +51,8 @@ class DefaultRestApplication extends base_application_1.BaseApplication {
         });
         // Configuring datasources
         this.dataSource(datasources_1.PostgresDataSource);
+        // Migration
+        this.configureMigration();
         // controllers
         this.bootOptions = {
             controllers: {
