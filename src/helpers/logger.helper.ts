@@ -2,11 +2,9 @@ import path from 'path';
 import { transports, format, createLogger } from 'winston';
 import 'winston-daily-rotate-file';
 import isEmpty from 'lodash/isEmpty';
-
 import { App } from '@/common';
 
-const LOGGER_FOLDER_PATH = process.env.LOGGER_FOLDER_PATH ?? './';
-
+const LOGGER_FOLDER_PATH = process.env.APP_ENV_LOGGER_FOLDER_PATH ?? './';
 const LOG_ENVIRONMENTS = new Set(['development', 'alpha', 'beta', 'staging']);
 const LOGGER_PREFIX = App.APPLICATION_NAME;
 

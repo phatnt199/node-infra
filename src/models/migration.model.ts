@@ -1,6 +1,6 @@
 import { model, property } from '@loopback/repository';
 import { MigrationStatuses } from '@/common';
-import { BaseTzEntity } from '@/base';
+import { BaseTzEntity } from '@/base/base.model';
 
 @model({
   settings: {

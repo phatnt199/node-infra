@@ -1,8 +1,8 @@
 import { MigrationProcess, MigrationStatuses } from '@/common';
 import { MigrationRepository } from '@/repositories';
 import { applicationLogger as logger } from '@/helpers';
+import { BaseApplication } from '@/base/base.application';
 import { Migration } from '@/models';
-import { BaseApplication } from '@/base';
 
 export const migration = async (application: BaseApplication, migrationProcesses: Array<MigrationProcess>) => {
   logger.info('START | Migrate database');

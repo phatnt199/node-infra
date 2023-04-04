@@ -55,6 +55,7 @@ export abstract class BaseApplication
   abstract getProjectRoot(): string;
   abstract validateEnv(): EnvironmentValidationResult;
   abstract declareModels(): Set<string>;
+
   abstract preConfigure(): void;
   abstract postConfigure(): void;
 }

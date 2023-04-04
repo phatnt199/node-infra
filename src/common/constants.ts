@@ -1,5 +1,5 @@
 export class App {
-  static readonly APPLICATION_NAME = process.env.APPLICATION_NAME ?? 'PNT';
+  static readonly APPLICATION_NAME = process.env.APP_ENV_APPLICATION_NAME ?? 'PNT';
   static readonly TIME_OFFSET = '+07:00';
   static readonly DEFAULT_LOCALE = 'en.UTF-8';
   static readonly DEFAULT_EXPLORER_PATH = '/explorer';
@@ -89,7 +89,7 @@ export class UserTypes {
   }
 }
 
-export class AccountTypes extends UserTypes {}
+export class AccountTypes extends UserTypes { }
 
 export class SocketIOConstants {
   static readonly EVENT_PING = 'ping';

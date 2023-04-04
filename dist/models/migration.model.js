@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Migration = void 0;
 const repository_1 = require("@loopback/repository");
 const common_1 = require("../common");
-const base_1 = require("../base");
-let Migration = class Migration extends base_1.BaseTzEntity {
+const base_model_1 = require("../base/base.model");
+let Migration = class Migration extends base_model_1.BaseTzEntity {
     constructor(data) {
         super(data);
     }

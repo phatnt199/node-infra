@@ -11,7 +11,7 @@ const customParseFormat_1 = __importDefault(require("dayjs/plugin/customParseFor
 const timezone_1 = __importDefault(require("dayjs/plugin/timezone"));
 dayjs_1.default.extend(customParseFormat_1.default);
 dayjs_1.default.extend(timezone_1.default);
-const tz = (_a = process.env.APPLICATION_TIMEZONE) !== null && _a !== void 0 ? _a : 'Asia/Ho_Chi_Minh';
+const tz = (_a = process.env.APP_ENV_APPLICATION_TIMEZONE) !== null && _a !== void 0 ? _a : 'Asia/Ho_Chi_Minh';
 dayjs_1.default.tz.setDefault(tz);
 const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));

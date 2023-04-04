@@ -1,6 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MigrationKeys = exports.SocketIOKeys = exports.AuthorizerKeys = exports.AuthenticateKeys = exports.RouteKeys = void 0;
+exports.MigrationKeys = exports.SocketIOKeys = exports.AuthorizerKeys = exports.AuthenticateKeys = exports.RouteKeys = exports.BindingKeys = void 0;
+class BindingKeys {
+}
+exports.BindingKeys = BindingKeys;
+BindingKeys.APPLICATION_ENVIRONMENTS = '@qt/application/environments';
+// -----------------------------------------------------------------------------
 class RouteKeys {
 }
 exports.RouteKeys = RouteKeys;

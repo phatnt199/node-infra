@@ -1,7 +1,7 @@
-import { property } from '@loopback/repository';
-import { BaseTzEntity } from '@/base';
-import { PrincipalMixin } from '@/mixins';
+import { BaseTzEntity } from '@/base/base.model';
 import { RoleStatuses, UserStatuses, UserTypes } from '@/common';
+import { PrincipalMixin } from '@/mixins';
+import { property } from '@loopback/repository';
 
 // -----------------------------------------------------------------------
 export const defineUser = () => {

@@ -22,7 +22,7 @@ const models_1 = require("../models");
 const core_1 = require("@loopback/core");
 const utilities_1 = require("../utilities");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
-const DS_AUTHORIZE = process.env.DS_AUTHORIZE;
+const DS_AUTHORIZE = process.env.APP_ENV_APPLICATION_DS_AUTHORIZE;
 if (!DS_AUTHORIZE || (0, isEmpty_1.default)(DS_AUTHORIZE)) {
     throw (0, utilities_1.getError)({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
 }

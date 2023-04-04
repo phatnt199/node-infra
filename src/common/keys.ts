@@ -1,3 +1,8 @@
+export class BindingKeys {
+  static readonly APPLICATION_ENVIRONMENTS = '@qt/application/environments';
+}
+
+// -----------------------------------------------------------------------------
 export class RouteKeys {
   static readonly ALWAYS_ALLOW_PATHS = '@app/application/always_allow_paths';
 }

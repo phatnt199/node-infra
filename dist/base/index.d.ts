@@ -1,4 +1,5 @@
 export * from './base.application';
+export * from './default.application';
 export * from './base.component';
 export * from './base.controller';
 export * from './base.datasource';

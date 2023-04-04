@@ -53,6 +53,10 @@ export interface IService {
 }
 export interface IController {
 }
+export interface IApplicationEnvironment {
+    get<ReturnType>(key: string): ReturnType;
+    set<ValueType>(key: string, value: ValueType): any;
+}
 export interface EnvironmentValidationResult {
     result: boolean;
     message?: string;

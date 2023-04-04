@@ -16,16 +16,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MigrationRepository = exports.BaseMigrationRepository = void 0;
-const base_1 = require("../base");
+const base_datasource_1 = require("../base/base.datasource");
+const base_repository_1 = require("../base/base.repository");
 const models_1 = require("../models");
-const core_1 = require("@loopback/core");
 const utilities_1 = require("../utilities");
+const core_1 = require("@loopback/core");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
-const DS_MIGRATION = process.env.DS_MIGRATION;
+const DS_MIGRATION = process.env.APP_ENV_APPLICATION_DS_MIGRATION;
 if (!DS_MIGRATION || (0, isEmpty_1.default)(DS_MIGRATION)) {
     throw (0, utilities_1.getError)({ message: `[MIGRATION][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_MIGRATION` });
 }
-class BaseMigrationRepository extends base_1.TzCrudRepository {
+class BaseMigrationRepository extends base_repository_1.TzCrudRepository {
     constructor(opts) {
         const { entityClass, dataSource } = opts;
         super(entityClass, dataSource);
@@ -39,7 +40,7 @@ let MigrationRepository = class MigrationRepository extends BaseMigrationReposit
 };
 MigrationRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_MIGRATION}`)),
-    __metadata("design:paramtypes", [base_1.BaseDataSource])
+    __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], MigrationRepository);
 exports.MigrationRepository = MigrationRepository;
 //# sourceMappingURL=migration.repository.js.map

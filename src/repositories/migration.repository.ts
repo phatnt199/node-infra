@@ -1,15 +1,16 @@
-import { BaseDataSource, TzCrudRepository } from '@/base';
+import { BaseDataSource } from '@/base/base.datasource';
+import { TzCrudRepository } from '@/base/base.repository';
 import { EntityClassType } from '@/common';
 import { Migration } from '@/models';
-import { inject } from '@loopback/core';
 import { getError } from '@/utilities';
+import { inject } from '@loopback/core';
 import isEmpty from 'lodash/isEmpty';
 
-const DS_MIGRATION = process.env.DS_MIGRATION;
+const DS_MIGRATION = process.env.APP_ENV_APPLICATION_DS_MIGRATION;
 if (!DS_MIGRATION || isEmpty(DS_MIGRATION)) {
   throw getError({ message: `[MIGRATION][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_MIGRATION` });
 }
-  
+
 export class BaseMigrationRepository<T extends Migration> extends TzCrudRepository<T> {
   constructor(opts: { entityClass: EntityClassType<T>; dataSource: BaseDataSource }) {
     const { entityClass, dataSource } = opts;

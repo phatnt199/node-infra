@@ -6,7 +6,7 @@ exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.E
 class App {
 }
 exports.App = App;
-App.APPLICATION_NAME = (_a = process.env.APPLICATION_NAME) !== null && _a !== void 0 ? _a : 'PNT';
+App.APPLICATION_NAME = (_a = process.env.APP_ENV_APPLICATION_NAME) !== null && _a !== void 0 ? _a : 'PNT';
 App.TIME_OFFSET = '+07:00';
 App.DEFAULT_LOCALE = 'en.UTF-8';
 App.DEFAULT_EXPLORER_PATH = '/explorer';
