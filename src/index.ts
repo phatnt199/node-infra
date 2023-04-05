@@ -30,4 +30,4 @@ export * from './mixins';
 export * from './models';
 export * from './repositories';
 export * from './services';
-export * from '@tanphat199/utilities/src/utilities'
+export * from './utilities';
