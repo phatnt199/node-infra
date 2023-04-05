@@ -53,6 +53,7 @@
     "@loopback/service-proxy": "^5.0.8",
     "@socket.io/redis-adapter": "^8.1.0",
     "@socket.io/redis-emitter": "^5.1.0",
+    "@tanphat199/utilities": "git+ssh://git@github.com:phatnt199/utilities.git",
     "axios": "^1.3.4",
     "bullmq": "^3.10.1",
     "casbin": "^5.25.0",

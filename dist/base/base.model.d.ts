@@ -60,11 +60,4 @@ declare const BaseTextSearchTzEntity_base: {
 } & typeof BaseTzEntity;
 export declare class BaseTextSearchTzEntity extends BaseTextSearchTzEntity_base {
 }
-export declare class ApplicationError extends Error {
-    protected statusCode: number;
-    constructor(opts: {
-        message: string;
-        statusCode?: number;
-    });
-}
 export {};

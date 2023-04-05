@@ -35,5 +35,5 @@ __exportStar(require("./mixins"), exports);
 __exportStar(require("./models"), exports);
 __exportStar(require("./repositories"), exports);
 __exportStar(require("./services"), exports);
-__exportStar(require("./utilities"), exports);
+__exportStar(require("@tanphat199/utilities/src/utilities"), exports);
 //# sourceMappingURL=index.js.map

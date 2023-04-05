@@ -28,11 +28,11 @@ exports.AuthorizeProvider = void 0;
 const common_1 = require("../../common");
 const helpers_1 = require("../../helpers");
 const services_1 = require("../../services");
-const utilities_1 = require("../../utilities");
 const authorization_1 = require("@loopback/authorization");
 const core_1 = require("@loopback/core");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const intersection_1 = __importDefault(require("lodash/intersection"));
+const utilities_1 = require("@tanphat199/utilities");
 let AuthorizeProvider = class AuthorizeProvider {
     constructor(enforcerService, alwaysAllowRoles) {
         this.enforcerService = enforcerService;

@@ -5,9 +5,9 @@ import jwt from 'jsonwebtoken';
 
 import { securityId } from '@loopback/security';
 import { JWTTokenPayload } from '@/common/types';
-import { decrypt, encrypt, getError } from '@/utilities';
 import { BaseService } from '@/base/base.service';
 import { AuthenticateKeys, Authentication } from '@/common';
+import { decrypt, encrypt, getError } from '@tanphat199/utilities';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class JWTTokenService extends BaseService {

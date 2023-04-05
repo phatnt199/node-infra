@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApplicationError = exports.BaseTextSearchTzEntity = exports.BaseDataTypeTzEntity = exports.BaseUserAuditTzEntity = exports.BaseTzEntity = exports.BaseStringIdEntity = exports.BaseNumberIdEntity = exports.BaseIdEntity = exports.BaseEntity = void 0;
+exports.BaseTextSearchTzEntity = exports.BaseDataTypeTzEntity = exports.BaseUserAuditTzEntity = exports.BaseTzEntity = exports.BaseStringIdEntity = exports.BaseNumberIdEntity = exports.BaseIdEntity = exports.BaseEntity = void 0;
 const repository_1 = require("@loopback/repository");
 const mixins_1 = require("../mixins");
 // ---------------------------------------------------------------------
@@ -56,13 +56,4 @@ exports.BaseDataTypeTzEntity = BaseDataTypeTzEntity;
 class BaseTextSearchTzEntity extends (0, mixins_1.TextSearchMixin)(BaseTzEntity) {
 }
 exports.BaseTextSearchTzEntity = BaseTextSearchTzEntity;
-// ---------------------------------------------------------------------
-class ApplicationError extends Error {
-    constructor(opts) {
-        const { message, statusCode = 400 } = opts;
-        super(message);
-        this.statusCode = statusCode;
-    }
-}
-exports.ApplicationError = ApplicationError;
 //# sourceMappingURL=base.model.js.map
