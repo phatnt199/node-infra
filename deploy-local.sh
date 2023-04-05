@@ -1,4 +1,4 @@
-npm run rebuild
+yarn rebuild
 echo "Rebuilt sources"
 
 rm -rf ~/Workspace/save/quantech/qt_sas/node_modules/@lb/infra/dist

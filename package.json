@@ -14,17 +14,17 @@
     "node": "14 || 16 || 17 || 18"
   },
   "scripts": {
-    "prebuild": "npm run lint",
+    "prebuild": "yarn lint",
     "build": "lb-tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "build:watch": "lb-tsc --watch",
-    "lint": "npm run eslint && npm run prettier:check",
-    "lint:fix": "npm run eslint --fix && npm run prettier:fix",
+    "lint": "yarn eslint && yarn prettier:check",
+    "lint:fix": "yarn eslint --fix && yarn prettier:fix",
     "prettier:cli": "lb-prettier \"**/*.ts\" \"**/*.js\"",
-    "prettier:check": "npm run prettier:cli -l",
-    "prettier:fix": "npm run prettier:cli --write",
+    "prettier:check": "yarn prettier:cli",
+    "prettier:fix": "yarn prettier:cli --write",
     "eslint": "lb-eslint --report-unused-disable-directives .",
     "clean": "sh clean.sh",
-    "rebuild": "npm run clean && npm run build"
+    "rebuild": "yarn clean && yarn build"
   },
   "repository": {
     "type": "git",
