@@ -6,6 +6,10 @@ import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
 
 const sqls = [
+  // UUID
+  `CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`,
+
+  // View policies
   'DROP VIEW IF EXISTS "ViewAuthorizePolicy";',
   `CREATE OR REPLACE VIEW "ViewAuthorizePolicy"
   AS (
