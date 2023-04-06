@@ -1,1 +1,2 @@
-export * from '@tanphat199/utilities/dist/utilities';
+export * from '@tanphat199/utilities';
+export * from './date.utility';
