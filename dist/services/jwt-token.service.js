@@ -24,7 +24,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const security_1 = require("@loopback/security");
 const base_service_1 = require("../base/base.service");
 const common_1 = require("../common");
-const utilities_1 = require("@tanphat199/utilities");
+const utilities_1 = require("../utilities");
 let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_service_1.BaseService {
     constructor(applicationSecret, jwtSecret, jwtExpiresIn) {
         super({ scope: JWTTokenService_1.name });

@@ -32,7 +32,7 @@ const authorization_1 = require("@loopback/authorization");
 const core_1 = require("@loopback/core");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const intersection_1 = __importDefault(require("lodash/intersection"));
-const utilities_1 = require("@tanphat199/utilities");
+const utilities_1 = require("../../utilities");
 let AuthorizeProvider = class AuthorizeProvider {
     constructor(enforcerService, alwaysAllowRoles) {
         this.enforcerService = enforcerService;

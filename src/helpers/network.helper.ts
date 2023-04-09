@@ -45,7 +45,7 @@ export class NetworkHelper {
       params,
       data: body,
       paramsSerializer: {
-        serialize: p => stringify(p),
+        serialize: (p) => stringify(p),
       },
       ...configs,
     };

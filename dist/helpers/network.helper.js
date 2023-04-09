@@ -51,7 +51,7 @@ class NetworkHelper {
             const props = Object.assign({ url,
                 method,
                 params, data: body, paramsSerializer: {
-                    serialize: p => (0, utilities_1.stringify)(p),
+                    serialize: (p) => (0, utilities_1.stringify)(p),
                 } }, configs);
             logger === null || logger === void 0 ? void 0 : logger.info('[send] URL: %s | Props: %o', url, props);
             const response = yield this.worker.request(props);
