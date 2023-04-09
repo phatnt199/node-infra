@@ -47,12 +47,12 @@ class NetworkHelper {
     send(opts, logger) {
         return __awaiter(this, void 0, void 0, function* () {
             const t = new Date().getTime();
-            const { url, method = 'get', params, body, configs } = opts;
+            const { url, method = 'get', params, body: data, headers, configs } = opts;
             const props = Object.assign({ url,
                 method,
-                params, data: body, paramsSerializer: {
-                    serialize: p => (0, utilities_1.stringify)(p),
-                } }, configs);
+                params,
+                data,
+                headers, paramsSerializer: { serialize: p => (0, utilities_1.stringify)(p) } }, configs);
             logger === null || logger === void 0 ? void 0 : logger.info('[send] URL: %s | Props: %o', url, props);
             const response = yield this.worker.request(props);
             logger === null || logger === void 0 ? void 0 : logger.info(`[network]][send] Took: %s(ms)`, new Date().getTime() - t);
@@ -62,44 +62,44 @@ class NetworkHelper {
     // -------------------------------------------------------------
     // GET REQUEST
     // -------------------------------------------------------------
-    get(opts) {
+    get(opts, logger) {
         return __awaiter(this, void 0, void 0, function* () {
             const { url, params, configs } = opts, rest = __rest(opts, ["url", "params", "configs"]);
-            const response = yield this.send(Object.assign(Object.assign({}, rest), { url, method: 'get', params, configs }));
+            const response = yield this.send(Object.assign(Object.assign({}, rest), { url, method: 'get', params, configs }), logger);
             return response;
         });
     }
     // -------------------------------------------------------------
     // POST REQUEST
     // -------------------------------------------------------------
-    post(opts) {
+    post(opts, logger) {
         return __awaiter(this, void 0, void 0, function* () {
             const { url, body, configs } = opts, rest = __rest(opts, ["url", "body", "configs"]);
-            const response = yield this.send(Object.assign(Object.assign({}, rest), { url, method: 'post', body, configs }));
+            const response = yield this.send(Object.assign(Object.assign({}, rest), { url, method: 'post', body, configs }), logger);
             return response;
         });
     }
     // -------------------------------------------------------------
-    put(opts) {
+    put(opts, logger) {
         return __awaiter(this, void 0, void 0, function* () {
             const { url, body, configs } = opts, rest = __rest(opts, ["url", "body", "configs"]);
-            const response = yield this.send(Object.assign(Object.assign(Object.assign({}, rest), { url, method: 'put', body, configs }), rest));
+            const response = yield this.send(Object.assign(Object.assign(Object.assign({}, rest), { url, method: 'put', body, configs }), rest), logger);
             return response;
         });
     }
     // -------------------------------------------------------------
-    patch(opts) {
+    patch(opts, logger) {
         return __awaiter(this, void 0, void 0, function* () {
             const { url, body, configs } = opts, rest = __rest(opts, ["url", "body", "configs"]);
-            const response = yield this.send(Object.assign(Object.assign({}, rest), { url, method: 'patch', body, configs }));
+            const response = yield this.send(Object.assign(Object.assign({}, rest), { url, method: 'patch', body, configs }), logger);
             return response;
         });
     }
     // -------------------------------------------------------------
-    delete(opts) {
+    delete(opts, logger) {
         return __awaiter(this, void 0, void 0, function* () {
             const { url, configs } = opts, rest = __rest(opts, ["url", "configs"]);
-            const response = yield this.send(Object.assign(Object.assign({}, rest), { url, method: 'delete', configs }));
+            const response = yield this.send(Object.assign(Object.assign({}, rest), { url, method: 'delete', configs }), logger);
             return response;
         });
     }
