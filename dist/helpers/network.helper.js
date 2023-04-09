@@ -35,8 +35,8 @@ class NetworkHelper {
         const { name, requestConfigs } = opts;
         this.name = name;
         (_a = opts === null || opts === void 0 ? void 0 : opts.logger) === null || _a === void 0 ? void 0 : _a.info('Creating new network request worker instance! Name: %s', this.name);
-        const defaultConfigs = require('axios/lib/defaults/index');
-        this.worker = axios_1.default.create(Object.assign(Object.assign({}, defaultConfigs), requestConfigs));
+        // const defaultConfigs = require('axios/lib/defaults/index');
+        this.worker = axios_1.default.create(Object.assign({}, requestConfigs));
     }
     getProtocol(url) {
         return url.startsWith('http:') ? HTTP : HTTPS;
@@ -51,7 +51,7 @@ class NetworkHelper {
             const props = Object.assign({ url,
                 method,
                 params, data: body, paramsSerializer: {
-                    serialize: (p) => (0, utilities_1.stringify)(p),
+                    serialize: p => (0, utilities_1.stringify)(p),
                 } }, configs);
             logger === null || logger === void 0 ? void 0 : logger.info('[send] URL: %s | Props: %o', url, props);
             const response = yield this.worker.request(props);

@@ -21,9 +21,9 @@ export class NetworkHelper {
     const { name, requestConfigs } = opts;
     this.name = name;
     opts?.logger?.info('Creating new network request worker instance! Name: %s', this.name);
-    const defaultConfigs = require('axios/lib/defaults/index');
+    // const defaultConfigs = require('axios/lib/defaults/index');
     this.worker = axios.create({
-      ...defaultConfigs,
+      // ...defaultConfigs,
       ...requestConfigs,
     });
   }
@@ -45,7 +45,7 @@ export class NetworkHelper {
       params,
       data: body,
       paramsSerializer: {
-        serialize: (p) => stringify(p),
+        serialize: p => stringify(p),
       },
       ...configs,
     };
