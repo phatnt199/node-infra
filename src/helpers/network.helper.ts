@@ -39,7 +39,7 @@ export class NetworkHelper {
   async send(opts: IRequestOptions, logger?: any) {
     const t = new Date().getTime();
 
-    const { url, method = 'get', params, body: data, headers, configs } = opts;
+    const { url, method = 'get', params = {}, body: data, headers, configs } = opts;
     const props: AxiosRequestConfig = {
       url,
       method,
@@ -53,7 +53,7 @@ export class NetworkHelper {
     logger?.info('[send] URL: %s | Props: %o', url, props);
     const response = await this.worker.request(props);
 
-    logger?.info(`[network]][send] Took: %s(ms)`, new Date().getTime() - t);
+    logger?.info(`[send] Response: %j | Took: %s(ms)`, response?.data, new Date().getTime() - t);
     return response;
   }
 
