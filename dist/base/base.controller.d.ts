@@ -8,6 +8,7 @@ import { ApplicationLogger } from '../helpers';
 import { Class } from '@loopback/service-proxy';
 export declare class BaseController implements IController {
     protected logger: ApplicationLogger;
+    defaultLimit: number;
     constructor(opts: {
         scope?: string;
     });
@@ -27,6 +28,7 @@ export interface CrudControllerOptions<E extends BaseIdEntity> {
 export declare const defineCrudController: <E extends BaseTzEntity>(opts: CrudControllerOptions<E>) => {
     new (repository: AbstractTzRepository<E, EntityRelation>): {
         repository: AbstractTzRepository<E, EntityRelation>;
+        defaultLimit: number;
         find(filter?: Filter<E> | undefined): Promise<(E & EntityRelation)[]>;
         findById(id: IdType, filter?: FilterExcludingWhere<E> | undefined): Promise<E & EntityRelation>;
         count(where?: Where<E> | undefined): Promise<Count>;

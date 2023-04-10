@@ -27,15 +27,14 @@ import { Class } from '@loopback/service-proxy';
 
 const DEFAULT_LIMIT = 20;
 
-const applyLimit = <E extends BaseTzEntity> (filter?: Filter<E>) => {
-  if (!filter) {
-    return { limit: DEFAULT_LIMIT }
-  }
-  if (filter && Object.keys(filter).some(f => f !== 'limit')) {
-    return { ...filter, limit: DEFAULT_LIMIT }
-  }
-  return filter
-}
+const applyLimit = <E extends BaseTzEntity>(filter?: Filter<E>) => {
+  const rs: Filter<E> = {
+    ...(filter ?? {}),
+  };
+
+  rs['limit'] = rs['limit'] ?? DEFAULT_LIMIT;
+  return rs;
+};
 
 // --------------------------------------------------------------------------------------------------------------
 export class BaseController implements IController {
@@ -307,10 +306,10 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
   relationName: string;
 }): ControllerClass => {
   const { baseClass, relationType, relationName } = opts;
-  
+
   const restPath = `/{id}/${relationName}`;
   const BaseClass = baseClass ?? BaseController;
-  
+
   class ViewController extends BaseClass implements IController {
     sourceRepository: AbstractTzRepository<S, EntityRelation>;
     targetRepository: AbstractTzRepository<T, EntityRelation>;

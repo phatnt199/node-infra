@@ -32,11 +32,19 @@ const get_1 = __importDefault(require("lodash/get"));
 const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
 const common_1 = require("../common");
+const DEFAULT_LIMIT = 20;
+const applyLimit = (filter) => {
+    var _a;
+    const rs = Object.assign({}, (filter !== null && filter !== void 0 ? filter : {}));
+    rs['limit'] = (_a = rs['limit']) !== null && _a !== void 0 ? _a : DEFAULT_LIMIT;
+    return rs;
+};
 // --------------------------------------------------------------------------------------------------------------
 class BaseController {
     constructor(opts) {
         var _a;
         this.logger = helpers_1.LoggerFactory.getLogger([(_a = opts === null || opts === void 0 ? void 0 : opts.scope) !== null && _a !== void 0 ? _a : BaseController.name]);
+        this.defaultLimit = DEFAULT_LIMIT;
     }
 }
 exports.BaseController = BaseController;
@@ -59,15 +67,16 @@ const defineCrudController = (opts) => {
     class ReadController {
         constructor(repository) {
             this.repository = repository;
+            this.defaultLimit = DEFAULT_LIMIT;
         }
         find(filter) {
             return __awaiter(this, void 0, void 0, function* () {
-                return this.repository.find(filter);
+                return this.repository.find(applyLimit(filter));
             });
         }
         findById(id, filter) {
             return __awaiter(this, void 0, void 0, function* () {
-                return this.repository.findById(id, filter);
+                return this.repository.findById(id, applyLimit(filter));
             });
         }
         count(where) {
@@ -302,6 +311,7 @@ const defineRelationViewController = (opts) => {
     class ViewController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
             super({ scope: `ViewController.${relationName}` });
+            this.defaultLimit = DEFAULT_LIMIT;
             if (!sourceRepository) {
                 throw (0, utilities_1.getError)({
                     statusCode: 500,
@@ -326,11 +336,11 @@ const defineRelationViewController = (opts) => {
                         return ref;
                     }
                     case common_1.EntityRelations.HAS_ONE: {
-                        return ref.get(filter);
+                        return ref.get(applyLimit(filter));
                     }
                     case common_1.EntityRelations.HAS_MANY:
                     case common_1.EntityRelations.HAS_MANY_THROUGH: {
-                        return ref.find(filter);
+                        return ref.find(applyLimit(filter));
                     }
                     default: {
                         return [];
@@ -365,6 +375,7 @@ const defineAssociateController = (opts) => {
     class AssociationController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
             super(sourceRepository, targetRepository);
+            this.defaultLimit = DEFAULT_LIMIT;
             if (!sourceRepository) {
                 throw (0, utilities_1.getError)({
                     statusCode: 500,
