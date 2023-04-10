@@ -25,6 +25,8 @@ import { getError } from '@/utilities';
 import { EntityRelations } from '@/common';
 import { Class } from '@loopback/service-proxy';
 
+const DEFAULT_LIMIT_RESPONSE = 10;
+
 // --------------------------------------------------------------------------------------------------------------
 export class BaseController implements IController {
   protected logger: ApplicationLogger;
@@ -81,7 +83,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
       },
     })
     async find(@param.filter(entityOptions) filter?: Filter<E>): Promise<(E & EntityRelation)[]> {
-      return this.repository.find(filter);
+      return this.repository.find(filter ?? { limit: DEFAULT_LIMIT_RESPONSE });
     }
 
     @get('/{id}', {
@@ -101,7 +103,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
       @param.query.object('filter', getFilterSchemaFor(entityOptions, { exclude: 'where' }))
       filter?: FilterExcludingWhere<E>,
     ): Promise<E & EntityRelation> {
-      return this.repository.findById(id, filter);
+      return this.repository.findById(id, filter ?? { limit: DEFAULT_LIMIT_RESPONSE });
     }
 
     @get('/count', {
@@ -339,11 +341,11 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
           return ref;
         }
         case EntityRelations.HAS_ONE: {
-          return ref.get(filter);
+          return ref.get(filter ?? { limit: DEFAULT_LIMIT_RESPONSE });
         }
         case EntityRelations.HAS_MANY:
         case EntityRelations.HAS_MANY_THROUGH: {
-          return ref.find(filter);
+          return ref.find(filter ?? { limit: DEFAULT_LIMIT_RESPONSE });
         }
         default: {
           return [];
