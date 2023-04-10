@@ -1,5 +1,7 @@
 import get from 'lodash/get';
 import round from 'lodash/round';
+import multer from 'multer';
+import { Request, Response } from '@loopback/rest';
 
 // -------------------------------------------------------------------------
 const INTL_0_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
@@ -11,6 +13,24 @@ const INTL_2_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2,
   minimumFractionDigits: 2,
 });
+
+// -------------------------------------------------------------------------
+export const parseMultipartBody = (request: Request, response: Response) => {
+  const storage = multer.memoryStorage();
+  const upload = multer({ storage });
+
+  return new Promise<any>((resolve, reject) => {
+    upload.any()(request, response, (err: any) => {
+
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      resolve(request.files);
+    });
+  });
+};
 
 // -------------------------------------------------------------------------
 export const getUID = () => Math.random().toString(36).slice(2).toUpperCase();

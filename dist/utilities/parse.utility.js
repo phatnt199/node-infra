@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNumberValue = exports.toStringDecimal = exports.float = exports.int = exports.isFloat = exports.isInt = exports.keysToCamel = exports.toCamel = exports.getUID = void 0;
+exports.getNumberValue = exports.toStringDecimal = exports.float = exports.int = exports.isFloat = exports.isInt = exports.keysToCamel = exports.toCamel = exports.getUID = exports.parseMultipartBody = void 0;
 const get_1 = __importDefault(require("lodash/get"));
 const round_1 = __importDefault(require("lodash/round"));
+const multer_1 = __importDefault(require("multer"));
 // -------------------------------------------------------------------------
 const INTL_0_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 0,
@@ -15,6 +16,21 @@ const INTL_2_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
 });
+// -------------------------------------------------------------------------
+const parseMultipartBody = (request, response) => {
+    const storage = multer_1.default.memoryStorage();
+    const upload = (0, multer_1.default)({ storage });
+    return new Promise((resolve, reject) => {
+        upload.any()(request, response, (err) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(request.files);
+        });
+    });
+};
+exports.parseMultipartBody = parseMultipartBody;
 // -------------------------------------------------------------------------
 const getUID = () => Math.random().toString(36).slice(2).toUpperCase();
 exports.getUID = getUID;

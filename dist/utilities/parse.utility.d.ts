@@ -1,3 +1,5 @@
+import { Request, Response } from '@loopback/rest';
+export declare const parseMultipartBody: (request: Request, response: Response) => Promise<any>;
 export declare const getUID: () => string;
 export declare const toCamel: (s: string) => string;
 export declare const keysToCamel: (object: object) => any;
