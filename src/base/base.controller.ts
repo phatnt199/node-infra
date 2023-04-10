@@ -25,14 +25,26 @@ import { getError } from '@/utilities';
 import { EntityRelations } from '@/common';
 import { Class } from '@loopback/service-proxy';
 
-const DEFAULT_LIMIT_RESPONSE = 10;
+const DEFAULT_LIMIT = 20;
+
+const applyLimit = <E extends BaseTzEntity> (filter?: Filter<E>) => {
+  if (!filter) {
+    return { limit: DEFAULT_LIMIT }
+  }
+  if (filter && Object.keys(filter).some(f => f !== 'limit')) {
+    return { ...filter, limit: DEFAULT_LIMIT }
+  }
+  return filter
+}
 
 // --------------------------------------------------------------------------------------------------------------
 export class BaseController implements IController {
   protected logger: ApplicationLogger;
+  defaultLimit: number;
 
   constructor(opts: { scope?: string }) {
     this.logger = LoggerFactory.getLogger([opts?.scope ?? BaseController.name]);
+    this.defaultLimit = DEFAULT_LIMIT;
   }
 }
 
@@ -62,9 +74,11 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
 
   class ReadController implements IController {
     repository: AbstractTzRepository<E, EntityRelation>;
+    defaultLimit: number;
 
     constructor(repository: AbstractTzRepository<E, EntityRelation>) {
       this.repository = repository;
+      this.defaultLimit = DEFAULT_LIMIT;
     }
 
     @get('/', {
@@ -83,7 +97,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
       },
     })
     async find(@param.filter(entityOptions) filter?: Filter<E>): Promise<(E & EntityRelation)[]> {
-      return this.repository.find(filter ?? { limit: DEFAULT_LIMIT_RESPONSE });
+      return this.repository.find(applyLimit(filter));
     }
 
     @get('/{id}', {
@@ -103,7 +117,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
       @param.query.object('filter', getFilterSchemaFor(entityOptions, { exclude: 'where' }))
       filter?: FilterExcludingWhere<E>,
     ): Promise<E & EntityRelation> {
-      return this.repository.findById(id, filter ?? { limit: DEFAULT_LIMIT_RESPONSE });
+      return this.repository.findById(id, applyLimit(filter));
     }
 
     @get('/count', {
@@ -293,19 +307,21 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
   relationName: string;
 }): ControllerClass => {
   const { baseClass, relationType, relationName } = opts;
-
+  
   const restPath = `/{id}/${relationName}`;
   const BaseClass = baseClass ?? BaseController;
-
+  
   class ViewController extends BaseClass implements IController {
     sourceRepository: AbstractTzRepository<S, EntityRelation>;
     targetRepository: AbstractTzRepository<T, EntityRelation>;
+    defaultLimit: number;
 
     constructor(
       sourceRepository: AbstractTzRepository<S, EntityRelation>,
       targetRepository: AbstractTzRepository<T, EntityRelation>,
     ) {
       super({ scope: `ViewController.${relationName}` });
+      this.defaultLimit = DEFAULT_LIMIT;
 
       if (!sourceRepository) {
         throw getError({
@@ -341,11 +357,11 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
           return ref;
         }
         case EntityRelations.HAS_ONE: {
-          return ref.get(filter ?? { limit: DEFAULT_LIMIT_RESPONSE });
+          return ref.get(applyLimit(filter));
         }
         case EntityRelations.HAS_MANY:
         case EntityRelations.HAS_MANY_THROUGH: {
-          return ref.find(filter ?? { limit: DEFAULT_LIMIT_RESPONSE });
+          return ref.find(applyLimit(filter));
         }
         default: {
           return [];
@@ -374,12 +390,14 @@ export const defineAssociateController = <
   class AssociationController extends BaseClass implements IController {
     sourceRepository: AbstractTzRepository<S, EntityRelation>;
     targetRepository: AbstractTzRepository<T, EntityRelation>;
+    defaultLimit: number;
 
     constructor(
       sourceRepository: AbstractTzRepository<S, EntityRelation>,
       targetRepository: AbstractTzRepository<T, EntityRelation>,
     ) {
       super(sourceRepository, targetRepository);
+      this.defaultLimit = DEFAULT_LIMIT;
 
       if (!sourceRepository) {
         throw getError({
