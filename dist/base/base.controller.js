@@ -32,7 +32,7 @@ const get_1 = __importDefault(require("lodash/get"));
 const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
 const common_1 = require("../common");
-const DEFAULT_LIMIT = 20;
+const DEFAULT_LIMIT = 50;
 const applyLimit = (filter) => {
     var _a;
     const rs = Object.assign({}, (filter !== null && filter !== void 0 ? filter : {}));
@@ -43,6 +43,7 @@ const applyLimit = (filter) => {
 class BaseController {
     constructor(opts) {
         var _a;
+        this.defaultLimit = DEFAULT_LIMIT;
         this.logger = helpers_1.LoggerFactory.getLogger([(_a = opts === null || opts === void 0 ? void 0 : opts.scope) !== null && _a !== void 0 ? _a : BaseController.name]);
         this.defaultLimit = DEFAULT_LIMIT;
     }
@@ -66,8 +67,9 @@ const defineCrudController = (opts) => {
     };
     class ReadController {
         constructor(repository) {
+            var _a;
             this.repository = repository;
-            this.defaultLimit = DEFAULT_LIMIT;
+            this.defaultLimit = (_a = controllerOptions === null || controllerOptions === void 0 ? void 0 : controllerOptions.defaultLimit) !== null && _a !== void 0 ? _a : DEFAULT_LIMIT;
         }
         find(filter) {
             return __awaiter(this, void 0, void 0, function* () {
@@ -305,13 +307,13 @@ const defineCrudController = (opts) => {
 exports.defineCrudController = defineCrudController;
 // --------------------------------------------------------------------------------------------------------------
 const defineRelationViewController = (opts) => {
-    const { baseClass, relationType, relationName } = opts;
+    const { baseClass, relationType, relationName, defaultLimit = DEFAULT_LIMIT } = opts;
     const restPath = `/{id}/${relationName}`;
     const BaseClass = baseClass !== null && baseClass !== void 0 ? baseClass : BaseController;
     class ViewController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
             super({ scope: `ViewController.${relationName}` });
-            this.defaultLimit = DEFAULT_LIMIT;
+            this.defaultLimit = defaultLimit;
             if (!sourceRepository) {
                 throw (0, utilities_1.getError)({
                     statusCode: 500,
@@ -369,13 +371,13 @@ const defineRelationViewController = (opts) => {
 exports.defineRelationViewController = defineRelationViewController;
 // --------------------------------------------------------------------------------------------------------------
 const defineAssociateController = (opts) => {
-    const { baseClass, relationName } = opts;
+    const { baseClass, relationName, defaultLimit = DEFAULT_LIMIT } = opts;
     const restPath = `/{id}/${relationName}`;
     const BaseClass = baseClass !== null && baseClass !== void 0 ? baseClass : BaseController;
     class AssociationController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
             super(sourceRepository, targetRepository);
-            this.defaultLimit = DEFAULT_LIMIT;
+            this.defaultLimit = defaultLimit;
             if (!sourceRepository) {
                 throw (0, utilities_1.getError)({
                     statusCode: 500,
@@ -455,7 +457,7 @@ const defineAssociateController = (opts) => {
 exports.defineAssociateController = defineAssociateController;
 // --------------------------------------------------------------------------------------------------------------
 const defineRelationCrudController = (controllerOptions) => {
-    const { association, schema, options = { controlTarget: false } } = controllerOptions;
+    const { association, schema, options = { controlTarget: false, defaultLimit: DEFAULT_LIMIT } } = controllerOptions;
     const { relationName, relationType } = association;
     if (!common_1.EntityRelations.isValid(relationType)) {
         throw (0, utilities_1.getError)({
@@ -464,10 +466,10 @@ const defineRelationCrudController = (controllerOptions) => {
         });
     }
     const { target: targetSchema } = schema;
-    const { controlTarget = true } = options;
+    const { controlTarget = true, defaultLimit = DEFAULT_LIMIT } = options;
     const restPath = `{id}/${relationName}`;
-    const ViewController = (0, exports.defineRelationViewController)({ baseClass: BaseController, relationType, relationName });
-    const AssociationController = (0, exports.defineAssociateController)({ baseClass: ViewController, relationName });
+    const ViewController = (0, exports.defineRelationViewController)({ baseClass: BaseController, relationType, relationName, defaultLimit });
+    const AssociationController = (0, exports.defineAssociateController)({ baseClass: ViewController, relationName, defaultLimit });
     // -----------------------------------------------------------------------------------------------
     const ExtendsableClass = relationType === common_1.EntityRelations.HAS_MANY_THROUGH ? AssociationController : ViewController;
     if (!controlTarget) {

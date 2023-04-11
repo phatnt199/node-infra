@@ -23,7 +23,9 @@ export interface CrudControllerOptions<E extends BaseIdEntity> {
     repository: {
         name: string;
     };
-    controller: CrudRestControllerOptions;
+    controller: CrudRestControllerOptions & {
+        defaultLimit?: number;
+    };
 }
 export declare const defineCrudController: <E extends BaseTzEntity>(opts: CrudControllerOptions<E>) => {
     new (repository: AbstractTzRepository<E, EntityRelation>): {
@@ -48,15 +50,18 @@ export interface RelationCrudControllerOptions {
     };
     options?: {
         controlTarget: boolean;
+        defaultLimit?: number;
     };
 }
 export declare const defineRelationViewController: <S extends BaseTzEntity, T extends BaseTzEntity>(opts: {
     baseClass?: Class<BaseController>;
     relationType: TRelationType;
     relationName: string;
+    defaultLimit?: number;
 }) => ControllerClass;
 export declare const defineAssociateController: <S extends BaseTzEntity, T extends BaseTzEntity, R extends BaseTzEntity | NullableType>(opts: {
     baseClass?: Class<BaseController>;
     relationName: string;
+    defaultLimit?: number;
 }) => ControllerClass;
 export declare const defineRelationCrudController: <S extends BaseTzEntity, T extends BaseTzEntity, R extends BaseTzEntity | NullableType>(controllerOptions: RelationCrudControllerOptions) => ControllerClass;

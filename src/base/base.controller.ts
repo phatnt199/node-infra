@@ -25,7 +25,7 @@ import { getError } from '@/utilities';
 import { EntityRelations } from '@/common';
 import { Class } from '@loopback/service-proxy';
 
-const DEFAULT_LIMIT = 20;
+const DEFAULT_LIMIT = 50;
 
 const applyLimit = <E extends BaseTzEntity>(filter?: Filter<E>) => {
   const rs: Filter<E> = {
@@ -39,7 +39,7 @@ const applyLimit = <E extends BaseTzEntity>(filter?: Filter<E>) => {
 // --------------------------------------------------------------------------------------------------------------
 export class BaseController implements IController {
   protected logger: ApplicationLogger;
-  defaultLimit: number;
+  defaultLimit: number = DEFAULT_LIMIT;
 
   constructor(opts: { scope?: string }) {
     this.logger = LoggerFactory.getLogger([opts?.scope ?? BaseController.name]);
@@ -58,7 +58,7 @@ export const getIdSchema = <E extends BaseIdEntity>(entity: typeof BaseIdEntity 
 export interface CrudControllerOptions<E extends BaseIdEntity> {
   entity: typeof BaseIdEntity & { prototype: E };
   repository: { name: string };
-  controller: CrudRestControllerOptions;
+  controller: CrudRestControllerOptions & { defaultLimit?: number };
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
 
     constructor(repository: AbstractTzRepository<E, EntityRelation>) {
       this.repository = repository;
-      this.defaultLimit = DEFAULT_LIMIT;
+      this.defaultLimit = controllerOptions?.defaultLimit ?? DEFAULT_LIMIT;
     }
 
     @get('/', {
@@ -131,10 +131,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
         },
       },
     })
-    async count(
-      @param.where(entityOptions)
-      where?: Where<E>,
-    ): Promise<Count> {
+    async count(@param.where(entityOptions) where?: Where<E>): Promise<Count> {
       return this.repository.count(where);
     }
   }
@@ -296,6 +293,7 @@ export interface RelationCrudControllerOptions {
   };
   options?: {
     controlTarget: boolean;
+    defaultLimit?: number;
   };
 }
 
@@ -304,8 +302,9 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
   baseClass?: Class<BaseController>;
   relationType: TRelationType;
   relationName: string;
+  defaultLimit?: number;
 }): ControllerClass => {
-  const { baseClass, relationType, relationName } = opts;
+  const { baseClass, relationType, relationName, defaultLimit = DEFAULT_LIMIT } = opts;
 
   const restPath = `/{id}/${relationName}`;
   const BaseClass = baseClass ?? BaseController;
@@ -320,7 +319,7 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
       targetRepository: AbstractTzRepository<T, EntityRelation>,
     ) {
       super({ scope: `ViewController.${relationName}` });
-      this.defaultLimit = DEFAULT_LIMIT;
+      this.defaultLimit = defaultLimit;
 
       if (!sourceRepository) {
         throw getError({
@@ -380,8 +379,9 @@ export const defineAssociateController = <
 >(opts: {
   baseClass?: Class<BaseController>;
   relationName: string;
+  defaultLimit?: number;
 }): ControllerClass => {
-  const { baseClass, relationName } = opts;
+  const { baseClass, relationName, defaultLimit = DEFAULT_LIMIT } = opts;
   const restPath = `/{id}/${relationName}`;
 
   const BaseClass = baseClass ?? BaseController;
@@ -396,7 +396,7 @@ export const defineAssociateController = <
       targetRepository: AbstractTzRepository<T, EntityRelation>,
     ) {
       super(sourceRepository, targetRepository);
-      this.defaultLimit = DEFAULT_LIMIT;
+      this.defaultLimit = defaultLimit;
 
       if (!sourceRepository) {
         throw getError({
@@ -472,7 +472,7 @@ export const defineRelationCrudController = <
 >(
   controllerOptions: RelationCrudControllerOptions,
 ): ControllerClass => {
-  const { association, schema, options = { controlTarget: false } } = controllerOptions;
+  const { association, schema, options = { controlTarget: false, defaultLimit: DEFAULT_LIMIT } } = controllerOptions;
   const { relationName, relationType } = association;
 
   if (!EntityRelations.isValid(relationType)) {
@@ -483,11 +483,11 @@ export const defineRelationCrudController = <
   }
 
   const { target: targetSchema } = schema;
-  const { controlTarget = true } = options;
+  const { controlTarget = true, defaultLimit = DEFAULT_LIMIT } = options;
 
   const restPath = `{id}/${relationName}`;
-  const ViewController = defineRelationViewController<S, T>({ baseClass: BaseController, relationType, relationName });
-  const AssociationController = defineAssociateController<S, T, R>({ baseClass: ViewController, relationName });
+  const ViewController = defineRelationViewController<S, T>({ baseClass: BaseController, relationType, relationName, defaultLimit });
+  const AssociationController = defineAssociateController<S, T, R>({ baseClass: ViewController, relationName, defaultLimit });
 
   // -----------------------------------------------------------------------------------------------
 
