@@ -468,8 +468,17 @@ const defineRelationCrudController = (controllerOptions) => {
     const { target: targetSchema } = schema;
     const { controlTarget = true, defaultLimit = DEFAULT_LIMIT } = options;
     const restPath = `{id}/${relationName}`;
-    const ViewController = (0, exports.defineRelationViewController)({ baseClass: BaseController, relationType, relationName, defaultLimit });
-    const AssociationController = (0, exports.defineAssociateController)({ baseClass: ViewController, relationName, defaultLimit });
+    const ViewController = (0, exports.defineRelationViewController)({
+        baseClass: BaseController,
+        relationType,
+        relationName,
+        defaultLimit,
+    });
+    const AssociationController = (0, exports.defineAssociateController)({
+        baseClass: ViewController,
+        relationName,
+        defaultLimit,
+    });
     // -----------------------------------------------------------------------------------------------
     const ExtendsableClass = relationType === common_1.EntityRelations.HAS_MANY_THROUGH ? AssociationController : ViewController;
     if (!controlTarget) {

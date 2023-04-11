@@ -41,7 +41,7 @@ export class BaseController implements IController {
   protected logger: ApplicationLogger;
   protected defaultLimit: number = DEFAULT_LIMIT;
 
-  constructor(opts: { scope?: string, defaultLimit?: number }) {
+  constructor(opts: { scope?: string; defaultLimit?: number }) {
     this.logger = LoggerFactory.getLogger([opts?.scope ?? BaseController.name]);
     this.defaultLimit = opts?.defaultLimit ?? DEFAULT_LIMIT;
   }
@@ -486,8 +486,17 @@ export const defineRelationCrudController = <
   const { controlTarget = true, defaultLimit = DEFAULT_LIMIT } = options;
 
   const restPath = `{id}/${relationName}`;
-  const ViewController = defineRelationViewController<S, T>({ baseClass: BaseController, relationType, relationName, defaultLimit });
-  const AssociationController = defineAssociateController<S, T, R>({ baseClass: ViewController, relationName, defaultLimit });
+  const ViewController = defineRelationViewController<S, T>({
+    baseClass: BaseController,
+    relationType,
+    relationName,
+    defaultLimit,
+  });
+  const AssociationController = defineAssociateController<S, T, R>({
+    baseClass: ViewController,
+    relationName,
+    defaultLimit,
+  });
 
   // -----------------------------------------------------------------------------------------------
 
