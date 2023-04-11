@@ -42,10 +42,10 @@ const applyLimit = (filter) => {
 // --------------------------------------------------------------------------------------------------------------
 class BaseController {
     constructor(opts) {
-        var _a;
+        var _a, _b;
         this.defaultLimit = DEFAULT_LIMIT;
         this.logger = helpers_1.LoggerFactory.getLogger([(_a = opts === null || opts === void 0 ? void 0 : opts.scope) !== null && _a !== void 0 ? _a : BaseController.name]);
-        this.defaultLimit = DEFAULT_LIMIT;
+        this.defaultLimit = (_b = opts === null || opts === void 0 ? void 0 : opts.defaultLimit) !== null && _b !== void 0 ? _b : DEFAULT_LIMIT;
     }
 }
 exports.BaseController = BaseController;

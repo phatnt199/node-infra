@@ -52,7 +52,6 @@ export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepos
 export interface IService {
 }
 export interface IController {
-    defaultLimit?: number;
 }
 export interface IApplicationEnvironment {
     get<ReturnType>(key: string): ReturnType;

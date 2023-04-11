@@ -59,9 +59,7 @@ export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepos
 export interface IService {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IController {
-  defaultLimit?: number;
-}
+export interface IController {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IApplicationEnvironment {

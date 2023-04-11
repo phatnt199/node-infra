@@ -39,11 +39,11 @@ const applyLimit = <E extends BaseTzEntity>(filter?: Filter<E>) => {
 // --------------------------------------------------------------------------------------------------------------
 export class BaseController implements IController {
   protected logger: ApplicationLogger;
-  defaultLimit: number = DEFAULT_LIMIT;
+  protected defaultLimit: number = DEFAULT_LIMIT;
 
-  constructor(opts: { scope?: string }) {
+  constructor(opts: { scope?: string, defaultLimit?: number }) {
     this.logger = LoggerFactory.getLogger([opts?.scope ?? BaseController.name]);
-    this.defaultLimit = DEFAULT_LIMIT;
+    this.defaultLimit = opts?.defaultLimit ?? DEFAULT_LIMIT;
   }
 }
 

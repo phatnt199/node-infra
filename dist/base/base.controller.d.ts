@@ -8,9 +8,10 @@ import { ApplicationLogger } from '../helpers';
 import { Class } from '@loopback/service-proxy';
 export declare class BaseController implements IController {
     protected logger: ApplicationLogger;
-    defaultLimit: number;
+    protected defaultLimit: number;
     constructor(opts: {
         scope?: string;
+        defaultLimit?: number;
     });
 }
 export declare const getIdSchema: <E extends BaseIdEntity>(entity: typeof BaseIdEntity & {
