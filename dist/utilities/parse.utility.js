@@ -72,34 +72,34 @@ const keysToCamel = (object) => {
 exports.keysToCamel = keysToCamel;
 // -------------------------------------------------------------------------
 const isInt = (n) => {
-    if (Number.isNaN(n)) {
+    if (isNaN(n)) {
         return false;
     }
     return Number.isInteger(n) || Math.floor(Number(n)) === n || Number(n) % 1 === 0;
 };
 exports.isInt = isInt;
 // -------------------------------------------------------------------------
-const isFloat = (n) => {
-    if (Number.isNaN(n)) {
+const isFloat = (input) => {
+    if (isNaN(input)) {
         return false;
     }
-    return Number(n) === n || Number(n) % 1 !== 0;
+    return Number(input) === input || Number(input) % 1 !== 0;
 };
 exports.isFloat = isFloat;
 // -------------------------------------------------------------------------
 const int = (input) => {
-    var _a;
-    if (!input || Number.isNaN(input)) {
+    var _a, _b;
+    if (!input || isNaN(input)) {
         return 0;
     }
     const normalized = (_a = input === null || input === void 0 ? void 0 : input.toString()) === null || _a === void 0 ? void 0 : _a.replace(/,/g, '');
-    return Number.parseInt(normalized, 10);
+    return (_b = Number.parseInt(normalized, 10)) !== null && _b !== void 0 ? _b : 0;
 };
 exports.int = int;
 // -------------------------------------------------------------------------
 const float = (input, digit = 2) => {
     var _a;
-    if (!input || Number.isNaN(input)) {
+    if (!input || isNaN(input)) {
         return 0;
     }
     const normalized = (_a = input === null || input === void 0 ? void 0 : input.toString()) === null || _a === void 0 ? void 0 : _a.replace(/,/g, '');
@@ -109,7 +109,7 @@ exports.float = float;
 // -------------------------------------------------------------------------
 const toStringDecimal = (input, digit = 2, options = { localeFormat: true }) => {
     const { localeFormat } = options;
-    if (Number.isNaN(input)) {
+    if (isNaN(input)) {
         return 0;
     }
     let number = 0;

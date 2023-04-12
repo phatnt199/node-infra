@@ -77,7 +77,7 @@ export const keysToCamel = (object: object) => {
 
 // -------------------------------------------------------------------------
 export const isInt = (n: any) => {
-  if (Number.isNaN(n)) {
+  if (isNaN(n)) {
     return false;
   }
 
@@ -85,27 +85,27 @@ export const isInt = (n: any) => {
 };
 
 // -------------------------------------------------------------------------
-export const isFloat = (n: any) => {
-  if (Number.isNaN(n)) {
+export const isFloat = (input: any) => {
+  if (isNaN(input)) {
     return false;
   }
 
-  return Number(n) === n || Number(n) % 1 !== 0;
+  return Number(input) === input || Number(input) % 1 !== 0;
 };
 
 // -------------------------------------------------------------------------
 export const int = (input: any) => {
-  if (!input || Number.isNaN(input)) {
+  if (!input || isNaN(input)) {
     return 0;
   }
 
   const normalized = input?.toString()?.replace(/,/g, '');
-  return Number.parseInt(normalized, 10);
+  return Number.parseInt(normalized, 10) ?? 0;
 };
 
 // -------------------------------------------------------------------------
 export const float = (input: any, digit = 2) => {
-  if (!input || Number.isNaN(input)) {
+  if (!input || isNaN(input)) {
     return 0;
   }
 
@@ -116,7 +116,7 @@ export const float = (input: any, digit = 2) => {
 // -------------------------------------------------------------------------
 export const toStringDecimal = (input: any, digit = 2, options = { localeFormat: true }) => {
   const { localeFormat } = options;
-  if (Number.isNaN(input)) {
+  if (isNaN(input)) {
     return 0;
   }
 
