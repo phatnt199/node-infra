@@ -1,5 +1,6 @@
 /// <reference types="node" />
-import { Socket as IOSocket } from 'socket.io';
+/// <reference types="node" />
+import { Server as IOServer, Socket as IOSocket } from 'socket.io';
 import Redis from 'ioredis';
 import { Server } from 'http';
 import { Handshake } from 'socket.io/dist/socket';
@@ -25,6 +26,26 @@ export declare class SocketIOServerHelper {
     private redisConnection;
     private clients;
     constructor(opts: ISocketIOServerOptions);
+    getIOServer(): IOServer<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>;
+    getClients(opts?: {
+        id: string;
+    }): {
+        id: string;
+        socket: IOSocket<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>;
+        state: "authenticated" | "unauthorized" | "authenticating";
+        interval?: NodeJS.Timeout | undefined;
+        authenticateTimeout: NodeJS.Timeout;
+    } | Record<string, {
+        id: string;
+        socket: IOSocket<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>;
+        state: "authenticated" | "unauthorized" | "authenticating";
+        interval?: NodeJS.Timeout | undefined;
+        authenticateTimeout: NodeJS.Timeout;
+    }>;
+    on(opts: {
+        topic: string;
+        handler: (...args: any) => Promise<void>;
+    }): void;
     configure(): void;
     onClientConnect(opts: {
         socket: IOSocket;

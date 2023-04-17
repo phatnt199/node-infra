@@ -51,6 +51,28 @@ class SocketIOServerHelper {
         this.configure();
     }
     // -------------------------------------------------------------------------------------------------------------
+    getIOServer() {
+        return this.io;
+    }
+    // -------------------------------------------------------------------------------------------------------------
+    getClients(opts) {
+        if (opts === null || opts === void 0 ? void 0 : opts.id) {
+            return this.clients[opts.id];
+        }
+        return this.clients;
+    }
+    // -------------------------------------------------------------------------------------------------------------
+    on(opts) {
+        const { topic, handler } = opts;
+        if (!topic || !handler) {
+            throw (0, utilities_1.getError)({ message: '[on] Invalid topic or event handler!' });
+        }
+        if (!this.io) {
+            throw (0, utilities_1.getError)({ message: '[on] IOServer is not initialized yet!' });
+        }
+        this.io.on(topic, handler);
+    }
+    // -------------------------------------------------------------------------------------------------------------
     configure() {
         var _a, _b, _c;
         this.logger.info('[configure][%s] Configuring IO Server', this.identifier);
