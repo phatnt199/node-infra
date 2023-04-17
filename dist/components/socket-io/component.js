@@ -49,7 +49,7 @@ let SocketIOComponent = class SocketIOComponent extends base_component_1.BaseCom
         const authenticateFn = this.application.getSync(common_1.SocketIOKeys.AUTHENTICATE_HANDLER);
         let clientConnectedFn = null;
         if (this.application.isBound(common_1.SocketIOKeys.CLIENT_CONNECTED_HANDLER)) {
-            clientConnectedFn = this.application.getSync(common_1.SocketIOKeys.AUTHENTICATE_HANDLER);
+            clientConnectedFn = this.application.getSync(common_1.SocketIOKeys.CLIENT_CONNECTED_HANDLER);
         }
         const restServer = this.application.restServer;
         const httpServer = restServer.httpServer;

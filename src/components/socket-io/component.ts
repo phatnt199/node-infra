@@ -43,7 +43,7 @@ export class SocketIOComponent extends BaseComponent {
     let clientConnectedFn: any = null;
     if (this.application.isBound(SocketIOKeys.CLIENT_CONNECTED_HANDLER)) {
       clientConnectedFn = this.application.getSync<(handshake: { headers: any }) => Promise<boolean>>(
-        SocketIOKeys.AUTHENTICATE_HANDLER,
+        SocketIOKeys.CLIENT_CONNECTED_HANDLER,
       );
     }
 
