@@ -40,6 +40,13 @@ export class SocketIOComponent extends BaseComponent {
       SocketIOKeys.AUTHENTICATE_HANDLER,
     );
 
+    let clientConnectedFn: any = null;
+    if (this.application.isBound(SocketIOKeys.CLIENT_CONNECTED_HANDLER)) {
+      clientConnectedFn = this.application.getSync<(handshake: { headers: any }) => Promise<boolean>>(
+        SocketIOKeys.AUTHENTICATE_HANDLER,
+      );
+    }
+
     const restServer = this.application.restServer;
     const httpServer = restServer.httpServer;
 
@@ -56,6 +63,7 @@ export class SocketIOComponent extends BaseComponent {
       server: httpServer.server,
       redisConnection,
       authenticateFn,
+      clientConnectedFn,
     });
 
     this.application.bind(SocketIOKeys.SOCKET_IO_INSTANCE).to(ioServer);

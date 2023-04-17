@@ -33,6 +33,7 @@ class SocketIOServerHelper {
         this.path = (_a = opts.path) !== null && _a !== void 0 ? _a : '';
         this.redisConnection = opts.redisConnection;
         this.authenticateFn = opts.authenticateFn;
+        this.onClientConnected = opts.clientConnectedFn;
         this.defaultRooms = (_b = opts.defaultRooms) !== null && _b !== void 0 ? _b : [common_1.SocketIOConstants.ROOM_DEFAULT, common_1.SocketIOConstants.ROOM_NOTIFICATION];
         if (!opts.server) {
             throw (0, utilities_1.getError)({
@@ -183,6 +184,7 @@ class SocketIOServerHelper {
     }
     // -------------------------------------------------------------------------------------------------------------
     onClientAuthenticated(opts) {
+        var _a, _b;
         const { socket } = opts;
         if (!socket) {
             this.logger.info('[onClientAuthenticated] Invalid new socket connection!');
@@ -251,6 +253,9 @@ class SocketIOServerHelper {
                 },
             },
             // log: true,
+        });
+        (_b = (_a = this.onClientConnected) === null || _a === void 0 ? void 0 : _a.call(this, { socket })) === null || _b === void 0 ? void 0 : _b.then(() => { }).catch(error => {
+            this.logger.error('[onClientConnected][Handler] Error: %s', error);
         });
     }
     // -------------------------------------------------------------------------------------------------------------

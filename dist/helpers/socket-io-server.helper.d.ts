@@ -12,6 +12,9 @@ export interface ISocketIOServerOptions {
     server: Server;
     redisConnection: Redis;
     authenticateFn: (args: Handshake) => Promise<boolean>;
+    clientConnectedFn: (opts: {
+        socket: IOSocket;
+    }) => Promise<void>;
     defaultRooms?: string[];
 }
 export declare class SocketIOServerHelper {
@@ -19,6 +22,7 @@ export declare class SocketIOServerHelper {
     private identifier;
     private path;
     private authenticateFn;
+    private onClientConnected;
     private defaultRooms;
     private io;
     private emitter;

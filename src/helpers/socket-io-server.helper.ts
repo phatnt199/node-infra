@@ -20,6 +20,7 @@ export interface ISocketIOServerOptions {
   server: Server;
   redisConnection: Redis;
   authenticateFn: (args: Handshake) => Promise<boolean>;
+  clientConnectedFn: (opts: { socket: IOSocket }) => Promise<void>;
   defaultRooms?: string[];
 }
 
@@ -31,6 +32,7 @@ export class SocketIOServerHelper {
   // private useAuth: boolean;
   private path: string;
   private authenticateFn: (args: Handshake) => Promise<boolean>;
+  private onClientConnected: (opts: { socket: IOSocket }) => Promise<void>;
   private defaultRooms: string[];
 
   private io: IOServer;
@@ -58,6 +60,7 @@ export class SocketIOServerHelper {
     this.path = opts.path ?? '';
     this.redisConnection = opts.redisConnection;
     this.authenticateFn = opts.authenticateFn;
+    this.onClientConnected = opts.clientConnectedFn;
     this.defaultRooms = opts.defaultRooms ?? [SocketIOConstants.ROOM_DEFAULT, SocketIOConstants.ROOM_NOTIFICATION];
 
     if (!opts.server) {
@@ -337,6 +340,12 @@ export class SocketIOServerHelper {
       },
       // log: true,
     });
+
+    this.onClientConnected?.({ socket })
+      ?.then(() => { })
+      .catch(error => {
+        this.logger.error('[onClientConnected][Handler] Error: %s', error);
+      });
   }
 
   // -------------------------------------------------------------------------------------------------------------

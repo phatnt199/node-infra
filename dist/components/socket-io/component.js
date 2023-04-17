@@ -47,6 +47,10 @@ let SocketIOComponent = class SocketIOComponent extends base_component_1.BaseCom
         const identifier = this.application.getSync(common_1.SocketIOKeys.IDENTIFIER);
         const serverPath = this.application.getSync(common_1.SocketIOKeys.PATH);
         const authenticateFn = this.application.getSync(common_1.SocketIOKeys.AUTHENTICATE_HANDLER);
+        let clientConnectedFn = null;
+        if (this.application.isBound(common_1.SocketIOKeys.CLIENT_CONNECTED_HANDLER)) {
+            clientConnectedFn = this.application.getSync(common_1.SocketIOKeys.AUTHENTICATE_HANDLER);
+        }
         const restServer = this.application.restServer;
         const httpServer = restServer.httpServer;
         if (!httpServer) {
@@ -61,6 +65,7 @@ let SocketIOComponent = class SocketIOComponent extends base_component_1.BaseCom
             server: httpServer.server,
             redisConnection,
             authenticateFn,
+            clientConnectedFn,
         });
         this.application.bind(common_1.SocketIOKeys.SOCKET_IO_INSTANCE).to(ioServer);
     }

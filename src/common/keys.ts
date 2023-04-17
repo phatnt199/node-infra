@@ -41,6 +41,7 @@ export class SocketIOKeys {
   static readonly PATH = '@app/socket-io/path';
   static readonly REDIS_CONNECTION = '@app/socket-io/redis-connection';
   static readonly AUTHENTICATE_HANDLER = '@app/socket-io/authenticate-handler';
+  static readonly CLIENT_CONNECTED_HANDLER = '@app/socket-io/client-connected-handler';
 }
 
 // -----------------------------------------------------------------------------
