@@ -138,6 +138,12 @@ export const definePermission = () => {
       postgresql: { columnName: 'parent_id' },
     })
     parentId: number;
+    
+    @property({
+      type: 'object',
+      postgresql: { columnName: 'details' },
+    })
+    details: any;
 
     constructor(data?: Partial<Permission>) {
       super(data);
