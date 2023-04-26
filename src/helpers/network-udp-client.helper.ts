@@ -87,7 +87,7 @@ export class NetworkUdpClient {
     });
 
     this.client.on('message', (message, remote) => {
-      this.logger.info(`[<==] Address: ${remote.address} | Port: ${remote.port} | Message: ${message}`);
+      // this.logger.info(`[<==] Address: ${remote.address} | Port: ${remote.port} | Message: ${message}`);
       this.onData?.({ identifier: this.identifier, message, remote });
     });
 

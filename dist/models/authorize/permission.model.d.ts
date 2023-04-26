@@ -6,6 +6,7 @@ declare const BasePermission: {
         pType: string;
         action: string;
         parentId: number;
+        details: any;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;
@@ -20,6 +21,7 @@ declare const BasePermission: {
         pType: string;
         action: string;
         parentId: number;
+        details: any;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;

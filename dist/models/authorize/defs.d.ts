@@ -76,6 +76,7 @@ export declare const definePermission: () => {
         pType: string;
         action: string;
         parentId: number;
+        details: any;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;
@@ -90,6 +91,7 @@ export declare const definePermission: () => {
         pType: string;
         action: string;
         parentId: number;
+        details: any;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;
