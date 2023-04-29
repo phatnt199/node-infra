@@ -288,7 +288,7 @@ export class SocketIOServerHelper {
 
       Promise.all(rooms.map((room: string) => socket.join(room)))
         .then(() => {
-          this.logger.info('[%s] Connection %s joined all rooms %s', SocketIOConstants.EVENT_JOIN, id, rooms);
+          this.logger.info('[%s] Connection: %s joined all rooms %s', SocketIOConstants.EVENT_JOIN, id, rooms);
         })
         .catch(error => {
           this.logger.error(
