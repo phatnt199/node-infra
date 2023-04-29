@@ -138,7 +138,7 @@ class SocketIOServerHelper {
                 this.clients[id].state = 'authenticating';
                 this.authenticateFn(handshake)
                     .then(rs => {
-                    console.log(rs);
+                    this.logger.info('[onClientAuthenticate] Socket: %s | Authenticate result: %s', id, rs);
                     // Valid connection
                     if (rs) {
                         this.onClientAuthenticated({ socket });
