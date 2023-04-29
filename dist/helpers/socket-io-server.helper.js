@@ -219,7 +219,7 @@ class SocketIOServerHelper {
             }
             Promise.all(rooms.map((room) => socket.join(room)))
                 .then(() => {
-                this.logger.info('[%s] Connection %s joined all rooms %s', common_1.SocketIOConstants.EVENT_JOIN, id, rooms);
+                this.logger.info('[%s] Connection: %s joined all rooms %s', common_1.SocketIOConstants.EVENT_JOIN, id, rooms);
             })
                 .catch(error => {
                 this.logger.error('[%s] Connection %s failed to join rooms %s | Error: %s', common_1.SocketIOConstants.EVENT_JOIN, id, rooms, error);
