@@ -1,4 +1,4 @@
-import { Server as IOServer, Socket as IOSocket } from 'socket.io';
+import { Server as IOServer, ServerOptions, Socket as IOSocket } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { Emitter } from '@socket.io/redis-emitter';
 import Redis from 'ioredis';
@@ -14,10 +14,8 @@ import { Handshake } from 'socket.io/dist/socket';
 
 export interface ISocketIOServerOptions {
   identifier: string;
-  useAuth: boolean;
-  path?: string;
-  port?: number;
   server: Server;
+  serverOptions: Partial<ServerOptions>,
   redisConnection: Redis;
   authenticateFn: (args: Handshake) => Promise<boolean>;
   clientConnectedFn: (opts: { socket: IOSocket }) => Promise<void>;
@@ -29,16 +27,16 @@ export class SocketIOServerHelper {
   private logger: ApplicationLogger;
 
   private identifier: string;
-  // private useAuth: boolean;
-  private path: string;
+  private server: Server;
+  private serverOptions: Partial<ServerOptions> = {};
+  private redisConnection: Redis;
+
   private authenticateFn: (args: Handshake) => Promise<boolean>;
   private onClientConnected: (opts: { socket: IOSocket }) => Promise<void>;
   private defaultRooms: string[];
 
   private io: IOServer;
   private emitter: Emitter;
-  private server: Server;
-  private redisConnection: Redis;
 
   private clients: Record<
     string,
@@ -56,8 +54,7 @@ export class SocketIOServerHelper {
     this.clients = {};
 
     this.identifier = opts.identifier;
-    // this.useAuth = opts.useAuth;
-    this.path = opts.path ?? '';
+    this.serverOptions = opts?.serverOptions ?? {};
     this.redisConnection = opts.redisConnection;
     this.authenticateFn = opts.authenticateFn;
     this.onClientConnected = opts.clientConnectedFn;
@@ -122,30 +119,7 @@ export class SocketIOServerHelper {
       });
     }
 
-    this.io = new IOServer(this.server, {
-      path: this.path ?? '',
-      cors: {
-        origin: ['https://phatnt.com'],
-        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-        preflightContinue: false,
-        optionsSuccessStatus: 204,
-        credentials: true,
-      },
-      perMessageDeflate: {
-        threshold: 512,
-        zlibDeflateOptions: {
-          chunkSize: 4 * 1024,
-        },
-        zlibInflateOptions: {
-          windowBits: 8,
-          memLevel: 4,
-        },
-        clientNoContextTakeover: true,
-        serverNoContextTakeover: true,
-        serverMaxWindowBits: 10,
-        concurrencyLimit: 20,
-      },
-    });
+    this.io = new IOServer(this.server, this.serverOptions);
 
     // Configure socket.io redis adapter
     const pubConnection = this.redisConnection.duplicate();
@@ -166,7 +140,7 @@ export class SocketIOServerHelper {
       await this.onClientConnect({ socket });
     });
 
-    this.logger.info('[configure] SocketIO Server READY | Path: %s | Address: %j', this.path, this.server?.address());
+    this.logger.info('[configure] SocketIO Server READY | Path: %s | Address: %j', this.serverOptions?.path ?? '', this.server?.address());
     this.logger.debug('[configure] Whether http listening: %s', this.server?.listening);
   }
 

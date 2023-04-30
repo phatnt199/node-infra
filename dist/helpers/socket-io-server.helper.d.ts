@@ -1,15 +1,13 @@
 /// <reference types="node" />
 /// <reference types="node" />
-import { Server as IOServer, Socket as IOSocket } from 'socket.io';
+import { Server as IOServer, ServerOptions, Socket as IOSocket } from 'socket.io';
 import Redis from 'ioredis';
 import { Server } from 'http';
 import { Handshake } from 'socket.io/dist/socket';
 export interface ISocketIOServerOptions {
     identifier: string;
-    useAuth: boolean;
-    path?: string;
-    port?: number;
     server: Server;
+    serverOptions: Partial<ServerOptions>;
     redisConnection: Redis;
     authenticateFn: (args: Handshake) => Promise<boolean>;
     clientConnectedFn: (opts: {
@@ -20,14 +18,14 @@ export interface ISocketIOServerOptions {
 export declare class SocketIOServerHelper {
     private logger;
     private identifier;
-    private path;
+    private server;
+    private serverOptions;
+    private redisConnection;
     private authenticateFn;
     private onClientConnected;
     private defaultRooms;
     private io;
     private emitter;
-    private server;
-    private redisConnection;
     private clients;
     constructor(opts: ISocketIOServerOptions);
     getIOServer(): IOServer<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>;

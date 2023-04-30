@@ -6,11 +6,12 @@ import { SocketIOKeys } from '@/common';
 import { BasicTokenService, JWTTokenService } from '@/services';
 import Redis from 'ioredis';
 import { SocketIOServerHelper } from '@/helpers';
+import { ServerOptions } from 'socket.io';
 
 export class SocketIOComponent extends BaseComponent {
   bindings: Binding[] = [
     Binding.bind(SocketIOKeys.IDENTIFIER).to('SOCKET_IO_SERVER'),
-    Binding.bind(SocketIOKeys.PATH).to('/io'),
+    Binding.bind(SocketIOKeys.SERVER_OPTIONS).to({ path: '/io' }),
     Binding.bind(SocketIOKeys.REDIS_CONNECTION).to(null),
   ];
 
@@ -33,9 +34,9 @@ export class SocketIOComponent extends BaseComponent {
     }
     this.logger.info('[binding] Binding authenticate for application...');
 
-    const redisConnection = this.application.getSync<Redis>(SocketIOKeys.REDIS_CONNECTION);
     const identifier = this.application.getSync<string>(SocketIOKeys.IDENTIFIER);
-    const serverPath = this.application.getSync<string>(SocketIOKeys.PATH);
+    const serverOptions = this.application.getSync<Partial<ServerOptions>>(SocketIOKeys.SERVER_OPTIONS);
+    const redisConnection = this.application.getSync<Redis>(SocketIOKeys.REDIS_CONNECTION);
     const authenticateFn = this.application.getSync<(handshake: { headers: any }) => Promise<boolean>>(
       SocketIOKeys.AUTHENTICATE_HANDLER,
     );
@@ -56,9 +57,8 @@ export class SocketIOComponent extends BaseComponent {
 
     const ioServer = new SocketIOServerHelper({
       identifier: identifier ?? `SOCKET_IO_SERVER`,
-      useAuth: true,
-      path: serverPath,
       server: httpServer.server,
+      serverOptions,
       redisConnection,
       authenticateFn,
       clientConnectedFn,

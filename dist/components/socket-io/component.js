@@ -26,7 +26,7 @@ let SocketIOComponent = class SocketIOComponent extends base_component_1.BaseCom
         this.application = application;
         this.bindings = [
             core_1.Binding.bind(common_1.SocketIOKeys.IDENTIFIER).to('SOCKET_IO_SERVER'),
-            core_1.Binding.bind(common_1.SocketIOKeys.PATH).to('/io'),
+            core_1.Binding.bind(common_1.SocketIOKeys.SERVER_OPTIONS).to({ path: '/io' }),
             core_1.Binding.bind(common_1.SocketIOKeys.REDIS_CONNECTION).to(null),
         ];
         this.binding();
@@ -43,9 +43,9 @@ let SocketIOComponent = class SocketIOComponent extends base_component_1.BaseCom
             });
         }
         this.logger.info('[binding] Binding authenticate for application...');
-        const redisConnection = this.application.getSync(common_1.SocketIOKeys.REDIS_CONNECTION);
         const identifier = this.application.getSync(common_1.SocketIOKeys.IDENTIFIER);
-        const serverPath = this.application.getSync(common_1.SocketIOKeys.PATH);
+        const serverOptions = this.application.getSync(common_1.SocketIOKeys.SERVER_OPTIONS);
+        const redisConnection = this.application.getSync(common_1.SocketIOKeys.REDIS_CONNECTION);
         const authenticateFn = this.application.getSync(common_1.SocketIOKeys.AUTHENTICATE_HANDLER);
         let clientConnectedFn = null;
         if (this.application.isBound(common_1.SocketIOKeys.CLIENT_CONNECTED_HANDLER)) {
@@ -60,9 +60,8 @@ let SocketIOComponent = class SocketIOComponent extends base_component_1.BaseCom
         }
         const ioServer = new helpers_1.SocketIOServerHelper({
             identifier: identifier !== null && identifier !== void 0 ? identifier : `SOCKET_IO_SERVER`,
-            useAuth: true,
-            path: serverPath,
             server: httpServer.server,
+            serverOptions,
             redisConnection,
             authenticateFn,
             clientConnectedFn,

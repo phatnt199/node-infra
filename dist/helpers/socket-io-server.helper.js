@@ -26,11 +26,11 @@ const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 class SocketIOServerHelper {
     constructor(opts) {
         var _a, _b;
+        this.serverOptions = {};
         this.logger = helpers_1.LoggerFactory.getLogger([SocketIOServerHelper.name]);
         this.clients = {};
         this.identifier = opts.identifier;
-        // this.useAuth = opts.useAuth;
-        this.path = (_a = opts.path) !== null && _a !== void 0 ? _a : '';
+        this.serverOptions = (_a = opts === null || opts === void 0 ? void 0 : opts.serverOptions) !== null && _a !== void 0 ? _a : {};
         this.redisConnection = opts.redisConnection;
         this.authenticateFn = opts.authenticateFn;
         this.onClientConnected = opts.clientConnectedFn;
@@ -75,7 +75,7 @@ class SocketIOServerHelper {
     }
     // -------------------------------------------------------------------------------------------------------------
     configure() {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         this.logger.info('[configure][%s] Configuring IO Server', this.identifier);
         if (!this.server) {
             throw (0, utilities_1.getError)({
@@ -83,30 +83,7 @@ class SocketIOServerHelper {
                 message: '[DANGER] Invalid server instance to init Socket.io server!',
             });
         }
-        this.io = new socket_io_1.Server(this.server, {
-            path: (_a = this.path) !== null && _a !== void 0 ? _a : '',
-            cors: {
-                origin: ['https://phatnt.com'],
-                methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-                preflightContinue: false,
-                optionsSuccessStatus: 204,
-                credentials: true,
-            },
-            perMessageDeflate: {
-                threshold: 512,
-                zlibDeflateOptions: {
-                    chunkSize: 4 * 1024,
-                },
-                zlibInflateOptions: {
-                    windowBits: 8,
-                    memLevel: 4,
-                },
-                clientNoContextTakeover: true,
-                serverNoContextTakeover: true,
-                serverMaxWindowBits: 10,
-                concurrencyLimit: 20,
-            },
-        });
+        this.io = new socket_io_1.Server(this.server, this.serverOptions);
         // Configure socket.io redis adapter
         const pubConnection = this.redisConnection.duplicate();
         const subConnection = this.redisConnection.duplicate();
@@ -122,8 +99,8 @@ class SocketIOServerHelper {
         this.io.on(common_1.SocketIOConstants.EVENT_CONNECT, (socket) => __awaiter(this, void 0, void 0, function* () {
             yield this.onClientConnect({ socket });
         }));
-        this.logger.info('[configure] SocketIO Server READY | Path: %s | Address: %j', this.path, (_b = this.server) === null || _b === void 0 ? void 0 : _b.address());
-        this.logger.debug('[configure] Whether http listening: %s', (_c = this.server) === null || _c === void 0 ? void 0 : _c.listening);
+        this.logger.info('[configure] SocketIO Server READY | Path: %s | Address: %j', (_b = (_a = this.serverOptions) === null || _a === void 0 ? void 0 : _a.path) !== null && _b !== void 0 ? _b : '', (_c = this.server) === null || _c === void 0 ? void 0 : _c.address());
+        this.logger.debug('[configure] Whether http listening: %s', (_d = this.server) === null || _d === void 0 ? void 0 : _d.listening);
     }
     // -------------------------------------------------------------------------------------------------------------
     onClientConnect(opts) {
