@@ -86,10 +86,25 @@ class SocketIOServerHelper {
         this.io = new socket_io_1.Server(this.server, {
             path: (_a = this.path) !== null && _a !== void 0 ? _a : '',
             cors: {
-                origin: '*',
-                methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+                origin: ['https://phatnt.com'],
+                methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
                 preflightContinue: false,
                 optionsSuccessStatus: 204,
+                credentials: true,
+            },
+            perMessageDeflate: {
+                threshold: 512,
+                zlibDeflateOptions: {
+                    chunkSize: 4 * 1024,
+                },
+                zlibInflateOptions: {
+                    windowBits: 8,
+                    memLevel: 4,
+                },
+                clientNoContextTakeover: true,
+                serverNoContextTakeover: true,
+                serverMaxWindowBits: 10,
+                concurrencyLimit: 20,
             },
         });
         // Configure socket.io redis adapter

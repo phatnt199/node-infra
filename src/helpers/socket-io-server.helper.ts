@@ -125,10 +125,25 @@ export class SocketIOServerHelper {
     this.io = new IOServer(this.server, {
       path: this.path ?? '',
       cors: {
-        origin: '*',
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        origin: ['https://phatnt.com'],
+        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
         preflightContinue: false,
         optionsSuccessStatus: 204,
+        credentials: true,
+      },
+      perMessageDeflate: {
+        threshold: 512,
+        zlibDeflateOptions: {
+          chunkSize: 4 * 1024,
+        },
+        zlibInflateOptions: {
+          windowBits: 8,
+          memLevel: 4,
+        },
+        clientNoContextTakeover: true,
+        serverNoContextTakeover: true,
+        serverMaxWindowBits: 10,
+        concurrencyLimit: 20,
       },
     });
 
