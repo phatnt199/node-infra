@@ -113,6 +113,10 @@ class SocketIOServerHelper {
             // Validate user identifier
             const { id, handshake } = socket;
             const { headers } = handshake;
+            if (this.clients[id]) {
+                this.logger.info('[onClientConnect] Socket client already existed: %j', { id, headers });
+                return;
+            }
             this.logger.info('[onClientConnect] New connection request with options: %j', { id, headers });
             this.clients[id] = {
                 id,
