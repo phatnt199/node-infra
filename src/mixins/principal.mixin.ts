@@ -1,8 +1,12 @@
-import { NumberIdType } from '@/common/types';
+import { IdType } from '@/common/types';
 import { MixinTarget } from '@loopback/core';
 import { Entity, property } from '@loopback/repository';
 
-export const PrincipalMixin = <E extends MixinTarget<Entity>>(superClass: E, defaultPrincipalType: string) => {
+export const PrincipalMixin = <E extends MixinTarget<Entity>>(
+  superClass: E,
+  defaultPrincipalType: string,
+  principalIdType: 'number' | 'string',
+) => {
   class Mixed extends superClass {
     @property({
       type: 'string',
@@ -15,17 +19,14 @@ export const PrincipalMixin = <E extends MixinTarget<Entity>>(superClass: E, def
     principalType?: string;
 
     @property({
-      type: 'number',
+      type: principalIdType,
       postgresql: {
         columnName: 'principal_id',
-        dataType: 'integer',
+        dataType: principalIdType === 'number' ? 'integer' : 'text',
       },
     })
-    principalId?: NumberIdType;
+    principalId?: IdType;
   }
 
   return Mixed;
 };
-  
-  
-  

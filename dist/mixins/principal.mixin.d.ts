@@ -1,9 +1,10 @@
+import { IdType } from '../common/types';
 import { MixinTarget } from '@loopback/core';
 import { Entity } from '@loopback/repository';
-export declare const PrincipalMixin: <E extends MixinTarget<Entity>>(superClass: E, defaultPrincipalType: string) => {
+export declare const PrincipalMixin: <E extends MixinTarget<Entity>>(superClass: E, defaultPrincipalType: string, principalIdType: 'number' | 'string') => {
     new (...args: any[]): {
         principalType?: string | undefined;
-        principalId?: number | undefined;
+        principalId?: IdType | undefined;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;

@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrincipalMixin = void 0;
 const repository_1 = require("@loopback/repository");
-const PrincipalMixin = (superClass, defaultPrincipalType) => {
+const PrincipalMixin = (superClass, defaultPrincipalType, principalIdType) => {
     class Mixed extends superClass {
     }
     __decorate([
@@ -27,13 +27,13 @@ const PrincipalMixin = (superClass, defaultPrincipalType) => {
     ], Mixed.prototype, "principalType", void 0);
     __decorate([
         (0, repository_1.property)({
-            type: 'number',
+            type: principalIdType,
             postgresql: {
                 columnName: 'principal_id',
-                dataType: 'integer',
+                dataType: principalIdType === 'number' ? 'integer' : 'text',
             },
         }),
-        __metadata("design:type", Number)
+        __metadata("design:type", Object)
     ], Mixed.prototype, "principalId", void 0);
     return Mixed;
 };

@@ -186,7 +186,7 @@ export const definePermissionMapping = () => {
 
 // -----------------------------------------------------------------------
 export const defineUserRole = () => {
-  class UserRole extends PrincipalMixin(BaseTzEntity, 'Role') {
+  class UserRole extends PrincipalMixin(BaseTzEntity, 'Role', 'number') {
     @property({
       type: 'number',
       postgresql: { columnName: 'user_id' },

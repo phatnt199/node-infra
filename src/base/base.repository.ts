@@ -1,4 +1,12 @@
-import { AnyObject, Count, DataObject, DefaultCrudRepository, juggler, Options, Where } from '@loopback/repository';
+import {
+  AnyObject,
+  Count,
+  DataObject,
+  DefaultCrudRepository,
+  juggler,
+  Options,
+  Where,
+} from '@loopback/repository';
 import { EntityClassType, EntityRelation, IdType, ITzRepository } from '@/common/types';
 import { BaseEntity, BaseTextSearchTzEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
 import { getError } from '@/utilities';

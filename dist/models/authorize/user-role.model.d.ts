@@ -2,7 +2,7 @@ declare const BaseUserRole: {
     new (data?: Partial<{
         userId: number;
         principalType?: string | undefined;
-        principalId?: number | undefined;
+        principalId?: import("../..").IdType | undefined;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
@@ -13,7 +13,7 @@ declare const BaseUserRole: {
     }> | undefined): {
         userId: number;
         principalType?: string | undefined;
-        principalId?: number | undefined;
+        principalId?: import("../..").IdType | undefined;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
