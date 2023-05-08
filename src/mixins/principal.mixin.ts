@@ -1,4 +1,4 @@
-import { IdType } from '@/common/types';
+import { NumberIdType } from '@/common/types';
 import { MixinTarget } from '@loopback/core';
 import { Entity, property } from '@loopback/repository';
 
@@ -15,13 +15,13 @@ export const PrincipalMixin = <E extends MixinTarget<Entity>>(superClass: E, def
     principalType?: string;
 
     @property({
-      type: 'string',
+      type: 'number',
       postgresql: {
         columnName: 'principal_id',
-        dataType: 'text',
+        dataType: 'integer',
       },
     })
-    principalId?: IdType;
+    principalId?: NumberIdType;
   }
 
   return Mixed;

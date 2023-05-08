@@ -27,13 +27,13 @@ const PrincipalMixin = (superClass, defaultPrincipalType) => {
     ], Mixed.prototype, "principalType", void 0);
     __decorate([
         (0, repository_1.property)({
-            type: 'string',
+            type: 'number',
             postgresql: {
                 columnName: 'principal_id',
-                dataType: 'text',
+                dataType: 'integer',
             },
         }),
-        __metadata("design:type", Object)
+        __metadata("design:type", Number)
     ], Mixed.prototype, "principalId", void 0);
     return Mixed;
 };
