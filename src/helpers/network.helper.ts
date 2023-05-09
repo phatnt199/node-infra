@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { stringify } from '@/utilities';
+import https from 'https';
 
 const HTTP = 'http';
 const HTTPS = 'https';
@@ -49,6 +50,13 @@ export class NetworkHelper {
       paramsSerializer: { serialize: p => stringify(p) },
       ...configs,
     };
+
+    const protocol = this.getProtocol(url);
+    if (protocol === HTTPS) {
+      props.httpsAgent = new https.Agent({
+        rejectUnauthorized: false,
+      })
+    }
 
     logger?.info('[send] URL: %s | Props: %o', url, props);
     const response = await this.worker.request(props);

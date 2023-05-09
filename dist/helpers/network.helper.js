@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NetworkHelper = void 0;
 const axios_1 = __importDefault(require("axios"));
 const utilities_1 = require("../utilities");
+const https_1 = __importDefault(require("https"));
 const HTTP = 'http';
 const HTTPS = 'https';
 // -------------------------------------------------------------
@@ -53,6 +54,12 @@ class NetworkHelper {
                 params,
                 data,
                 headers, paramsSerializer: { serialize: p => (0, utilities_1.stringify)(p) } }, configs);
+            const protocol = this.getProtocol(url);
+            if (protocol === HTTPS) {
+                props.httpsAgent = new https_1.default.Agent({
+                    rejectUnauthorized: false,
+                });
+            }
             logger === null || logger === void 0 ? void 0 : logger.info('[send] URL: %s | Props: %o', url, props);
             const response = yield this.worker.request(props);
             logger === null || logger === void 0 ? void 0 : logger.info(`[send] Response: %j | Took: %s(ms)`, response === null || response === void 0 ? void 0 : response.data, new Date().getTime() - t);
