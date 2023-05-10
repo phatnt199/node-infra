@@ -9,8 +9,7 @@ export const TzMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
       postgresql: {
         columnName: 'created_at',
         dataType: 'TIMESTAMPTZ',
-      },
-      hidden: true,
+      }
     })
     createdAt: Date;
 
@@ -20,8 +19,7 @@ export const TzMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
       postgresql: {
         columnName: 'modified_at',
         dataType: 'TIMESTAMPTZ',
-      },
-      hidden: true,
+      }
     })
     modifiedAt: Date;
   }
