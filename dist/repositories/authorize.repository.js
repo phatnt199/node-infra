@@ -22,6 +22,7 @@ const models_1 = require("../models");
 const core_1 = require("@loopback/core");
 const utilities_1 = require("../utilities");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
+const repository_1 = require("@loopback/repository");
 const DS_AUTHORIZE = process.env.APP_ENV_APPLICATION_DS_AUTHORIZE;
 if (!DS_AUTHORIZE || (0, isEmpty_1.default)(DS_AUTHORIZE)) {
     throw (0, utilities_1.getError)({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
@@ -36,14 +37,20 @@ class AbstractAuthorizeRepository extends base_repository_1.TzCrudRepository {
 exports.AbstractAuthorizeRepository = AbstractAuthorizeRepository;
 // ----------------------------------------------------------------------------
 let RoleRepository = class RoleRepository extends AbstractAuthorizeRepository {
-    constructor(dataSource) {
+    constructor(dataSource, permissionRepositoryGetter, permissionMappingRepositoryGetter) {
         super(models_1.Role, dataSource);
+        this.permissionRepositoryGetter = permissionRepositoryGetter;
+        this.permissionMappingRepositoryGetter = permissionMappingRepositoryGetter;
+        this.permissions = this.createHasManyThroughRepositoryFactoryFor('permissions', permissionRepositoryGetter, permissionMappingRepositoryGetter);
+        this.registerInclusionResolver('permissions', this.permissions.inclusionResolver);
     }
     bindingRelations() { }
 };
 RoleRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
-    __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
+    __param(1, repository_1.repository.getter('PermissionRepository')),
+    __param(2, repository_1.repository.getter('PermissionMappingRepository')),
+    __metadata("design:paramtypes", [base_datasource_1.BaseDataSource, Function, Function])
 ], RoleRepository);
 exports.RoleRepository = RoleRepository;
 // ----------------------------------------------------------------------------

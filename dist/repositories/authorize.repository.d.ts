@@ -1,14 +1,19 @@
 import { BaseDataSource } from '../base/base.datasource';
 import { BaseTzEntity } from '../base/base.model';
 import { TzCrudRepository, ViewRepository } from '../base/base.repository';
-import { EntityClassType } from '../common';
+import { EntityClassType, IdType } from '../common';
 import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from '../models';
+import { Getter } from '@loopback/core';
+import { HasManyThroughRepositoryFactory } from '@loopback/repository';
 export declare abstract class AbstractAuthorizeRepository<T extends BaseTzEntity> extends TzCrudRepository<T> {
     constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource);
     abstract bindingRelations(): void;
 }
 export declare class RoleRepository extends AbstractAuthorizeRepository<Role> {
-    constructor(dataSource: BaseDataSource);
+    protected permissionRepositoryGetter: Getter<PermissionRepository>;
+    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository>;
+    readonly permissions: HasManyThroughRepositoryFactory<Permission, IdType, PermissionMapping, IdType>;
+    constructor(dataSource: BaseDataSource, permissionRepositoryGetter: Getter<PermissionRepository>, permissionMappingRepositoryGetter: Getter<PermissionMappingRepository>);
     bindingRelations(): void;
 }
 export declare class PermissionRepository extends AbstractAuthorizeRepository<Permission> {

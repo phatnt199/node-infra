@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Role = void 0;
 const repository_1 = require("@loopback/repository");
+const _1 = require(".");
 const defs_1 = require("./defs");
 const BaseRole = (0, defs_1.defineRole)();
 // ---------------------------------------------------------------
@@ -19,6 +20,16 @@ let Role = class Role extends BaseRole {
         super(data);
     }
 };
+__decorate([
+    (0, repository_1.hasMany)(() => _1.Permission, {
+        through: {
+            model: () => _1.PermissionMapping,
+            keyFrom: 'roleId',
+            keyTo: 'permissionId',
+        },
+    }),
+    __metadata("design:type", Array)
+], Role.prototype, "permissions", void 0);
 Role = __decorate([
     (0, repository_1.model)({
         settings: {

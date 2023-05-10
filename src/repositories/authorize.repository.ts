@@ -1,11 +1,12 @@
 import { BaseDataSource } from '@/base/base.datasource';
 import { BaseTzEntity } from '@/base/base.model';
 import { TzCrudRepository, ViewRepository } from '@/base/base.repository';
-import { EntityClassType } from '@/common';
+import { EntityClassType, IdType } from '@/common';
 import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from '@/models';
-import { inject } from '@loopback/core';
+import { Getter, inject } from '@loopback/core';
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
+import { HasManyThroughRepositoryFactory, repository } from '@loopback/repository';
 
 const DS_AUTHORIZE = process.env.APP_ENV_APPLICATION_DS_AUTHORIZE;
 if (!DS_AUTHORIZE || isEmpty(DS_AUTHORIZE)) {
@@ -25,11 +26,22 @@ export abstract class AbstractAuthorizeRepository<T extends BaseTzEntity> extend
 
 // ----------------------------------------------------------------------------
 export class RoleRepository extends AbstractAuthorizeRepository<Role> {
-  constructor(@inject(`datasources.${DS_AUTHORIZE}`) dataSource: BaseDataSource) {
+  public readonly permissions: HasManyThroughRepositoryFactory<Permission, IdType, PermissionMapping, IdType>;
+
+  constructor(
+    @inject(`datasources.${DS_AUTHORIZE}`) dataSource: BaseDataSource,
+    @repository.getter('PermissionRepository')
+    protected permissionRepositoryGetter: Getter<PermissionRepository>,
+    @repository.getter('PermissionMappingRepository')
+    protected permissionMappingRepositoryGetter: Getter<PermissionMappingRepository>,
+  ) {
     super(Role, dataSource);
+
+    this.permissions = this.createHasManyThroughRepositoryFactoryFor('permissions', permissionRepositoryGetter, permissionMappingRepositoryGetter);
+    this.registerInclusionResolver('permissions', this.permissions.inclusionResolver);
   }
 
-  bindingRelations(): void {}
+  bindingRelations(): void { }
 }
 
 // ----------------------------------------------------------------------------
@@ -38,7 +50,7 @@ export class PermissionRepository extends AbstractAuthorizeRepository<Permission
     super(Permission, dataSource);
   }
 
-  bindingRelations(): void {}
+  bindingRelations(): void { }
 }
 
 // ----------------------------------------------------------------------------
@@ -47,7 +59,7 @@ export class PermissionMappingRepository extends AbstractAuthorizeRepository<Per
     super(PermissionMapping, dataSource);
   }
 
-  bindingRelations(): void {}
+  bindingRelations(): void { }
 }
 
 // ----------------------------------------------------------------------------
@@ -56,7 +68,7 @@ export class UserRoleRepository extends AbstractAuthorizeRepository<UserRole> {
     super(UserRole, dataSource);
   }
 
-  bindingRelations(): void {}
+  bindingRelations(): void { }
 }
 
 // ----------------------------------------------------------------------------

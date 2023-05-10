@@ -1,3 +1,4 @@
+import { Permission } from '.';
 declare const BaseRole: {
     new (data?: Partial<{
         identifier: string;
@@ -33,6 +34,7 @@ declare const BaseRole: {
     definition: import("@loopback/repository").ModelDefinition;
 };
 export declare class Role extends BaseRole {
+    permissions: Permission[];
     constructor(data?: Partial<Role>);
 }
 export {};
