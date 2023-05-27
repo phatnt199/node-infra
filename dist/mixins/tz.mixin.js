@@ -21,7 +21,7 @@ const TzMixin = (superClass) => {
             postgresql: {
                 columnName: 'created_at',
                 dataType: 'TIMESTAMPTZ',
-            }
+            },
         }),
         __metadata("design:type", Date)
     ], Mixed.prototype, "createdAt", void 0);
@@ -32,7 +32,7 @@ const TzMixin = (superClass) => {
             postgresql: {
                 columnName: 'modified_at',
                 dataType: 'TIMESTAMPTZ',
-            }
+            },
         }),
         __metadata("design:type", Date)
     ], Mixed.prototype, "modifiedAt", void 0);
