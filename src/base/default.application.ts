@@ -1,6 +1,6 @@
 import { BindingKeys, EnvironmentKeys, EnvironmentValidationResult, MigrationKeys } from '@/common';
 import { MigrationComponent } from '@/components';
-import { PostgresDataSource } from '@/datasources';
+import { KvMemDataSource, PostgresDataSource } from '@/datasources';
 import { applicationEnvironment } from '@/helpers';
 import { ApplicationConfig } from '@loopback/core';
 import { RestBindings } from '@loopback/rest';
@@ -58,6 +58,7 @@ export abstract class DefaultRestApplication extends BaseApplication {
 
     // Configuring datasources
     this.dataSource(PostgresDataSource);
+    this.dataSource(KvMemDataSource);
 
     // Migration
     this.configureMigration();
