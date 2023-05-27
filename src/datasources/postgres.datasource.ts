@@ -1,6 +1,6 @@
 import { BaseDataSource } from '@/base/base.datasource';
 import { getError } from '@/utilities';
-import { inject } from '@loopback/core';
+import { inject, LifeCycleObserver, lifeCycleObserver } from '@loopback/core';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
@@ -35,7 +35,8 @@ for (const key in databaseConfigs) {
   }
 }
 
-export class PostgresDataSource extends BaseDataSource {
+@lifeCycleObserver('datasource')
+export class PostgresDataSource extends BaseDataSource implements LifeCycleObserver {
   static dataSourceName = databaseConfigs.name;
   static readonly defaultConfig = databaseConfigs;
 

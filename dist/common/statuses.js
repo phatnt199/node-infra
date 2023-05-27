@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoleStatuses = exports.UserStatuses = exports.CommonStatuses = exports.MigrationStatuses = exports.Statuses = void 0;
 class Statuses {
 }
-exports.Statuses = Statuses;
 Statuses.UNKNOWN = '000_UNKNOWN';
 Statuses.ACTIVATED = '100_ACTIVATED';
 Statuses.DEACTIVATED = '101_DEACTIVATED';
@@ -14,18 +13,18 @@ Statuses.ARCHIVE = '104_ARCHIVE';
 Statuses.SUCCESS = '105_SUCCESS';
 Statuses.FAIL = '106_FAIL';
 Statuses.SENT = '107_SENT';
+exports.Statuses = Statuses;
 class MigrationStatuses {
 }
-exports.MigrationStatuses = MigrationStatuses;
 MigrationStatuses.UNKNOWN = Statuses.UNKNOWN;
 MigrationStatuses.SUCCESS = Statuses.SUCCESS;
 MigrationStatuses.FAIL = Statuses.FAIL;
+exports.MigrationStatuses = MigrationStatuses;
 class CommonStatuses {
     static isValid(scheme) {
         return this.SCHEME_SET.has(scheme);
     }
 }
-exports.CommonStatuses = CommonStatuses;
 _a = CommonStatuses;
 CommonStatuses.UNKNOWN = Statuses.UNKNOWN;
 CommonStatuses.ACTIVATED = Statuses.ACTIVATED;
@@ -33,6 +32,7 @@ CommonStatuses.DEACTIVATED = Statuses.DEACTIVATED;
 CommonStatuses.BLOCKED = Statuses.BLOCKED;
 CommonStatuses.ARCHIVE = Statuses.ARCHIVE;
 CommonStatuses.SCHEME_SET = new Set([_a.UNKNOWN, _a.ACTIVATED, _a.DEACTIVATED, _a.BLOCKED, _a.ARCHIVE]);
+exports.CommonStatuses = CommonStatuses;
 class UserStatuses extends CommonStatuses {
 }
 exports.UserStatuses = UserStatuses;

@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnvironmentKeys = void 0;
 class EnvironmentKeys {
 }
-exports.EnvironmentKeys = EnvironmentKeys;
 EnvironmentKeys.APP_ENV_APPLICATION_NAME = 'APP_ENV_APPLICATION_NAME';
 EnvironmentKeys.APP_ENV_APPLICATION_TIMEZONE = 'APP_ENV_APPLICATION_TIMEZONE';
 EnvironmentKeys.APP_ENV_APPLICATION_SECRET = 'APP_ENV_APPLICATION_SECRET';
@@ -20,4 +19,5 @@ EnvironmentKeys.APP_ENV_POSTGRES_PORT = 'APP_ENV_POSTGRES_PORT';
 EnvironmentKeys.APP_ENV_POSTGRES_USERNAME = 'APP_ENV_POSTGRES_USERNAME';
 EnvironmentKeys.APP_ENV_POSTGRES_PASSWORD = 'APP_ENV_POSTGRES_PASSWORD';
 EnvironmentKeys.APP_ENV_POSTGRES_DATABASE = 'APP_ENV_POSTGRES_DATABASE';
+exports.EnvironmentKeys = EnvironmentKeys;
 //# sourceMappingURL=environments.js.map
