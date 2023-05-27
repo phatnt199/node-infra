@@ -1,6 +1,5 @@
 import { BaseDataSource } from '../base/base.datasource';
-import { LifeCycleObserver } from '@loopback/core';
-export declare class PostgresDataSource extends BaseDataSource implements LifeCycleObserver {
+export declare class PostgresDataSource extends BaseDataSource {
     static dataSourceName: string | undefined;
     static readonly defaultConfig: {
         connector: string;

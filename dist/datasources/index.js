@@ -15,4 +15,5 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./postgres.datasource"), exports);
+__exportStar(require("./kvmem.datasource"), exports);
 //# sourceMappingURL=index.js.map
