@@ -16,7 +16,7 @@ export interface IDataSource {
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export type EntityClassType<T extends Entity> = typeof Entity & { prototype: T & { id: IdType } };
+export type EntityClassType<T extends Entity> = typeof Entity & { prototype: T & { id?: IdType } };
 export type EntityRelation = {};
 export type NumberIdType = number;
 export type StringIdType = string;
