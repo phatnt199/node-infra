@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TextSearchTzCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.AbstractTzRepository = void 0;
+exports.TextSearchTzCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.KVRepository = exports.AbstractKVRepository = exports.AbstractTzRepository = void 0;
 const repository_1 = require("@loopback/repository");
 const utilities_1 = require("../utilities");
 const get_1 = __importDefault(require("lodash/get"));
@@ -23,6 +23,20 @@ class AbstractTzRepository extends repository_1.DefaultCrudRepository {
     }
 }
 exports.AbstractTzRepository = AbstractTzRepository;
+// ----------------------------------------------------------------------------------------------------------------------------------------
+class AbstractKVRepository extends repository_1.DefaultKeyValueRepository {
+    constructor(entityClass, dataSource) {
+        super(entityClass, dataSource);
+    }
+}
+exports.AbstractKVRepository = AbstractKVRepository;
+// ----------------------------------------------------------------------------------------------------------------------------------------
+class KVRepository extends AbstractKVRepository {
+    constructor(entityClass, dataSource) {
+        super(entityClass, dataSource);
+    }
+}
+exports.KVRepository = KVRepository;
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class ViewRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource) {

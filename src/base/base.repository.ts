@@ -3,12 +3,13 @@ import {
   Count,
   DataObject,
   DefaultCrudRepository,
+  DefaultKeyValueRepository,
   juggler,
   Options,
   Where,
 } from '@loopback/repository';
 import { EntityClassType, EntityRelation, IdType, ITzRepository } from '@/common/types';
-import { BaseEntity, BaseTextSearchTzEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
+import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
 import { getError } from '@/utilities';
 import get from 'lodash/get';
 
@@ -29,6 +30,20 @@ export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends Ent
   abstract createWithReturn(data: DataObject<E>, options?: any): Promise<E>;
   abstract updateWithReturn(id: IdType, data: DataObject<E>, options?: any): Promise<E>;
   abstract upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export abstract class AbstractKVRepository<E extends BaseKVEntity> extends DefaultKeyValueRepository<E> {
+  constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
+    super(entityClass, dataSource);
+  }
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export abstract class KVRepository<E extends BaseKVEntity> extends AbstractKVRepository<E> {
+  constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
+    super(entityClass, dataSource);
+  }
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------

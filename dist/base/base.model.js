@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BaseTextSearchTzEntity = exports.BaseDataTypeTzEntity = exports.BaseUserAuditTzEntity = exports.BaseTzEntity = exports.BaseStringIdEntity = exports.BaseNumberIdEntity = exports.BaseIdEntity = exports.BaseEntity = void 0;
+exports.BaseTextSearchTzEntity = exports.BaseDataTypeTzEntity = exports.BaseUserAuditTzEntity = exports.BaseTzEntity = exports.BaseKVEntity = exports.BaseStringIdEntity = exports.BaseNumberIdEntity = exports.BaseIdEntity = exports.BaseEntity = void 0;
 const repository_1 = require("@loopback/repository");
 const mixins_1 = require("../mixins");
 // ---------------------------------------------------------------------
@@ -40,6 +40,14 @@ __decorate([
     __metadata("design:type", String)
 ], BaseStringIdEntity.prototype, "id", void 0);
 exports.BaseStringIdEntity = BaseStringIdEntity;
+// ---------------------------------------------------------------------
+class BaseKVEntity extends BaseEntity {
+}
+__decorate([
+    (0, repository_1.property)({ type: 'object' }),
+    __metadata("design:type", Object)
+], BaseKVEntity.prototype, "payload", void 0);
+exports.BaseKVEntity = BaseKVEntity;
 // ---------------------------------------------------------------------
 class BaseTzEntity extends (0, mixins_1.TzMixin)(BaseIdEntity) {
 }

@@ -1,6 +1,6 @@
-import { AnyObject, Count, DataObject, DefaultCrudRepository, juggler, Options, Where } from '@loopback/repository';
+import { AnyObject, Count, DataObject, DefaultCrudRepository, DefaultKeyValueRepository, juggler, Options, Where } from '@loopback/repository';
 import { EntityClassType, EntityRelation, IdType, ITzRepository } from '../common/types';
-import { BaseEntity, BaseTextSearchTzEntity, BaseTzEntity } from './base.model';
+import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity } from './base.model';
 export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation> extends DefaultCrudRepository<E, IdType, R> implements ITzRepository<E> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
     abstract mixTimestamp(entity: DataObject<E>, options?: {
@@ -14,6 +14,12 @@ export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R ext
     abstract createWithReturn(data: DataObject<E>, options?: any): Promise<E>;
     abstract updateWithReturn(id: IdType, data: DataObject<E>, options?: any): Promise<E>;
     abstract upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
+}
+export declare abstract class AbstractKVRepository<E extends BaseKVEntity> extends DefaultKeyValueRepository<E> {
+    constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
+}
+export declare abstract class KVRepository<E extends BaseKVEntity> extends AbstractKVRepository<E> {
+    constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
 }
 export declare abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRepository<E, IdType, any> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);

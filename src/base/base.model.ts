@@ -23,6 +23,12 @@ export class BaseStringIdEntity extends BaseEntity {
 }
 
 // ---------------------------------------------------------------------
+export class BaseKVEntity extends BaseEntity {
+  @property({ type: 'object' })
+  payload: any;
+}
+
+// ---------------------------------------------------------------------
 export class BaseTzEntity extends TzMixin(BaseIdEntity) {}
 
 // ---------------------------------------------------------------------

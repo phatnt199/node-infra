@@ -10,6 +10,9 @@ export declare class BaseNumberIdEntity extends BaseEntity {
 export declare class BaseStringIdEntity extends BaseEntity {
     id: string;
 }
+export declare class BaseKVEntity extends BaseEntity {
+    payload: any;
+}
 declare const BaseTzEntity_base: {
     new (...args: any[]): {
         createdAt: Date;

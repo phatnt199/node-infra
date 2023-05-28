@@ -2,7 +2,7 @@ import { ControllerClass } from '@loopback/core';
 import { CrudRestControllerOptions } from '@loopback/rest-crud';
 import { Count, Filter, FilterExcludingWhere, Where } from '@loopback/repository';
 import { SchemaObject } from '@loopback/rest';
-import { BaseIdEntity, BaseTzEntity, AbstractTzRepository } from './';
+import { BaseIdEntity, BaseTzEntity, AbstractTzRepository, BaseKVEntity, AbstractKVRepository } from './';
 import { EntityRelation, IController, IdType, NullableType, TRelationType } from '../common/types';
 import { ApplicationLogger } from '../helpers';
 import { Class } from '@loopback/service-proxy';
@@ -28,6 +28,22 @@ export interface CrudControllerOptions<E extends BaseIdEntity> {
         defaultLimit?: number;
     };
 }
+export interface KVControllerOptions<E extends BaseKVEntity> {
+    entity: typeof BaseKVEntity & {
+        prototype: E;
+    };
+    repository: {
+        name: string;
+    };
+    controller: CrudRestControllerOptions;
+}
+export declare const defineKVController: <E extends BaseKVEntity>(opts: KVControllerOptions<E>) => {
+    new (repository: AbstractKVRepository<E>): {
+        repository: AbstractKVRepository<E>;
+        get(key: string): Promise<E>;
+        getKeys(match: string): AsyncIterable<string>;
+    };
+};
 export declare const defineCrudController: <E extends BaseTzEntity>(opts: CrudControllerOptions<E>) => {
     new (repository: AbstractTzRepository<E, EntityRelation>): {
         repository: AbstractTzRepository<E, EntityRelation>;
