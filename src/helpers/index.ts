@@ -8,4 +8,5 @@ export * from './logger.helper';
 export * from './network-tcp-client.helper';
 export * from './network-udp-client.helper';
 export * from './redis.helper';
+export * from './cron.helper';
 export * from './socket-io-server.helper';
