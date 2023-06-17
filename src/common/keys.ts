@@ -50,3 +50,9 @@ export class MigrationKeys {
   static readonly MIGRATION_REPOSITORY = '@app/migration/component/repositories/migration';
   static readonly MIGRATION_DATASOURCE = '@app/migration/datasource';
 }
+
+// -----------------------------------------------------------------------------
+export class MinioKeys {
+  static readonly MINIO_INSTANCE = '@app/minio/instance';
+  static readonly CONNECTION_OPTIONS = '@app/minio/connection-options';
+}

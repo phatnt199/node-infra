@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { Client, ClientOptions } from 'minio';
-interface IUploadFile {
+export interface IUploadFile {
     originalname: string;
     mimetype: string;
     buffer: Buffer;
@@ -31,11 +31,7 @@ export declare class MinioHelper {
     upload(opts: {
         bucket: string;
         files: Array<IUploadFile>;
-    }): Promise<{
-        bucket: string;
-        fileName: string;
-        link: string;
-    }[]>;
+    }): Promise<unknown[]>;
     getFile(opts: {
         bucket: string;
         name: string;
@@ -50,4 +46,3 @@ export declare class MinioHelper {
         name: string;
     }): void;
 }
-export {};

@@ -18,7 +18,6 @@ const base_component_1 = require("../../base/base.component");
 const utilities_1 = require("../../utilities");
 const core_1 = require("@loopback/core");
 const common_1 = require("../../common");
-const services_1 = require("../../services");
 const helpers_1 = require("../../helpers");
 let SocketIOComponent = class SocketIOComponent extends base_component_1.BaseComponent {
     constructor(application) {
@@ -30,10 +29,6 @@ let SocketIOComponent = class SocketIOComponent extends base_component_1.BaseCom
             core_1.Binding.bind(common_1.SocketIOKeys.REDIS_CONNECTION).to(null),
         ];
         this.binding();
-    }
-    defineServices() {
-        this.application.service(services_1.BasicTokenService);
-        this.application.service(services_1.JWTTokenService);
     }
     binding() {
         if (!this.application) {

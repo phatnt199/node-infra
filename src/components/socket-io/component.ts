@@ -3,7 +3,6 @@ import { BaseComponent } from '@/base/base.component';
 import { getError } from '@/utilities';
 import { Binding, CoreBindings, inject } from '@loopback/core';
 import { SocketIOKeys } from '@/common';
-import { BasicTokenService, JWTTokenService } from '@/services';
 import Redis from 'ioredis';
 import { SocketIOServerHelper } from '@/helpers';
 import { ServerOptions } from 'socket.io';
@@ -18,11 +17,6 @@ export class SocketIOComponent extends BaseComponent {
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
     super({ scope: SocketIOComponent.name });
     this.binding();
-  }
-
-  defineServices() {
-    this.application.service(BasicTokenService);
-    this.application.service(JWTTokenService);
   }
 
   binding() {

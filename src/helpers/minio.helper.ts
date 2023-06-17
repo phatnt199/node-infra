@@ -5,7 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import { Client, ClientOptions } from 'minio';
 
 // ---------------------------------------------------------------------
-interface IUploadFile {
+export interface IUploadFile {
   originalname: string;
   mimetype: string;
   buffer: Buffer;
@@ -96,7 +96,6 @@ export class MinioHelper {
 
   // ---------------------------------------------------------------------
   async upload(opts: { bucket: string; files: Array<IUploadFile> }) {
-    const rs = [];
     const { bucket, files } = opts;
 
     const isExists = await this.isBucketExists({ name: bucket });
@@ -108,30 +107,41 @@ export class MinioHelper {
       return [];
     }
 
-    for (const file of files) {
-      const { originalname: originalName, mimetype: mimeType, buffer, size, encoding } = file;
+    const rs = await Promise.all(
+      files?.map(file => {
+        const { originalname: originalName, mimetype: mimeType, buffer, size, encoding } = file;
 
-      if (isEmpty(originalName)) {
-        this.logger.error('[upload] Invalid original name!');
-        continue;
-      }
-      const normalizeName = originalName.toLowerCase().replace(/ /g, '_');
-      const t = new Date().getTime();
-      rs.push({
-        bucket,
-        fileName: normalizeName,
-        link: `/static/${bucket}/${normalizeName}`,
-      });
-      const uploadInfo = await this.client.putObject(bucket, normalizeName, buffer, size, {
-        originalName,
-        normalizeName,
-        size,
-        encoding,
-        mimeType,
-      });
+        if (!originalName || isEmpty(originalName)) {
+          this.logger.error('[upload] Invalid original name!');
+          return;
+        }
 
-      this.logger.info('[upload] Uploaded: %j | Took: %s (ms)', uploadInfo, new Date().getTime() - t);
-    }
+        const normalizeName = originalName.toLowerCase().replace(/ /g, '_');
+        return new Promise((resolve, reject) => {
+          const t = new Date().getTime();
+          this.client
+            .putObject(bucket, normalizeName, buffer, size, {
+              originalName,
+              normalizeName,
+              size,
+              encoding,
+              mimeType,
+            })
+            .then(uploadInfo => {
+              this.logger.info('[upload] Uploaded: %j | Took: %s (ms)', uploadInfo, new Date().getTime() - t);
+
+              resolve({
+                bucket,
+                fileName: normalizeName,
+                link: `/static-assets/buckets/${bucket}/${normalizeName}`,
+              });
+            })
+            .catch(error => {
+              reject(error);
+            });
+        });
+      }),
+    );
 
     return rs;
   }

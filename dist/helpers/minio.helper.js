@@ -95,7 +95,6 @@ class MinioHelper {
     // ---------------------------------------------------------------------
     upload(opts) {
         return __awaiter(this, void 0, void 0, function* () {
-            const rs = [];
             const { bucket, files } = opts;
             const isExists = yield this.isBucketExists({ name: bucket });
             if (!isExists) {
@@ -104,28 +103,36 @@ class MinioHelper {
             if (!(files === null || files === void 0 ? void 0 : files.length)) {
                 return [];
             }
-            for (const file of files) {
+            const rs = yield Promise.all(files === null || files === void 0 ? void 0 : files.map(file => {
                 const { originalname: originalName, mimetype: mimeType, buffer, size, encoding } = file;
-                if ((0, isEmpty_1.default)(originalName)) {
+                if (!originalName || (0, isEmpty_1.default)(originalName)) {
                     this.logger.error('[upload] Invalid original name!');
-                    continue;
+                    return;
                 }
                 const normalizeName = originalName.toLowerCase().replace(/ /g, '_');
-                const t = new Date().getTime();
-                rs.push({
-                    bucket,
-                    fileName: normalizeName,
-                    link: `/static/${bucket}/${normalizeName}`,
+                return new Promise((resolve, reject) => {
+                    const t = new Date().getTime();
+                    this.client
+                        .putObject(bucket, normalizeName, buffer, size, {
+                        originalName,
+                        normalizeName,
+                        size,
+                        encoding,
+                        mimeType,
+                    })
+                        .then(uploadInfo => {
+                        this.logger.info('[upload] Uploaded: %j | Took: %s (ms)', uploadInfo, new Date().getTime() - t);
+                        resolve({
+                            bucket,
+                            fileName: normalizeName,
+                            link: `/static-assets/buckets/${bucket}/${normalizeName}`,
+                        });
+                    })
+                        .catch(error => {
+                        reject(error);
+                    });
                 });
-                const uploadInfo = yield this.client.putObject(bucket, normalizeName, buffer, size, {
-                    originalName,
-                    normalizeName,
-                    size,
-                    encoding,
-                    mimeType,
-                });
-                this.logger.info('[upload] Uploaded: %j | Took: %s (ms)', uploadInfo, new Date().getTime() - t);
-            }
+            }));
             return rs;
         });
     }
