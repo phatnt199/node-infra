@@ -68,6 +68,7 @@ export interface IError<N extends number = number> extends Error {
 }
 export type MigrationProcess = {
     name: string;
+    cleanFn?: Function;
     fn: Function;
     options?: {
         alwaysRun?: boolean;
