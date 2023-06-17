@@ -10,3 +10,4 @@ export * from './network-udp-client.helper';
 export * from './redis.helper';
 export * from './cron.helper';
 export * from './socket-io-server.helper';
+export * from './minio.helper';

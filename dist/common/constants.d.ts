@@ -82,3 +82,9 @@ export declare class SocketIOConstants {
     static readonly ROOM_DEFAULT = "io-default";
     static readonly ROOM_NOTIFICATION = "io-notification";
 }
+export declare class MimeTypes {
+    static readonly UNKNOWN = "unknown";
+    static readonly IMAGE = "image";
+    static readonly VIDEO = "video";
+    static readonly TEXT = "text";
+}

@@ -28,16 +28,35 @@ export declare class RedisHelper {
             log: boolean;
         };
     }): Promise<void>;
+    mset(opts: {
+        payload: Array<{
+            key: string;
+            value: any;
+        }>;
+        options?: {
+            log: boolean;
+        };
+    }): Promise<void>;
     get(opts: {
         key: string;
         transform?: (input: string) => any;
     }): Promise<any>;
+    mget(opts: {
+        keys: Array<string>;
+        transform?: (input: string) => any;
+    }): Promise<any[] | null>;
     getString(opts: {
         key: string;
     }): Promise<any>;
+    getStrings(opts: {
+        keys: Array<string>;
+    }): Promise<any[] | null>;
     getObject(opts: {
         key: string;
     }): Promise<any>;
+    getObjects(opts: {
+        keys: Array<string>;
+    }): Promise<any[] | null>;
     keys(opts: {
         key: string;
     }): Promise<string[]>;

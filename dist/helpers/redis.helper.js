@@ -61,6 +61,24 @@ class RedisHelper {
             this.logger.info(`[set] Set key: ${key} | value: ${serialized}`);
         });
     }
+    mset(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.client) {
+                this.logger.info('[set] No valid Redis connection!');
+                return;
+            }
+            const { payload, options } = opts;
+            const serialized = payload === null || payload === void 0 ? void 0 : payload.reduce((current, el) => {
+                const { key, value } = el;
+                return Object.assign(Object.assign({}, current), { [key]: JSON.stringify(value) });
+            }, {});
+            yield this.client.mset(serialized);
+            if (!(options === null || options === void 0 ? void 0 : options.log)) {
+                return;
+            }
+            this.logger.info('[mset] Payload: %j', serialized);
+        });
+    }
     get(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { key, transform } = opts;
@@ -70,9 +88,23 @@ class RedisHelper {
             }
             const value = yield this.client.get(key);
             if (!transform || !value) {
-                return value;
+                return null;
             }
             return transform(value);
+        });
+    }
+    mget(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { keys, transform } = opts;
+            if (!this.client) {
+                this.logger.info('[get] No valid Redis connection!');
+                return null;
+            }
+            const values = yield this.client.mget(keys);
+            if (!transform || !(values === null || values === void 0 ? void 0 : values.length)) {
+                return null;
+            }
+            return values === null || values === void 0 ? void 0 : values.map(el => (el ? transform(el) : el));
         });
     }
     getString(opts) {
@@ -81,9 +113,21 @@ class RedisHelper {
             return rs;
         });
     }
+    getStrings(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rs = yield this.mget(opts);
+            return rs;
+        });
+    }
     getObject(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const rs = yield this.get(Object.assign(Object.assign({}, opts), { transform: (cached) => JSON.parse(cached) }));
+            return rs;
+        });
+    }
+    getObjects(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rs = yield this.mget(Object.assign(Object.assign({}, opts), { transform: (cached) => JSON.parse(cached) }));
             return rs;
         });
     }

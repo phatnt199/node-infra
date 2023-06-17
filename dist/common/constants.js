@@ -2,7 +2,7 @@
 var _a;
 var _b, _c, _d;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EnforcerDefinitions = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.FixedUserRoles = exports.ApplicationRoles = exports.Formatters = exports.Authentication = exports.App = void 0;
+exports.MimeTypes = exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EnforcerDefinitions = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.FixedUserRoles = exports.ApplicationRoles = exports.Formatters = exports.Authentication = exports.App = void 0;
 class App {
 }
 exports.App = App;
@@ -109,4 +109,11 @@ SocketIOConstants.EVENT_AUTHENTICATED = 'authenticated';
 SocketIOConstants.EVENT_UNAUTHENTICATE = 'unauthenticated';
 SocketIOConstants.ROOM_DEFAULT = 'io-default';
 SocketIOConstants.ROOM_NOTIFICATION = 'io-notification';
+class MimeTypes {
+}
+exports.MimeTypes = MimeTypes;
+MimeTypes.UNKNOWN = 'unknown';
+MimeTypes.IMAGE = 'image';
+MimeTypes.VIDEO = 'video';
+MimeTypes.TEXT = 'text';
 //# sourceMappingURL=constants.js.map

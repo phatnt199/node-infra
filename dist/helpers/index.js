@@ -26,4 +26,5 @@ __exportStar(require("./network-udp-client.helper"), exports);
 __exportStar(require("./redis.helper"), exports);
 __exportStar(require("./cron.helper"), exports);
 __exportStar(require("./socket-io-server.helper"), exports);
+__exportStar(require("./minio.helper"), exports);
 //# sourceMappingURL=index.js.map
