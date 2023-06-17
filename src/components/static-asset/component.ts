@@ -1,11 +1,11 @@
 import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
+import { MinioKeys } from '@/common';
+import { MinioHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import { Binding, CoreBindings, inject } from '@loopback/core';
-import { MinioKeys } from '@/common';
 import { ClientOptions } from 'minio';
-import { MinioHelper } from '@/helpers';
-import { StaticAssetController } from './static-asset.controller';
+import { StaticAssetController } from './controller';
 
 export class StaticAssetComponent extends BaseComponent {
   bindings: Binding[] = [Binding.bind(MinioKeys.CONNECTION_OPTIONS).to(null)];

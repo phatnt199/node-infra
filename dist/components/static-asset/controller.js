@@ -182,4 +182,4 @@ StaticAssetController = __decorate([
     __metadata("design:paramtypes", [base_1.BaseApplication, Object, Object])
 ], StaticAssetController);
 exports.StaticAssetController = StaticAssetController;
-//# sourceMappingURL=static-asset.controller.js.map
+//# sourceMappingURL=controller.js.map

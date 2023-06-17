@@ -15,11 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StaticAssetComponent = void 0;
 const base_application_1 = require("../../base/base.application");
 const base_component_1 = require("../../base/base.component");
-const utilities_1 = require("../../utilities");
-const core_1 = require("@loopback/core");
 const common_1 = require("../../common");
 const helpers_1 = require("../../helpers");
-const static_asset_controller_1 = require("./static-asset.controller");
+const utilities_1 = require("../../utilities");
+const core_1 = require("@loopback/core");
+const controller_1 = require("./controller");
 let StaticAssetComponent = class StaticAssetComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: StaticAssetComponent.name });
@@ -28,7 +28,7 @@ let StaticAssetComponent = class StaticAssetComponent extends base_component_1.B
         this.binding();
     }
     defineControllers() {
-        this.application.controller(static_asset_controller_1.StaticAssetController);
+        this.application.controller(controller_1.StaticAssetController);
     }
     binding() {
         if (!this.application) {
