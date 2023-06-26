@@ -2,15 +2,15 @@ import { BindingKeys, EnvironmentKeys, EnvironmentValidationResult, MigrationKey
 import { MigrationComponent } from '@/components';
 import { KvMemDataSource, PostgresDataSource } from '@/datasources';
 import { applicationEnvironment } from '@/helpers';
-import { ApplicationConfig } from '@loopback/core';
-import { RestBindings } from '@loopback/rest';
+import { ApplicationConfig, Constructor } from '@loopback/core';
+import { RestBindings, SequenceHandler } from '@loopback/rest';
 import isEmpty from 'lodash/isEmpty';
 import { BaseApplication } from './base.application';
 
 export abstract class DefaultRestApplication extends BaseApplication {
   protected applicationRoles: string[] = [];
 
-  constructor(opts: ApplicationConfig) {
+  constructor(opts: { serverOptions: ApplicationConfig; sequence?: Constructor<SequenceHandler> }) {
     super(opts);
   }
 

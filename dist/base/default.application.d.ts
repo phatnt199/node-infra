@@ -1,9 +1,13 @@
 import { EnvironmentValidationResult } from '../common';
-import { ApplicationConfig } from '@loopback/core';
+import { ApplicationConfig, Constructor } from '@loopback/core';
+import { SequenceHandler } from '@loopback/rest';
 import { BaseApplication } from './base.application';
 export declare abstract class DefaultRestApplication extends BaseApplication {
     protected applicationRoles: string[];
-    constructor(opts: ApplicationConfig);
+    constructor(opts: {
+        serverOptions: ApplicationConfig;
+        sequence?: Constructor<SequenceHandler>;
+    });
     getApplicationRoles(): string[];
     validateEnv(): EnvironmentValidationResult;
     declareModels(): Set<string>;

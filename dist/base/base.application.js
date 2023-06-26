@@ -10,12 +10,13 @@ const helpers_1 = require("../helpers");
 const base_sequence_1 = require("./base.sequence");
 const __1 = require("..");
 class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceMixin)((0, repository_1.RepositoryMixin)(rest_1.RestApplication))) {
-    constructor(options = {}) {
+    constructor(opts) {
         var _a, _b;
-        super(options);
+        const { serverOptions, sequence } = opts;
+        super(serverOptions);
         this.logger = helpers_1.LoggerFactory.getLogger(['Application']);
         this.bind(__1.RouteKeys.ALWAYS_ALLOW_PATHS).to([]);
-        this.sequence(base_sequence_1.BaseApplicationSequence);
+        this.sequence(sequence !== null && sequence !== void 0 ? sequence : base_sequence_1.BaseApplicationSequence);
         this.staticConfigure();
         this.projectRoot = this.getProjectRoot();
         this.component(rest_crud_1.CrudRestComponent);

@@ -1,7 +1,7 @@
 import { BootMixin } from '@loopback/boot';
-import { ApplicationConfig } from '@loopback/core';
+import { ApplicationConfig, Constructor } from '@loopback/core';
 import { RepositoryMixin } from '@loopback/repository';
-import { RestApplication } from '@loopback/rest';
+import { RestApplication, SequenceHandler } from '@loopback/rest';
 import { ServiceMixin } from '@loopback/service-proxy';
 import { CrudRestComponent } from '@loopback/rest-crud';
 import { EnvironmentValidationResult, IApplication } from '@/common/types';
@@ -16,12 +16,13 @@ export abstract class BaseApplication
   protected logger: ApplicationLogger;
   models: Set<string>;
 
-  constructor(options: ApplicationConfig = {}) {
-    super(options);
+  constructor(opts: { serverOptions: ApplicationConfig; sequence?: Constructor<SequenceHandler> }) {
+    const { serverOptions, sequence } = opts;
+    super(serverOptions);
     this.logger = LoggerFactory.getLogger(['Application']);
 
     this.bind(RouteKeys.ALWAYS_ALLOW_PATHS).to([]);
-    this.sequence(BaseApplicationSequence);
+    this.sequence(sequence ?? BaseApplicationSequence);
 
     this.staticConfigure();
     this.projectRoot = this.getProjectRoot();
