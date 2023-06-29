@@ -1,17 +1,18 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { stringify } from '@/utilities';
 import https from 'https';
+import { AnyObject } from '@/common/types';
 
 const HTTP = 'http';
 const HTTPS = 'https';
 
-interface IRequestOptions {
+export interface IRequestOptions {
   url: string;
   method?: 'get' | 'post' | 'put' | 'patch' | 'delete' | 'options';
-  params?: Record<string | symbol | number, any>;
-  body?: any;
-  headers?: Record<string | symbol | number, any>;
-  configs?: object;
+  params?: AnyObject;
+  body?: AnyObject;
+  headers?: AnyObject;
+  configs?: AnyObject;
 }
 
 // -------------------------------------------------------------
@@ -55,7 +56,7 @@ export class NetworkHelper {
     if (protocol === HTTPS) {
       props.httpsAgent = new https.Agent({
         rejectUnauthorized: false,
-      })
+      });
     }
 
     logger?.info('[send] URL: %s | Props: %o', url, props);

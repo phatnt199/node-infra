@@ -1,11 +1,12 @@
 import { AxiosRequestConfig } from 'axios';
-interface IRequestOptions {
+import { AnyObject } from '../common/types';
+export interface IRequestOptions {
     url: string;
     method?: 'get' | 'post' | 'put' | 'patch' | 'delete' | 'options';
-    params?: Record<string | symbol | number, any>;
-    body?: any;
-    headers?: Record<string | symbol | number, any>;
-    configs?: object;
+    params?: AnyObject;
+    body?: AnyObject;
+    headers?: AnyObject;
+    configs?: AnyObject;
 }
 export declare class NetworkHelper {
     private name;
@@ -23,4 +24,3 @@ export declare class NetworkHelper {
     patch(opts: IRequestOptions, logger?: any): Promise<import("axios").AxiosResponse<any, any>>;
     delete(opts: IRequestOptions, logger?: any): Promise<import("axios").AxiosResponse<any, any>>;
 }
-export {};

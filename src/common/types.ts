@@ -22,6 +22,7 @@ export type NumberIdType = number;
 export type StringIdType = string;
 export type IdType = string | number;
 export type AnyType = any;
+export type AnyObject = Record<string | symbol | number, any>;
 export type NullableType = undefined | null | void;
 export type TRelationType = 'belongsTo' | 'hasOne' | 'hasMany' | 'hasManyThrough';
 export type TBullQueueRole = 'queue' | 'worker';
@@ -56,10 +57,10 @@ export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepos
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IService {}
+export interface IService { }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IController {}
+export interface IController { }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IApplicationEnvironment {
@@ -88,12 +89,12 @@ export type MigrationProcess = {
     alwaysRun?: boolean;
     [key: string | symbol]: any;
   };
-}
+};
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface JWTTokenPayload extends UserProfile {
   userId: IdType;
-  roles: { id: IdType, identifier: string, priority: number }[];
+  roles: { id: IdType; identifier: string; priority: number }[];
 }
 
-export interface TokenPayload extends JWTTokenPayload {};
+export interface TokenPayload extends JWTTokenPayload { }
