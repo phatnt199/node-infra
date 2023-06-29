@@ -92,12 +92,31 @@ let AuthorizeProvider = class AuthorizeProvider {
             if (!userId || !(roles === null || roles === void 0 ? void 0 : roles.length)) {
                 return authorization_1.AuthorizationDecision.DENY;
             }
-            const { resource, allowedRoles = [], scopes } = metadata;
+            const { resource, allowedRoles = [], scopes, voters } = metadata;
             const requestResource = resource !== null && resource !== void 0 ? resource : context.resource;
             // Verify static roles
             if (((_a = (0, intersection_1.default)(this.alwaysAllowRoles, roleIdentifiers)) === null || _a === void 0 ? void 0 : _a.length) > 0 ||
                 ((_b = (0, intersection_1.default)(allowedRoles, roleIdentifiers)) === null || _b === void 0 ? void 0 : _b.length) > 0) {
                 return authorization_1.AuthorizationDecision.ALLOW;
+            }
+            if (voters && (voters === null || voters === void 0 ? void 0 : voters.length) > 0) {
+                const voterRs = yield Promise.all(voters === null || voters === void 0 ? void 0 : voters.map(el => {
+                    switch (typeof el) {
+                        case 'function': {
+                            return el === null || el === void 0 ? void 0 : el(context, metadata);
+                        }
+                        default: {
+                            throw (0, utilities_1.getError)({ message: '[authorize][voter] voter implementation must be function type!' });
+                        }
+                    }
+                }));
+                const voterSet = new Set(voterRs);
+                if (voterSet.size === 1 && voterSet.has(authorization_1.AuthorizationDecision.ALLOW)) {
+                    return authorization_1.AuthorizationDecision.ALLOW;
+                }
+                if (voterSet.has(authorization_1.AuthorizationDecision.DENY)) {
+                    return authorization_1.AuthorizationDecision.DENY;
+                }
             }
             // Authorize by role and user permissions
             const authorizeDecision = yield this.authorizePermission(userId, requestResource, (_c = scopes === null || scopes === void 0 ? void 0 : scopes[0]) !== null && _c !== void 0 ? _c : common_1.EnforcerDefinitions.ACTION_EXECUTE);

@@ -10,7 +10,7 @@ import {
 import { inject, Provider } from '@loopback/core';
 import isEmpty from 'lodash/isEmpty';
 import intersection from 'lodash/intersection';
-import { int } from '@/utilities';
+import { getError, int } from '@/utilities';
 
 export class AuthorizeProvider implements Provider<Authorizer> {
   private logger: ApplicationLogger;
@@ -81,7 +81,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
       return AuthorizationDecision.DENY;
     }
 
-    const { resource, allowedRoles = [], scopes } = metadata;
+    const { resource, allowedRoles = [], scopes, voters } = metadata;
     const requestResource = resource ?? context.resource;
 
     // Verify static roles
@@ -90,6 +90,30 @@ export class AuthorizeProvider implements Provider<Authorizer> {
       intersection(allowedRoles, roleIdentifiers)?.length > 0
     ) {
       return AuthorizationDecision.ALLOW;
+    }
+
+    if (voters && voters?.length > 0) {
+      const voterRs = await Promise.all(
+        voters?.map(el => {
+          switch (typeof el) {
+            case 'function': {
+              return el?.(context, metadata);
+            }
+            default: {
+              throw getError({ message: '[authorize][voter] voter implementation must be function type!' });
+            }
+          }
+        }),
+      );
+      const voterSet = new Set(voterRs);
+
+      if (voterSet.size === 1 && voterSet.has(AuthorizationDecision.ALLOW)) {
+        return AuthorizationDecision.ALLOW;
+      }
+
+      if (voterSet.has(AuthorizationDecision.DENY)) {
+        return AuthorizationDecision.DENY;
+      }
     }
 
     // Authorize by role and user permissions
