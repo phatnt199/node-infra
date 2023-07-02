@@ -201,7 +201,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
         },
       },
     })
-    async find(@param.filter(entityOptions) filter?: Filter<E>): Promise<(E & EntityRelation)[]> {
+    find(@param.filter(entityOptions) filter?: Filter<E>): Promise<(E & EntityRelation)[]> {
       return this.repository.find(applyLimit(filter));
     }
 
@@ -217,12 +217,31 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
         },
       },
     })
-    async findById(
+    findById(
       @param(idPathParam) id: IdType,
       @param.query.object('filter', getFilterSchemaFor(entityOptions, { exclude: 'where' }))
       filter?: FilterExcludingWhere<E>,
     ): Promise<E & EntityRelation> {
       return this.repository.findById(id, applyLimit(filter));
+    }
+
+    @get('/find-one', {
+      responses: {
+        '200': {
+          description: `Find one ${entityOptions.name} model instance`,
+          content: {
+            'application/json': {
+              schema: getModelSchemaRef(entityOptions, { includeRelations: true }),
+            },
+          },
+        },
+      },
+    })
+    findOne(
+      @param.query.object('filter', getFilterSchemaFor(entityOptions))
+      filter?: FilterExcludingWhere<E>,
+    ): Promise<(E & EntityRelation) | null> {
+      return this.repository.findOne(filter);
     }
 
     @get('/count', {
@@ -237,7 +256,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
         },
       },
     })
-    async count(@param.where(entityOptions) where?: Where<E>): Promise<Count> {
+    count(@param.where(entityOptions) where?: Where<E>): Promise<Count> {
       return this.repository.count(where);
     }
   }

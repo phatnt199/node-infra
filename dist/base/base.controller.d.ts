@@ -50,6 +50,7 @@ export declare const defineCrudController: <E extends BaseTzEntity>(opts: CrudCo
         defaultLimit: number;
         find(filter?: Filter<E> | undefined): Promise<(E & EntityRelation)[]>;
         findById(id: IdType, filter?: FilterExcludingWhere<E> | undefined): Promise<E & EntityRelation>;
+        findOne(filter?: FilterExcludingWhere<E> | undefined): Promise<(E & EntityRelation) | null>;
         count(where?: Where<E> | undefined): Promise<Count>;
     };
 };

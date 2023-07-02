@@ -1,7 +1,7 @@
 /// <reference types="express" />
-import { Request } from '@loopback/rest';
 import { AuthenticationStrategy } from '@loopback/authentication';
-import { JWTTokenService } from '../../services';
+import { Request } from '@loopback/rest';
+import { JWTTokenService } from './jwt-token.service';
 export declare class JWTAuthenticationStrategy implements AuthenticationStrategy {
     private service;
     name: string;

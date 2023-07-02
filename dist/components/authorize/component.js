@@ -25,18 +25,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizeComponent = void 0;
-const base_component_1 = require("../../base/base.component");
-const core_1 = require("@loopback/core");
 const base_application_1 = require("../../base/base.application");
-const authorize_1 = require("../../models/authorize");
-const authorization_1 = require("@loopback/authorization");
-const provider_1 = require("./provider");
-const services_1 = require("../../services");
+const base_component_1 = require("../../base/base.component");
 const common_1 = require("../../common");
+const authorize_1 = require("../../models/authorize");
 const repositories_1 = require("../../repositories");
+const authorization_1 = require("@loopback/authorization");
+const core_1 = require("@loopback/core");
+const enforcer_service_1 = require("./enforcer.service");
+const provider_1 = require("./provider");
+const utilities_1 = require("../../utilities");
 const flatten_1 = __importDefault(require("lodash/flatten"));
 const path_1 = __importDefault(require("path"));
-const utilities_1 = require("../../utilities");
 const authorizeConfPath = path_1.default.resolve(__dirname, '../../../static/security/authorize_model.conf');
 let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseComponent {
     constructor(application) {
@@ -132,7 +132,7 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
         this.verify()
             .then(() => {
             this.application.component(authorization_1.AuthorizationComponent);
-            this.application.bind(common_1.AuthorizerKeys.ENFORCER).toInjectable(services_1.EnforcerService);
+            this.application.bind(common_1.AuthorizerKeys.ENFORCER).toInjectable(enforcer_service_1.EnforcerService);
             this.application.configure(authorization_1.AuthorizationBindings.COMPONENT).to({
                 precedence: authorization_1.AuthorizationDecision.DENY,
                 defaultDecision: authorization_1.AuthorizationDecision.DENY,

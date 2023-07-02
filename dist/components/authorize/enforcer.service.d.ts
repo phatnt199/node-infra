@@ -1,6 +1,6 @@
+import { BaseDataSource } from '../../base';
+import { IdType } from '../../common';
 import { Enforcer } from 'casbin';
-import { IdType } from '../common';
-import { BaseDataSource } from '..';
 export declare class EnforcerService {
     protected options: {
         confPath: string;

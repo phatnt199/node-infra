@@ -23,9 +23,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BasicAuthenticationStrategy = void 0;
 const common_1 = require("../../common");
-const services_1 = require("../../services");
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
+const basic_token_service_1 = require("./basic-token.service");
 let BasicAuthenticationStrategy = class BasicAuthenticationStrategy {
     constructor(service) {
         this.service = service;
@@ -58,7 +58,7 @@ let BasicAuthenticationStrategy = class BasicAuthenticationStrategy {
 };
 BasicAuthenticationStrategy = __decorate([
     __param(0, (0, core_1.inject)('services.BasicTokenService')),
-    __metadata("design:paramtypes", [services_1.BasicTokenService])
+    __metadata("design:paramtypes", [basic_token_service_1.BasicTokenService])
 ], BasicAuthenticationStrategy);
 exports.BasicAuthenticationStrategy = BasicAuthenticationStrategy;
 //# sourceMappingURL=basic.strategy.js.map

@@ -1,5 +1,5 @@
-import { JWTTokenPayload } from '../common/types';
-import { BaseService } from '../base/base.service';
+import { JWTTokenPayload } from '../../common/types';
+import { BaseService } from '../../base/base.service';
 export declare class JWTTokenService extends BaseService {
     private applicationSecret;
     private jwtSecret;

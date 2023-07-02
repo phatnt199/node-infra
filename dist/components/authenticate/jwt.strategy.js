@@ -22,9 +22,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JWTAuthenticationStrategy = void 0;
-const core_1 = require("@loopback/core");
-const services_1 = require("../../services");
 const common_1 = require("../../common");
+const core_1 = require("@loopback/core");
+const jwt_token_service_1 = require("./jwt-token.service");
 let JWTAuthenticationStrategy = class JWTAuthenticationStrategy {
     constructor(service) {
         this.service = service;
@@ -39,7 +39,7 @@ let JWTAuthenticationStrategy = class JWTAuthenticationStrategy {
 };
 JWTAuthenticationStrategy = __decorate([
     __param(0, (0, core_1.inject)('services.JWTTokenService')),
-    __metadata("design:paramtypes", [services_1.JWTTokenService])
+    __metadata("design:paramtypes", [jwt_token_service_1.JWTTokenService])
 ], JWTAuthenticationStrategy);
 exports.JWTAuthenticationStrategy = JWTAuthenticationStrategy;
 //# sourceMappingURL=jwt.strategy.js.map

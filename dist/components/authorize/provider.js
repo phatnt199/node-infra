@@ -27,12 +27,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizeProvider = void 0;
 const common_1 = require("../../common");
 const helpers_1 = require("../../helpers");
-const services_1 = require("../../services");
 const authorization_1 = require("@loopback/authorization");
 const core_1 = require("@loopback/core");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const intersection_1 = __importDefault(require("lodash/intersection"));
 const utilities_1 = require("../../utilities");
+const enforcer_service_1 = require("./enforcer.service");
 let AuthorizeProvider = class AuthorizeProvider {
     constructor(enforcerService, alwaysAllowRoles) {
         this.enforcerService = enforcerService;
@@ -129,7 +129,7 @@ let AuthorizeProvider = class AuthorizeProvider {
 AuthorizeProvider = __decorate([
     __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.ENFORCER)),
     __param(1, (0, core_1.inject)(common_1.AuthorizerKeys.ALWAYS_ALLOW_ROLES)),
-    __metadata("design:paramtypes", [services_1.EnforcerService, Array])
+    __metadata("design:paramtypes", [enforcer_service_1.EnforcerService, Array])
 ], AuthorizeProvider);
 exports.AuthorizeProvider = AuthorizeProvider;
 //# sourceMappingURL=provider.js.map

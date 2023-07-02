@@ -11,7 +11,8 @@ import { Binding, CoreBindings, inject } from '@loopback/core';
 import { JWTAuthenticationStrategy } from './jwt.strategy';
 import { BasicAuthenticationStrategy } from './basic.strategy';
 import { App, AuthenticateKeys, Authentication } from '@/common';
-import { BasicTokenService, JWTTokenService } from '@/services';
+import { BasicTokenService } from './basic-token.service';
+import { JWTTokenService } from './jwt-token.service';
 
 export class AuthenticateComponent extends BaseComponent {
   bindings: Binding[] = [

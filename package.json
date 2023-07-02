@@ -1,6 +1,5 @@
 {
   "name": "@lb/infra",
-  "private": true,
   "version": "0.0.3",
   "description": "Loopback 4 Infrastructure",
   "keywords": [
@@ -28,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:phatnt199/lb-infra.git"
+    "url": "git+https://github.com/phatnt199/lb-infra.git"
   },
   "author": "Phat Nguyen <tanphat199@gmail.com>",
   "license": "ISC",
@@ -38,6 +37,9 @@
     "src",
     "!*/__tests__"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@loopback/authentication": "^9.0.9",
     "@loopback/authentication-jwt": "^0.12.9",
@@ -90,5 +92,9 @@
     "tsc-alias": "^1.7.0",
     "tsconfig-paths": "^4.1.0",
     "typescript": "~4.9.4"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/phatnt199/lb-infra/issues"
+  },
+  "homepage": "https://github.com/phatnt199/lb-infra#readme"
 }

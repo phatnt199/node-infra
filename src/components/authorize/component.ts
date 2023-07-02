@@ -1,16 +1,7 @@
-import { BaseComponent } from '@/base/base.component';
-import { Binding, CoreBindings, inject } from '@loopback/core';
 import { BaseApplication } from '@/base/base.application';
-import { Role, Permission, PermissionMapping, UserRole, ViewAuthorizePolicy } from '@/models/authorize';
-import {
-  AuthorizationBindings,
-  AuthorizationComponent,
-  AuthorizationDecision,
-  AuthorizationTags,
-} from '@loopback/authorization';
-import { AuthorizeProvider } from './provider';
-import { EnforcerService } from '@/services';
+import { BaseComponent } from '@/base/base.component';
 import { AuthorizerKeys } from '@/common';
+import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from '@/models/authorize';
 import {
   PermissionMappingRepository,
   PermissionRepository,
@@ -18,11 +9,20 @@ import {
   UserRoleRepository,
   ViewAuthorizePolicyRepository,
 } from '@/repositories';
+import {
+  AuthorizationBindings,
+  AuthorizationComponent,
+  AuthorizationDecision,
+  AuthorizationTags,
+} from '@loopback/authorization';
+import { Binding, CoreBindings, inject } from '@loopback/core';
+import { EnforcerService } from './enforcer.service';
+import { AuthorizeProvider } from './provider';
 
-import flatten from 'lodash/flatten';
-import path from 'path';
 import { BaseDataSource } from '@/base/base.datasource';
 import { getError } from '@/utilities';
+import flatten from 'lodash/flatten';
+import path from 'path';
 
 const authorizeConfPath = path.resolve(__dirname, '../../../static/security/authorize_model.conf');
 

@@ -22,7 +22,8 @@ const core_1 = require("@loopback/core");
 const jwt_strategy_1 = require("./jwt.strategy");
 const basic_strategy_1 = require("./basic.strategy");
 const common_1 = require("../../common");
-const services_1 = require("../../services");
+const basic_token_service_1 = require("./basic-token.service");
+const jwt_token_service_1 = require("./jwt-token.service");
 let AuthenticateComponent = class AuthenticateComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthenticateComponent.name });
@@ -39,8 +40,8 @@ let AuthenticateComponent = class AuthenticateComponent extends base_component_1
         this.binding();
     }
     defineServices() {
-        this.application.service(services_1.BasicTokenService);
-        this.application.service(services_1.JWTTokenService);
+        this.application.service(basic_token_service_1.BasicTokenService);
+        this.application.service(jwt_token_service_1.JWTTokenService);
     }
     registerComponent() {
         this.application.component(authentication_1.AuthenticationComponent);

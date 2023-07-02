@@ -182,19 +182,16 @@ const defineCrudController = (opts) => {
             this.defaultLimit = (_a = controllerOptions === null || controllerOptions === void 0 ? void 0 : controllerOptions.defaultLimit) !== null && _a !== void 0 ? _a : DEFAULT_LIMIT;
         }
         find(filter) {
-            return __awaiter(this, void 0, void 0, function* () {
-                return this.repository.find(applyLimit(filter));
-            });
+            return this.repository.find(applyLimit(filter));
         }
         findById(id, filter) {
-            return __awaiter(this, void 0, void 0, function* () {
-                return this.repository.findById(id, applyLimit(filter));
-            });
+            return this.repository.findById(id, applyLimit(filter));
+        }
+        findOne(filter) {
+            return this.repository.findOne(filter);
         }
         count(where) {
-            return __awaiter(this, void 0, void 0, function* () {
-                return this.repository.count(where);
-            });
+            return this.repository.count(where);
         }
     }
     __decorate([
@@ -237,6 +234,24 @@ const defineCrudController = (opts) => {
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", Promise)
     ], ReadController.prototype, "findById", null);
+    __decorate([
+        (0, rest_1.get)('/find-one', {
+            responses: {
+                '200': {
+                    description: `Find one ${entityOptions.name} model instance`,
+                    content: {
+                        'application/json': {
+                            schema: (0, rest_1.getModelSchemaRef)(entityOptions, { includeRelations: true }),
+                        },
+                    },
+                },
+            },
+        }),
+        __param(0, rest_1.param.query.object('filter', (0, rest_1.getFilterSchemaFor)(entityOptions))),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object]),
+        __metadata("design:returntype", Promise)
+    ], ReadController.prototype, "findOne", null);
     __decorate([
         (0, rest_1.get)('/count', {
             responses: {

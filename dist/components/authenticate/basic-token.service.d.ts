@@ -1,4 +1,4 @@
-import { BaseService } from '../base/base.service';
+import { BaseService } from '../../base/base.service';
 export declare class BasicTokenService extends BaseService {
     constructor();
     getRepository(): null;

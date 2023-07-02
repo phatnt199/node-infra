@@ -1,10 +1,11 @@
+import { BaseDataSource } from '@/base';
+import { AuthorizerKeys, IdType } from '@/common';
+import { ApplicationLogger, CasbinLBAdapter, EnforcerFilterValue, LoggerFactory } from '@/helpers';
+import { getError } from '@/utilities';
+import { BindingScope, inject, injectable } from '@loopback/core';
 import { Enforcer, newCachedEnforcer, newEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
-import { getError } from '@/utilities';
-import { AuthorizerKeys, IdType } from '@/common';
-import { ApplicationLogger, BaseDataSource, CasbinLBAdapter, LoggerFactory, EnforcerFilterValue } from '..';
-import { BindingScope, inject, injectable } from '@loopback/core';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class EnforcerService {

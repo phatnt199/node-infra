@@ -7,7 +7,7 @@ export class BasicTokenService extends BaseService {
     super({ scope: BasicTokenService.name });
   }
 
-  getRepository() {
+  getRepository() { 
     return null;
   }
 

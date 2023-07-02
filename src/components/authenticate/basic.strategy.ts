@@ -1,8 +1,8 @@
 import { Authentication } from '@/common';
-import { BasicTokenService } from '@/services';
 import { AuthenticationStrategy } from '@loopback/authentication';
 import { inject } from '@loopback/core';
 import { HttpErrors, Request } from '@loopback/rest';
+import { BasicTokenService } from './basic-token.service';
 
 export class BasicAuthenticationStrategy implements AuthenticationStrategy {
   name = Authentication.TYPE_BASIC;

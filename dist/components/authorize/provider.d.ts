@@ -1,6 +1,6 @@
-import { EnforcerService } from '../../services';
 import { AuthorizationContext, AuthorizationDecision, AuthorizationMetadata, Authorizer } from '@loopback/authorization';
 import { Provider } from '@loopback/core';
+import { EnforcerService } from './enforcer.service';
 export declare class AuthorizeProvider implements Provider<Authorizer> {
     private enforcerService;
     private alwaysAllowRoles;
