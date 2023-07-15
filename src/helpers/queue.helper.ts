@@ -8,7 +8,7 @@ interface IQueueCallback<ElementType> {
 }
 
 // --------------------------------------------------------
-export class Queue<ElementType> {
+export class QueueHelper<ElementType> {
   public identifier: string;
   public storage: Array<ElementType>;
 
@@ -51,8 +51,8 @@ export class Queue<ElementType> {
 }
 
 // --------------------------------------------------------
-export class MultiQueue<ElementType> {
-  public storage: Record<string, Queue<ElementType>>;
+export class MultiQueueHelper<ElementType> {
+  public storage: Record<string, QueueHelper<ElementType>>;
 
   private onDataEnqueue?: (identifier: string, payload: ElementType) => void;
   private onDataDequeue?: (identifier: string, payload: ElementType) => void;
@@ -72,7 +72,7 @@ export class MultiQueue<ElementType> {
 
   enqueue(identifier: string, value: ElementType) {
     if (!this.storage[identifier]) {
-      this.storage[identifier] = new Queue({ identifier });
+      this.storage[identifier] = new QueueHelper({ identifier });
     }
 
     this.storage[identifier].enqueue(value);
