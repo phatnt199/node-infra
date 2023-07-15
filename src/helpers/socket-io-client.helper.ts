@@ -13,7 +13,7 @@ export interface ISocketIOClientOptions {
   options: IOptions;
 }
 
-export class SocketIOClient {
+export class SocketIOClientHelper {
   private logger: ApplicationLogger;
 
   private identifier: string;
@@ -22,7 +22,7 @@ export class SocketIOClient {
   private client: Socket;
 
   constructor(opts: ISocketIOClientOptions) {
-    this.logger = LoggerFactory.getLogger([SocketIOClient.name]);
+    this.logger = LoggerFactory.getLogger([SocketIOClientHelper.name]);
 
     this.identifier = opts.identifier;
     this.host = opts.host;

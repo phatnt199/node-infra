@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SocketIOClient = void 0;
+exports.SocketIOClientHelper = void 0;
 const socket_io_client_1 = require("socket.io-client");
 const __1 = require("..");
 const logger_helper_1 = require("./logger.helper");
-class SocketIOClient {
+class SocketIOClientHelper {
     constructor(opts) {
-        this.logger = logger_helper_1.LoggerFactory.getLogger([SocketIOClient.name]);
+        this.logger = logger_helper_1.LoggerFactory.getLogger([SocketIOClientHelper.name]);
         this.identifier = opts.identifier;
         this.host = opts.host;
         this.options = opts.options;
@@ -82,5 +82,5 @@ class SocketIOClient {
         this.logger.info('[emit][%s] Topic: %s | Message: %j', topic, message);
     }
 }
-exports.SocketIOClient = SocketIOClient;
+exports.SocketIOClientHelper = SocketIOClientHelper;
 //# sourceMappingURL=socket-io-client.helper.js.map

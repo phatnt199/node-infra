@@ -8,7 +8,7 @@ export interface ISocketIOClientOptions {
     host: string;
     options: IOptions;
 }
-export declare class SocketIOClient {
+export declare class SocketIOClientHelper {
     private logger;
     private identifier;
     private host;
