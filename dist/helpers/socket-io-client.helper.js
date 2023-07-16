@@ -26,13 +26,6 @@ class SocketIOClientHelper {
     }
     // -----------------------------------------------------------------
     subscribe(opts) {
-        var _a;
-        if (!((_a = this.client) === null || _a === void 0 ? void 0 : _a.connected)) {
-            throw (0, __1.getError)({
-                statusCode: 400,
-                message: `[subscribe] Invalid socket client state to subscribe!`,
-            });
-        }
         const eventHandlers = opts.events;
         const eventNames = Object.keys(eventHandlers);
         this.logger.info('[subscribe][%s] Handling events: %j', this.identifier, eventNames);
@@ -50,16 +43,10 @@ class SocketIOClientHelper {
     // -----------------------------------------------------------------
     unsubscribe(opts) {
         var _a;
-        if (!((_a = this.client) === null || _a === void 0 ? void 0 : _a.connected)) {
-            throw (0, __1.getError)({
-                statusCode: 400,
-                message: `[subscribe] Invalid socket client state to subscribe!`,
-            });
-        }
         const { events: eventNames } = opts;
         this.logger.info('[unsubscribe][%s] Handling events: %j', this.identifier, eventNames);
         for (const eventName of eventNames) {
-            if (!this.client.hasListeners(eventName)) {
+            if (!((_a = this.client) === null || _a === void 0 ? void 0 : _a.hasListeners(eventName))) {
                 continue;
             }
             this.client.off(eventName);
