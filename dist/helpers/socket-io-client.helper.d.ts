@@ -23,6 +23,8 @@ export declare class SocketIOClientHelper {
     unsubscribe(opts: {
         events: Array<string>;
     }): void;
+    connect(): void;
+    disconnect(): void;
     emit(opts: {
         topic: string;
         message: string;

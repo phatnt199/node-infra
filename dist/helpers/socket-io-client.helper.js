@@ -53,6 +53,22 @@ class SocketIOClientHelper {
         }
     }
     // -----------------------------------------------------------------
+    connect() {
+        if (!this.client) {
+            this.logger.info('[connect][%s] Invalid client to connect!', this.identifier);
+            return;
+        }
+        this.client.connect();
+    }
+    // -----------------------------------------------------------------
+    disconnect() {
+        if (!this.client) {
+            this.logger.info('[disconnect][%s] Invalid client to disconnect!', this.identifier);
+            return;
+        }
+        this.client.disconnect();
+    }
+    // -----------------------------------------------------------------
     emit(opts) {
         var _a;
         if (!((_a = this.client) === null || _a === void 0 ? void 0 : _a.connected)) {

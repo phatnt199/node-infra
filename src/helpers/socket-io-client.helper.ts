@@ -79,6 +79,26 @@ export class SocketIOClientHelper {
   }
 
   // -----------------------------------------------------------------
+  connect() {
+    if (!this.client) {
+      this.logger.info('[connect][%s] Invalid client to connect!', this.identifier);
+      return;
+    }
+
+    this.client.connect();
+  }
+
+  // -----------------------------------------------------------------
+  disconnect() {
+    if (!this.client) {
+      this.logger.info('[disconnect][%s] Invalid client to disconnect!', this.identifier);
+      return;
+    }
+
+    this.client.disconnect();
+  }
+
+  // -----------------------------------------------------------------
   emit(opts: { topic: string; message: string; log?: boolean }) {
     if (!this.client?.connected) {
       throw getError({
