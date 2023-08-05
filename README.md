@@ -538,7 +538,9 @@ export class ViewAuthorizePolicy extends BaseEntity {
 }
 ```
 <hr>
+
 ### Mixins:
+
 #### These Mixins are useful to define models
 1.  Timezone Mixin (`TzMixin`) has 2 properties:
 - createdAt: Date
