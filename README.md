@@ -33,10 +33,9 @@ APP_ENV_POSTGRES_DATABASE
 In Lb-infra we can extends from 2 kind of classes:
 
 - `BaseApplication`: This abstract class is very basic which extends from `Loopback 4`
-- `DefaultRestApplication`: This is a class that implements `BaseApplication` class.
+-  `DefaultRestApplication`: This is a class that implements `BaseApplication` class.
 
 #### Class Diagram for Application Layer:
-
 ```mermaid
 ---
 title: Application Layer
@@ -47,11 +46,11 @@ classDiagram
     BootMixin <|-- BaseApplication: extends
     BaseApplication <|-- DefaultRestApplication: extends
     Application <|.. BaseApplication : implements
-    BaseApplication<|-- MyApplication : extends
-    DefaultRestApplication<|-- MyApplication : extends
+    BaseApplication<|-- MyApplication : extends  
+    DefaultRestApplication<|-- MyApplication : extends  
     class BootMixin{ }
     class Application{
-      <<interface>>
+      <<interface>> 
       + models: Set~string~
 
       + staticConfigure() void
@@ -84,10 +83,9 @@ classDiagram
     }
     class MyApplication { }
 ```
-
 <i> -> We have to extends from 1 of those classes to create a new application.</i>
 
-#### Usage Application with DefaultRestApplication:
+#### Usage Application:
 
 ```ts
 import { DefaultRestApplication } from '@lb/infra';
