@@ -28,7 +28,7 @@ APP_ENV_POSTGRES_DATABASE
 
 ## The highest level of Lb-infra is `Application`
 
-### Application
+### Application:
 
 In Lb-infra we can extends from 2 kind of classes:
 
@@ -42,11 +42,13 @@ title: Application Layer
 ---
 classDiagram
     note for BootMixin "Loopback4"
+    note for MyApplication "This class can be define by your own"
     BootMixin <|-- BaseApplication: extends
     BaseApplication <|-- DefaultRestApplication: extends
     Application <|.. BaseApplication : implements
-    class BootMixin{
-    }
+    BaseApplication<|-- MyApplication : extends  
+    DefaultRestApplication<|-- MyApplication : extends  
+    class BootMixin{ }
     class Application{
       <<interface>> 
       + models: Set~string~
@@ -79,8 +81,9 @@ classDiagram
       + configMigration() void
       + preConfigure() void
     }
+    class MyApplication { }
 ```
-<i> -> We have to extends from 2 of those classes to create a new application.</i>
+<i> -> We have to extends from 1 of those classes to create a new application.</i>
 
 #### Usage Application:
 
