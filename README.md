@@ -147,6 +147,7 @@ const runApplication = async () => {
 ```
 
 <hr>
+
 ### Models:
 
 #### Base Models:
