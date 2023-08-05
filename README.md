@@ -32,8 +32,8 @@ APP_ENV_POSTGRES_DATABASE
 
 In Lb-infra we can extends from 2 kind of classes:
 
-- `BaseApplication`: This abstract class is very basic which extends from `loopback`
-  `DefaultRestApplication`: This is a class that implements `BaseApplication` class.
+- `BaseApplication`: This abstract class is very basic which extends from `Loopback 4`
+-  `DefaultRestApplication`: This is a class that implements `BaseApplication` class.
 
 #### Class Diagram for Application Layer:
 ```mermaid
