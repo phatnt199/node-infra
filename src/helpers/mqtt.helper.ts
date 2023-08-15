@@ -20,7 +20,7 @@ export class MQTTClientHelper {
   private identifier: string;
   private url: string;
   private options: mqtt.IClientOptions;
-  private client: mqtt.Client;
+  private client: mqtt.MqttClient;
 
   private onConnect?: () => void;
   private onDisconnect?: () => void;
