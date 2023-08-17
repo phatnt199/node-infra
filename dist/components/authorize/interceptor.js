@@ -49,12 +49,12 @@ let AuthorizateInterceptor = AuthorizateInterceptor_1 = class AuthorizateInterce
                 const result = yield next();
                 return result;
             }
-            this.logger.debug('Authorization metadata for %s', description, metadata);
+            this.logger.debug('Authorization metadata for %s %s', description, metadata);
             // retrieve it from authentication module
             const user = yield invocationCtx.get(security_1.SecurityBindings.USER, {
                 optional: true,
             });
-            this.logger.debug('Current user', user);
+            this.logger.debug('Current user: %s', user);
             const authorizationCtx = {
                 principals: user ? [Object.assign(Object.assign({}, user), { name: (_a = user.name) !== null && _a !== void 0 ? _a : user[security_1.securityId], type: 'USER' })] : [],
                 roles: [],
@@ -62,12 +62,12 @@ let AuthorizateInterceptor = AuthorizateInterceptor_1 = class AuthorizateInterce
                 resource: invocationCtx.targetName,
                 invocationContext: invocationCtx,
             };
-            this.logger.debug('Security context for %s', description, authorizationCtx);
+            this.logger.debug('Security context for %s %s', description, authorizationCtx);
             const authorizers = yield loadAuthorizers(invocationCtx);
             let finalDecision = this.options.defaultDecision;
             for (const fn of authorizers) {
                 const decision = yield fn(authorizationCtx, metadata);
-                this.logger.debug('Decision', decision);
+                this.logger.debug('Decision: %s', decision);
                 if (decision && decision !== authorization_1.AuthorizationDecision.ABSTAIN) {
                     finalDecision = decision;
                 }
@@ -84,7 +84,7 @@ let AuthorizateInterceptor = AuthorizateInterceptor_1 = class AuthorizateInterce
                     break;
                 }
             }
-            this.logger.debug('Final decision', finalDecision);
+            this.logger.debug('Final decision: %s', finalDecision);
             if (finalDecision === authorization_1.AuthorizationDecision.DENY) {
                 const error = new authorization_1.AuthorizationError('Access denied');
                 error.statusCode = this.options.defaultStatusCodeForDeny;
