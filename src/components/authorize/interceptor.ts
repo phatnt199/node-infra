@@ -63,14 +63,14 @@ export class AuthorizateInterceptor implements Provider<Interceptor> {
       const result = await next();
       return result;
     }
-    this.logger.debug('Authorization metadata for %s', description, metadata);
+    this.logger.debug('Authorization metadata for %s %s', description, metadata);
 
     // retrieve it from authentication module
     const user = await invocationCtx.get<UserProfile>(SecurityBindings.USER, {
       optional: true,
     });
 
-    this.logger.debug('Current user', user);
+    this.logger.debug('Current user: %s', user);
 
     const authorizationCtx: AuthorizationContext = {
       principals: user ? [{
@@ -84,13 +84,13 @@ export class AuthorizateInterceptor implements Provider<Interceptor> {
       invocationContext: invocationCtx,
     };
 
-    this.logger.debug('Security context for %s', description, authorizationCtx);
+    this.logger.debug('Security context for %s %s', description, authorizationCtx);
     const authorizers = await loadAuthorizers(invocationCtx);
 
     let finalDecision = this.options.defaultDecision;
     for (const fn of authorizers) {
       const decision = await fn(authorizationCtx, metadata);
-      this.logger.debug('Decision', decision);
+      this.logger.debug('Decision: %s', decision);
       if (decision && decision !== AuthorizationDecision.ABSTAIN) {
         finalDecision = decision;
       }
@@ -111,7 +111,7 @@ export class AuthorizateInterceptor implements Provider<Interceptor> {
         break;
       }
     }
-    this.logger.debug('Final decision', finalDecision);
+    this.logger.debug('Final decision: %s', finalDecision);
     if (finalDecision === AuthorizationDecision.DENY) {
       const error = new AuthorizationError('Access denied');
       error.statusCode = this.options.defaultStatusCodeForDeny;
