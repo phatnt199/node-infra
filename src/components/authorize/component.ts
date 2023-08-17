@@ -11,7 +11,6 @@ import {
 } from '@/repositories';
 import {
   AuthorizationBindings,
-  AuthorizationComponent,
   AuthorizationDecision,
   AuthorizationTags,
 } from '@loopback/authorization';
@@ -23,6 +22,7 @@ import { BaseDataSource } from '@/base/base.datasource';
 import { getError } from '@/utilities';
 import flatten from 'lodash/flatten';
 import path from 'path';
+import { AuthorizateInterceptor } from './interceptor';
 
 const authorizeConfPath = path.resolve(__dirname, '../../../static/security/authorize_model.conf');
 
@@ -133,7 +133,7 @@ export class AuthorizeComponent extends BaseComponent {
 
     this.verify()
       .then(() => {
-        this.application.component(AuthorizationComponent);
+        this.application.interceptor(AuthorizateInterceptor);
         this.application.bind(AuthorizerKeys.ENFORCER).toInjectable(EnforcerService);
 
         this.application.configure(AuthorizationBindings.COMPONENT).to({
