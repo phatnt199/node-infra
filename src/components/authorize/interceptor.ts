@@ -63,7 +63,7 @@ export class AuthorizateInterceptor implements Provider<Interceptor> {
       const result = await next();
       return result;
     }
-    this.logger.debug('Authorization metadata for %s %s', description, metadata);
+    this.logger.debug('Authorization metadata for %s', description);
 
     // retrieve it from authentication module
     const user = await invocationCtx.get<UserProfile>(SecurityBindings.USER, {
@@ -84,7 +84,7 @@ export class AuthorizateInterceptor implements Provider<Interceptor> {
       invocationContext: invocationCtx,
     };
 
-    this.logger.debug('Security context for %s %s', description, authorizationCtx);
+    this.logger.debug('Security context for %s', description);
     const authorizers = await loadAuthorizers(invocationCtx);
 
     let finalDecision = this.options.defaultDecision;

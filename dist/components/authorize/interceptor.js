@@ -49,7 +49,7 @@ let AuthorizateInterceptor = AuthorizateInterceptor_1 = class AuthorizateInterce
                 const result = yield next();
                 return result;
             }
-            this.logger.debug('Authorization metadata for %s %s', description, metadata);
+            this.logger.debug('Authorization metadata for %s', description);
             // retrieve it from authentication module
             const user = yield invocationCtx.get(security_1.SecurityBindings.USER, {
                 optional: true,
@@ -62,7 +62,7 @@ let AuthorizateInterceptor = AuthorizateInterceptor_1 = class AuthorizateInterce
                 resource: invocationCtx.targetName,
                 invocationContext: invocationCtx,
             };
-            this.logger.debug('Security context for %s %s', description, authorizationCtx);
+            this.logger.debug('Security context for %s', description);
             const authorizers = yield loadAuthorizers(invocationCtx);
             let finalDecision = this.options.defaultDecision;
             for (const fn of authorizers) {
