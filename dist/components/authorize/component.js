@@ -37,6 +37,7 @@ const provider_1 = require("./provider");
 const utilities_1 = require("../../utilities");
 const flatten_1 = __importDefault(require("lodash/flatten"));
 const path_1 = __importDefault(require("path"));
+const interceptor_1 = require("./interceptor");
 const authorizeConfPath = path_1.default.resolve(__dirname, '../../../static/security/authorize_model.conf');
 let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseComponent {
     constructor(application) {
@@ -131,7 +132,7 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
         }
         this.verify()
             .then(() => {
-            this.application.component(authorization_1.AuthorizationComponent);
+            this.application.interceptor(interceptor_1.AuthorizateInterceptor);
             this.application.bind(common_1.AuthorizerKeys.ENFORCER).toInjectable(enforcer_service_1.EnforcerService);
             this.application.configure(authorization_1.AuthorizationBindings.COMPONENT).to({
                 precedence: authorization_1.AuthorizationDecision.DENY,
