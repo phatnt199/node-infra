@@ -5,4 +5,3 @@ export * from './authenticate/jwt-token.service';
 export * from './socket-io/component';
 export * from './migration/component';
 export * from './static-asset';
-export * from './authenticate';
