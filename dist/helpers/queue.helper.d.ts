@@ -3,7 +3,7 @@ interface IQueueCallback<ElementType> {
     onDataDequeue?: (identifier: string, payload: ElementType) => void;
     onTriggerRetry?: (identifier: string) => void;
 }
-export declare class Queue<ElementType> {
+export declare class QueueHelper<ElementType> {
     identifier: string;
     storage: Array<ElementType>;
     private onDataEnqueue?;
@@ -15,8 +15,8 @@ export declare class Queue<ElementType> {
     dequeue(): ElementType | undefined;
     getElementAt(position?: number): ElementType | undefined;
 }
-export declare class MultiQueue<ElementType> {
-    storage: Record<string, Queue<ElementType>>;
+export declare class MultiQueueHelper<ElementType> {
+    storage: Record<string, QueueHelper<ElementType>>;
     private onDataEnqueue?;
     private onDataDequeue?;
     constructor(opts: IQueueCallback<ElementType>);
@@ -24,8 +24,8 @@ export declare class MultiQueue<ElementType> {
     dequeue(identifier: string): ElementType | undefined;
     getElementAt(identifier: string, position?: number): ElementType | undefined;
     getCurrentData(identifier: string): ElementType | undefined;
-    getQueue(identifier: string): Queue<ElementType>;
+    getQueue(identifier: string): QueueHelper<ElementType>;
     removeQueue(queue: string): void;
-    mapData(): Record<string, Queue<ElementType>>;
+    mapData(): Record<string, QueueHelper<ElementType>>;
 }
 export {};
