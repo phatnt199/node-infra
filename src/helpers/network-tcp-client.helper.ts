@@ -10,6 +10,7 @@ interface NetworkTcpClientProps {
   onClosed?: () => void;
   onError?: (error: any) => void;
   reconnect?: boolean;
+  encoding?: BufferEncoding;
 }
 
 export class NetworkTcpClient {
@@ -31,6 +32,8 @@ export class NetworkTcpClient {
   } = { maxReconnect: 5, currentReconnect: 0 };
   private reconnectTimeout: any;
 
+  private encoding?: BufferEncoding;
+
   constructor(opts: NetworkTcpClientProps) {
     this.logger = LoggerFactory.getLogger([NetworkTcpClient.name]);
 
@@ -41,6 +44,7 @@ export class NetworkTcpClient {
     this.onClosed = opts?.onClosed ?? this.handleClosed;
     this.onError = opts?.onError ?? this.handleError;
     this.reconnect = opts?.reconnect ?? false;
+    this.encoding = opts?.encoding;
   }
 
   static newInstance(opts: NetworkTcpClientProps) {
@@ -121,7 +125,11 @@ export class NetworkTcpClient {
     }
 
     this.client = new SocketClient();
-    this.client.setEncoding('utf8');
+
+    if (this.encoding) {
+      this.client.setEncoding(this.encoding);
+    }
+
     this.client.connect(this.options, this.onConnected);
 
     this.client.on('data', (message: any) => {
