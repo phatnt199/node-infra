@@ -1,3 +1,4 @@
+/// <reference types="node" />
 interface NetworkTcpClientProps {
     identifier: string;
     options: {
@@ -5,24 +6,26 @@ interface NetworkTcpClientProps {
         port: number;
         localAddress: string;
     };
+    reconnect?: boolean;
+    encoding?: BufferEncoding;
     onConnected?: () => void;
     onData?: (raw: any) => void;
     onClosed?: () => void;
     onError?: (error: any) => void;
-    reconnect?: boolean;
 }
 export declare class NetworkTcpClient {
     private logger;
+    private client?;
     private identifier;
     private options;
+    private reconnect?;
+    private retry;
+    private reconnectTimeout;
+    private encoding?;
     private onConnected;
     private onData;
     private onClosed?;
     private onError?;
-    private client?;
-    private reconnect?;
-    private retry;
-    private reconnectTimeout;
     constructor(opts: NetworkTcpClientProps);
     static newInstance(opts: NetworkTcpClientProps): NetworkTcpClient;
     handleConnected(): void;

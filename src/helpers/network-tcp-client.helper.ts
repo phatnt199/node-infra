@@ -2,37 +2,40 @@ import { LoggerFactory, ApplicationLogger } from '@/helpers';
 import isEmpty from 'lodash/isEmpty';
 import { Socket as SocketClient } from 'net';
 
+const DEFAULT_MAX_RETRY = 5;
+
 interface NetworkTcpClientProps {
+  // props
   identifier: string;
   options: { host: string; port: number; localAddress: string };
+  reconnect?: boolean;
+  encoding?: BufferEncoding;
+
+  // handlers
   onConnected?: () => void;
   onData?: (raw: any) => void;
   onClosed?: () => void;
   onError?: (error: any) => void;
-  reconnect?: boolean;
-  encoding?: BufferEncoding;
 }
 
 export class NetworkTcpClient {
   private logger: ApplicationLogger;
+  private client?: SocketClient | null;
 
   private identifier: string;
   private options: any;
+  private reconnect?: boolean;
+  private retry: { maxReconnect: number; currentReconnect: number } = {
+    maxReconnect: DEFAULT_MAX_RETRY,
+    currentReconnect: 0,
+  };
+  private reconnectTimeout: any;
+  private encoding?: BufferEncoding;
+
   private onConnected: () => void;
   private onData: (opts: { identifier: string; message: any }) => void;
   private onClosed?: () => void;
   private onError?: (error: any) => void;
-
-  private client?: SocketClient | null;
-
-  private reconnect?: boolean;
-  private retry: {
-    maxReconnect: number;
-    currentReconnect: number;
-  } = { maxReconnect: 5, currentReconnect: 0 };
-  private reconnectTimeout: any;
-
-  private encoding?: BufferEncoding;
 
   constructor(opts: NetworkTcpClientProps) {
     this.logger = LoggerFactory.getLogger([NetworkTcpClient.name]);
@@ -152,8 +155,8 @@ export class NetworkTcpClient {
     }
 
     this.client?.destroy();
-
     this.client = null;
+
     clearTimeout(this.reconnectTimeout);
     this.reconnectTimeout = null;
     this.logger.info('[disconnect][%s] NetworkTcpClient is destroyed!', this.identifier);

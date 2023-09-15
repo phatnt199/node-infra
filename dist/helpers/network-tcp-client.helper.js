@@ -7,10 +7,14 @@ exports.NetworkTcpClient = void 0;
 const helpers_1 = require("../helpers");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const net_1 = require("net");
+const DEFAULT_MAX_RETRY = 5;
 class NetworkTcpClient {
     constructor(opts) {
         var _a, _b, _c, _d, _e;
-        this.retry = { maxReconnect: 5, currentReconnect: 0 };
+        this.retry = {
+            maxReconnect: DEFAULT_MAX_RETRY,
+            currentReconnect: 0,
+        };
         this.logger = helpers_1.LoggerFactory.getLogger([NetworkTcpClient.name]);
         this.identifier = opts.identifier;
         this.options = opts.options;
@@ -19,6 +23,7 @@ class NetworkTcpClient {
         this.onClosed = (_c = opts === null || opts === void 0 ? void 0 : opts.onClosed) !== null && _c !== void 0 ? _c : this.handleClosed;
         this.onError = (_d = opts === null || opts === void 0 ? void 0 : opts.onError) !== null && _d !== void 0 ? _d : this.handleError;
         this.reconnect = (_e = opts === null || opts === void 0 ? void 0 : opts.reconnect) !== null && _e !== void 0 ? _e : false;
+        this.encoding = opts === null || opts === void 0 ? void 0 : opts.encoding;
     }
     static newInstance(opts) {
         return new NetworkTcpClient(opts);
@@ -72,7 +77,9 @@ class NetworkTcpClient {
             this.client = null;
         }
         this.client = new net_1.Socket();
-        this.client.setEncoding('utf8');
+        if (this.encoding) {
+            this.client.setEncoding(this.encoding);
+        }
         this.client.connect(this.options, this.onConnected);
         this.client.on('data', (message) => {
             this.onData({ identifier: this.identifier, message });
