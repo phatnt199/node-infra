@@ -1,7 +1,7 @@
-import { ApplicationConfig, Constructor } from '@loopback/core';
-import { RestApplication, SequenceHandler } from '@loopback/rest';
 import { EnvironmentValidationResult, IApplication } from '../common/types';
 import { ApplicationLogger } from '../helpers';
+import { ApplicationConfig, Constructor } from '@loopback/core';
+import { RestApplication, SequenceHandler } from '@loopback/rest';
 declare const BaseApplication_base: (new (...args: any[]) => {
     projectRoot: string;
     bootOptions?: import("@loopback/boot").BootOptions | undefined;
@@ -281,5 +281,14 @@ export declare abstract class BaseApplication extends BaseApplication_base imple
     abstract declareModels(): Set<string>;
     abstract preConfigure(): void;
     abstract postConfigure(): void;
+    getMigrateModels(opts: {
+        ignoreModels: string[];
+    }): Promise<void>;
+    migrateModels(opts: {
+        application: BaseApplication;
+        existingSchema: string;
+        ignoreModels?: string[];
+        migrateModels?: string[];
+    }): Promise<void>;
 }
 export {};

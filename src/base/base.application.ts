@@ -1,14 +1,14 @@
-import { BootMixin } from '@loopback/boot';
-import { ApplicationConfig, Constructor } from '@loopback/core';
-import { RepositoryMixin } from '@loopback/repository';
-import { RestApplication, SequenceHandler } from '@loopback/rest';
-import { ServiceMixin } from '@loopback/service-proxy';
-import { CrudRestComponent } from '@loopback/rest-crud';
 import { EnvironmentValidationResult, IApplication } from '@/common/types';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
+import { BootMixin } from '@loopback/boot';
+import { ApplicationConfig, Constructor } from '@loopback/core';
+import { RepositoryMixin, RepositoryTags } from '@loopback/repository';
+import { RestApplication, SequenceHandler } from '@loopback/rest';
+import { CrudRestComponent } from '@loopback/rest-crud';
+import { ServiceMixin } from '@loopback/service-proxy';
 
+import { BaseDataSource, RouteKeys } from '..';
 import { BaseApplicationSequence } from './base.sequence';
-import { RouteKeys } from '..';
 
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
@@ -59,4 +59,47 @@ export abstract class BaseApplication
 
   abstract preConfigure(): void;
   abstract postConfigure(): void;
+
+  async getMigrateModels(opts: { ignoreModels: string[] }) {
+    const { ignoreModels } = opts;
+
+    const repoBindings = this.findByTag(RepositoryTags.REPOSITORY);
+    const valids = repoBindings.filter(b => {
+      const key = b.key;
+      const modelName = key.slice(key.indexOf('.') + 1, key.indexOf('Repository'));
+      return !ignoreModels.includes(modelName);
+    });
+
+    // Load models
+    await Promise.all(valids.map(b => this.get(b.key)));
+  }
+
+  async migrateModels(opts: {
+    application: BaseApplication;
+    existingSchema: string;
+    ignoreModels?: string[];
+    migrateModels?: string[];
+  }) {
+    const { existingSchema, ignoreModels = [], migrateModels } = opts;
+
+    await this.getMigrateModels({ ignoreModels });
+    const operation = existingSchema === 'drop' ? 'automigrate' : 'autoupdate';
+
+    const dsBindings = this.findByTag(RepositoryTags.DATASOURCE);
+    for (const b of dsBindings) {
+      const ds = await this.get<BaseDataSource>(b.key);
+      if (!ds) {
+        continue;
+      }
+
+      const isDisableMigration = ds.settings?.disableMigration ?? false;
+      if (!(operation in ds) || isDisableMigration) {
+        this.logger.info('[migrateSchema] Skip migrating datasource %s', b.key);
+        continue;
+      }
+
+      this.logger.info('[migrateSchema] Migrating datasource %s', b.key);
+      await ds[operation](migrateModels);
+    }
+  }
 }

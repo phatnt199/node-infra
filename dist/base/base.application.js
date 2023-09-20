@@ -1,14 +1,23 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseApplication = void 0;
+const helpers_1 = require("../helpers");
 const boot_1 = require("@loopback/boot");
 const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
-const service_proxy_1 = require("@loopback/service-proxy");
 const rest_crud_1 = require("@loopback/rest-crud");
-const helpers_1 = require("../helpers");
-const base_sequence_1 = require("./base.sequence");
+const service_proxy_1 = require("@loopback/service-proxy");
 const __1 = require("..");
+const base_sequence_1 = require("./base.sequence");
 class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceMixin)((0, repository_1.RepositoryMixin)(rest_1.RestApplication))) {
     constructor(opts) {
         var _a, _b;
@@ -39,6 +48,41 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
         this.preConfigure();
         this.logger.info(' Executing Post-Configure...');
         this.postConfigure();
+    }
+    getMigrateModels(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { ignoreModels } = opts;
+            const repoBindings = this.findByTag(repository_1.RepositoryTags.REPOSITORY);
+            const valids = repoBindings.filter(b => {
+                const key = b.key;
+                const modelName = key.slice(key.indexOf('.') + 1, key.indexOf('Repository'));
+                return !ignoreModels.includes(modelName);
+            });
+            // Load models
+            yield Promise.all(valids.map(b => this.get(b.key)));
+        });
+    }
+    migrateModels(opts) {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function* () {
+            const { existingSchema, ignoreModels = [], migrateModels } = opts;
+            yield this.getMigrateModels({ ignoreModels });
+            const operation = existingSchema === 'drop' ? 'automigrate' : 'autoupdate';
+            const dsBindings = this.findByTag(repository_1.RepositoryTags.DATASOURCE);
+            for (const b of dsBindings) {
+                const ds = yield this.get(b.key);
+                if (!ds) {
+                    continue;
+                }
+                const isDisableMigration = (_b = (_a = ds.settings) === null || _a === void 0 ? void 0 : _a.disableMigration) !== null && _b !== void 0 ? _b : false;
+                if (!(operation in ds) || isDisableMigration) {
+                    this.logger.info('[migrateSchema] Skip migrating datasource %s', b.key);
+                    continue;
+                }
+                this.logger.info('[migrateSchema] Migrating datasource %s', b.key);
+                yield ds[operation](migrateModels);
+            }
+        });
     }
 }
 exports.BaseApplication = BaseApplication;
