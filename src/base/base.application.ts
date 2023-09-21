@@ -75,7 +75,6 @@ export abstract class BaseApplication
   }
 
   async migrateModels(opts: {
-    application: BaseApplication;
     existingSchema: string;
     ignoreModels?: string[];
     migrateModels?: string[];

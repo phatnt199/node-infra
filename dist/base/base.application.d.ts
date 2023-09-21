@@ -285,7 +285,6 @@ export declare abstract class BaseApplication extends BaseApplication_base imple
         ignoreModels: string[];
     }): Promise<void>;
     migrateModels(opts: {
-        application: BaseApplication;
         existingSchema: string;
         ignoreModels?: string[];
         migrateModels?: string[];
