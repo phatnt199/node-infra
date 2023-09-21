@@ -12,7 +12,8 @@ import { BaseApplicationSequence } from './base.sequence';
 
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
-  implements IApplication {
+  implements IApplication
+{
   protected logger: ApplicationLogger;
   models: Set<string>;
 
@@ -74,31 +75,36 @@ export abstract class BaseApplication
     await Promise.all(valids.map(b => this.get(b.key)));
   }
 
-  async migrateModels(opts: {
-    existingSchema: string;
-    ignoreModels?: string[];
-    migrateModels?: string[];
-  }) {
+  async migrateModels(opts: { existingSchema: string; ignoreModels?: string[]; migrateModels?: string[] }) {
     const { existingSchema, ignoreModels = [], migrateModels } = opts;
 
+    this.logger.info('[migrateModels] Loading legacy migratable models...!');
     await this.getMigrateModels({ ignoreModels });
     const operation = existingSchema === 'drop' ? 'automigrate' : 'autoupdate';
 
     const dsBindings = this.findByTag(RepositoryTags.DATASOURCE);
     for (const b of dsBindings) {
+      const t = new Date().getTime();
+      this.logger.info('[migrateModels] START | Migrating datasource %s', b.key);
+
       const ds = await this.get<BaseDataSource>(b.key);
       if (!ds) {
+        this.logger.error('[migrateModels] Invalid datasource with key %s', b.key);
         continue;
       }
 
       const isDisableMigration = ds.settings?.disableMigration ?? false;
       if (!(operation in ds) || isDisableMigration) {
-        this.logger.info('[migrateSchema] Skip migrating datasource %s', b.key);
+        this.logger.info('[migrateModels] Skip migrating datasource %s', b.key);
         continue;
       }
 
-      this.logger.info('[migrateSchema] Migrating datasource %s', b.key);
       await ds[operation](migrateModels);
+      this.logger.info(
+        '[migrateModels] DONE | Migrating datasource %s | Took: %d(ms)',
+        b.key,
+        new Date().getTime() - t,
+      );
     }
   }
 }

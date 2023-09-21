@@ -66,21 +66,25 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             const { existingSchema, ignoreModels = [], migrateModels } = opts;
+            this.logger.info('[migrateModels] Loading legacy migratable models...!');
             yield this.getMigrateModels({ ignoreModels });
             const operation = existingSchema === 'drop' ? 'automigrate' : 'autoupdate';
             const dsBindings = this.findByTag(repository_1.RepositoryTags.DATASOURCE);
             for (const b of dsBindings) {
+                const t = new Date().getTime();
+                this.logger.info('[migrateModels] START | Migrating datasource %s', b.key);
                 const ds = yield this.get(b.key);
                 if (!ds) {
+                    this.logger.error('[migrateModels] Invalid datasource with key %s', b.key);
                     continue;
                 }
                 const isDisableMigration = (_b = (_a = ds.settings) === null || _a === void 0 ? void 0 : _a.disableMigration) !== null && _b !== void 0 ? _b : false;
                 if (!(operation in ds) || isDisableMigration) {
-                    this.logger.info('[migrateSchema] Skip migrating datasource %s', b.key);
+                    this.logger.info('[migrateModels] Skip migrating datasource %s', b.key);
                     continue;
                 }
-                this.logger.info('[migrateSchema] Migrating datasource %s', b.key);
                 yield ds[operation](migrateModels);
+                this.logger.info('[migrateModels] DONE | Migrating datasource %s | Took: %d(ms)', b.key, new Date().getTime() - t);
             }
         });
     }
