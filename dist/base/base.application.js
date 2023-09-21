@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseApplication = void 0;
 const helpers_1 = require("../helpers");
@@ -16,6 +19,8 @@ const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
 const rest_crud_1 = require("@loopback/rest-crud");
 const service_proxy_1 = require("@loopback/service-proxy");
+const get_1 = __importDefault(require("lodash/get"));
+const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const __1 = require("..");
 const base_sequence_1 = require("./base.sequence");
 class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceMixin)((0, repository_1.RepositoryMixin)(rest_1.RestApplication))) {
@@ -50,24 +55,49 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
         this.postConfigure();
     }
     getMigrateModels(opts) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { ignoreModels } = opts;
-            const repoBindings = this.findByTag(repository_1.RepositoryTags.REPOSITORY);
-            const valids = repoBindings.filter(b => {
-                const key = b.key;
-                const modelName = key.slice(key.indexOf('.') + 1, key.indexOf('Repository'));
-                return !ignoreModels.includes(modelName);
-            });
-            // Load models
-            yield Promise.all(valids.map(b => this.get(b.key)));
+        const { ignoreModels, migrateModels } = opts;
+        const repoBindings = this.findByTag(repository_1.RepositoryTags.REPOSITORY);
+        const valids = repoBindings.filter(b => {
+            const key = b.key;
+            const modelName = key.slice(key.indexOf('.') + 1, key.indexOf('Repository'));
+            if (ignoreModels && ignoreModels.includes(modelName)) {
+                return false;
+            }
+            if (migrateModels && !migrateModels.includes(modelName)) {
+                return false;
+            }
+            return true;
         });
+        // Load models
+        return Promise.all(valids.map(b => this.get(b.key)));
+    }
+    classifyModelsByDs(opts) {
+        const { reps } = opts;
+        const modelByDs = {};
+        for (const rep of reps) {
+            const dsName = (0, get_1.default)(rep, 'dataSource.name');
+            if (!dsName || (0, isEmpty_1.default)(dsName)) {
+                continue;
+            }
+            const dsKey = `datasources.${dsName}`;
+            if (!(modelByDs === null || modelByDs === void 0 ? void 0 : modelByDs[dsKey])) {
+                modelByDs[dsKey] = [];
+            }
+            const modelName = (0, get_1.default)(rep, 'entityClass.definition.name', '');
+            if ((0, isEmpty_1.default)(modelName)) {
+                continue;
+            }
+            modelByDs[dsKey].push(modelName);
+        }
+        return modelByDs;
     }
     migrateModels(opts) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             const { existingSchema, ignoreModels = [], migrateModels } = opts;
             this.logger.info('[migrateModels] Loading legacy migratable models...!');
-            yield this.getMigrateModels({ ignoreModels });
+            const reps = (yield this.getMigrateModels({ ignoreModels, migrateModels }));
+            const classified = this.classifyModelsByDs({ reps });
             const operation = existingSchema === 'drop' ? 'automigrate' : 'autoupdate';
             const dsBindings = this.findByTag(repository_1.RepositoryTags.DATASOURCE);
             for (const b of dsBindings) {
@@ -83,7 +113,7 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
                     this.logger.info('[migrateModels] Skip migrating datasource %s', b.key);
                     continue;
                 }
-                yield ds[operation](migrateModels);
+                yield ds[operation](classified === null || classified === void 0 ? void 0 : classified[b.key]);
                 this.logger.info('[migrateModels] DONE | Migrating datasource %s | Took: %d(ms)', b.key, new Date().getTime() - t);
             }
         });

@@ -1,7 +1,9 @@
 import { EnvironmentValidationResult, IApplication } from '../common/types';
 import { ApplicationLogger } from '../helpers';
 import { ApplicationConfig, Constructor } from '@loopback/core';
+import { Repository } from '@loopback/repository';
 import { RestApplication, SequenceHandler } from '@loopback/rest';
+import { BaseEntity } from '..';
 declare const BaseApplication_base: (new (...args: any[]) => {
     projectRoot: string;
     bootOptions?: import("@loopback/boot").BootOptions | undefined;
@@ -178,8 +180,8 @@ declare const BaseApplication_base: (new (...args: any[]) => {
     prependOnceListener: (eventName: string | symbol, listener: (...args: any[]) => void) => import("@loopback/core").Application;
     eventNames: () => (string | symbol)[];
 }) & (new (...args: any[]) => {
-    repository<R extends import("@loopback/repository").Repository<any>>(repoClass: import("@loopback/repository").Class<R>, nameOrOptions?: string | import("@loopback/core").BindingFromClassOptions | undefined): import("@loopback/boot").Binding<R>;
-    getRepository<R_1 extends import("@loopback/repository").Repository<any>>(repo: import("@loopback/repository").Class<R_1>): Promise<R_1>;
+    repository<R extends Repository<any>>(repoClass: import("@loopback/repository").Class<R>, nameOrOptions?: string | import("@loopback/core").BindingFromClassOptions | undefined): import("@loopback/boot").Binding<R>;
+    getRepository<R_1 extends Repository<any>>(repo: import("@loopback/repository").Class<R_1>): Promise<R_1>;
     dataSource<D extends import("@loopback/repository").JugglerDataSource>(dataSource: D | import("@loopback/repository").Class<D>, nameOrOptions?: string | import("@loopback/core").BindingFromClassOptions | undefined): import("@loopback/boot").Binding<D>;
     model<M extends import("@loopback/repository").Class<unknown>>(modelClass: M): import("@loopback/boot").Binding<M>;
     component<C_2 extends import("@loopback/core").Component = import("@loopback/core").Component>(componentCtor: Constructor<C_2>, nameOrOptions?: string | import("@loopback/core").BindingFromClassOptions | undefined): import("@loopback/boot").Binding<C_2>;
@@ -282,8 +284,12 @@ export declare abstract class BaseApplication extends BaseApplication_base imple
     abstract preConfigure(): void;
     abstract postConfigure(): void;
     getMigrateModels(opts: {
-        ignoreModels: string[];
-    }): Promise<void>;
+        ignoreModels?: string[];
+        migrateModels?: string[];
+    }): Promise<unknown[]>;
+    classifyModelsByDs(opts: {
+        reps: Array<Repository<BaseEntity>>;
+    }): Record<string, string[]>;
     migrateModels(opts: {
         existingSchema: string;
         ignoreModels?: string[];

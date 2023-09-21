@@ -2,18 +2,19 @@ import { EnvironmentValidationResult, IApplication } from '@/common/types';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { BootMixin } from '@loopback/boot';
 import { ApplicationConfig, Constructor } from '@loopback/core';
-import { RepositoryMixin, RepositoryTags } from '@loopback/repository';
+import { Repository, RepositoryMixin, RepositoryTags } from '@loopback/repository';
 import { RestApplication, SequenceHandler } from '@loopback/rest';
 import { CrudRestComponent } from '@loopback/rest-crud';
 import { ServiceMixin } from '@loopback/service-proxy';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 
-import { BaseDataSource, RouteKeys } from '..';
+import { BaseDataSource, BaseEntity, RouteKeys } from '..';
 import { BaseApplicationSequence } from './base.sequence';
 
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
-  implements IApplication
-{
+  implements IApplication {
   protected logger: ApplicationLogger;
   models: Set<string>;
 
@@ -61,25 +62,62 @@ export abstract class BaseApplication
   abstract preConfigure(): void;
   abstract postConfigure(): void;
 
-  async getMigrateModels(opts: { ignoreModels: string[] }) {
-    const { ignoreModels } = opts;
+  getMigrateModels(opts: { ignoreModels?: string[]; migrateModels?: string[] }) {
+    const { ignoreModels, migrateModels } = opts;
 
     const repoBindings = this.findByTag(RepositoryTags.REPOSITORY);
     const valids = repoBindings.filter(b => {
       const key = b.key;
       const modelName = key.slice(key.indexOf('.') + 1, key.indexOf('Repository'));
-      return !ignoreModels.includes(modelName);
+
+      if (ignoreModels && ignoreModels.includes(modelName)) {
+        return false;
+      }
+
+      if (migrateModels && !migrateModels.includes(modelName)) {
+        return false;
+      }
+
+      return true;
     });
 
     // Load models
-    await Promise.all(valids.map(b => this.get(b.key)));
+    return Promise.all(valids.map(b => this.get(b.key)));
+  }
+
+  classifyModelsByDs(opts: { reps: Array<Repository<BaseEntity>> }) {
+    const { reps } = opts;
+    const modelByDs: Record<string, Array<string>> = {};
+
+    for (const rep of reps) {
+      const dsName = get(rep, 'dataSource.name');
+      if (!dsName || isEmpty(dsName)) {
+        continue;
+      }
+
+      const dsKey = `datasources.${dsName}`;
+      if (!modelByDs?.[dsKey]) {
+        modelByDs[dsKey] = [];
+      }
+
+      const modelName = get(rep, 'entityClass.definition.name', '') as string;
+      if (isEmpty(modelName)) {
+        continue;
+      }
+
+      modelByDs[dsKey].push(modelName);
+    }
+
+    return modelByDs;
   }
 
   async migrateModels(opts: { existingSchema: string; ignoreModels?: string[]; migrateModels?: string[] }) {
     const { existingSchema, ignoreModels = [], migrateModels } = opts;
 
     this.logger.info('[migrateModels] Loading legacy migratable models...!');
-    await this.getMigrateModels({ ignoreModels });
+    const reps = (await this.getMigrateModels({ ignoreModels, migrateModels })) as Array<Repository<BaseEntity>>;
+    const classified = this.classifyModelsByDs({ reps });
+
     const operation = existingSchema === 'drop' ? 'automigrate' : 'autoupdate';
 
     const dsBindings = this.findByTag(RepositoryTags.DATASOURCE);
@@ -99,7 +137,7 @@ export abstract class BaseApplication
         continue;
       }
 
-      await ds[operation](migrateModels);
+      await ds[operation](classified?.[b.key]);
       this.logger.info(
         '[migrateModels] DONE | Migrating datasource %s | Took: %d(ms)',
         b.key,
