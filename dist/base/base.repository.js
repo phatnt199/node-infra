@@ -21,6 +21,11 @@ class AbstractTzRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource) {
         super(entityClass, dataSource);
     }
+    beginTransaction(options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.dataSource.beginTransaction(options !== null && options !== void 0 ? options : {}));
+        });
+    }
 }
 exports.AbstractTzRepository = AbstractTzRepository;
 // ----------------------------------------------------------------------------------------------------------------------------------------

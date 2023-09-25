@@ -1,8 +1,9 @@
-import { AnyObject, Count, DataObject, DefaultCrudRepository, DefaultKeyValueRepository, juggler, Options, Where } from '@loopback/repository';
+import { AnyObject, Count, DataObject, DefaultCrudRepository, DefaultKeyValueRepository, IsolationLevel, juggler, Options, Transaction, TransactionalEntityRepository, Where } from '@loopback/repository';
 import { EntityClassType, EntityRelation, IdType, ITzRepository } from '../common/types';
 import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity } from './base.model';
-export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation> extends DefaultCrudRepository<E, IdType, R> implements ITzRepository<E> {
+export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation> extends DefaultCrudRepository<E, IdType, R> implements ITzRepository<E>, TransactionalEntityRepository<E, IdType, R> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
+    beginTransaction(options?: IsolationLevel | Options): Promise<Transaction>;
     abstract mixTimestamp(entity: DataObject<E>, options?: {
         newInstance: boolean;
     }): DataObject<E>;
