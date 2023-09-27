@@ -17,9 +17,6 @@ class BasicTokenService extends base_service_1.BaseService {
     constructor() {
         super({ scope: BasicTokenService.name });
     }
-    getRepository() {
-        return null;
-    }
     verify(credential) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!credential) {

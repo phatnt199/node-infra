@@ -7,10 +7,6 @@ export class BasicTokenService extends BaseService {
     super({ scope: BasicTokenService.name });
   }
 
-  getRepository() { 
-    return null;
-  }
-
   async verify(credential: { username: string; password: string }): Promise<any> {
     if (!credential) {
       this.logger.error('verify', 'Missing basic credential for validating request!');

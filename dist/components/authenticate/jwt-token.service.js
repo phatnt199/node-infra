@@ -32,9 +32,6 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
         this.jwtSecret = jwtSecret;
         this.jwtExpiresIn = jwtExpiresIn;
     }
-    getRepository() {
-        return null;
-    }
     // --------------------------------------------------------------------------------------
     extractCredentials(request) {
         if (!request.headers.authorization) {

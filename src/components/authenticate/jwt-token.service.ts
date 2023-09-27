@@ -19,10 +19,6 @@ export class JWTTokenService extends BaseService {
     super({ scope: JWTTokenService.name });
   }
 
-  getRepository() {
-    return null;
-  }
-
   // --------------------------------------------------------------------------------------
   extractCredentials(request: { headers: any }): { type: string; token: string } {
     if (!request.headers.authorization) {
