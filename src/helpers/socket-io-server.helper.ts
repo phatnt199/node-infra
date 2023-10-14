@@ -12,13 +12,16 @@ import { Server } from 'http';
 import isEmpty from 'lodash/isEmpty';
 import { Handshake } from 'socket.io/dist/socket';
 
+const CLIENT_AUTHENTICATE_TIMEOUT = 10 * 1000;
+
 export interface ISocketIOServerOptions {
   identifier: string;
   server: Server;
-  serverOptions: Partial<ServerOptions>,
+  serverOptions: Partial<ServerOptions>;
   redisConnection: Redis;
   authenticateFn: (args: Handshake) => Promise<boolean>;
   clientConnectedFn: (opts: { socket: IOSocket }) => Promise<void>;
+  authenticateTimeout?: number;
   defaultRooms?: string[];
 }
 
@@ -33,6 +36,8 @@ export class SocketIOServerHelper {
 
   private authenticateFn: (args: Handshake) => Promise<boolean>;
   private onClientConnected: (opts: { socket: IOSocket }) => Promise<void>;
+
+  private authenticateTimeout: number;
   private defaultRooms: string[];
 
   private io: IOServer;
@@ -58,6 +63,7 @@ export class SocketIOServerHelper {
     this.redisConnection = opts.redisConnection;
     this.authenticateFn = opts.authenticateFn;
     this.onClientConnected = opts.clientConnectedFn;
+    this.authenticateTimeout = opts.authenticateTimeout ?? CLIENT_AUTHENTICATE_TIMEOUT;
     this.defaultRooms = opts.defaultRooms ?? [SocketIOConstants.ROOM_DEFAULT, SocketIOConstants.ROOM_NOTIFICATION];
 
     if (!opts.server) {
@@ -140,7 +146,11 @@ export class SocketIOServerHelper {
       await this.onClientConnect({ socket });
     });
 
-    this.logger.info('[configure] SocketIO Server READY | Path: %s | Address: %j', this.serverOptions?.path ?? '', this.server?.address());
+    this.logger.info(
+      '[configure] SocketIO Server READY | Path: %s | Address: %j',
+      this.serverOptions?.path ?? '',
+      this.server?.address(),
+    );
     this.logger.debug('[configure] Whether http listening: %s', this.server?.listening);
   }
 
@@ -171,7 +181,7 @@ export class SocketIOServerHelper {
         }
 
         this.disconnect({ socket });
-      }, 2000),
+      }, this.authenticateTimeout),
     };
 
     socket.on(SocketIOConstants.EVENT_AUTHENTICATE, () => {
@@ -336,7 +346,7 @@ export class SocketIOServerHelper {
     });
 
     this.onClientConnected?.({ socket })
-      ?.then(() => { })
+      ?.then(() => {})
       .catch(error => {
         this.logger.error('[onClientConnected][Handler] Error: %s', error);
       });

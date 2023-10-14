@@ -22,10 +22,11 @@ const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
 const common_1 = require("../common");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
+const CLIENT_AUTHENTICATE_TIMEOUT = 10 * 1000;
 // -------------------------------------------------------------------------------------------------------------
 class SocketIOServerHelper {
     constructor(opts) {
-        var _a, _b;
+        var _a, _b, _c;
         this.serverOptions = {};
         this.logger = helpers_1.LoggerFactory.getLogger([SocketIOServerHelper.name]);
         this.clients = {};
@@ -34,7 +35,8 @@ class SocketIOServerHelper {
         this.redisConnection = opts.redisConnection;
         this.authenticateFn = opts.authenticateFn;
         this.onClientConnected = opts.clientConnectedFn;
-        this.defaultRooms = (_b = opts.defaultRooms) !== null && _b !== void 0 ? _b : [common_1.SocketIOConstants.ROOM_DEFAULT, common_1.SocketIOConstants.ROOM_NOTIFICATION];
+        this.authenticateTimeout = (_b = opts.authenticateTimeout) !== null && _b !== void 0 ? _b : CLIENT_AUTHENTICATE_TIMEOUT;
+        this.defaultRooms = (_c = opts.defaultRooms) !== null && _c !== void 0 ? _c : [common_1.SocketIOConstants.ROOM_DEFAULT, common_1.SocketIOConstants.ROOM_NOTIFICATION];
         if (!opts.server) {
             throw (0, utilities_1.getError)({
                 statusCode: 500,
@@ -128,7 +130,7 @@ class SocketIOServerHelper {
                         return;
                     }
                     this.disconnect({ socket });
-                }, 2000),
+                }, this.authenticateTimeout),
             };
             socket.on(common_1.SocketIOConstants.EVENT_AUTHENTICATE, () => {
                 this.clients[id].state = 'authenticating';

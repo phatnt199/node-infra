@@ -13,6 +13,7 @@ export interface ISocketIOServerOptions {
     clientConnectedFn: (opts: {
         socket: IOSocket;
     }) => Promise<void>;
+    authenticateTimeout?: number;
     defaultRooms?: string[];
 }
 export declare class SocketIOServerHelper {
@@ -23,6 +24,7 @@ export declare class SocketIOServerHelper {
     private redisConnection;
     private authenticateFn;
     private onClientConnected;
+    private authenticateTimeout;
     private defaultRooms;
     private io;
     private emitter;
