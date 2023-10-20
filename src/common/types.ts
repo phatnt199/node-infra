@@ -57,10 +57,11 @@ export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepos
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IService { }
+export interface IService {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IController { }
+export interface IController {}
+export type ICRUDController = IController & { repository: any };
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IApplicationEnvironment {
@@ -97,4 +98,4 @@ export interface JWTTokenPayload extends UserProfile {
   roles: { id: IdType; identifier: string; priority: number }[];
 }
 
-export interface TokenPayload extends JWTTokenPayload { }
+export interface TokenPayload extends JWTTokenPayload {}

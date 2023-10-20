@@ -54,6 +54,9 @@ export interface IService {
 }
 export interface IController {
 }
+export type ICRUDController = IController & {
+    repository: any;
+};
 export interface IApplicationEnvironment {
     get<ReturnType>(key: string): ReturnType;
     set<ValueType>(key: string, value: ValueType): any;
