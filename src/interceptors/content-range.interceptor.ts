@@ -66,8 +66,8 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
     const countRs = await repository.count(where);
 
     const start = 0 + skip;
-    const end = Math.min(start + limit - 1, countRs.count);
-    this.response.set('Content-Range', `records ${start}-${end}/${countRs.count}`);
+    const end = Math.min(start + limit, countRs.count);
+    this.response.set('Content-Range', `records ${start}-${end > 0 ? end - 1 : end}/${countRs.count}`);
   }
 
   // -------------------------------------------------------------------------------------

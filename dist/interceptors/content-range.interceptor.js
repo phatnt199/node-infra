@@ -69,8 +69,8 @@ let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInte
             const { where = {}, skip = 0, limit = (_b = controller === null || controller === void 0 ? void 0 : controller.defaultLimit) !== null && _b !== void 0 ? _b : common_1.App.DEFAULT_QUERY_LIMIT } = filter;
             const countRs = yield repository.count(where);
             const start = 0 + skip;
-            const end = Math.min(start + limit - 1, countRs.count);
-            this.response.set('Content-Range', `records ${start}-${end}/${countRs.count}`);
+            const end = Math.min(start + limit, countRs.count);
+            this.response.set('Content-Range', `records ${start}-${end > 0 ? end - 1 : end}/${countRs.count}`);
         });
     }
     // -------------------------------------------------------------------------------------
