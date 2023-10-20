@@ -8,6 +8,7 @@ const common_1 = require("../common");
 const components_1 = require("../components");
 const datasources_1 = require("../datasources");
 const helpers_1 = require("../helpers");
+const content_range_interceptor_1 = require("../interceptors/content-range.interceptor");
 const rest_1 = require("@loopback/rest");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const base_application_1 = require("./base.application");
@@ -54,6 +55,8 @@ class DefaultRestApplication extends base_application_1.BaseApplication {
         this.dataSource(datasources_1.KvMemDataSource);
         // Migration
         this.configureMigration();
+        // Interceptors
+        this.interceptor(content_range_interceptor_1.ContentRangeInterceptor, { global: true });
         // controllers
         this.bootOptions = {
             controllers: {

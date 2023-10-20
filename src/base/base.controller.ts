@@ -22,28 +22,26 @@ import { BaseIdEntity, BaseTzEntity, AbstractTzRepository, BaseKVEntity, Abstrac
 import { EntityRelation, IController, IdType, NullableType, TRelationType } from '@/common/types';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
-import { EntityRelations } from '@/common';
+import { App, EntityRelations } from '@/common';
 import { Class } from '@loopback/service-proxy';
-
-const DEFAULT_LIMIT = 50;
 
 const applyLimit = <E extends BaseTzEntity>(filter?: Filter<E>) => {
   const rs: Filter<E> = {
     ...(filter ?? {}),
   };
 
-  rs['limit'] = rs['limit'] ?? DEFAULT_LIMIT;
+  rs['limit'] = rs['limit'] ?? App.DEFAULT_QUERY_LIMIT;
   return rs;
 };
 
 // --------------------------------------------------------------------------------------------------------------
 export class BaseController implements IController {
   protected logger: ApplicationLogger;
-  protected defaultLimit: number = DEFAULT_LIMIT;
+  defaultLimit: number = App.DEFAULT_QUERY_LIMIT;
 
   constructor(opts: { scope?: string; defaultLimit?: number }) {
     this.logger = LoggerFactory.getLogger([opts?.scope ?? BaseController.name]);
-    this.defaultLimit = opts?.defaultLimit ?? DEFAULT_LIMIT;
+    this.defaultLimit = opts?.defaultLimit ?? App.DEFAULT_QUERY_LIMIT;
   }
 }
 
@@ -74,6 +72,7 @@ export const defineKVController = <E extends BaseKVEntity>(opts: KVControllerOpt
 
   class ReadController implements IController {
     repository: AbstractKVRepository<E>;
+    defaultLimit: number = App.DEFAULT_QUERY_LIMIT;
 
     constructor(repository: AbstractKVRepository<E>) {
       this.repository = repository;
@@ -183,7 +182,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
 
     constructor(repository: AbstractTzRepository<E, EntityRelation>) {
       this.repository = repository;
-      this.defaultLimit = controllerOptions?.defaultLimit ?? DEFAULT_LIMIT;
+      this.defaultLimit = controllerOptions?.defaultLimit ?? App.DEFAULT_QUERY_LIMIT;
     }
 
     @get('/', {
@@ -429,12 +428,19 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
   relationName: string;
   defaultLimit?: number;
 }): ControllerClass => {
-  const { baseClass, relationType, relationName, defaultLimit = DEFAULT_LIMIT } = opts;
+  const { baseClass, relationType, relationName, defaultLimit = App.DEFAULT_QUERY_LIMIT } = opts;
 
   const restPath = `/{id}/${relationName}`;
   const BaseClass = baseClass ?? BaseController;
 
   class ViewController extends BaseClass implements IController {
+    relation: {
+      name: string;
+      type: string;
+    } = {
+      name: relationName,
+      type: relationType,
+    };
     sourceRepository: AbstractTzRepository<S, EntityRelation>;
     targetRepository: AbstractTzRepository<T, EntityRelation>;
     defaultLimit: number;
@@ -506,7 +512,7 @@ export const defineAssociateController = <
   relationName: string;
   defaultLimit?: number;
 }): ControllerClass => {
-  const { baseClass, relationName, defaultLimit = DEFAULT_LIMIT } = opts;
+  const { baseClass, relationName, defaultLimit = App.DEFAULT_QUERY_LIMIT } = opts;
   const restPath = `/{id}/${relationName}`;
 
   const BaseClass = baseClass ?? BaseController;
@@ -597,7 +603,11 @@ export const defineRelationCrudController = <
 >(
   controllerOptions: RelationCrudControllerOptions,
 ): ControllerClass => {
-  const { association, schema, options = { controlTarget: false, defaultLimit: DEFAULT_LIMIT } } = controllerOptions;
+  const {
+    association,
+    schema,
+    options = { controlTarget: false, defaultLimit: App.DEFAULT_QUERY_LIMIT },
+  } = controllerOptions;
   const { relationName, relationType } = association;
 
   if (!EntityRelations.isValid(relationType)) {
@@ -608,7 +618,7 @@ export const defineRelationCrudController = <
   }
 
   const { target: targetSchema } = schema;
-  const { controlTarget = true, defaultLimit = DEFAULT_LIMIT } = options;
+  const { controlTarget = true, defaultLimit = App.DEFAULT_QUERY_LIMIT } = options;
 
   const restPath = `{id}/${relationName}`;
   const ViewController = defineRelationViewController<S, T>({

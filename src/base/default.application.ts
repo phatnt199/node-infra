@@ -2,6 +2,7 @@ import { BindingKeys, EnvironmentKeys, EnvironmentValidationResult, MigrationKey
 import { MigrationComponent } from '@/components';
 import { KvMemDataSource, PostgresDataSource } from '@/datasources';
 import { applicationEnvironment } from '@/helpers';
+import { ContentRangeInterceptor } from '@/interceptors/content-range.interceptor';
 import { ApplicationConfig, Constructor } from '@loopback/core';
 import { RestBindings, SequenceHandler } from '@loopback/rest';
 import isEmpty from 'lodash/isEmpty';
@@ -62,6 +63,9 @@ export abstract class DefaultRestApplication extends BaseApplication {
 
     // Migration
     this.configureMigration();
+
+    // Interceptors
+    this.interceptor(ContentRangeInterceptor, { global: true });
 
     // controllers
     this.bootOptions = {

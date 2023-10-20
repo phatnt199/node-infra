@@ -65,7 +65,11 @@ export interface IService {}
 export interface IController {}
 
 export interface ICRUDController extends IController {
-  repository: IRepository;
+  defaultLimit: number;
+  relation?: { name: string; type: string };
+  repository?: IRepository;
+  sourceRepository?: IRepository;
+  targetRepository?: IRepository;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------

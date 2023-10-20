@@ -8,7 +8,7 @@ import { ApplicationLogger } from '../helpers';
 import { Class } from '@loopback/service-proxy';
 export declare class BaseController implements IController {
     protected logger: ApplicationLogger;
-    protected defaultLimit: number;
+    defaultLimit: number;
     constructor(opts: {
         scope?: string;
         defaultLimit?: number;
@@ -40,6 +40,7 @@ export interface KVControllerOptions<E extends BaseKVEntity> {
 export declare const defineKVController: <E extends BaseKVEntity>(opts: KVControllerOptions<E>) => {
     new (repository: AbstractKVRepository<E>): {
         repository: AbstractKVRepository<E>;
+        defaultLimit: number;
         get(key: string): Promise<E>;
         getKeys(match: string): AsyncIterable<string>;
     };

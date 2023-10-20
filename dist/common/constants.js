@@ -11,6 +11,7 @@ App.TIME_OFFSET = '+07:00';
 App.DEFAULT_LOCALE = 'en.UTF-8';
 App.DEFAULT_EXPLORER_PATH = '/explorer';
 App.SECRET = 'application.secret';
+App.DEFAULT_QUERY_LIMIT = 50;
 class Authentication {
 }
 exports.Authentication = Authentication;

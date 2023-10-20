@@ -32,20 +32,19 @@ const get_1 = __importDefault(require("lodash/get"));
 const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
 const common_1 = require("../common");
-const DEFAULT_LIMIT = 50;
 const applyLimit = (filter) => {
     var _a;
     const rs = Object.assign({}, (filter !== null && filter !== void 0 ? filter : {}));
-    rs['limit'] = (_a = rs['limit']) !== null && _a !== void 0 ? _a : DEFAULT_LIMIT;
+    rs['limit'] = (_a = rs['limit']) !== null && _a !== void 0 ? _a : common_1.App.DEFAULT_QUERY_LIMIT;
     return rs;
 };
 // --------------------------------------------------------------------------------------------------------------
 class BaseController {
     constructor(opts) {
         var _a, _b;
-        this.defaultLimit = DEFAULT_LIMIT;
+        this.defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT;
         this.logger = helpers_1.LoggerFactory.getLogger([(_a = opts === null || opts === void 0 ? void 0 : opts.scope) !== null && _a !== void 0 ? _a : BaseController.name]);
-        this.defaultLimit = (_b = opts === null || opts === void 0 ? void 0 : opts.defaultLimit) !== null && _b !== void 0 ? _b : DEFAULT_LIMIT;
+        this.defaultLimit = (_b = opts === null || opts === void 0 ? void 0 : opts.defaultLimit) !== null && _b !== void 0 ? _b : common_1.App.DEFAULT_QUERY_LIMIT;
     }
 }
 exports.BaseController = BaseController;
@@ -62,6 +61,7 @@ const defineKVController = (opts) => {
     const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = opts;
     class ReadController {
         constructor(repository) {
+            this.defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT;
             this.repository = repository;
         }
         get(key) {
@@ -179,7 +179,7 @@ const defineCrudController = (opts) => {
         constructor(repository) {
             var _a;
             this.repository = repository;
-            this.defaultLimit = (_a = controllerOptions === null || controllerOptions === void 0 ? void 0 : controllerOptions.defaultLimit) !== null && _a !== void 0 ? _a : DEFAULT_LIMIT;
+            this.defaultLimit = (_a = controllerOptions === null || controllerOptions === void 0 ? void 0 : controllerOptions.defaultLimit) !== null && _a !== void 0 ? _a : common_1.App.DEFAULT_QUERY_LIMIT;
         }
         find(filter) {
             return this.repository.find(applyLimit(filter));
@@ -432,12 +432,16 @@ const defineCrudController = (opts) => {
 exports.defineCrudController = defineCrudController;
 // --------------------------------------------------------------------------------------------------------------
 const defineRelationViewController = (opts) => {
-    const { baseClass, relationType, relationName, defaultLimit = DEFAULT_LIMIT } = opts;
+    const { baseClass, relationType, relationName, defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT } = opts;
     const restPath = `/{id}/${relationName}`;
     const BaseClass = baseClass !== null && baseClass !== void 0 ? baseClass : BaseController;
     class ViewController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
             super({ scope: `ViewController.${relationName}` });
+            this.relation = {
+                name: relationName,
+                type: relationType,
+            };
             this.defaultLimit = defaultLimit;
             if (!sourceRepository) {
                 throw (0, utilities_1.getError)({
@@ -496,7 +500,7 @@ const defineRelationViewController = (opts) => {
 exports.defineRelationViewController = defineRelationViewController;
 // --------------------------------------------------------------------------------------------------------------
 const defineAssociateController = (opts) => {
-    const { baseClass, relationName, defaultLimit = DEFAULT_LIMIT } = opts;
+    const { baseClass, relationName, defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT } = opts;
     const restPath = `/{id}/${relationName}`;
     const BaseClass = baseClass !== null && baseClass !== void 0 ? baseClass : BaseController;
     class AssociationController extends BaseClass {
@@ -582,7 +586,7 @@ const defineAssociateController = (opts) => {
 exports.defineAssociateController = defineAssociateController;
 // --------------------------------------------------------------------------------------------------------------
 const defineRelationCrudController = (controllerOptions) => {
-    const { association, schema, options = { controlTarget: false, defaultLimit: DEFAULT_LIMIT } } = controllerOptions;
+    const { association, schema, options = { controlTarget: false, defaultLimit: common_1.App.DEFAULT_QUERY_LIMIT }, } = controllerOptions;
     const { relationName, relationType } = association;
     if (!common_1.EntityRelations.isValid(relationType)) {
         throw (0, utilities_1.getError)({
@@ -591,7 +595,7 @@ const defineRelationCrudController = (controllerOptions) => {
         });
     }
     const { target: targetSchema } = schema;
-    const { controlTarget = true, defaultLimit = DEFAULT_LIMIT } = options;
+    const { controlTarget = true, defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT } = options;
     const restPath = `{id}/${relationName}`;
     const ViewController = (0, exports.defineRelationViewController)({
         baseClass: BaseController,
