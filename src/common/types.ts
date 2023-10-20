@@ -61,7 +61,7 @@ export interface IService {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IController {}
-export type ICRUDController = IController & { repository: any };
+export type TCRUDController = IController & { repository: any };
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IApplicationEnvironment {
