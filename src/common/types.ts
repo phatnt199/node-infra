@@ -34,7 +34,9 @@ export interface IEntity {
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IPersistableRepository<E extends BaseIdEntity> {
+export interface IRepository {}
+
+export interface IPersistableRepository<E extends BaseIdEntity> extends IRepository {
   existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
 
   create(data: DataObject<E>, options?: Options): Promise<E>;
@@ -61,7 +63,10 @@ export interface IService {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IController {}
-export type TCRUDController = IController & { repository: any };
+
+export interface ICRUDController extends IController {
+  repository: IRepository;
+}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IApplicationEnvironment {
