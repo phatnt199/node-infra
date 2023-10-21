@@ -63,7 +63,6 @@ const defineRelationViewController = (opts) => {
         find(id, filter) {
             return __awaiter(this, void 0, void 0, function* () {
                 const ref = (0, get_1.default)(this.sourceRepository, relationName)(id);
-                console.log(ref);
                 switch (relationType) {
                     case common_1.EntityRelations.BELONGS_TO: {
                         return ref;
