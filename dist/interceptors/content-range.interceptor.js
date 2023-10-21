@@ -86,7 +86,7 @@ let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInte
             }
             const refId = args[0];
             let filter = args[1];
-            if (!controller.sourceRepository || !refId) {
+            if (!controller.sourceRepository || !controller.targetRepository || !refId) {
                 return;
             }
             if (!filter) {
@@ -96,18 +96,13 @@ let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInte
                     where: {},
                 };
             }
-            // const ref = get(controller.sourceRepository, relation.name)(refId);
+            const { skip = 0 } = filter;
             switch (relation.type) {
                 case common_1.EntityRelations.HAS_MANY:
                 case common_1.EntityRelations.HAS_MANY_THROUGH: {
-                    const { 
-                    // where = {},
-                    skip = 0,
-                    // limit = controller?.defaultLimit ?? App.DEFAULT_QUERY_LIMIT,
-                     } = filter;
                     const start = 0 + skip;
                     const end = result === null || result === void 0 ? void 0 : result.length;
-                    this.response.set('Content-Range', `records ${start}-${end}/*`);
+                    this.response.set('Content-Range', `records ${start}-${end}/${end}`);
                     break;
                 }
                 default: {

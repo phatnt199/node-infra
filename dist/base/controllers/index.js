@@ -14,13 +14,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./base.application"), exports);
-__exportStar(require("./default.application"), exports);
-__exportStar(require("./base.component"), exports);
-__exportStar(require("./controllers"), exports);
-__exportStar(require("./base.datasource"), exports);
-__exportStar(require("./base.model"), exports);
-__exportStar(require("./base.repository"), exports);
-__exportStar(require("./base.sequence"), exports);
-__exportStar(require("./base.service"), exports);
+__exportStar(require("./common"), exports);
+__exportStar(require("./kv.controller"), exports);
+__exportStar(require("./crud.controller"), exports);
+__exportStar(require("./relational.controller"), exports);
 //# sourceMappingURL=index.js.map

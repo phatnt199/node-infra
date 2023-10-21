@@ -82,7 +82,7 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
 
     const refId: BaseIdEntity = args[0];
     let filter: Filter<BaseIdEntity> = args[1];
-    if (!controller.sourceRepository || !refId) {
+    if (!controller.sourceRepository || !controller.targetRepository || !refId) {
       return;
     }
 
@@ -94,19 +94,14 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
       };
     }
 
-    // const ref = get(controller.sourceRepository, relation.name)(refId);
+    const { skip = 0 } = filter;
+
     switch (relation.type) {
       case EntityRelations.HAS_MANY:
       case EntityRelations.HAS_MANY_THROUGH: {
-        const {
-          // where = {},
-          skip = 0,
-          // limit = controller?.defaultLimit ?? App.DEFAULT_QUERY_LIMIT,
-        } = filter;
-
         const start = 0 + skip;
         const end = result?.length;
-        this.response.set('Content-Range', `records ${start}-${end}/*`);
+        this.response.set('Content-Range', `records ${start}-${end}/${end}`);
         break;
       }
       default: {

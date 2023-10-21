@@ -1,0 +1,263 @@
+import { inject } from '@loopback/core';
+import { CrudRestControllerOptions } from '@loopback/rest-crud';
+import { Count, CountSchema, DataObject, Filter, FilterExcludingWhere, Where } from '@loopback/repository';
+import {
+  del,
+  get,
+  getFilterSchemaFor,
+  getModelSchemaRef,
+  param,
+  ParameterObject,
+  patch,
+  post,
+  put,
+  requestBody,
+} from '@loopback/rest';
+
+import { BaseIdEntity, BaseTzEntity, AbstractTzRepository } from './../';
+import { EntityRelation, IController, IdType } from '@/common/types';
+import { App } from '@/common';
+import { applyLimit, getIdSchema } from './common';
+
+// --------------------------------------------------------------------------------------------------------------
+export interface CrudControllerOptions<E extends BaseIdEntity> {
+  entity: typeof BaseIdEntity & { prototype: E };
+  repository: { name: string };
+  controller: CrudRestControllerOptions & { defaultLimit?: number };
+}
+
+// --------------------------------------------------------------------------------------------------------------
+export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControllerOptions<E>) => {
+  const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = opts;
+
+  const idPathParam: ParameterObject = {
+    name: 'id',
+    in: 'path',
+    schema: getIdSchema(entityOptions),
+  };
+
+  class ReadController implements IController {
+    repository: AbstractTzRepository<E, EntityRelation>;
+    defaultLimit: number;
+
+    constructor(repository: AbstractTzRepository<E, EntityRelation>) {
+      this.repository = repository;
+      this.defaultLimit = controllerOptions?.defaultLimit ?? App.DEFAULT_QUERY_LIMIT;
+    }
+
+    @get('/', {
+      responses: {
+        '200': {
+          description: `Array of ${entityOptions.name} model instances`,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: getModelSchemaRef(entityOptions, { includeRelations: true }),
+              },
+            },
+          },
+        },
+      },
+    })
+    find(@param.filter(entityOptions) filter?: Filter<E>): Promise<(E & EntityRelation)[]> {
+      return this.repository.find(applyLimit(filter));
+    }
+
+    @get('/{id}', {
+      responses: {
+        '200': {
+          description: `Find ${entityOptions.name} model instance`,
+          content: {
+            'application/json': {
+              schema: getModelSchemaRef(entityOptions, { includeRelations: true }),
+            },
+          },
+        },
+      },
+    })
+    findById(
+      @param(idPathParam) id: IdType,
+      @param.query.object('filter', getFilterSchemaFor(entityOptions, { exclude: 'where' }))
+      filter?: FilterExcludingWhere<E>,
+    ): Promise<E & EntityRelation> {
+      return this.repository.findById(id, applyLimit(filter));
+    }
+
+    @get('/find-one', {
+      responses: {
+        '200': {
+          description: `Find one ${entityOptions.name} model instance`,
+          content: {
+            'application/json': {
+              schema: getModelSchemaRef(entityOptions, { includeRelations: true }),
+            },
+          },
+        },
+      },
+    })
+    findOne(
+      @param.query.object('filter', getFilterSchemaFor(entityOptions))
+      filter?: FilterExcludingWhere<E>,
+    ): Promise<(E & EntityRelation) | null> {
+      return this.repository.findOne(filter);
+    }
+
+    @get('/count', {
+      responses: {
+        '200': {
+          description: `Count number of ${entityOptions.name} model instance`,
+          content: {
+            'application/json': {
+              schema: CountSchema,
+            },
+          },
+        },
+      },
+    })
+    count(@param.where(entityOptions) where?: Where<E>): Promise<Count> {
+      return this.repository.count(where);
+    }
+  }
+
+  if (controllerOptions.readonly) {
+    if (repositoryOptions?.name) {
+      inject(`repositories.${repositoryOptions.name}`)(ReadController, undefined, 0);
+    }
+
+    return ReadController;
+  }
+
+  class CRUDController extends ReadController {
+    constructor(repository: AbstractTzRepository<E, EntityRelation>) {
+      super(repository);
+    }
+
+    @post('/', {
+      responses: {
+        '200': {
+          description: `Create ${entityOptions.name} model instance`,
+          content: {
+            'application/json': {
+              schema: getModelSchemaRef(entityOptions),
+            },
+          },
+        },
+      },
+    })
+    async create(
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(entityOptions, {
+              title: `New ${entityOptions.name} payload`,
+              exclude: ['id', 'createdAt', 'modifiedAt'],
+            }),
+          },
+        },
+      })
+      data: Omit<E, 'id'>,
+    ): Promise<E> {
+      const rs = await this.repository.create(data as DataObject<E>);
+      return rs;
+    }
+
+    @patch('/', {
+      responses: {
+        '200': {
+          description: `Number of updated ${entityOptions.name} models`,
+          content: {
+            'application/json': {
+              schema: CountSchema,
+            },
+          },
+        },
+      },
+    })
+    async updateAll(
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(entityOptions, {
+              title: `Partial fields of ${entityOptions.name}`,
+              partial: true,
+            }),
+          },
+        },
+      })
+      data: Partial<E>,
+      @param.where(entityOptions)
+      where?: Where<E>,
+    ): Promise<Count> {
+      return this.repository.updateAll(data as DataObject<E>, where);
+    }
+
+    @patch('/{id}', {
+      responses: {
+        '200': {
+          description: `Updated ${entityOptions.name} models`,
+          content: {
+            'application/json': {
+              schema: getModelSchemaRef(entityOptions, {
+                title: `Updated ${entityOptions.name} models`,
+              }),
+            },
+          },
+        },
+      },
+    })
+    async updateById(
+      @param(idPathParam) id: IdType,
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(entityOptions, {
+              title: `Partial fields of ${entityOptions.name}`,
+              partial: true,
+            }),
+          },
+        },
+      })
+      data: Partial<E>,
+    ): Promise<E> {
+      const rs = await this.repository.updateWithReturn(id, data as DataObject<E>);
+      return rs;
+    }
+
+    @put('/{id}', {
+      responses: {
+        '204': { description: `${entityOptions.name} was replaced` },
+      },
+    })
+    async replaceById(
+      @param(idPathParam) id: IdType,
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(entityOptions, {
+              title: `Fields of ${entityOptions.name}`,
+            }),
+          },
+        },
+      })
+      data: E,
+    ): Promise<void> {
+      await this.repository.replaceById(id, data);
+    }
+
+    @del('/{id}', {
+      responses: {
+        '204': { description: `${entityOptions} was deleted` },
+      },
+    })
+    async deleteById(@param(idPathParam) id: IdType): Promise<void> {
+      await this.repository.deleteById(id);
+    }
+  }
+
+  if (repositoryOptions?.name) {
+    inject(`repositories.${repositoryOptions.name}`)(CRUDController, undefined, 0);
+  }
+
+  return CRUDController;
+};
