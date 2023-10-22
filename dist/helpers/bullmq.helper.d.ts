@@ -24,6 +24,7 @@ export declare class BullMQHelper {
     private onWorkerDataFail?;
     private logger;
     constructor(options: IBullMQOptions);
+    static newInstance(opts: IBullMQOptions): BullMQHelper;
     configureQueue(): void;
     configureWorker(): void;
     configure(): void;

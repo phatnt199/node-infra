@@ -54,6 +54,10 @@ export class BullMQHelper {
     this.configure();
   }
 
+  static newInstance(opts: IBullMQOptions) {
+    return new BullMQHelper(opts);
+  }
+
   configureQueue() {
     if (!this.queueName) {
       this.logger.error('[configureQueue][%s] Invalid queue name', this.identifier);

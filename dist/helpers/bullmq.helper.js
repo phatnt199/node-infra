@@ -27,6 +27,9 @@ class BullMQHelper {
         this.onWorkerDataFail = onWorkerDataFail;
         this.configure();
     }
+    static newInstance(opts) {
+        return new BullMQHelper(opts);
+    }
     configureQueue() {
         if (!this.queueName) {
             this.logger.error('[configureQueue][%s] Invalid queue name', this.identifier);
