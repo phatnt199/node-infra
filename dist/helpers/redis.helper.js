@@ -16,6 +16,7 @@ exports.RedisHelper = void 0;
 const ioredis_1 = __importDefault(require("ioredis"));
 const helpers_1 = require("../helpers");
 class RedisHelper {
+    // ---------------------------------------------------------------------------------
     constructor(options) {
         this.logger = helpers_1.LoggerFactory.getLogger([RedisHelper.name]);
         const { name, host, port, password, onConnected, onReady, onError } = options;
@@ -46,6 +47,7 @@ class RedisHelper {
             this.logger.error(` ${name} RECONNECTING...`);
         });
     }
+    // ---------------------------------------------------------------------------------
     set(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { key, value, options = { log: false } } = opts;
@@ -61,6 +63,7 @@ class RedisHelper {
             this.logger.info(`[set] Set key: ${key} | value: ${serialized}`);
         });
     }
+    // ---------------------------------------------------------------------------------
     mset(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.client) {
@@ -79,6 +82,7 @@ class RedisHelper {
             this.logger.info('[mset] Payload: %j', serialized);
         });
     }
+    // ---------------------------------------------------------------------------------
     get(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { key, transform } = opts;
@@ -93,6 +97,7 @@ class RedisHelper {
             return transform(value);
         });
     }
+    // ---------------------------------------------------------------------------------
     mget(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { keys, transform } = opts;
@@ -107,30 +112,35 @@ class RedisHelper {
             return values === null || values === void 0 ? void 0 : values.map(el => (el ? transform(el) : el));
         });
     }
+    // ---------------------------------------------------------------------------------
     getString(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const rs = yield this.get(opts);
             return rs;
         });
     }
+    // ---------------------------------------------------------------------------------
     getStrings(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const rs = yield this.mget(opts);
             return rs;
         });
     }
+    // ---------------------------------------------------------------------------------
     getObject(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const rs = yield this.get(Object.assign(Object.assign({}, opts), { transform: (cached) => JSON.parse(cached) }));
             return rs;
         });
     }
+    // ---------------------------------------------------------------------------------
     getObjects(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const rs = yield this.mget(Object.assign(Object.assign({}, opts), { transform: (cached) => JSON.parse(cached) }));
             return rs;
         });
     }
+    // ---------------------------------------------------------------------------------
     keys(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { key } = opts;

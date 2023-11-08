@@ -5,6 +5,7 @@ export class RedisHelper {
   client: Redis;
   private logger: ApplicationLogger;
 
+  // ---------------------------------------------------------------------------------
   constructor(options: {
     name: string;
     host: string;
@@ -49,6 +50,7 @@ export class RedisHelper {
     });
   }
 
+  // ---------------------------------------------------------------------------------
   async set(opts: { key: string; value: any; options?: { log: boolean } }) {
     const { key, value, options = { log: false } } = opts;
 
@@ -67,6 +69,7 @@ export class RedisHelper {
     this.logger.info(`[set] Set key: ${key} | value: ${serialized}`);
   }
 
+  // ---------------------------------------------------------------------------------
   async mset(opts: { payload: Array<{ key: string; value: any }>; options?: { log: boolean } }) {
     if (!this.client) {
       this.logger.info('[set] No valid Redis connection!');
@@ -87,6 +90,7 @@ export class RedisHelper {
     this.logger.info('[mset] Payload: %j', serialized);
   }
 
+  // ---------------------------------------------------------------------------------
   async get(opts: { key: string; transform?: (input: string) => any }) {
     const { key, transform } = opts;
     if (!this.client) {
@@ -102,6 +106,7 @@ export class RedisHelper {
     return transform(value);
   }
 
+  // ---------------------------------------------------------------------------------
   async mget(opts: { keys: Array<string>; transform?: (input: string) => any }) {
     const { keys, transform } = opts;
     if (!this.client) {
@@ -117,16 +122,19 @@ export class RedisHelper {
     return values?.map(el => (el ? transform(el) : el));
   }
 
+  // ---------------------------------------------------------------------------------
   async getString(opts: { key: string }) {
     const rs = await this.get(opts);
     return rs;
   }
 
+  // ---------------------------------------------------------------------------------
   async getStrings(opts: { keys: Array<string> }) {
     const rs = await this.mget(opts);
     return rs;
   }
 
+  // ---------------------------------------------------------------------------------
   async getObject(opts: { key: string }) {
     const rs = await this.get({
       ...opts,
@@ -136,6 +144,7 @@ export class RedisHelper {
     return rs;
   }
 
+  // ---------------------------------------------------------------------------------
   async getObjects(opts: { keys: Array<string> }) {
     const rs = await this.mget({
       ...opts,
@@ -145,6 +154,7 @@ export class RedisHelper {
     return rs;
   }
 
+  // ---------------------------------------------------------------------------------
   async keys(opts: { key: string }) {
     const { key } = opts;
     if (!this.client) {

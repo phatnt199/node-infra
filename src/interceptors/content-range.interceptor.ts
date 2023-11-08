@@ -135,6 +135,7 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
 
   async intercept(context: InvocationContext, next: () => ValueOrPromise<InvocationResult>) {
     const result = await next();
+    this.response.set('Access-Control-Expose-Headers', 'Content-Length, Content-Type, Content-Range');
 
     if (!context?.methodName) {
       return result;
