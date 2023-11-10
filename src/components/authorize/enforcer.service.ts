@@ -25,19 +25,22 @@ export class EnforcerService {
       return this.enforcer;
     }
 
+    this.logger.debug('[getEnforcer] Enforcer Options: ', this.options);
     const { confPath, useCache } = this.options;
 
     if (!confPath || isEmpty(confPath)) {
+      this.logger.error('[getEnforcer] Invalid configure path | confPath: %s', confPath);
       throw getError({
         statusCode: 500,
-        message: '[getEnforcer] Invalid enforcer configuration path!',
+        message: `[getEnforcer] Invalid enforcer configuration path | confPath: ${confPath}`,
       });
     }
 
     if (!fs.existsSync(confPath)) {
+      this.logger.error('[getEnforcer] Please check again configure path | confPath: %s', confPath);
       throw getError({
         statusCode: 500,
-        message: '[getEnforcer] Enforcer configuration path is not existed!',
+        message: `[getEnforcer] Enforcer configuration path is not existed | confPath: ${confPath}`,
       });
     }
 

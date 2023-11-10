@@ -45,17 +45,20 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
             if (this.enforcer) {
                 return this.enforcer;
             }
+            this.logger.debug('[getEnforcer] Enforcer Options: ', this.options);
             const { confPath, useCache } = this.options;
             if (!confPath || (0, isEmpty_1.default)(confPath)) {
+                this.logger.error('[getEnforcer] Invalid configure path | confPath: %s', confPath);
                 throw (0, utilities_1.getError)({
                     statusCode: 500,
-                    message: '[getEnforcer] Invalid enforcer configuration path!',
+                    message: `[getEnforcer] Invalid enforcer configuration path | confPath: ${confPath}`,
                 });
             }
             if (!fs_1.default.existsSync(confPath)) {
+                this.logger.error('[getEnforcer] Please check again configure path | confPath: %s', confPath);
                 throw (0, utilities_1.getError)({
                     statusCode: 500,
-                    message: '[getEnforcer] Enforcer configuration path is not existed!',
+                    message: `[getEnforcer] Enforcer configuration path is not existed | confPath: ${confPath}`,
                 });
             }
             this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', confPath, this.dataSource.name);
