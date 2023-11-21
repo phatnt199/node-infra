@@ -27,28 +27,48 @@ export class AuthorizeProvider implements Provider<Authorizer> {
   }
 
   // -------------------------------------------------------------------------------------------------------------------
-  normalizeEnforcePayload(subject: string, object: string, action: string) {
+  normalizeEnforcePayload(subject: string, object: string, scope?: string) {
     return {
       subject: subject?.toLowerCase() || '',
-      object: (object?.toLowerCase() || '')?.replace(/controller/g, '')?.replace(/.prototype/g, ''),
-      action: action?.toLowerCase() || EnforcerDefinitions.ACTION_EXECUTE,
+      object:
+        scope?.toLowerCase() ?? (object?.toLowerCase() || '')?.replace(/controller/g, '')?.replace(/.prototype/g, ''),
+      action: EnforcerDefinitions.ACTION_EXECUTE,
     };
   }
 
   // -------------------------------------------------------------------------------------------------------------------
-  async authorizePermission(userId: number, object: string, action: string): Promise<boolean> {
-    let rs = false;
-    const enforcer = await this.enforcerService.getTypeEnforcer(userId);
+  async authorizePermission(userId: number, object: string, scopes?: string[]): Promise<boolean> {
+    let singleAuthRs = false;
+    let scopeAuthRs = true;
 
+    const enforcer = await this.enforcerService.getTypeEnforcer(userId);
     if (!enforcer) {
       this.logger.debug('[authorizePermission] Skip authorization for NULL enforcer!');
-      return rs;
+      return false;
     }
 
     const subject = `${EnforcerDefinitions.PREFIX_USER}_${userId}`;
-    const enforcePayload = this.normalizeEnforcePayload(subject, object, action);
-    rs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
-    return rs;
+    for (const scope of scopes ?? []) {
+      const enforcePayload = this.normalizeEnforcePayload(subject, object, scope);
+      scopeAuthRs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
+      this.logger.debug('[authorizePermission] Payload: %j | scopeAuthRs: %s', enforcePayload, scopeAuthRs);
+
+      if (!scopeAuthRs) {
+        this.logger.debug('[authorizePermission] Permission denied | Payload: %j', enforcePayload);
+        break;
+      }
+    }
+
+    if (!scopeAuthRs) {
+      return scopeAuthRs;
+    }
+
+    if (object) {
+      const enforcePayload = this.normalizeEnforcePayload(subject, object);
+      singleAuthRs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
+      this.logger.debug('[authorizePermission] Payload: %j | singleAuthRs: %s', enforcePayload, singleAuthRs);
+    }
+    return scopeAuthRs && singleAuthRs;
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -117,11 +137,7 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     }
 
     // Authorize by role and user permissions
-    const authorizeDecision = await this.authorizePermission(
-      userId,
-      requestResource,
-      scopes?.[0] ?? EnforcerDefinitions.ACTION_EXECUTE,
-    );
+    const authorizeDecision = await this.authorizePermission(userId, requestResource, scopes);
 
     const rs = authorizeDecision ? AuthorizationDecision.ALLOW : AuthorizationDecision.DENY;
 

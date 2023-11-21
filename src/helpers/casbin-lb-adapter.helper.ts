@@ -61,6 +61,7 @@ export class CasbinLBAdapter implements FilteredAdapter {
 
     // Load policy lines
     const policyRs = flatten(await Promise.all(aclQueries));
+    this.logger.debug('[loadFilteredPolicy] policyRs: %j | filter: %j', policyRs, filter);
     for (const el of policyRs) {
       if (!el) {
         continue;

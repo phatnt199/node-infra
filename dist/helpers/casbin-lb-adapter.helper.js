@@ -63,6 +63,7 @@ class CasbinLBAdapter {
             }
             // Load policy lines
             const policyRs = (0, flatten_1.default)(yield Promise.all(aclQueries));
+            this.logger.debug('[loadFilteredPolicy] policyRs: %j | filter: %j', policyRs, filter);
             for (const el of policyRs) {
                 if (!el) {
                     continue;

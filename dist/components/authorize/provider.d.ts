@@ -7,11 +7,11 @@ export declare class AuthorizeProvider implements Provider<Authorizer> {
     private logger;
     constructor(enforcerService: EnforcerService, alwaysAllowRoles: string[]);
     value(): Authorizer<AuthorizationMetadata>;
-    normalizeEnforcePayload(subject: string, object: string, action: string): {
+    normalizeEnforcePayload(subject: string, object: string, scope?: string): {
         subject: string;
         object: string;
         action: string;
     };
-    authorizePermission(userId: number, object: string, action: string): Promise<boolean>;
+    authorizePermission(userId: number, object: string, scopes?: string[]): Promise<boolean>;
     authorize(context: AuthorizationContext, metadata: AuthorizationMetadata): Promise<AuthorizationDecision>;
 }

@@ -41,50 +41,52 @@ let AuthorizateInterceptor = AuthorizateInterceptor_1 = class AuthorizateInterce
             let metadata = (0, authorization_1.getAuthorizationMetadata)(invocationCtx.target, invocationCtx.methodName);
             const description = invocationCtx.description;
             if (!metadata) {
-                this.logger.debug('No authorization metadata is found for %s', description);
+                this.logger.debug('[intercept] No authorization metadata is found for %s', description);
             }
             metadata = metadata !== null && metadata !== void 0 ? metadata : this.options.defaultMetadata;
             if (!metadata || (metadata === null || metadata === void 0 ? void 0 : metadata.skip)) {
-                this.logger.debug('Authorization is skipped for %s', description);
+                this.logger.debug('[intercept] Authorization is skipped for %s', description);
                 const result = yield next();
                 return result;
             }
-            this.logger.debug('Authorization metadata for %s', description);
+            this.logger.debug('[intercept] Authorization metadata for %s', description);
             // retrieve it from authentication module
             const user = yield invocationCtx.get(security_1.SecurityBindings.USER, {
                 optional: true,
             });
-            this.logger.debug('Current user: %s', user);
+            this.logger.debug('[intercept] Current user: %s', user);
             const authorizationCtx = {
-                principals: user ? [Object.assign(Object.assign({}, user), { name: (_a = user.name) !== null && _a !== void 0 ? _a : user[security_1.securityId], type: 'USER' })] : [],
+                principals: user
+                    ? [
+                        Object.assign(Object.assign({}, user), { name: (_a = user.name) !== null && _a !== void 0 ? _a : user[security_1.securityId], type: 'USER' }),
+                    ]
+                    : [],
                 roles: [],
                 scopes: [],
                 resource: invocationCtx.targetName,
                 invocationContext: invocationCtx,
             };
-            this.logger.debug('Security context for %s', description);
+            this.logger.debug('[intercept] Security context for %s', description);
             const authorizers = yield loadAuthorizers(invocationCtx);
             let finalDecision = this.options.defaultDecision;
             for (const fn of authorizers) {
                 const decision = yield fn(authorizationCtx, metadata);
-                this.logger.debug('Decision: %s', decision);
+                this.logger.debug('[intercept] Decision: %s', decision);
                 if (decision && decision !== authorization_1.AuthorizationDecision.ABSTAIN) {
                     finalDecision = decision;
                 }
-                if (decision === authorization_1.AuthorizationDecision.DENY &&
-                    this.options.precedence === authorization_1.AuthorizationDecision.DENY) {
-                    this.logger.debug('Access denied');
+                if (decision === authorization_1.AuthorizationDecision.DENY && this.options.precedence === authorization_1.AuthorizationDecision.DENY) {
+                    this.logger.debug('[intercept] Access denied');
                     const error = new authorization_1.AuthorizationError('Access denied');
                     error.statusCode = this.options.defaultStatusCodeForDeny;
                     throw error;
                 }
-                if (decision === authorization_1.AuthorizationDecision.ALLOW &&
-                    this.options.precedence === authorization_1.AuthorizationDecision.ALLOW) {
-                    this.logger.debug('Access allowed');
+                if (decision === authorization_1.AuthorizationDecision.ALLOW && this.options.precedence === authorization_1.AuthorizationDecision.ALLOW) {
+                    this.logger.debug('[intercept] Access allowed');
                     break;
                 }
             }
-            this.logger.debug('Final decision: %s', finalDecision);
+            this.logger.debug('[intercept] Final decision: %s', finalDecision);
             if (finalDecision === authorization_1.AuthorizationDecision.DENY) {
                 const error = new authorization_1.AuthorizationError('Access denied');
                 error.statusCode = this.options.defaultStatusCodeForDeny;
@@ -108,11 +110,10 @@ function loadAuthorizers(ctx) {
         for (const keyOrFn of authorizers) {
             if (typeof keyOrFn === 'function') {
                 authorizerFunctions.push(keyOrFn);
+                continue;
             }
-            else {
-                const fn = yield ctx.get(keyOrFn);
-                authorizerFunctions.push(fn);
-            }
+            const fn = yield ctx.get(keyOrFn);
+            authorizerFunctions.push(fn);
         }
         return authorizerFunctions;
     });
