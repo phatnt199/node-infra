@@ -134,11 +134,16 @@ export const definePermission = () => {
     action: string;
 
     @property({
+      type: 'string',
+    })
+    scope?: string;
+
+    @property({
       type: 'number',
       postgresql: { columnName: 'parent_id' },
     })
     parentId: number;
-    
+
     @property({
       type: 'object',
       postgresql: { columnName: 'details' },

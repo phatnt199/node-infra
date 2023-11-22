@@ -164,6 +164,12 @@ const definePermission = () => {
     ], Permission.prototype, "action", void 0);
     __decorate([
         (0, repository_1.property)({
+            type: 'string',
+        }),
+        __metadata("design:type", String)
+    ], Permission.prototype, "scope", void 0);
+    __decorate([
+        (0, repository_1.property)({
             type: 'number',
             postgresql: { columnName: 'parent_id' },
         }),

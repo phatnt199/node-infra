@@ -5,6 +5,7 @@ declare const BasePermission: {
         subject: string;
         pType: string;
         action: string;
+        scope?: string | undefined;
         parentId: number;
         details: any;
         createdAt: Date;
@@ -20,6 +21,7 @@ declare const BasePermission: {
         subject: string;
         pType: string;
         action: string;
+        scope?: string | undefined;
         parentId: number;
         details: any;
         createdAt: Date;
