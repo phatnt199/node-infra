@@ -13,17 +13,18 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthenticateComponent = void 0;
-const base_application_1 = require("../../base/base.application");
-const base_component_1 = require("../../base/base.component");
-const utilities_1 = require("../../utilities");
 const authentication_1 = require("@loopback/authentication");
 const authentication_jwt_1 = require("@loopback/authentication-jwt");
 const core_1 = require("@loopback/core");
-const jwt_strategy_1 = require("./jwt.strategy");
-const basic_strategy_1 = require("./basic.strategy");
+const base_application_1 = require("../../base/base.application");
+const base_component_1 = require("../../base/base.component");
 const common_1 = require("../../common");
+const utilities_1 = require("../../utilities");
 const basic_token_service_1 = require("./basic-token.service");
+const basic_strategy_1 = require("./basic.strategy");
 const jwt_token_service_1 = require("./jwt-token.service");
+const jwt_strategy_1 = require("./jwt.strategy");
+const middleware_1 = require("./middleware");
 let AuthenticateComponent = class AuthenticateComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthenticateComponent.name });
@@ -39,7 +40,12 @@ let AuthenticateComponent = class AuthenticateComponent extends base_component_1
         ];
         this.binding();
     }
+    defineMiddlewares() {
+        this.logger.debug('[defineMiddlewares] Initializing authenticate component - middlewares...!');
+        this.application.middleware(middleware_1.AuthenticationMiddleware);
+    }
     defineServices() {
+        this.logger.debug('[defineServices] Initializing authenticate component - services...!');
         this.application.service(basic_token_service_1.BasicTokenService);
         this.application.service(jwt_token_service_1.JWTTokenService);
     }
@@ -65,6 +71,7 @@ let AuthenticateComponent = class AuthenticateComponent extends base_component_1
         this.logger.info('[binding] Binding authenticate component for application...');
         this.defineServices();
         this.registerComponent();
+        this.defineMiddlewares();
     }
 };
 AuthenticateComponent = __decorate([

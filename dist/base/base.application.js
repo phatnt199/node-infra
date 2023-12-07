@@ -13,16 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseApplication = void 0;
-const helpers_1 = require("../helpers");
 const boot_1 = require("@loopback/boot");
 const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
 const rest_crud_1 = require("@loopback/rest-crud");
 const service_proxy_1 = require("@loopback/service-proxy");
+const helpers_1 = require("../helpers");
 const get_1 = __importDefault(require("lodash/get"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const __1 = require("..");
-const base_sequence_1 = require("./base.sequence");
 class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceMixin)((0, repository_1.RepositoryMixin)(rest_1.RestApplication))) {
     constructor(opts) {
         var _a, _b;
@@ -30,28 +29,31 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
         super(serverOptions);
         this.logger = helpers_1.LoggerFactory.getLogger(['Application']);
         this.bind(__1.RouteKeys.ALWAYS_ALLOW_PATHS).to([]);
-        this.sequence(sequence !== null && sequence !== void 0 ? sequence : base_sequence_1.BaseApplicationSequence);
+        this.bind(__1.BindingKeys.APPLICATION_MIDDLEWARE_OPTIONS).to(rest_1.MiddlewareSequence.defaultOptions);
+        this.sequence(sequence !== null && sequence !== void 0 ? sequence : __1.BaseApplicationSequence);
         this.staticConfigure();
         this.projectRoot = this.getProjectRoot();
         this.component(rest_crud_1.CrudRestComponent);
         const applicationEnv = (_a = process.env.NODE_ENV) !== null && _a !== void 0 ? _a : 'unknown';
-        this.logger.info(' Starting application with ENV "%s"...', applicationEnv);
+        this.logger.info('[Application] Starting application with ENV "%s"...', applicationEnv);
         // Validate whole application environment args.
-        this.logger.info(' Validating application environments...');
+        this.logger.info('[Application] Validating application environments...');
         const envValidation = this.validateEnv();
         if (!envValidation.result) {
             throw new Error((_b = envValidation === null || envValidation === void 0 ? void 0 : envValidation.message) !== null && _b !== void 0 ? _b : 'Invalid application environment!');
         }
         else {
-            this.logger.info(' All application environments are valid...');
+            this.logger.info('[Application] All application environments are valid...');
         }
-        this.logger.info(' Declare application models...');
+        this.logger.info('[Application] Declare application models...');
         this.models = new Set([]);
         this.models = this.declareModels();
+        // Middlewares
+        this.middleware(__1.RequestSpyMiddleware);
         // Do configure while modules for application.
-        this.logger.info(' Executing Pre-Configure...');
+        this.logger.info('[Application] Executing Pre-Configure...');
         this.preConfigure();
-        this.logger.info(' Executing Post-Configure...');
+        this.logger.info('[Application] Executing Post-Configure...');
         this.postConfigure();
     }
     getMigrateModels(opts) {

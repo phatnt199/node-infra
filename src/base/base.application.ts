@@ -1,20 +1,22 @@
-import { EnvironmentValidationResult, IApplication } from '@/common/types';
-import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { BootMixin } from '@loopback/boot';
 import { ApplicationConfig, Constructor } from '@loopback/core';
 import { Repository, RepositoryMixin, RepositoryTags } from '@loopback/repository';
-import { RestApplication, SequenceHandler } from '@loopback/rest';
+import { MiddlewareSequence, RestApplication, SequenceHandler } from '@loopback/rest';
 import { CrudRestComponent } from '@loopback/rest-crud';
 import { ServiceMixin } from '@loopback/service-proxy';
+
+import { EnvironmentValidationResult, IApplication } from '@/common/types';
+import { ApplicationLogger, LoggerFactory } from '@/helpers';
+
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
-import { BaseDataSource, BaseEntity, RouteKeys } from '..';
-import { BaseApplicationSequence } from './base.sequence';
+import { BaseApplicationSequence, BaseDataSource, BaseEntity, BindingKeys, RequestSpyMiddleware, RouteKeys } from '..';
 
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
-  implements IApplication {
+  implements IApplication
+{
   protected logger: ApplicationLogger;
   models: Set<string>;
 
@@ -24,6 +26,7 @@ export abstract class BaseApplication
     this.logger = LoggerFactory.getLogger(['Application']);
 
     this.bind(RouteKeys.ALWAYS_ALLOW_PATHS).to([]);
+    this.bind(BindingKeys.APPLICATION_MIDDLEWARE_OPTIONS).to(MiddlewareSequence.defaultOptions);
     this.sequence(sequence ?? BaseApplicationSequence);
 
     this.staticConfigure();
@@ -31,26 +34,29 @@ export abstract class BaseApplication
     this.component(CrudRestComponent);
 
     const applicationEnv = process.env.NODE_ENV ?? 'unknown';
-    this.logger.info(' Starting application with ENV "%s"...', applicationEnv);
+    this.logger.info('[Application] Starting application with ENV "%s"...', applicationEnv);
 
     // Validate whole application environment args.
-    this.logger.info(' Validating application environments...');
+    this.logger.info('[Application] Validating application environments...');
     const envValidation = this.validateEnv();
     if (!envValidation.result) {
       throw new Error(envValidation?.message ?? 'Invalid application environment!');
     } else {
-      this.logger.info(' All application environments are valid...');
+      this.logger.info('[Application] All application environments are valid...');
     }
 
-    this.logger.info(' Declare application models...');
+    this.logger.info('[Application] Declare application models...');
     this.models = new Set([]);
     this.models = this.declareModels();
 
+    // Middlewares
+    this.middleware(RequestSpyMiddleware);
+
     // Do configure while modules for application.
-    this.logger.info(' Executing Pre-Configure...');
+    this.logger.info('[Application] Executing Pre-Configure...');
     this.preConfigure();
 
-    this.logger.info(' Executing Post-Configure...');
+    this.logger.info('[Application] Executing Post-Configure...');
     this.postConfigure();
   }
 

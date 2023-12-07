@@ -5,6 +5,7 @@ class BindingKeys {
 }
 exports.BindingKeys = BindingKeys;
 BindingKeys.APPLICATION_ENVIRONMENTS = '@qt/application/environments';
+BindingKeys.APPLICATION_MIDDLEWARE_OPTIONS = '@app/application/middleware_options';
 // -----------------------------------------------------------------------------
 class RouteKeys {
 }

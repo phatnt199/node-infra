@@ -1,6 +1,3 @@
-import { BaseApplication } from '@/base/base.application';
-import { BaseComponent } from '@/base/base.component';
-import { getError } from '@/utilities';
 import { AuthenticationComponent, registerAuthenticationStrategy } from '@loopback/authentication';
 import {
   JWTAuthenticationComponent,
@@ -8,11 +5,16 @@ import {
   TokenServiceBindings,
 } from '@loopback/authentication-jwt';
 import { Binding, CoreBindings, inject } from '@loopback/core';
-import { JWTAuthenticationStrategy } from './jwt.strategy';
-import { BasicAuthenticationStrategy } from './basic.strategy';
+
+import { BaseApplication } from '@/base/base.application';
+import { BaseComponent } from '@/base/base.component';
 import { App, AuthenticateKeys, Authentication } from '@/common';
+import { getError } from '@/utilities';
 import { BasicTokenService } from './basic-token.service';
+import { BasicAuthenticationStrategy } from './basic.strategy';
 import { JWTTokenService } from './jwt-token.service';
+import { JWTAuthenticationStrategy } from './jwt.strategy';
+import { AuthenticationMiddleware } from './middleware';
 
 export class AuthenticateComponent extends BaseComponent {
   bindings: Binding[] = [
@@ -30,7 +32,13 @@ export class AuthenticateComponent extends BaseComponent {
     this.binding();
   }
 
+  defineMiddlewares() {
+    this.logger.debug('[defineMiddlewares] Initializing authenticate component - middlewares...!');
+    this.application.middleware(AuthenticationMiddleware);
+  }
+
   defineServices() {
+    this.logger.debug('[defineServices] Initializing authenticate component - services...!');
     this.application.service(BasicTokenService);
     this.application.service(JWTTokenService);
   }
@@ -69,7 +77,10 @@ export class AuthenticateComponent extends BaseComponent {
     }
 
     this.logger.info('[binding] Binding authenticate component for application...');
+
     this.defineServices();
     this.registerComponent();
+
+    this.defineMiddlewares();
   }
 }

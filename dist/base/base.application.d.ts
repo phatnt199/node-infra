@@ -1,8 +1,8 @@
-import { EnvironmentValidationResult, IApplication } from '../common/types';
-import { ApplicationLogger } from '../helpers';
 import { ApplicationConfig, Constructor } from '@loopback/core';
 import { Repository } from '@loopback/repository';
 import { RestApplication, SequenceHandler } from '@loopback/rest';
+import { EnvironmentValidationResult, IApplication } from '../common/types';
+import { ApplicationLogger } from '../helpers';
 import { BaseEntity } from '..';
 declare const BaseApplication_base: (new (...args: any[]) => {
     projectRoot: string;

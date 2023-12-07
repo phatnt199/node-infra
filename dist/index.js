@@ -29,6 +29,7 @@ __exportStar(require("./common"), exports);
 __exportStar(require("./components"), exports);
 __exportStar(require("./datasources"), exports);
 __exportStar(require("./helpers"), exports);
+__exportStar(require("./middlewares"), exports);
 __exportStar(require("./migrations"), exports);
 __exportStar(require("./migrations/authorize"), exports);
 __exportStar(require("./mixins"), exports);
