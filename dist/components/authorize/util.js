@@ -27,7 +27,7 @@ const union_1 = __importDefault(require("lodash/union"));
  * import GeneratePermissionService ....
  * import * as ControllerClasses from './your-controller-path'
  *
- * async migratePermissions() {
+ * const migratePermissions = async () => {
  *   try {
  *     // your application
  *     const app = new Application();

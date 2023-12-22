@@ -21,7 +21,7 @@ export interface IPermission {
  * import GeneratePermissionService ....
  * import * as ControllerClasses from './your-controller-path'
  *
- * async migratePermissions() {
+ * const migratePermissions = async () => {
  *   try {
  *     // your application
  *     const app = new Application();
@@ -76,6 +76,6 @@ export declare class GeneratePermissionService {
     }>, permissionRepository: PermissionRepository): Promise<void>;
     startMigration(opts: {
         permissionRepository: any;
-        controllers: any;
+        controllers: object;
     }): Promise<void>;
 }

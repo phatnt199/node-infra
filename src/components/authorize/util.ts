@@ -28,7 +28,7 @@ export interface IPermission {
  * import GeneratePermissionService ....
  * import * as ControllerClasses from './your-controller-path'
  *
- * async migratePermissions() {
+ * const migratePermissions = async () => {
  *   try {
  *     // your application
  *     const app = new Application();
@@ -186,7 +186,7 @@ export class GeneratePermissionService {
     }
   }
 
-  async startMigration(opts: { permissionRepository: any; controllers: any }) {
+  async startMigration(opts: { permissionRepository: any; controllers: object }) {
     const { permissionRepository, controllers } = opts;
     const permissions: IPermission[] = [];
 
