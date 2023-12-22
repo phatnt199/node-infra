@@ -110,7 +110,7 @@ export declare const definePermission: () => {
 };
 export declare const definePermissionMapping: () => {
     new (data?: Partial<{
-        userId: number;
+        userId?: number | undefined;
         roleId: number;
         permissionId: number;
         effect: string;
@@ -122,7 +122,7 @@ export declare const definePermissionMapping: () => {
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
         id: number;
     }> | undefined): {
-        userId: number;
+        userId?: number | undefined;
         roleId: number;
         permissionId: number;
         effect: string;

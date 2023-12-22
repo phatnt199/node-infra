@@ -1,6 +1,6 @@
 declare const BasePermissionMapping: {
     new (data?: Partial<{
-        userId: number;
+        userId?: number | undefined;
         roleId: number;
         permissionId: number;
         effect: string;
@@ -12,7 +12,7 @@ declare const BasePermissionMapping: {
         toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
         id: number;
     }> | undefined): {
-        userId: number;
+        userId?: number | undefined;
         roleId: number;
         permissionId: number;
         effect: string;
