@@ -556,10 +556,10 @@ const migratePermissions = async () => {
     const app = new Application();
     await app.boot();
 
-    const generatePermissionService = new GeneratePermissionStudio();
+    const generatePermissionService = new CustomGeneratePermission();
 
     // your permission repository
-    const permissionRepository = app.getSync<PermissionRepository>(KeyWithPath.repositories.PermissionRepository);
+    const permissionRepository = app.getSync<PermissionRepository>('repositories.PermissionRepository');
 
     await generatePermissionService.startMigration({ permissionRepository, controllers: ControllerClasses as any });
 
