@@ -212,8 +212,10 @@ export class GeneratePermissionService {
       const controllerPrototype = controllerClass.prototype;
       const permissionSubjectLowerCase = permissionSubject?.toLowerCase();
 
-      await this.generateParentPermissions({ controller, permissionRepository });
       applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', permissionSubject);
+
+      await this.generateParentPermissions({ controller, permissionRepository });
+
       const parentPermission = await permissionRepository.findOne({
         where: { subject: permissionSubjectLowerCase },
       });

@@ -175,8 +175,8 @@ class GeneratePermissionService {
                 const permissionSubject = controllerClass.name.replace(/Controller/g, '');
                 const controllerPrototype = controllerClass.prototype;
                 const permissionSubjectLowerCase = permissionSubject === null || permissionSubject === void 0 ? void 0 : permissionSubject.toLowerCase();
-                yield this.generateParentPermissions({ controller, permissionRepository });
                 helpers_1.applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', permissionSubject);
+                yield this.generateParentPermissions({ controller, permissionRepository });
                 const parentPermission = yield permissionRepository.findOne({
                     where: { subject: permissionSubjectLowerCase },
                 });

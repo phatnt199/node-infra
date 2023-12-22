@@ -178,7 +178,10 @@ const definePermission = () => {
     __decorate([
         (0, repository_1.property)({
             type: 'object',
-            postgresql: { columnName: 'details' },
+            postgresql: {
+                columnName: 'details',
+                dataType: 'jsonb',
+            },
         }),
         __metadata("design:type", Object)
     ], Permission.prototype, "details", void 0);

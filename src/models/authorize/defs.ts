@@ -146,9 +146,12 @@ export const definePermission = () => {
 
     @property({
       type: 'object',
-      postgresql: { columnName: 'details' },
+      postgresql: {
+        columnName: 'details',
+        dataType: 'jsonb',
+      },
     })
-    details: any;
+    details: Record<string, unknown>;
 
     constructor(data?: Partial<Permission>) {
       super(data);

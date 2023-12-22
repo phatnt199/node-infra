@@ -77,7 +77,7 @@ export declare const definePermission: () => {
         action: string;
         scope?: string | undefined;
         parentId: number;
-        details: any;
+        details: Record<string, unknown>;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;
@@ -93,7 +93,7 @@ export declare const definePermission: () => {
         action: string;
         scope?: string | undefined;
         parentId: number;
-        details: any;
+        details: Record<string, unknown>;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;
