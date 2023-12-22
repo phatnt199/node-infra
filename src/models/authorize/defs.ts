@@ -165,7 +165,7 @@ export const definePermissionMapping = () => {
       type: 'number',
       postgresql: { columnName: 'user_id' },
     })
-    userId: number;
+    userId?: number;
 
     @property({
       type: 'number',
