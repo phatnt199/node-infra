@@ -75,7 +75,7 @@ export declare class GeneratePermissionService {
         idx: string;
     }>, permissionRepository: PermissionRepository): Promise<void>;
     startMigration(opts: {
-        permissionRepository: PermissionRepository;
+        permissionRepository: any;
         controllers: any;
     }): Promise<void>;
 }

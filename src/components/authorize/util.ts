@@ -186,7 +186,7 @@ export class GeneratePermissionService {
     }
   }
 
-  async startMigration(opts: { permissionRepository: PermissionRepository; controllers: any }) {
+  async startMigration(opts: { permissionRepository: any; controllers: any }) {
     const { permissionRepository, controllers } = opts;
     const permissions: IPermission[] = [];
 
