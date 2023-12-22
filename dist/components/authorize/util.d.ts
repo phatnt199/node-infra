@@ -53,6 +53,10 @@ export interface IPermission {
  */
 export declare class GeneratePermissionService {
     getMethodsClass(controllerPrototype: object): string[];
+    generateParentPermissions(opts: {
+        controller: Function;
+        permissionRepository: PermissionRepository;
+    }): Promise<void>;
     generatePermissions(opts: {
         methods: string[];
         permissionSubject: string;

@@ -63,6 +63,22 @@ export class GeneratePermissionService {
   getMethodsClass(controllerPrototype: object) {
     return Reflect.ownKeys(controllerPrototype).slice(1) as string[];
   }
+  async generateParentPermissions(opts: { controller: Function; permissionRepository: PermissionRepository }) {
+    const { controller, permissionRepository } = opts ?? {};
+    const controllerName = controller.name;
+    const permissionSubject = controllerName.replace(/Controller/g, '')?.toLowerCase();
+
+    const parentPermissions = {
+      name: `All permissions of ${permissionSubject}`,
+      code: `${permissionSubject}.*`,
+      subject: permissionSubject,
+      action: EnforcerDefinitions.ACTION_EXECUTE,
+      pType: 'p',
+    };
+
+    applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', controllerName);
+    await permissionRepository.upsertWith({ ...parentPermissions }, { code: parentPermissions.code });
+  }
 
   generatePermissions(opts: {
     methods: string[];
@@ -196,6 +212,7 @@ export class GeneratePermissionService {
       const controllerPrototype = controllerClass.prototype;
       const permissionSubjectLowerCase = permissionSubject?.toLowerCase();
 
+      await this.generateParentPermissions({ controller, permissionRepository });
       applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', permissionSubject);
       const parentPermission = await permissionRepository.findOne({
         where: { subject: permissionSubjectLowerCase },

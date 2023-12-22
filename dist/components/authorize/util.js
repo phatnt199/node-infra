@@ -93,6 +93,23 @@ class GeneratePermissionService {
     getMethodsClass(controllerPrototype) {
         return Reflect.ownKeys(controllerPrototype).slice(1);
     }
+    generateParentPermissions(opts) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const { controller, permissionRepository } = opts !== null && opts !== void 0 ? opts : {};
+            const controllerName = controller.name;
+            const permissionSubject = (_a = controllerName.replace(/Controller/g, '')) === null || _a === void 0 ? void 0 : _a.toLowerCase();
+            const parentPermissions = {
+                name: `All permissions of ${permissionSubject}`,
+                code: `${permissionSubject}.*`,
+                subject: permissionSubject,
+                action: common_1.EnforcerDefinitions.ACTION_EXECUTE,
+                pType: 'p',
+            };
+            helpers_1.applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', controllerName);
+            yield permissionRepository.upsertWith(Object.assign({}, parentPermissions), { code: parentPermissions.code });
+        });
+    }
     generatePermissions(opts) {
         const { methods, permissionSubject, parentId, allPermissionDecoratorData } = opts !== null && opts !== void 0 ? opts : {};
         return methods.map(m => {
@@ -158,6 +175,7 @@ class GeneratePermissionService {
                 const permissionSubject = controllerClass.name.replace(/Controller/g, '');
                 const controllerPrototype = controllerClass.prototype;
                 const permissionSubjectLowerCase = permissionSubject === null || permissionSubject === void 0 ? void 0 : permissionSubject.toLowerCase();
+                yield this.generateParentPermissions({ controller, permissionRepository });
                 helpers_1.applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', permissionSubject);
                 const parentPermission = yield permissionRepository.findOne({
                     where: { subject: permissionSubjectLowerCase },
