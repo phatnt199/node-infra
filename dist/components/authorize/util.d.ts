@@ -32,8 +32,8 @@ export interface IPermission {
  *     // your permission repository
  *     const permissionRepository = app.getSync<PermissionRepository>('repositories.PermissionRepository');
  *
- *     await generatePermissionService.startMigration({ permissionRepository, controllers });
- *
+     await generatePermissionService.startMigration({ permissionRepository, controllers: (ControllerClasses as any) });
+*
  *     process.exit(0);
  *   } catch (e) {
  *     console.error('Cannot migrate controllers: ', e);

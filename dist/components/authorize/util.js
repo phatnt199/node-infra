@@ -38,8 +38,8 @@ const union_1 = __importDefault(require("lodash/union"));
  *     // your permission repository
  *     const permissionRepository = app.getSync<PermissionRepository>('repositories.PermissionRepository');
  *
- *     await generatePermissionService.startMigration({ permissionRepository, controllers });
- *
+     await generatePermissionService.startMigration({ permissionRepository, controllers: (ControllerClasses as any) });
+*
  *     process.exit(0);
  *   } catch (e) {
  *     console.error('Cannot migrate controllers: ', e);
@@ -175,9 +175,9 @@ class GeneratePermissionService {
                 yield this.updatePermissionByChangeMethodName(permissionSubjectLowerCase, allPermissionDecoratorData, permissionRepository);
                 permissions.push(...permissionList);
             }
-            for (const p of permissions) {
+            yield Promise.all(permissions.map((p) => __awaiter(this, void 0, void 0, function* () {
                 yield permissionRepository.upsertWith(p, { code: p.code });
-            }
+            })));
         });
     }
 }

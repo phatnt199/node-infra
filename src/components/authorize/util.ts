@@ -39,8 +39,8 @@ export interface IPermission {
  *     // your permission repository
  *     const permissionRepository = app.getSync<PermissionRepository>('repositories.PermissionRepository');
  *
- *     await generatePermissionService.startMigration({ permissionRepository, controllers });
- *
+     await generatePermissionService.startMigration({ permissionRepository, controllers: (ControllerClasses as any) });
+*
  *     process.exit(0);
  *   } catch (e) {
  *     console.error('Cannot migrate controllers: ', e);
@@ -224,8 +224,10 @@ export class GeneratePermissionService {
       permissions.push(...permissionList);
     }
 
-    for (const p of permissions) {
-      await permissionRepository.upsertWith(p, { code: p.code });
-    }
+    await Promise.all(
+      permissions.map(async p => {
+        await permissionRepository.upsertWith(p, { code: p.code });
+      }),
+    );
   }
 }
