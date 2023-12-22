@@ -7,7 +7,7 @@ declare const BasePermission: {
         action: string;
         scope?: string | undefined;
         parentId: number;
-        details: Record<string, unknown>;
+        details: any;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;
@@ -23,7 +23,7 @@ declare const BasePermission: {
         action: string;
         scope?: string | undefined;
         parentId: number;
-        details: Record<string, unknown>;
+        details: any;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;

@@ -151,7 +151,7 @@ export const definePermission = () => {
         dataType: 'jsonb',
       },
     })
-    details: Record<string, unknown>;
+    details: any;
 
     constructor(data?: Partial<Permission>) {
       super(data);
