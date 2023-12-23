@@ -15,7 +15,7 @@ export interface IPermission {
   name: string;
   parentId: number;
   pType: string;
-  details?: Record<string, unknown>;
+  details?: { idx: number };
 }
 
 export class GeneratePermissionService {
@@ -43,7 +43,7 @@ export class GeneratePermissionService {
     methods: string[];
     permissionSubject: string;
     parentId: number;
-    allPermissionDecoratorData: MetadataMap<unknown> | object | any;
+    allPermissionDecoratorData: MetadataMap<{ idx: number }>;
   }) {
     const { methods, permissionSubject, parentId, allPermissionDecoratorData } = opts ?? {};
 
@@ -56,7 +56,7 @@ export class GeneratePermissionService {
         scope: m.match(/get|find|search/gim) ? EnforcerDefinitions.ACTION_READ : EnforcerDefinitions.ACTION_WRITE,
         pType: 'p',
         parentId,
-        details: allPermissionDecoratorData?.[m] as Record<string, unknown>,
+        details: allPermissionDecoratorData?.[m],
       };
     }) as IPermission[];
   }
@@ -65,7 +65,7 @@ export class GeneratePermissionService {
     methodsParentsMethods: string[];
     methodsChildClass: string[];
     parentPermission: Permission;
-    allPermissionDecoratorData: MetadataMap<unknown> | object;
+    allPermissionDecoratorData: MetadataMap<{ idx: number }>;
   }) => {
     const { methodsChildClass, methodsParentsMethods, parentPermission, allPermissionDecoratorData } = opts ?? {};
 
@@ -104,7 +104,7 @@ export class GeneratePermissionService {
     controller: Function;
     parentPermission: Permission;
     permissionRepository: PermissionRepository;
-    allPermissionDecoratorData: MetadataMap<unknown> | object;
+    allPermissionDecoratorData: MetadataMap<{ idx: number }>;
   }) {
     const { controller, parentPermission, allPermissionDecoratorData } = opts;
     const permissionRecords: IPermission[] = [];
@@ -128,7 +128,7 @@ export class GeneratePermissionService {
 
   async updatePermissionByChangeMethodName(
     permissionSubject: string,
-    allPermissionDecoratorData: Record<string, { idx: string }>,
+    allPermissionDecoratorData: MetadataMap<{ idx: number }>,
     permissionRepository: PermissionRepository,
   ) {
     if (!Object.values(allPermissionDecoratorData).length) {
@@ -161,12 +161,12 @@ export class GeneratePermissionService {
     }
   }
 
-  async startMigration(opts: { permissionRepository: any; controllers: object }) {
+  async startMigration(opts: { permissionRepository: PermissionRepository; controllers: Record<string, Function> }) {
     const { permissionRepository, controllers } = opts;
     const permissions: IPermission[] = [];
 
     for (const controller of Object.values(controllers)) {
-      const controllerClass = controller as Function;
+      const controllerClass = controller;
       const permissionSubject = controllerClass.name.replace(/Controller/g, '');
       const controllerPrototype = controllerClass.prototype;
       const permissionSubjectLowerCase = permissionSubject?.toLowerCase();
@@ -183,7 +183,7 @@ export class GeneratePermissionService {
         continue;
       }
 
-      const allPermissionDecoratorData: Record<string, { idx: string }> =
+      const allPermissionDecoratorData: MetadataMap<{ idx: number }> =
         getDecoratorData(controllerPrototype, MetadataDecoratorKeys.PERMISSION) ?? {};
 
       const permissionList = this.generatePermissionRecords({
