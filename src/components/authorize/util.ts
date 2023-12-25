@@ -161,11 +161,11 @@ export class GeneratePermissionService {
     }
   }
 
-  async startMigration(opts: { permissionRepository: PermissionRepository; controllers: Record<string, Function> }) {
+  async startMigration(opts: { permissionRepository: PermissionRepository; controllers: Function[] }) {
     const { permissionRepository, controllers } = opts;
     const permissions: IPermission[] = [];
 
-    for (const controller of Object.values(controllers)) {
+    for (const controller of controllers) {
       const controllerClass = controller;
       const permissionSubject = controllerClass.name.replace(/Controller/g, '');
       const controllerPrototype = controllerClass.prototype;
@@ -202,10 +202,8 @@ export class GeneratePermissionService {
       permissions.push(...permissionList);
     }
 
-    await Promise.all(
-      permissions.map(async p => {
-        await permissionRepository.upsertWith(p, { code: p.code });
-      }),
-    );
+    for (const p of permissions) {
+      await permissionRepository.upsertWith(p, { code: p.code });
+    }
   }
 }
