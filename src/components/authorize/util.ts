@@ -127,10 +127,10 @@ export class GeneratePermissionService {
     return permissionRecords;
   }
 
-  async updatePermissionByChangeMethodName<T extends BaseTzEntity>(
+  async updatePermissionByChangeMethodName(
     permissionSubject: string,
     allPermissionDecoratorData: MetadataMap<{ idx: number }>,
-    permissionRepository: TzCrudRepository<T> & PermissionRepository,
+    permissionRepository: PermissionRepository,
   ) {
     if (!Object.values(allPermissionDecoratorData).length) {
       return;
