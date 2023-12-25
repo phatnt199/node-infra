@@ -146,7 +146,10 @@ export const definePermission = () => {
 
     @property({
       type: 'object',
-      postgresql: { columnName: 'details' },
+      postgresql: {
+        columnName: 'details',
+        dataType: 'jsonb',
+      },
     })
     details: any;
 
@@ -165,7 +168,7 @@ export const definePermissionMapping = () => {
       type: 'number',
       postgresql: { columnName: 'user_id' },
     })
-    userId: number;
+    userId?: number;
 
     @property({
       type: 'number',

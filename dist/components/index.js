@@ -16,6 +16,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./authorize/component"), exports);
 __exportStar(require("./authorize/provider"), exports);
+__exportStar(require("./authorize/util"), exports);
+__exportStar(require("./authorize/decorator"), exports);
 __exportStar(require("./authenticate/component"), exports);
 __exportStar(require("./authenticate/jwt-token.service"), exports);
 __exportStar(require("./socket-io/component"), exports);

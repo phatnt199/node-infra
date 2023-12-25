@@ -1,5 +1,7 @@
 export * from './authorize/component';
 export * from './authorize/provider';
+export * from './authorize/util';
+export * from './authorize/decorator';
 export * from './authenticate/component';
 export * from './authenticate/jwt-token.service';
 export * from './socket-io/component';

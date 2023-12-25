@@ -1,6 +1,6 @@
 {
   "name": "@lb/infra",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Loopback 4 Infrastructure",
   "keywords": [
     "loopback",
@@ -13,7 +13,6 @@
     "node": "16 || 18 || 20"
   },
   "scripts": {
-    "prebuild": "yarn lint",
     "build": "lb-tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "build:watch": "lb-tsc --watch",
     "lint": "yarn eslint && yarn prettier:check",

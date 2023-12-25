@@ -213,222 +213,19 @@ class BaseTextSearchTzEntity extends TextSearchMixin(BaseTzEntity) {}
 
 #### Enhanced Custom Models from Base Models:
 
-##### 1. Models relate to authorize:
+Instead of create models by hand we have:
 
-- `defineUser()`: return an enhanced User model.
+- `defineUser()`: return User model.
+- `defineRole()`: return Role model.
+- `definePermission()`: return Permission model.
+- `definePermissionMapping()`: return PermissionMapping model.
+- `defineUserRole()`: return UserRole model extends `PrincipalMixin` with principal class is Role.
 
-```ts
-const defineUser = () => {
-  class User extends BaseTzEntity {
-    @property({
-      type: 'string',
-    })
-    realm?: string;
-
-    @property({
-      type: 'string',
-      default: UserStatuses.UNKNOWN,
-      postgresql: {
-        columnName: 'status',
-        dataType: 'text',
-      },
-    })
-    status: string;
-
-    @property({
-      type: 'string',
-      default: UserTypes.SYSTEM,
-      postgresql: {
-        columnName: 'user_type',
-        dataType: 'text',
-      },
-    })
-    userType?: string;
-
-    @property({
-      type: 'date',
-      postgresql: {
-        columnName: 'activated_at',
-        dataType: 'TIMESTAMPTZ',
-      },
-    })
-    activatedAt?: Date;
-
-    @property({
-      type: 'date',
-      postgresql: {
-        columnName: 'last_login_at',
-        dataType: 'TIMESTAMPTZ',
-      },
-    })
-    lastLoginAt?: Date;
-
-    @property({
-      type: 'number',
-      postgresql: {
-        columnName: 'parent_id',
-      },
-    })
-    parentId: number;
-
-    constructor(data?: Partial<User>) {
-      super(data);
-    }
-  }
-
-  return User;
-};
-```
-
-- `defineRole()`: return an enhanced Role model.
-
-```ts
-const defineRole = () => {
-  class Role extends BaseTzEntity {
-    @property({
-      type: 'string',
-      require: true,
-    })
-    identifier: string;
-
-    @property({
-      type: 'string',
-      require: true,
-    })
-    name: string;
-
-    @property({
-      type: 'string',
-    })
-    description?: string;
-
-    @property({
-      type: 'number',
-    })
-    priority: number;
-
-    @property({
-      type: 'string',
-      default: RoleStatuses.ACTIVATED,
-    })
-    status: string;
-
-    constructor(data?: Partial<Role>) {
-      super(data);
-    }
-  }
-
-  return Role;
-};
-```
-
-- `definePermission()`: return an enhanced Permission model.
-
-```ts
-const definePermission = () => {
-  class Permission extends BaseTzEntity {
-    @property({
-      type: 'string',
-    })
-    code: string;
-
-    @property({
-      type: 'string',
-    })
-    name: string;
-
-    @property({
-      type: 'string',
-    })
-    subject: string;
-
-    @property({
-      type: 'string',
-      postgresql: { columnName: 'p_type' },
-    })
-    pType: string;
-
-    @property({
-      type: 'string',
-    })
-    action: string;
-
-    @property({
-      type: 'number',
-      postgresql: { columnName: 'parent_id' },
-    })
-    parentId: number;
-
-    @property({
-      type: 'object',
-      postgresql: { columnName: 'details' },
-    })
-    details: any;
-
-    constructor(data?: Partial<Permission>) {
-      super(data);
-    }
-  }
-
-  return Permission;
-};
-```
-
-- `definePermissionMapping()`: return an enhanced PermissionMapping model.
-
-```ts
-const definePermissionMapping = () => {
-  class PermissionMapping extends BaseTzEntity {
-    @property({
-      type: 'number',
-      postgresql: { columnName: 'user_id' },
-    })
-    userId: number;
-
-    @property({
-      type: 'number',
-      postgresql: { columnName: 'role_id' },
-    })
-    roleId: number;
-
-    @property({
-      type: 'number',
-      postgresql: { columnName: 'permission_id' },
-    })
-    permissionId: number;
-
-    @property({ type: 'string' })
-    effect: string;
-
-    constructor(data?: Partial<PermissionMapping>) {
-      super(data);
-    }
-  }
-  return PermissionMapping;
-};
-```
-
-- `defineUserRole()`: return an enhanced UserRole model extends `PrincipalMixin` with principal class is Role.
-
-```ts
-const defineUserRole = () => {
-  class UserRole extends PrincipalMixin(BaseTzEntity, 'Role', 'number') {
-    @property({
-      type: 'number',
-      postgresql: { columnName: 'user_id' },
-    })
-    userId: number;
-
-    constructor(data?: Partial<UserRole>) {
-      super(data);
-    }
-  }
-  return UserRole;
-};
-```
 ##### 2. Usage enhanced models:
+
 1. You can define models based on 5 function defined above.
 2. You can reuse the models which implemented from 5 those above.
+
 ```ts
 // An example of using one of 5 function defined models before.
 // user-role.model.ts which implemented defineUserRole()
@@ -450,187 +247,48 @@ export class UserRole extends BaseUserRole {
 }
 ```
 
-
-
-##### 3. Models relate to migration:
-
-```ts
-@model({
-  settings: {
-    postgresql: {
-      schema: 'public',
-      table: 'Migration',
-    },
-    strict: true,
-    indexes: {
-      INDEX_UNIQUE_NAME: {
-        keys: { name: 1 },
-        options: { unique: true },
-      },
-    },
-  },
-})
-export class Migration extends BaseTzEntity {
-  @property({
-    type: 'string',
-    required: true,
-  })
-  name: string;
-
-  @property({
-    type: 'string',
-    default: MigrationStatuses.UNKNOWN,
-  })
-  status: string;
-
-  constructor(data?: Partial<Migration>) {
-    super(data);
-  }
-}
-```
-
-##### 4. Model for ViewAuthorizePolicy:
-```ts
-@model({
-  settings: {
-    postgresql: {
-      schema: 'public',
-      table: 'ViewAuthorizePolicy',
-    },
-    indexes: {
-      INDEX_UNIQUE_SUBJECT: {
-        keys: { subject: 1 },
-        options: { unique: true },
-      },
-    },
-  },
-})
-export class ViewAuthorizePolicy extends BaseEntity {
-  @property({ type: 'string', id: true })
-  id: StringIdType;
-
-  @property({
-    type: 'string',
-    postgresql: {
-      columnName: 'subject',
-    },
-  })
-  subject: string;
-
-  @property({
-    type: 'string',
-    postgresql: {
-      columnName: 'subject_type',
-    },
-  })
-  subjectType: string;
-
-  @property({
-    type: 'string',
-    postgresql: {
-      columnName: 'subject_id',
-    },
-  })
-  subjectId: IdType;
-
-  constructor(data?: Partial<ViewAuthorizePolicy>) {
-    super(data);
-  }
-}
-```
 <hr>
 
 ### Mixins:
 
+Read more on: https://loopback.io/doc/en/lb4/Mixin.html
+
 #### These Mixins are useful to define models
+
 1.  Timezone Mixin (`TzMixin`) has 2 properties:
-- createdAt: Date
-- modifiedAt: Date
-```ts
-const TzMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
-  class Mixed extends superClass {
-    @property({
-      type: 'date',
-      defaultFn: 'now',
-      postgresql: {
-        columnName: 'created_at',
-        dataType: 'TIMESTAMPTZ',
-      },
-    })
-    createdAt: Date;
 
-    @property({
-      type: 'date',
-      defaultFn: 'now',
-      postgresql: {
-        columnName: 'modified_at',
-        dataType: 'TIMESTAMPTZ',
-      },
-    })
-    modifiedAt: Date;
-  }
+- This mixin will include 2 properties is create_adt, modified_at as default
+- You can pass, your model to extends 2 those properties from TZMixin
 
-  return Mixed;
-}
-
-````
 2. Text-Search Mixin (`TextSearchMixin`) has 1 properties:
+
 - textSearch?: string
+
 ```ts
 const TextSearchMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
- class Mixed extends superClass {
-  @property({
-    type: 'string',
-    hidden: true,
-    postgresql: {
-      columnName: 'text_search',
-      dataType: 'text',
-    }
-  })
-  textSearch?: string;
-
- }
- return Mixed;
-}
-````
-
-3. Principal Mixin (`PrincipalMixin`) has 2 properties:
-
-- `principalIdType`?: string
-- `principalId`?: IdType
-
-```ts
-const PrincipalMixin = <E extends MixinTarget<Entity>>(
-  superClass: E,
-  defaultPrincipalType: string,
-  principalIdType: 'number' | 'string',
-) => {
   class Mixed extends superClass {
     @property({
       type: 'string',
-      default: defaultPrincipalType,
+      hidden: true,
       postgresql: {
-        columnName: 'principal_type',
+        columnName: 'text_search',
         dataType: 'text',
       },
     })
-    principalType?: string;
-
-    @property({
-      type: principalIdType,
-      postgresql: {
-        columnName: 'principal_id',
-        dataType: principalIdType === 'number' ? 'integer' : 'text',
-      },
-    })
-    principalId?: IdType;
+    textSearch?: string;
   }
-
   return Mixed;
 };
+```
 
+3. Principal Mixin (`PrincipalMixin`) has 2 properties:
+
+- `principalType`?: string -> the parent you will refer
+- `principalId`?: IdType ->the parent id of the table you extends
+
+```ts
 // Example:
-class UserAccount extends PrincipalMixin(BaseTzEntity, 'Account', 'number') {
+class UserRole extends PrincipalMixin(BaseTzEntity, 'Account', 'number') {
   @belongsTo(
     () => User,
     { keyFrom: 'userId' },
@@ -642,45 +300,24 @@ class UserAccount extends PrincipalMixin(BaseTzEntity, 'Account', 'number') {
   )
   userId: NumberIdType;
 
-  constructor(data?: Partial<UserAccount>) {
+  constructor(data?: Partial<UserRole>) {
     super(data);
   }
 }
 ```
 
-4. User audit Mixin (`UserAuditMixin`) has 2 properties:
+The result of migrate this model will be:
 
-- createdBy: IdType
-- modifiedBy: IdType
+Table: `UserRole`
+id | create_at | modified_at | principle_type | principle_id | user_id
+--- | --- | --- | --- |--- |---
+1|2023-12-15 08:50:49.019000 +00:00|2023-12-15 10:44:25.348000 +00:00|Role|35|2
 
-```ts
-const UserAuditMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
-  class Mixed extends superClass {
-    @property({
-      type: 'number',
-      postgresql: {
-        columnName: 'created_by',
-        dataType: 'number',
-      },
-      hidden: true,
-    })
-    createdBy: IdType;
+Description:
 
-    @property({
-      type: 'number',
-      postgresql: {
-        columnName: 'modified_by',
-        dataType: 'number',
-      },
-      hidden: true,
-    })
-    modifiedBy: IdType;
-  }
+- UserRole id 1 we have a principle type is `Role` that means we have the link from `UserRole` -> `Role` and the `role_id` is 35 for `user_id`: 2
 
-  return Mixed;
-};
-```
-
+4. User audit Mixin (`UserAuditMixin`) :
 5. Date type Mixin (`DataTypeMixin`) has properties:
 
 - tValue?: string
@@ -738,3 +375,276 @@ const DataTypeMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
   return Mixed;
 };
 ```
+
+<hr/>
+
+## Authorize and generating permissions:
+
+1. We use `Casbin` for authorization, and we have model format for casbin to handle `Authorize`
+
+Read more: [Casbin](https://casbin.org/docs/get-started)
+
+2. In `AuthorizeComponent` will check the permission of `user/role` in `ViewAuthorityPolicy` table that user has permission or not to make decision to access API
+
+3. We must generate permissions first, then we have class `GeneratePermissionService` to generate automatically permission for all controller you export in path `controllers/index.ts`(\*).
+
+Visual (\*) for the path is mentioned:
+
+```
+.
+└── .src
+    └── controllers
+        └── index.ts
+        └── user.controller.ts
+        └── ...
+```
+
+Note:
+
+> 1. Inside `index.ts` you should export all your controller you need to generate permission, which will be store in table `Permission` in `PostgreSQL`
+> 2. Then when you create a record in table `PermissionMapping` we need insert `permission_id` + `role_id` + effect `(allow or deny)`, that when we query table `ViewAuthorityPolicy` we will have the policy for `role_id` & `permission_id` will be accessed api which is the methods in your controllers
+
+#### Usage of GeneratePermissionService:
+
+1. We have a class utility for generate permission base on controllers which own many methods inside, methods are extends from base controller of Infra also
+
+2. You can extends the class `GeneratePermissionService` to custom your rule also
+
+Step 1: Write a migratePermission file by your own
+Step 2: Write a script for generate permission in package.json
+
+```ts
+// STEP 1 >>>> example we create file migrate-permission.ts
+// In migrate-permission.ts
+import { GeneratePermissionService } from '@lb/infra';
+import * as ControllerClasses from './your-controller-path';
+import { Application } from './your-path-point-to-your-application';
+
+const migratePermissions = async () => {
+  try {
+    // your application
+    const app = new Application();
+    await app.boot();
+
+    const generatePermissionService = new GeneratePermissionService();
+
+    // your permission repository
+    const permissionRepository = app.getSync<PermissionRepository>('repositories.PermissionRepository');
+    await generatePermissionService.startMigration({ permissionRepository, controllers: ControllerClasses as any });
+
+    process.exit(0);
+  } catch (e) {
+    console.error('Cannot migrate controllers: ', e);
+    process.exit(1);
+  }
+};
+
+migratePermissions();
+
+// STEP 2 >>>>
+// In file -> package.json add script for migrate-permission
+// Here is the example, you can rename your script freely:
+
+// "migrate-permission": "npm run build && node --trace-warnings -r dotenv-flow/config ./dist/migrate-permission",
+// "generatePermission:production": "NODE_ENV=production RUN_MODE=migrate-permission npm run migrate-permission",
+// "generatePermission:dev": "NODE_ENV=development RUN_MODE=migrate-permission npm run migrate-permission",
+// "generatePermission:local": "NODE_ENV=local RUN_MODE=migrate-permission npm run migrate-permission",
+```
+
+Note:
+The script migrate permission have to point to the file you create to generate permission
+> "migrate-permission": "npm run build && node --trace-warnings -r dotenv-flow/config ./dist/your-migrate-permission-file",
+
+
+When you create new APIs that we will run the script and repeat this process when you create new APIs:
+Eg:
+The script: `yarn generatePermission:local` -> migrate for local database
+
+### Customize generatePermissions:
+You can also extends to custom your logic about generate permissions 
+
+
+```mermaid
+classDiagram
+
+ class GeneratePermissionService {
+        +getMethodsClass(controllerPrototype: object)
+        +async generateParentPermissions(opts)
+        +generatePermissions(opts)
+        +generatePermissionBaseInherit(opts)
+        +generatePermissionRecords(opts)
+        +updatePermissionByChangeMethodName(permissionSubject: string, allPermissionDecoratorData: object, permissionRepository: PermissionRepository)
+        +startMigration(opts)
+    }
+```
+Description: 
+1. getMethodsClass: get all methods in a class.
+2. generateParentPermissions: generate permission for parent permissions.
+3. generatePermissionBaseInherit: generate permission for base on controller extends parent class to get suitable methods that avoid redundant generate. 
+4. generatePermissionRecords: generate permission for permissions records which finally insert to table `Permission` return `IPermission[]`.
+5. updatePermissionByChangeMethodName: update the permission base on `@permission` .
+6. startMigration: start migration process which run all methods above.
+
+Eg:
+
+```ts
+// In my migrate-permission file
+
+// import things ......
+class CustomGeneratePermission extends GeneratePermissionService {
+
+  generatePermissionBaseInherit = (opts: {
+    methodsParentsMethods: string[];
+    methodsChildClass: string[];
+    parentPermission: Permission;
+    allPermissionDecoratorData: MetadataMap<unknown> | object;
+    parentClassConstructorName?: string;
+  }) => {
+    const {
+      methodsChildClass,
+      methodsParentsMethods,
+      parentPermission,
+      allPermissionDecoratorData,
+      parentClassConstructorName,
+    } = opts ?? {};
+
+    const defaultPermissions = [
+      'count',
+      'create',
+      'find',
+      'findOne',
+      'findById',
+      'replaceById',
+      'updateById',
+      'deleteById',
+      'updateAll',
+    ];
+
+    // Controller not extended from any class
+    if (methodsParentsMethods.includes('__proto__')) {
+      return this.generatePermissions({
+        methods: methodsChildClass,
+        permissionSubject: parentPermission.subject,
+        parentId: parentPermission.id,
+        allPermissionDecoratorData,
+      });
+    }
+
+    // Controller is extended from Mixin(CrudController)
+    if (parentClassConstructorName?.match(/mixin/gim)) {
+      return this.generatePermissions({
+        methods: union(defaultPermissions, methodsParentsMethods, methodsChildClass),
+        permissionSubject: parentPermission.subject,
+        parentId: parentPermission.id,
+        allPermissionDecoratorData,
+      });
+    }
+
+    // Controller is extended from CrudController
+    return this.generatePermissions({
+      methods: union(defaultPermissions, methodsChildClass),
+      permissionSubject: parentPermission.subject,
+      parentId: parentPermission.id,
+      allPermissionDecoratorData,
+    });
+  };
+}
+
+const migratePermissions = async () => {
+  try {
+    // your application
+    const app = new Application();
+    await app.boot();
+
+    const generatePermissionService = new CustomGeneratePermission();
+
+    // your permission repository
+    const permissionRepository = app.getSync<PermissionRepository>('repositories.PermissionRepository');
+
+    await generatePermissionService.startMigration({ permissionRepository, controllers: ControllerClasses as any });
+
+    process.exit(0);
+  } catch (e) {
+    console.error('Cannot migrate controllers: ', e);
+    process.exit(1);
+  }
+};
+
+migratePermissions();
+```
+
+
+
+#### Permission decorator
+
+1. When we finish the step to generate permissions and assign permission to role
+
+2. We have the problem that when a developer change the name of the method in some controllers that we will have the problem to access api because the change of name that is a permission also
+
+3. Solve the problem, we have a custom decorator for a permission: `@permission`
+
+##### Usage:
+
+We have this controller and we have the api `download` which will do something, we develop it at time number (1)
+
+```ts
+Class MyController {
+    @get('download', {
+      responses: {
+        '200': {
+          description: `Get download data`,
+          content: { 'application/json': {} },
+        },
+      },
+    })
+    async downloadData() {
+      // Do somthing
+    }
+  }
+
+}
+
+```
+
+1. At time number (2), some develop will change the method `downloadData` to `exportExcelFile`,
+2. Then we generate permission by the script we set-up before, that will create new record
+3. Then some role which have the permission downloadData cannot access any permission `downloadData`
+
+Solve this problem, we use `@permission`:
+
+```ts
+Class MyController {
+    @get('download', {
+      responses: {
+        '200': {
+          content: { 'application/json': {} },
+        },
+      },
+    })
+    @permission({ idx: 1 })
+    async downloadData() {
+      // Do somthing
+    }
+  }
+
+  @get('', {
+      responses: {
+        '200': {
+          description: `Get download data`,
+          content: { 'application/json': {} },
+        },
+      },
+    })
+    @permission({ idx: 2 })
+    async getData() {
+      // Do somthing
+    }
+  }
+
+}
+
+```
+
+1. This decorator will help us identify that is the method we had create if we change the method name,
+
+2. Inside table `Permission` will be replaced the old name to the new one, and `{idx: 1}` which will be stored in column `details` of table `Permission` to compare the new one with old one
