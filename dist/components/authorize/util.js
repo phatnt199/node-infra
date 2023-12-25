@@ -66,7 +66,6 @@ class GeneratePermissionService {
                 action: common_1.EnforcerDefinitions.ACTION_EXECUTE,
                 pType: 'p',
             };
-            helpers_1.applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', controllerName);
             yield permissionRepository.upsertWith(Object.assign({}, parentPermissions), { code: parentPermissions.code });
         });
     }
@@ -134,7 +133,7 @@ class GeneratePermissionService {
                 const permissionSubject = controller.name.replace(/Controller/g, '');
                 const controllerPrototype = controller.prototype;
                 const permissionSubjectLowerCase = permissionSubject === null || permissionSubject === void 0 ? void 0 : permissionSubject.toLowerCase();
-                helpers_1.applicationLogger.info('[Migrate Permissions 1] Migration permissions for: %s %s', controller.name, permissionSubject);
+                helpers_1.applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', controller.name);
                 yield this.generateParentPermissions({ controller, permissionRepository });
                 const parentPermission = yield permissionRepository.findOne({
                     where: { subject: permissionSubjectLowerCase },

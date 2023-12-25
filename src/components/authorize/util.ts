@@ -3,8 +3,9 @@ import { applicationLogger } from '@/helpers';
 import { MetadataMap } from '@loopback/core';
 import { getDecoratorData, MetadataDecoratorKeys } from './decorator';
 import { Permission } from '@/models';
-import { PermissionRepository } from '@/repositories';
+import { AbstractAuthorizeRepository, PermissionRepository } from '@/repositories';
 import union from 'lodash/union';
+import { BaseTzEntity } from '@/base';
 
 //---------------------------------------------------------------------------
 export interface IPermission {
@@ -22,7 +23,11 @@ export class GeneratePermissionService {
   getMethodsClass(controllerPrototype: object) {
     return Reflect.ownKeys(controllerPrototype).slice(1) as string[];
   }
-  async generateParentPermissions(opts: { controller: Function; permissionRepository: PermissionRepository }) {
+
+  async generateParentPermissions<T extends BaseTzEntity>(opts: {
+    controller: Function;
+    permissionRepository: AbstractAuthorizeRepository<T> | PermissionRepository;
+  }) {
     const { controller, permissionRepository } = opts ?? {};
     const controllerName = controller.name;
     const permissionSubject = controllerName.replace(/Controller/g, '')?.toLowerCase();
@@ -35,7 +40,6 @@ export class GeneratePermissionService {
       pType: 'p',
     };
 
-    applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', controllerName);
     await permissionRepository.upsertWith({ ...parentPermissions }, { code: parentPermissions.code });
   }
 
@@ -100,10 +104,10 @@ export class GeneratePermissionService {
     });
   };
 
-  generatePermissionRecords(opts: {
+  generatePermissionRecords<T extends BaseTzEntity>(opts: {
     controller: Function;
     parentPermission: Permission;
-    permissionRepository: PermissionRepository;
+    permissionRepository: AbstractAuthorizeRepository<T> | PermissionRepository;
     allPermissionDecoratorData: MetadataMap<{ idx: number }>;
   }) {
     const { controller, parentPermission, allPermissionDecoratorData } = opts;
@@ -161,7 +165,10 @@ export class GeneratePermissionService {
     }
   }
 
-  async startMigration(opts: { permissionRepository: PermissionRepository; controllers: Function[] }) {
+  async startMigration<T extends BaseTzEntity>(opts: {
+    permissionRepository: AbstractAuthorizeRepository<T> & PermissionRepository;
+    controllers: Function[];
+  }) {
     const { permissionRepository, controllers } = opts;
     const permissions: IPermission[] = [];
 
@@ -170,7 +177,7 @@ export class GeneratePermissionService {
       const controllerPrototype = controller.prototype;
       const permissionSubjectLowerCase = permissionSubject?.toLowerCase();
 
-      applicationLogger.info('[Migrate Permissions 1] Migration permissions for: %s %s', controller.name, permissionSubject);
+      applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', controller.name);
 
       await this.generateParentPermissions({ controller, permissionRepository });
 
