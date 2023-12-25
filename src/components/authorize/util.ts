@@ -166,9 +166,8 @@ export class GeneratePermissionService {
     const permissions: IPermission[] = [];
 
     for (const controller of controllers) {
-      const controllerClass = controller;
-      const permissionSubject = controllerClass.name.replace(/Controller/g, '');
-      const controllerPrototype = controllerClass.prototype;
+      const permissionSubject = controller.name.replace(/Controller/g, '');
+      const controllerPrototype = controller.prototype;
       const permissionSubjectLowerCase = permissionSubject?.toLowerCase();
 
       applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', permissionSubject);
@@ -187,7 +186,7 @@ export class GeneratePermissionService {
         getDecoratorData(controllerPrototype, MetadataDecoratorKeys.PERMISSION) ?? {};
 
       const permissionList = this.generatePermissionRecords({
-        controller: controllerClass,
+        controller,
         parentPermission,
         permissionRepository,
         allPermissionDecoratorData,
