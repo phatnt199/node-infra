@@ -1,6 +1,7 @@
 import { MetadataMap } from '@loopback/core';
 import { Permission } from '../../models';
 import { PermissionRepository } from '../../repositories';
+import { BaseController } from '../../base';
 export interface IPermission {
     code: string;
     subject: string;
@@ -48,6 +49,6 @@ export declare class GeneratePermissionService {
     }>, permissionRepository: PermissionRepository): Promise<void>;
     startMigration(opts: {
         permissionRepository: PermissionRepository;
-        controllers: Function[];
+        controllers: (typeof BaseController)[];
     }): Promise<void>;
 }

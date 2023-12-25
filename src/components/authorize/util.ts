@@ -5,7 +5,7 @@ import { getDecoratorData, MetadataDecoratorKeys } from './decorator';
 import { Permission } from '@/models';
 import { PermissionRepository } from '@/repositories';
 import union from 'lodash/union';
-import { BaseTzEntity, TzCrudRepository } from '@/base';
+import { BaseController } from '@/base';
 
 //---------------------------------------------------------------------------
 export interface IPermission {
@@ -162,7 +162,7 @@ export class GeneratePermissionService {
     }
   }
 
-  async startMigration(opts: { permissionRepository: PermissionRepository; controllers: Function[] }) {
+  async startMigration(opts: { permissionRepository: PermissionRepository; controllers: (typeof BaseController)[] }) {
     const { permissionRepository, controllers } = opts;
     const permissions: IPermission[] = [];
 
