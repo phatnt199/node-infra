@@ -1,6 +1,6 @@
 import { EnforcerDefinitions, IController } from '@/common';
 import { applicationLogger } from '@/helpers';
-import { MetadataMap } from '@loopback/core';
+import { Constructor, MetadataMap } from '@loopback/core';
 import { getDecoratorData, MetadataDecoratorKeys } from './decorator';
 import { Permission } from '@/models';
 import { PermissionRepository } from '@/repositories';
@@ -24,7 +24,7 @@ export class GeneratePermissionService {
   }
 
   async generateParentPermissions(opts: {
-    controller: IController & Function;
+    controller: Constructor<IController>;
     permissionRepository: PermissionRepository;
   }) {
     const { controller, permissionRepository } = opts ?? {};
@@ -104,7 +104,7 @@ export class GeneratePermissionService {
   };
 
   generatePermissionRecords(opts: {
-    controller: IController & Function;
+    controller: Constructor<IController>;
     parentPermission: Permission;
     permissionRepository: PermissionRepository;
     allPermissionDecoratorData: MetadataMap<{ idx: number }>;
@@ -164,7 +164,10 @@ export class GeneratePermissionService {
     }
   }
 
-  async startMigration(opts: { permissionRepository: PermissionRepository; controllers: (IController & Function)[] }) {
+  async startMigration(opts: {
+    permissionRepository: PermissionRepository;
+    controllers: Array<Constructor<IController>>;
+  }) {
     const { permissionRepository, controllers } = opts;
     const permissions: IPermission[] = [];
 

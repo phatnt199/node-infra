@@ -1,5 +1,5 @@
 import { IController } from '../../common';
-import { MetadataMap } from '@loopback/core';
+import { Constructor, MetadataMap } from '@loopback/core';
 import { Permission } from '../../models';
 import { PermissionRepository } from '../../repositories';
 export interface IPermission {
@@ -17,7 +17,7 @@ export interface IPermission {
 export declare class GeneratePermissionService {
     getMethodsClass(controllerPrototype: object): string[];
     generateParentPermissions(opts: {
-        controller: IController & Function;
+        controller: Constructor<IController>;
         permissionRepository: PermissionRepository;
     }): Promise<void>;
     generatePermissions(opts: {
@@ -37,7 +37,7 @@ export declare class GeneratePermissionService {
         }>;
     }) => IPermission[];
     generatePermissionRecords(opts: {
-        controller: IController & Function;
+        controller: Constructor<IController>;
         parentPermission: Permission;
         permissionRepository: PermissionRepository;
         allPermissionDecoratorData: MetadataMap<{
@@ -49,6 +49,6 @@ export declare class GeneratePermissionService {
     }>, permissionRepository: PermissionRepository): Promise<void>;
     startMigration(opts: {
         permissionRepository: PermissionRepository;
-        controllers: (IController & Function)[];
+        controllers: Array<Constructor<IController>>;
     }): Promise<void>;
 }
