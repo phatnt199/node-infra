@@ -3,9 +3,9 @@ import { applicationLogger } from '@/helpers';
 import { MetadataMap } from '@loopback/core';
 import { getDecoratorData, MetadataDecoratorKeys } from './decorator';
 import { Permission } from '@/models';
-import { AbstractAuthorizeRepository, PermissionRepository } from '@/repositories';
+import { PermissionRepository } from '@/repositories';
 import union from 'lodash/union';
-import { BaseTzEntity } from '@/base';
+import { BaseTzEntity, TzCrudRepository } from '@/base';
 
 //---------------------------------------------------------------------------
 export interface IPermission {
@@ -24,10 +24,7 @@ export class GeneratePermissionService {
     return Reflect.ownKeys(controllerPrototype).slice(1) as string[];
   }
 
-  async generateParentPermissions<T extends BaseTzEntity>(opts: {
-    controller: Function;
-    permissionRepository: AbstractAuthorizeRepository<T> | PermissionRepository;
-  }) {
+  async generateParentPermissions(opts: { controller: Function; permissionRepository: PermissionRepository }) {
     const { controller, permissionRepository } = opts ?? {};
     const controllerName = controller.name;
     const permissionSubject = controllerName.replace(/Controller/g, '')?.toLowerCase();
@@ -104,10 +101,10 @@ export class GeneratePermissionService {
     });
   };
 
-  generatePermissionRecords<T extends BaseTzEntity>(opts: {
+  generatePermissionRecords(opts: {
     controller: Function;
     parentPermission: Permission;
-    permissionRepository: AbstractAuthorizeRepository<T> | PermissionRepository;
+    permissionRepository: PermissionRepository;
     allPermissionDecoratorData: MetadataMap<{ idx: number }>;
   }) {
     const { controller, parentPermission, allPermissionDecoratorData } = opts;
@@ -130,10 +127,10 @@ export class GeneratePermissionService {
     return permissionRecords;
   }
 
-  async updatePermissionByChangeMethodName(
+  async updatePermissionByChangeMethodName<T extends BaseTzEntity>(
     permissionSubject: string,
     allPermissionDecoratorData: MetadataMap<{ idx: number }>,
-    permissionRepository: PermissionRepository,
+    permissionRepository: TzCrudRepository<T> & PermissionRepository,
   ) {
     if (!Object.values(allPermissionDecoratorData).length) {
       return;
@@ -165,10 +162,7 @@ export class GeneratePermissionService {
     }
   }
 
-  async startMigration<T extends BaseTzEntity>(opts: {
-    permissionRepository: AbstractAuthorizeRepository<T> & PermissionRepository;
-    controllers: Function[];
-  }) {
+  async startMigration(opts: { permissionRepository: PermissionRepository; controllers: Function[] }) {
     const { permissionRepository, controllers } = opts;
     const permissions: IPermission[] = [];
 
