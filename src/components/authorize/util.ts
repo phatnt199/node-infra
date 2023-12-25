@@ -1,11 +1,10 @@
-import { EnforcerDefinitions } from '@/common';
+import { EnforcerDefinitions, IController } from '@/common';
 import { applicationLogger } from '@/helpers';
 import { MetadataMap } from '@loopback/core';
 import { getDecoratorData, MetadataDecoratorKeys } from './decorator';
 import { Permission } from '@/models';
 import { PermissionRepository } from '@/repositories';
 import union from 'lodash/union';
-import { BaseController } from '@/base';
 
 //---------------------------------------------------------------------------
 export interface IPermission {
@@ -24,7 +23,10 @@ export class GeneratePermissionService {
     return Reflect.ownKeys(controllerPrototype).slice(1) as string[];
   }
 
-  async generateParentPermissions(opts: { controller: Function; permissionRepository: PermissionRepository }) {
+  async generateParentPermissions(opts: {
+    controller: IController & Function;
+    permissionRepository: PermissionRepository;
+  }) {
     const { controller, permissionRepository } = opts ?? {};
     const controllerName = controller.name;
     const permissionSubject = controllerName.replace(/Controller/g, '')?.toLowerCase();
@@ -102,7 +104,7 @@ export class GeneratePermissionService {
   };
 
   generatePermissionRecords(opts: {
-    controller: Function;
+    controller: IController & Function;
     parentPermission: Permission;
     permissionRepository: PermissionRepository;
     allPermissionDecoratorData: MetadataMap<{ idx: number }>;
@@ -162,7 +164,7 @@ export class GeneratePermissionService {
     }
   }
 
-  async startMigration(opts: { permissionRepository: PermissionRepository; controllers: (typeof BaseController)[] }) {
+  async startMigration(opts: { permissionRepository: PermissionRepository; controllers: (IController & Function)[] }) {
     const { permissionRepository, controllers } = opts;
     const permissions: IPermission[] = [];
 
