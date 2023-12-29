@@ -91,6 +91,24 @@ export class RedisHelper {
   }
 
   // ---------------------------------------------------------------------------------
+  async hset(opts: { key: string; value: any; options?: { log: boolean } }) {
+    if (!this.client) {
+      this.logger.info('[hset] No valid Redis connection!');
+      return;
+    }
+
+    const { key, value, options } = opts;
+    const rs = await this.client.hset(key, value);
+
+    if (!options?.log) {
+      return rs;
+    }
+
+    this.logger.info('[hset] Result: %j', rs);
+    return rs;
+  }
+
+  // ---------------------------------------------------------------------------------
   async get(opts: { key: string; transform?: (input: string) => any }) {
     const { key, transform } = opts;
     if (!this.client) {
@@ -120,6 +138,22 @@ export class RedisHelper {
     }
 
     return values?.map(el => (el ? transform(el) : el));
+  }
+
+  // ---------------------------------------------------------------------------------
+  async hgetall(opts: { key: string; transform?: <T, R>(input: T) => R }) {
+    const { key, transform } = opts;
+    if (!this.client) {
+      this.logger.info('[get] No valid Redis connection!');
+      return null;
+    }
+
+    const value = await this.client.hgetall(key);
+    if (!transform || !value) {
+      return value;
+    }
+
+    return transform(value);
   }
 
   // ---------------------------------------------------------------------------------

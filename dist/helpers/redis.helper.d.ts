@@ -37,6 +37,13 @@ export declare class RedisHelper {
             log: boolean;
         };
     }): Promise<void>;
+    hset(opts: {
+        key: string;
+        value: any;
+        options?: {
+            log: boolean;
+        };
+    }): Promise<number | undefined>;
     get(opts: {
         key: string;
         transform?: (input: string) => any;
@@ -45,6 +52,10 @@ export declare class RedisHelper {
         keys: Array<string>;
         transform?: (input: string) => any;
     }): Promise<any[] | null>;
+    hgetall(opts: {
+        key: string;
+        transform?: <T, R>(input: T) => R;
+    }): Promise<unknown>;
     getString(opts: {
         key: string;
     }): Promise<any>;

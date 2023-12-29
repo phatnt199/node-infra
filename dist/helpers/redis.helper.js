@@ -83,6 +83,22 @@ class RedisHelper {
         });
     }
     // ---------------------------------------------------------------------------------
+    hset(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.client) {
+                this.logger.info('[hset] No valid Redis connection!');
+                return;
+            }
+            const { key, value, options } = opts;
+            const rs = yield this.client.hset(key, value);
+            if (!(options === null || options === void 0 ? void 0 : options.log)) {
+                return rs;
+            }
+            this.logger.info('[hset] Result: %j', rs);
+            return rs;
+        });
+    }
+    // ---------------------------------------------------------------------------------
     get(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { key, transform } = opts;
@@ -110,6 +126,21 @@ class RedisHelper {
                 return null;
             }
             return values === null || values === void 0 ? void 0 : values.map(el => (el ? transform(el) : el));
+        });
+    }
+    // ---------------------------------------------------------------------------------
+    hgetall(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { key, transform } = opts;
+            if (!this.client) {
+                this.logger.info('[get] No valid Redis connection!');
+                return null;
+            }
+            const value = yield this.client.hgetall(key);
+            if (!transform || !value) {
+                return value;
+            }
+            return transform(value);
         });
     }
     // ---------------------------------------------------------------------------------
