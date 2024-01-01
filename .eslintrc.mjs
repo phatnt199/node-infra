@@ -1,4 +1,4 @@
-module.exports = {
+const config = {
   extends: '@loopback/eslint-config',
   rules: {
     '@typescript-eslint/no-explicit-any': 'off',
@@ -6,3 +6,5 @@ module.exports = {
     '@typescript-eslint/no-floating-promises': 'off',
   },
 }
+
+export default config;

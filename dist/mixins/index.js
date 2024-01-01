@@ -19,4 +19,5 @@ __exportStar(require("./data-type.mixin"), exports);
 __exportStar(require("./principal.mixin"), exports);
 __exportStar(require("./text-search.mixin"), exports);
 __exportStar(require("./user-audit.mixin"), exports);
+__exportStar(require("./soft-persistent.mixin"), exports);
 //# sourceMappingURL=index.js.map
