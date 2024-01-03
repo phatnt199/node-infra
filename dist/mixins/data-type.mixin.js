@@ -43,14 +43,13 @@ const DataTypeMixin = (superClass) => {
     ], Mixed.prototype, "jValue", void 0);
     __decorate([
         (0, repository_1.property)({
-            type: 'array',
-            itemType: 'number',
+            type: 'buffer',
             postgresql: {
                 columnName: 'b_value',
                 dataType: 'bytea',
             },
         }),
-        __metadata("design:type", Array)
+        __metadata("design:type", Buffer)
     ], Mixed.prototype, "bValue", void 0);
     __decorate([
         (0, repository_1.property)({

@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { MixinTarget } from '@loopback/core';
 import { Entity } from '@loopback/repository';
 export declare const DataTypeMixin: <E extends MixinTarget<Entity>>(superClass: E) => {
@@ -5,7 +6,7 @@ export declare const DataTypeMixin: <E extends MixinTarget<Entity>>(superClass: 
         tValue?: string | undefined;
         nValue?: number | undefined;
         jValue?: any;
-        bValue?: number[] | undefined;
+        bValue?: Buffer | undefined;
         dataType?: string | undefined;
         getId: () => any;
         getIdObject: () => Object;

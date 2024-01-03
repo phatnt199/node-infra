@@ -28,14 +28,13 @@ export const DataTypeMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
     jValue?: any;
 
     @property({
-      type: 'array',
-      itemType: 'number',
+      type: 'buffer',
       postgresql: {
         columnName: 'b_value',
         dataType: 'bytea',
       },
     })
-    bValue?: number[];
+    bValue?: Buffer;
 
     @property({
       type: 'string',
