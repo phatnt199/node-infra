@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Entity } from '@loopback/repository';
 export declare class BaseEntity extends Entity {
 }
@@ -43,7 +42,7 @@ declare const BaseDataTypeTzEntity_base: {
         tValue?: string | undefined;
         nValue?: number | undefined;
         jValue?: any;
-        bValue?: Buffer | undefined;
+        bValue?: number[] | undefined;
         dataType?: string | undefined;
         getId: () => any;
         getIdObject: () => Object;
