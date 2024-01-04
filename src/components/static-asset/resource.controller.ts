@@ -1,12 +1,14 @@
+import { CoreBindings, inject } from '@loopback/core';
+import { api, get, param, post, Request, Response, RestBindings } from '@loopback/rest';
+
 import { BaseApplication } from '@/base';
 import { Formatters, IController, ResourceAssetKeys } from '@/common';
 import { ApplicationLogger, IUploadFile, LoggerFactory } from '@/helpers';
 import { dayjs, getError } from '@/utilities';
-import { CoreBindings, inject } from '@loopback/core';
-import { api, get, param, post, Request, Response, RestBindings } from '@loopback/rest';
+
+import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 import multer from 'multer';
-import fs from 'fs';
 import { join } from 'path';
 
 @api({ basePath: '/static-resources' })
@@ -26,7 +28,7 @@ export class StaticResourceController implements IController {
   @post('/upload', {
     responses: {
       '200': {
-        description: 'Upload files to bucket',
+        description: 'Upload files to resource folder',
         content: { 'application/json': {} },
       },
     },

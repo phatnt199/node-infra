@@ -17,15 +17,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var StaticResourceController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StaticResourceController = void 0;
+const core_1 = require("@loopback/core");
+const rest_1 = require("@loopback/rest");
 const base_1 = require("../../base");
 const common_1 = require("../../common");
 const helpers_1 = require("../../helpers");
 const utilities_1 = require("../../utilities");
-const core_1 = require("@loopback/core");
-const rest_1 = require("@loopback/rest");
+const fs_1 = __importDefault(require("fs"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const multer_1 = __importDefault(require("multer"));
-const fs_1 = __importDefault(require("fs"));
 const path_1 = require("path");
 let StaticResourceController = StaticResourceController_1 = class StaticResourceController {
     constructor(application, request, response) {
@@ -110,7 +110,7 @@ __decorate([
     (0, rest_1.post)('/upload', {
         responses: {
             '200': {
-                description: 'Upload files to bucket',
+                description: 'Upload files to resource folder',
                 content: { 'application/json': {} },
             },
         },
