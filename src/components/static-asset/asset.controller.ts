@@ -1,5 +1,5 @@
 import { BaseApplication } from '@/base';
-import { IController, MinioKeys } from '@/common';
+import { IController, ResourceAssetKeys } from '@/common';
 import { ApplicationLogger, IUploadFile, LoggerFactory, MinioHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import { CoreBindings, inject } from '@loopback/core';
@@ -16,8 +16,8 @@ export class StaticAssetController implements IController {
     @inject(RestBindings.Http.REQUEST) private request: Request,
     @inject(RestBindings.Http.RESPONSE) private response: Response,
   ) {
-    this.temporaryStorage = multer.memoryStorage();
     this.logger = LoggerFactory.getLogger([StaticAssetController.name]);
+    this.temporaryStorage = multer.memoryStorage();
   }
 
   @post('/buckets/{bucket_name}', {
@@ -29,7 +29,7 @@ export class StaticAssetController implements IController {
     },
   })
   createBucket(@param.path.string('bucket_name') bucketName: string) {
-    const minioInstance = this.application.getSync<MinioHelper>(MinioKeys.MINIO_INSTANCE);
+    const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
     return minioInstance.createBucket({ name: bucketName });
   }
 
@@ -42,7 +42,7 @@ export class StaticAssetController implements IController {
     },
   })
   removeBucket(@param.path.string('bucket_name') bucketName: string) {
-    const minioInstance = this.application.getSync<MinioHelper>(MinioKeys.MINIO_INSTANCE);
+    const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
     return minioInstance.removeBucket({ name: bucketName });
   }
 
@@ -55,7 +55,7 @@ export class StaticAssetController implements IController {
     },
   })
   getBucket(@param.path.string('bucket_name') bucketName: string) {
-    const minioInstance = this.application.getSync<MinioHelper>(MinioKeys.MINIO_INSTANCE);
+    const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
     return minioInstance.getBucket({ name: bucketName });
   }
 
@@ -68,7 +68,7 @@ export class StaticAssetController implements IController {
     },
   })
   getBuckets() {
-    const minioInstance = this.application.getSync<MinioHelper>(MinioKeys.MINIO_INSTANCE);
+    const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
     return minioInstance.getBuckets();
   }
 
@@ -81,7 +81,7 @@ export class StaticAssetController implements IController {
     },
   })
   uploadObject(@param.path.string('bucket_name') bucketName: string) {
-    const minioInstance = this.application.getSync<MinioHelper>(MinioKeys.MINIO_INSTANCE);
+    const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
     return new Promise((resolve, reject) => {
       multer({ storage: this.temporaryStorage }).array('files')(this.request, this.response, error => {
         if (error) {
@@ -102,7 +102,7 @@ export class StaticAssetController implements IController {
     @param.path.string('bucket_name') bucketName: string,
     @param.path.string('object_name') objectName: string,
   ) {
-    const minioInstance = this.application.getSync<MinioHelper>(MinioKeys.MINIO_INSTANCE);
+    const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
     return new Promise(() => {
       minioInstance.getStat({ bucket: bucketName, name: objectName }).then(fileStat => {
         const { size, metaData } = fileStat;
@@ -138,7 +138,7 @@ export class StaticAssetController implements IController {
     @param.path.string('bucket_name') bucketName: string,
     @param.path.string('object_name') objectName: string,
   ) {
-    const minioInstance = this.application.getSync<MinioHelper>(MinioKeys.MINIO_INSTANCE);
+    const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
     return new Promise(() => {
       minioInstance.getStat({ bucket: bucketName, name: objectName }).then(fileStat => {
         const { size, metaData } = fileStat;

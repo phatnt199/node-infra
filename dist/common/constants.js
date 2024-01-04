@@ -29,6 +29,7 @@ class Formatters {
 }
 exports.Formatters = Formatters;
 Formatters.DATE_TIME = 'YYYY-MM-DD HH:mm:ss';
+Formatters.DATE_TIME_2 = 'YYYYMMDDHHmmss';
 Formatters.DATE_1 = 'YYYY-MM-DD';
 Formatters.DATE_2 = 'YYYYMMDD';
 Formatters.TIME_1 = 'HH:mm:ss';

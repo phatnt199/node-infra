@@ -1,2 +1,3 @@
 export * from './component';
-export * from './controller';
+export * from './asset.controller';
+export * from './resource.controller';

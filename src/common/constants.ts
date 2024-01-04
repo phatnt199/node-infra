@@ -25,6 +25,7 @@ export class Authentication {
 
 export class Formatters {
   static readonly DATE_TIME = 'YYYY-MM-DD HH:mm:ss';
+  static readonly DATE_TIME_2 = 'YYYYMMDDHHmmss';
   static readonly DATE_1 = 'YYYY-MM-DD';
   static readonly DATE_2 = 'YYYYMMDD';
   static readonly TIME_1 = 'HH:mm:ss';

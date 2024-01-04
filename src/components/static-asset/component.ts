@@ -1,22 +1,38 @@
 import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
-import { MinioKeys } from '@/common';
+import { ResourceAssetKeys } from '@/common';
 import { MinioHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import { Binding, CoreBindings, inject } from '@loopback/core';
 import { ClientOptions } from 'minio';
-import { StaticAssetController } from './controller';
+import { StaticAssetController } from './asset.controller';
+import { StaticResourceController } from './resource.controller';
 
 export class StaticAssetComponent extends BaseComponent {
-  bindings: Binding[] = [Binding.bind(MinioKeys.CONNECTION_OPTIONS).to(null)];
+  bindings: Binding[] = [
+    Binding.bind(ResourceAssetKeys.COMPONENT_OPTIONS).to({
+      useMinioAsset: true,
+      useStaticResource: true,
+      resourceBasePath: './',
+    }),
+    Binding.bind(ResourceAssetKeys.CONNECTION_OPTIONS).to(null),
+  ];
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
     super({ scope: StaticAssetComponent.name });
     this.binding();
   }
 
-  defineControllers() {
-    this.application.controller(StaticAssetController);
+  defineControllers(opts: { useMinioAsset: boolean; useStaticResource: boolean }) {
+    const { useMinioAsset, useStaticResource } = opts;
+
+    if (useMinioAsset) {
+      this.application.controller(StaticAssetController);
+    }
+
+    if (useStaticResource) {
+      this.application.controller(StaticResourceController);
+    }
   }
 
   binding() {
@@ -28,10 +44,25 @@ export class StaticAssetComponent extends BaseComponent {
     }
 
     this.logger.info('[binding] Binding static asset for application...');
-    const connectionOptions = this.application.getSync<ClientOptions>(MinioKeys.CONNECTION_OPTIONS);
-    const minioHelper = new MinioHelper(connectionOptions);
-    this.application.bind(MinioKeys.MINIO_INSTANCE).to(minioHelper);
 
-    this.defineControllers();
+    const componentOptions = this.application.getSync<{
+      useMinioAsset: boolean;
+      useStaticResource: boolean;
+      resourceBasePath: string;
+    }>(ResourceAssetKeys.COMPONENT_OPTIONS);
+
+    const { useMinioAsset, useStaticResource, resourceBasePath } = componentOptions;
+
+    if (useMinioAsset) {
+      const connectionOptions = this.application.getSync<ClientOptions>(ResourceAssetKeys.CONNECTION_OPTIONS);
+      const minioHelper = new MinioHelper(connectionOptions);
+      this.application.bind(ResourceAssetKeys.MINIO_INSTANCE).to(minioHelper);
+    }
+
+    if (useStaticResource) {
+      this.application.bind(ResourceAssetKeys.RESOURCE_BASE_PATH).to(resourceBasePath);
+    }
+
+    this.defineControllers({ useMinioAsset, useStaticResource });
   }
 }

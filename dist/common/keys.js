@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MinioKeys = exports.MigrationKeys = exports.SocketIOKeys = exports.AuthorizerKeys = exports.AuthenticateKeys = exports.RouteKeys = exports.BindingKeys = void 0;
+exports.ResourceAssetKeys = exports.MigrationKeys = exports.SocketIOKeys = exports.AuthorizerKeys = exports.AuthenticateKeys = exports.RouteKeys = exports.BindingKeys = void 0;
 class BindingKeys {
 }
 exports.BindingKeys = BindingKeys;
@@ -53,9 +53,11 @@ MigrationKeys.MIGRATION_MODEL = '@app/migration/component/models/migration';
 MigrationKeys.MIGRATION_REPOSITORY = '@app/migration/component/repositories/migration';
 MigrationKeys.MIGRATION_DATASOURCE = '@app/migration/datasource';
 // -----------------------------------------------------------------------------
-class MinioKeys {
+class ResourceAssetKeys {
 }
-exports.MinioKeys = MinioKeys;
-MinioKeys.MINIO_INSTANCE = '@app/minio/instance';
-MinioKeys.CONNECTION_OPTIONS = '@app/minio/connection-options';
+exports.ResourceAssetKeys = ResourceAssetKeys;
+ResourceAssetKeys.COMPONENT_OPTIONS = '@app/minio/component-options';
+ResourceAssetKeys.MINIO_INSTANCE = '@app/minio/instance';
+ResourceAssetKeys.CONNECTION_OPTIONS = '@app/minio/connection-options';
+ResourceAssetKeys.RESOURCE_BASE_PATH = '@app/resources/base-path';
 //# sourceMappingURL=keys.js.map

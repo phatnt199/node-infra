@@ -5,6 +5,9 @@ export declare class StaticAssetComponent extends BaseComponent {
     protected application: BaseApplication;
     bindings: Binding[];
     constructor(application: BaseApplication);
-    defineControllers(): void;
+    defineControllers(opts: {
+        useMinioAsset: boolean;
+        useStaticResource: boolean;
+    }): void;
     binding(): void;
 }

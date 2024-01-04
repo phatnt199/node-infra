@@ -29,27 +29,27 @@ let StaticAssetController = StaticAssetController_1 = class StaticAssetControlle
         this.application = application;
         this.request = request;
         this.response = response;
-        this.temporaryStorage = multer_1.default.memoryStorage();
         this.logger = helpers_1.LoggerFactory.getLogger([StaticAssetController_1.name]);
+        this.temporaryStorage = multer_1.default.memoryStorage();
     }
     createBucket(bucketName) {
-        const minioInstance = this.application.getSync(common_1.MinioKeys.MINIO_INSTANCE);
+        const minioInstance = this.application.getSync(common_1.ResourceAssetKeys.MINIO_INSTANCE);
         return minioInstance.createBucket({ name: bucketName });
     }
     removeBucket(bucketName) {
-        const minioInstance = this.application.getSync(common_1.MinioKeys.MINIO_INSTANCE);
+        const minioInstance = this.application.getSync(common_1.ResourceAssetKeys.MINIO_INSTANCE);
         return minioInstance.removeBucket({ name: bucketName });
     }
     getBucket(bucketName) {
-        const minioInstance = this.application.getSync(common_1.MinioKeys.MINIO_INSTANCE);
+        const minioInstance = this.application.getSync(common_1.ResourceAssetKeys.MINIO_INSTANCE);
         return minioInstance.getBucket({ name: bucketName });
     }
     getBuckets() {
-        const minioInstance = this.application.getSync(common_1.MinioKeys.MINIO_INSTANCE);
+        const minioInstance = this.application.getSync(common_1.ResourceAssetKeys.MINIO_INSTANCE);
         return minioInstance.getBuckets();
     }
     uploadObject(bucketName) {
-        const minioInstance = this.application.getSync(common_1.MinioKeys.MINIO_INSTANCE);
+        const minioInstance = this.application.getSync(common_1.ResourceAssetKeys.MINIO_INSTANCE);
         return new Promise((resolve, reject) => {
             (0, multer_1.default)({ storage: this.temporaryStorage }).array('files')(this.request, this.response, error => {
                 if (error) {
@@ -64,7 +64,7 @@ let StaticAssetController = StaticAssetController_1 = class StaticAssetControlle
         });
     }
     downloadObject(bucketName, objectName) {
-        const minioInstance = this.application.getSync(common_1.MinioKeys.MINIO_INSTANCE);
+        const minioInstance = this.application.getSync(common_1.ResourceAssetKeys.MINIO_INSTANCE);
         return new Promise(() => {
             minioInstance.getStat({ bucket: bucketName, name: objectName }).then(fileStat => {
                 const { size, metaData } = fileStat;
@@ -89,7 +89,7 @@ let StaticAssetController = StaticAssetController_1 = class StaticAssetControlle
         });
     }
     getStaticObject(bucketName, objectName) {
-        const minioInstance = this.application.getSync(common_1.MinioKeys.MINIO_INSTANCE);
+        const minioInstance = this.application.getSync(common_1.ResourceAssetKeys.MINIO_INSTANCE);
         return new Promise(() => {
             minioInstance.getStat({ bucket: bucketName, name: objectName }).then(fileStat => {
                 const { size, metaData } = fileStat;
@@ -204,4 +204,4 @@ StaticAssetController = StaticAssetController_1 = __decorate([
     __metadata("design:paramtypes", [base_1.BaseApplication, Object, Object])
 ], StaticAssetController);
 exports.StaticAssetController = StaticAssetController;
-//# sourceMappingURL=controller.js.map
+//# sourceMappingURL=asset.controller.js.map
