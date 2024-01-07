@@ -1,5 +1,5 @@
 import { Server as IOServer, ServerOptions, Socket as IOSocket } from 'socket.io';
-import { createAdapter } from '@socket.io/redis-streams-adapter';
+import { createAdapter } from '@socket.io/redis-adapter';
 import { Emitter } from '@socket.io/redis-emitter';
 import Redis from 'ioredis';
 import { of } from 'rxjs';
@@ -125,20 +125,20 @@ export class SocketIOServerHelper {
       });
     }
 
-    const adapterClient = this.redisConnection.duplicate();
+    this.io = new IOServer(this.server, this.serverOptions);
+
+    // Config socket.io redis adapter
+    const adapterPubClient = this.redisConnection.duplicate();
+    const adapterSubClient = this.redisConnection.duplicate();
+    this.io.adapter(createAdapter(adapterPubClient, adapterSubClient));
+    this.logger.info('[configure] SocketIO Server initialized Redis Adapter!');
+
+    // Config socket.io redis emitter
     const emitterClient = this.redisConnection.duplicate();
-
-    this.io = new IOServer(this.server, {
-      ...this.serverOptions,
-      adapter: createAdapter(adapterClient),
-    });
-
-    // Config socket.io redis emiiter
     this.emitter = new Emitter(emitterClient);
     this.emitter.redisClient.on('error', (error: Error) => {
       this.logger.error('[configure][Emitter] On Error: %j', error);
     });
-
     this.logger.info('[configure] SocketIO Server initialized Redis Emitter!');
 
     // Handle socket.io new connection

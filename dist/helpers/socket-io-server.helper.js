@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SocketIOServerHelper = void 0;
 const socket_io_1 = require("socket.io");
-const redis_streams_adapter_1 = require("@socket.io/redis-streams-adapter");
+const redis_adapter_1 = require("@socket.io/redis-adapter");
 const redis_emitter_1 = require("@socket.io/redis-emitter");
 const rxjs_1 = require("rxjs");
 const operators_1 = require("rxjs/operators");
@@ -76,10 +76,14 @@ class SocketIOServerHelper {
                 message: '[DANGER] Invalid server instance to init Socket.io server!',
             });
         }
-        const adapterClient = this.redisConnection.duplicate();
+        this.io = new socket_io_1.Server(this.server, this.serverOptions);
+        // Config socket.io redis adapter
+        const adapterPubClient = this.redisConnection.duplicate();
+        const adapterSubClient = this.redisConnection.duplicate();
+        this.io.adapter((0, redis_adapter_1.createAdapter)(adapterPubClient, adapterSubClient));
+        this.logger.info('[configure] SocketIO Server initialized Redis Adapter!');
+        // Config socket.io redis emitter
         const emitterClient = this.redisConnection.duplicate();
-        this.io = new socket_io_1.Server(this.server, Object.assign(Object.assign({}, this.serverOptions), { adapter: (0, redis_streams_adapter_1.createAdapter)(adapterClient) }));
-        // Config socket.io redis emiiter
         this.emitter = new redis_emitter_1.Emitter(emitterClient);
         this.emitter.redisClient.on('error', (error) => {
             this.logger.error('[configure][Emitter] On Error: %j', error);
