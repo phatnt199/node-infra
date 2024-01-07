@@ -1,20 +1,11 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SocketIOServerHelper = void 0;
 const socket_io_1 = require("socket.io");
-const redis_adapter_1 = require("@socket.io/redis-adapter");
+const redis_streams_adapter_1 = require("@socket.io/redis-streams-adapter");
 const redis_emitter_1 = require("@socket.io/redis-emitter");
 const rxjs_1 = require("rxjs");
 const operators_1 = require("rxjs/operators");
@@ -85,97 +76,92 @@ class SocketIOServerHelper {
                 message: '[DANGER] Invalid server instance to init Socket.io server!',
             });
         }
-        this.io = new socket_io_1.Server(this.server, this.serverOptions);
-        // Configure socket.io redis adapter
-        const pubConnection = this.redisConnection.duplicate();
-        const subConnection = this.redisConnection.duplicate();
-        this.io.adapter((0, redis_adapter_1.createAdapter)(pubConnection, subConnection));
-        this.logger.info('[configure] SocketIO Server is plugged with Redis Adapter!');
+        const adapterClient = this.redisConnection.duplicate();
+        const emitterClient = this.redisConnection.duplicate();
+        this.io = new socket_io_1.Server(this.server, Object.assign(Object.assign({}, this.serverOptions), { adapter: (0, redis_streams_adapter_1.createAdapter)(adapterClient) }));
         // Config socket.io redis emiiter
-        this.emitter = new redis_emitter_1.Emitter(this.redisConnection.duplicate());
+        this.emitter = new redis_emitter_1.Emitter(emitterClient);
         this.emitter.redisClient.on('error', (error) => {
             this.logger.error('[configure][Emitter] On Error: %j', error);
         });
         this.logger.info('[configure] SocketIO Server initialized Redis Emitter!');
         // Handle socket.io new connection
-        this.io.on(common_1.SocketIOConstants.EVENT_CONNECT, (socket) => __awaiter(this, void 0, void 0, function* () {
-            yield this.onClientConnect({ socket });
-        }));
+        this.io.on(common_1.SocketIOConstants.EVENT_CONNECT, (socket) => {
+            this.onClientConnect({ socket });
+        });
         this.logger.info('[configure] SocketIO Server READY | Path: %s | Address: %j', (_b = (_a = this.serverOptions) === null || _a === void 0 ? void 0 : _a.path) !== null && _b !== void 0 ? _b : '', (_c = this.server) === null || _c === void 0 ? void 0 : _c.address());
         this.logger.debug('[configure] Whether http listening: %s', (_d = this.server) === null || _d === void 0 ? void 0 : _d.listening);
     }
     // -------------------------------------------------------------------------------------------------------------
     onClientConnect(opts) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { socket } = opts;
-            if (!socket) {
-                this.logger.info('[onClientConnect] Invalid new socket connection!');
-                return;
-            }
-            // Validate user identifier
-            const { id, handshake } = socket;
-            const { headers } = handshake;
-            if (this.clients[id]) {
-                this.logger.info('[onClientConnect] Socket client already existed: %j', { id, headers });
-                return;
-            }
-            this.logger.info('[onClientConnect] New connection request with options: %j', { id, headers });
-            this.clients[id] = {
-                id,
-                socket,
-                state: 'unauthorized',
-                authenticateTimeout: setTimeout(() => {
-                    var _a;
-                    if (((_a = this.clients[id]) === null || _a === void 0 ? void 0 : _a.state) === 'authenticated') {
-                        return;
-                    }
-                    this.disconnect({ socket });
-                }, this.authenticateTimeout),
-            };
-            socket.on(common_1.SocketIOConstants.EVENT_AUTHENTICATE, () => {
-                this.clients[id].state = 'authenticating';
-                this.authenticateFn(handshake)
-                    .then(rs => {
-                    this.logger.info('[onClientAuthenticate] Socket: %s | Authenticate result: %s', id, rs);
-                    // Valid connection
-                    if (rs) {
-                        this.onClientAuthenticated({ socket });
-                        return;
-                    }
-                    // Invalid connection
-                    this.clients[id].state = 'unauthorized';
-                    this.send({
-                        destination: socket.id,
-                        payload: {
-                            topic: common_1.SocketIOConstants.EVENT_UNAUTHENTICATE,
-                            data: {
-                                message: 'Invalid token token authenticate! Please login again!',
-                                time: new Date().toISOString(),
-                            },
+        const { socket } = opts;
+        if (!socket) {
+            this.logger.info('[onClientConnect] Invalid new socket connection!');
+            return;
+        }
+        // Validate user identifier
+        const { id, handshake } = socket;
+        const { headers } = handshake;
+        if (this.clients[id]) {
+            this.logger.info('[onClientConnect] Socket client already existed: %j', { id, headers });
+            return;
+        }
+        this.logger.info('[onClientConnect] New connection request with options: %j', { id, headers });
+        this.clients[id] = {
+            id,
+            socket,
+            state: 'unauthorized',
+            authenticateTimeout: setTimeout(() => {
+                var _a;
+                if (((_a = this.clients[id]) === null || _a === void 0 ? void 0 : _a.state) === 'authenticated') {
+                    return;
+                }
+                this.disconnect({ socket });
+            }, this.authenticateTimeout),
+        };
+        socket.on(common_1.SocketIOConstants.EVENT_AUTHENTICATE, () => {
+            this.clients[id].state = 'authenticating';
+            this.authenticateFn(handshake)
+                .then(rs => {
+                this.logger.info('[onClientAuthenticate] Socket: %s | Authenticate result: %s', id, rs);
+                // Valid connection
+                if (rs) {
+                    this.onClientAuthenticated({ socket });
+                    return;
+                }
+                // Invalid connection
+                this.clients[id].state = 'unauthorized';
+                this.send({
+                    destination: socket.id,
+                    payload: {
+                        topic: common_1.SocketIOConstants.EVENT_UNAUTHENTICATE,
+                        data: {
+                            message: 'Invalid token token authenticate! Please login again!',
+                            time: new Date().toISOString(),
                         },
-                        cb: () => {
-                            this.disconnect({ socket });
+                    },
+                    cb: () => {
+                        this.disconnect({ socket });
+                    },
+                });
+            })
+                .catch(error => {
+                // Unexpected error while authenticating connection
+                this.clients[id].state = 'unauthorized';
+                this.logger.error('[onClientConnect] Connection: %s | Failed to authenticate new socket connection | Error: %s', id, error);
+                this.send({
+                    destination: socket.id,
+                    payload: {
+                        topic: common_1.SocketIOConstants.EVENT_UNAUTHENTICATE,
+                        data: {
+                            message: 'Failed to authenticate connection! Please login again!',
+                            time: new Date().toISOString(),
                         },
-                    });
-                })
-                    .catch(error => {
-                    // Unexpected error while authenticating connection
-                    this.clients[id].state = 'unauthorized';
-                    this.logger.error('[onClientConnect] Connection: %s | Failed to authenticate new socket connection | Error: %s', id, error);
-                    this.send({
-                        destination: socket.id,
-                        payload: {
-                            topic: common_1.SocketIOConstants.EVENT_UNAUTHENTICATE,
-                            data: {
-                                message: 'Failed to authenticate connection! Please login again!',
-                                time: new Date().toISOString(),
-                            },
-                        },
-                        log: true,
-                        cb: () => {
-                            this.disconnect({ socket });
-                        },
-                    });
+                    },
+                    log: true,
+                    cb: () => {
+                        this.disconnect({ socket });
+                    },
                 });
             });
         });

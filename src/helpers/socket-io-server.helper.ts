@@ -1,5 +1,5 @@
 import { Server as IOServer, ServerOptions, Socket as IOSocket } from 'socket.io';
-import { createAdapter } from '@socket.io/redis-adapter';
+import { createAdapter } from '@socket.io/redis-streams-adapter';
 import { Emitter } from '@socket.io/redis-emitter';
 import Redis from 'ioredis';
 import { of } from 'rxjs';
@@ -125,16 +125,16 @@ export class SocketIOServerHelper {
       });
     }
 
-    this.io = new IOServer(this.server, this.serverOptions);
+    const adapterClient = this.redisConnection.duplicate();
+    const emitterClient = this.redisConnection.duplicate();
 
-    // Configure socket.io redis adapter
-    const pubConnection = this.redisConnection.duplicate();
-    const subConnection = this.redisConnection.duplicate();
-    this.io.adapter(createAdapter(pubConnection, subConnection));
-    this.logger.info('[configure] SocketIO Server is plugged with Redis Adapter!');
+    this.io = new IOServer(this.server, {
+      ...this.serverOptions,
+      adapter: createAdapter(adapterClient),
+    });
 
     // Config socket.io redis emiiter
-    this.emitter = new Emitter(this.redisConnection.duplicate());
+    this.emitter = new Emitter(emitterClient);
     this.emitter.redisClient.on('error', (error: Error) => {
       this.logger.error('[configure][Emitter] On Error: %j', error);
     });
@@ -142,8 +142,8 @@ export class SocketIOServerHelper {
     this.logger.info('[configure] SocketIO Server initialized Redis Emitter!');
 
     // Handle socket.io new connection
-    this.io.on(SocketIOConstants.EVENT_CONNECT, async (socket: IOSocket) => {
-      await this.onClientConnect({ socket });
+    this.io.on(SocketIOConstants.EVENT_CONNECT, (socket: IOSocket) => {
+      this.onClientConnect({ socket });
     });
 
     this.logger.info(
@@ -155,7 +155,7 @@ export class SocketIOServerHelper {
   }
 
   // -------------------------------------------------------------------------------------------------------------
-  async onClientConnect(opts: { socket: IOSocket }) {
+  onClientConnect(opts: { socket: IOSocket }) {
     const { socket } = opts;
     if (!socket) {
       this.logger.info('[onClientConnect] Invalid new socket connection!');

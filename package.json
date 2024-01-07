@@ -54,6 +54,7 @@
     "@loopback/service-proxy": "^6.1.1",
     "@socket.io/redis-adapter": "^8.1.0",
     "@socket.io/redis-emitter": "^5.1.0",
+    "@socket.io/redis-streams-adapter": "^0.1.0",
     "axios": "1.6.5",
     "bullmq": "5.1.1",
     "casbin": "^5.25.0",

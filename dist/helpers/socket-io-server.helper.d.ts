@@ -53,7 +53,7 @@ export declare class SocketIOServerHelper {
     configure(): void;
     onClientConnect(opts: {
         socket: IOSocket;
-    }): Promise<void>;
+    }): void;
     onClientAuthenticated(opts: {
         socket: IOSocket;
     }): void;
