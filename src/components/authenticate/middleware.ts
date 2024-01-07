@@ -41,7 +41,7 @@ export class AuthenticationMiddleware extends BaseProvider implements Provider<M
           break;
         }
         default: {
-          this.logger.error('[authenticate] User request failed to authenticate | Error: %s', error);
+          this.logger.error('[authenticate] User request failed to authenticate | %s', error);
           break;
         }
       }
