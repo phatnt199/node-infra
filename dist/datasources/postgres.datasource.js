@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var PostgresDataSource_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostgresDataSource = void 0;
 const base_datasource_1 = require("../base/base.datasource");
@@ -50,17 +51,17 @@ for (const key in databaseConfigs) {
         }
     }
 }
-let PostgresDataSource = class PostgresDataSource extends base_datasource_1.BaseDataSource {
+let PostgresDataSource = PostgresDataSource_1 = class PostgresDataSource extends base_datasource_1.BaseDataSource {
     constructor(dsConfig = databaseConfigs) {
-        super({ dsConfig, scope: PostgresDataSource.name });
+        super({ dsConfig, scope: PostgresDataSource_1.name });
         this.logger.info('[Datasource] Postgres Datasource Config: %j', dsConfig);
     }
 };
+exports.PostgresDataSource = PostgresDataSource;
 PostgresDataSource.dataSourceName = databaseConfigs.name;
 PostgresDataSource.defaultConfig = databaseConfigs;
-PostgresDataSource = __decorate([
+exports.PostgresDataSource = PostgresDataSource = PostgresDataSource_1 = __decorate([
     __param(0, (0, core_1.inject)(`datasources.config.${databaseConfigs.name}`, { optional: true })),
     __metadata("design:paramtypes", [Object])
 ], PostgresDataSource);
-exports.PostgresDataSource = PostgresDataSource;
 //# sourceMappingURL=postgres.datasource.js.map

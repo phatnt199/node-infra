@@ -1,33 +1,43 @@
-import { CronJob } from 'cron';
+import { CronJob, CronOnCompleteCommand } from 'cron';
 import isEmpty from 'lodash/isEmpty';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
+
+export interface ICronHelperOptions {
+  cronTime: string;
+  onTick: () => void | Promise<void>;
+  onCompleted?: CronOnCompleteCommand;
+  autoStart?: boolean;
+  tz?: string;
+}
 
 // --------------------------------------------------------
 export class CronHelper {
   private logger: ApplicationLogger;
 
   private cronTime: string;
-  private onTick?: () => void | Promise<void>;
-  private onCompleted?: () => void | Promise<void>;
+  private onTick: () => void | Promise<void>;
+  private onCompleted?: CronOnCompleteCommand | null;
   private autoStart: boolean;
+  private tz?: string | null;
+
   public instance: CronJob;
 
-  constructor(opts: {
-    cronTime: string;
-    onTick?: () => void | Promise<void>;
-    onCompleted?: () => void | Promise<void>;
-    autoStart?: boolean;
-  }) {
+  constructor(opts: ICronHelperOptions) {
     this.logger = LoggerFactory.getLogger([CronHelper.name]);
 
-    const { cronTime, onTick, onCompleted, autoStart = false } = opts;
+    const { cronTime, onTick, onCompleted, autoStart = false, tz } = opts;
     this.cronTime = cronTime;
     this.onTick = onTick;
     this.onCompleted = onCompleted;
     this.autoStart = autoStart ?? false;
+    this.tz = tz;
 
     this.configure();
+  }
+
+  static newInstance(opts: ICronHelperOptions) {
+    return new CronHelper(opts);
   }
 
   configure() {
@@ -37,7 +47,7 @@ export class CronHelper {
       });
     }
 
-    this.instance = new CronJob(
+    /* this.instance = new CronJob(
       this.cronTime,
       () => {
         this.onTick?.();
@@ -46,7 +56,14 @@ export class CronHelper {
         this.onCompleted?.();
       },
       this.autoStart,
-    );
+    ); */
+    this.instance = CronJob.from({
+      cronTime: this.cronTime,
+      onTick: this.onTick,
+      onComplete: this.onCompleted,
+      start: this.autoStart,
+      timeZone: this.tz,
+    });
   }
 
   start() {

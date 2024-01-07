@@ -111,6 +111,7 @@ let StaticAssetController = StaticAssetController_1 = class StaticAssetControlle
         });
     }
 };
+exports.StaticAssetController = StaticAssetController;
 __decorate([
     (0, rest_1.post)('/buckets/{bucket_name}', {
         responses: {
@@ -196,12 +197,11 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], StaticAssetController.prototype, "getStaticObject", null);
-StaticAssetController = StaticAssetController_1 = __decorate([
+exports.StaticAssetController = StaticAssetController = StaticAssetController_1 = __decorate([
     (0, rest_1.api)({ basePath: '/static-assets' }),
     __param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
     __param(1, (0, core_1.inject)(rest_1.RestBindings.Http.REQUEST)),
     __param(2, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
     __metadata("design:paramtypes", [base_1.BaseApplication, Object, Object])
 ], StaticAssetController);
-exports.StaticAssetController = StaticAssetController;
 //# sourceMappingURL=asset.controller.js.map

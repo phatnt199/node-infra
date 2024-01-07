@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var AuthenticateComponent_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthenticateComponent = void 0;
 const authentication_1 = require("@loopback/authentication");
@@ -25,9 +26,9 @@ const basic_strategy_1 = require("./basic.strategy");
 const jwt_token_service_1 = require("./jwt-token.service");
 const jwt_strategy_1 = require("./jwt.strategy");
 const middleware_1 = require("./middleware");
-let AuthenticateComponent = class AuthenticateComponent extends base_component_1.BaseComponent {
+let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponent extends base_component_1.BaseComponent {
     constructor(application) {
-        super({ scope: AuthenticateComponent.name });
+        super({ scope: AuthenticateComponent_1.name });
         this.application = application;
         this.bindings = [
             core_1.Binding.bind(common_1.AuthenticateKeys.APPLICATION_SECRET).to(common_1.App.SECRET),
@@ -74,9 +75,9 @@ let AuthenticateComponent = class AuthenticateComponent extends base_component_1
         this.defineMiddlewares();
     }
 };
-AuthenticateComponent = __decorate([
+exports.AuthenticateComponent = AuthenticateComponent;
+exports.AuthenticateComponent = AuthenticateComponent = AuthenticateComponent_1 = __decorate([
     __param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
     __metadata("design:paramtypes", [base_application_1.BaseApplication])
 ], AuthenticateComponent);
-exports.AuthenticateComponent = AuthenticateComponent;
 //# sourceMappingURL=component.js.map

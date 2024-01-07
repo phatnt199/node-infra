@@ -20,6 +20,7 @@ let Role = class Role extends BaseRole {
         super(data);
     }
 };
+exports.Role = Role;
 __decorate([
     (0, repository_1.hasMany)(() => _1.Permission, {
         through: {
@@ -30,7 +31,7 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], Role.prototype, "permissions", void 0);
-Role = __decorate([
+exports.Role = Role = __decorate([
     (0, repository_1.model)({
         settings: {
             postgresql: {
@@ -42,5 +43,4 @@ Role = __decorate([
     }),
     __metadata("design:paramtypes", [Object])
 ], Role);
-exports.Role = Role;
 //# sourceMappingURL=role.model.js.map

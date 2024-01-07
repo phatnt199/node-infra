@@ -18,6 +18,7 @@ let Migration = class Migration extends base_model_1.BaseTzEntity {
         super(data);
     }
 };
+exports.Migration = Migration;
 __decorate([
     (0, repository_1.property)({
         type: 'string',
@@ -32,7 +33,7 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], Migration.prototype, "status", void 0);
-Migration = __decorate([
+exports.Migration = Migration = __decorate([
     (0, repository_1.model)({
         settings: {
             postgresql: {
@@ -50,5 +51,4 @@ Migration = __decorate([
     }),
     __metadata("design:paramtypes", [Object])
 ], Migration);
-exports.Migration = Migration;
 //# sourceMappingURL=migration.model.js.map

@@ -37,9 +37,9 @@ let JWTAuthenticationStrategy = class JWTAuthenticationStrategy {
         });
     }
 };
-JWTAuthenticationStrategy = __decorate([
+exports.JWTAuthenticationStrategy = JWTAuthenticationStrategy;
+exports.JWTAuthenticationStrategy = JWTAuthenticationStrategy = __decorate([
     __param(0, (0, core_1.inject)('services.JWTTokenService')),
     __metadata("design:paramtypes", [jwt_token_service_1.JWTTokenService])
 ], JWTAuthenticationStrategy);
-exports.JWTAuthenticationStrategy = JWTAuthenticationStrategy;
 //# sourceMappingURL=jwt.strategy.js.map

@@ -53,12 +53,12 @@ let RequestSpyMiddleware = RequestSpyMiddleware_1 = class RequestSpyMiddleware e
         };
     }
 };
-RequestSpyMiddleware = RequestSpyMiddleware_1 = __decorate([
+exports.RequestSpyMiddleware = RequestSpyMiddleware;
+exports.RequestSpyMiddleware = RequestSpyMiddleware = RequestSpyMiddleware_1 = __decorate([
     (0, core_1.injectable)((0, rest_1.asMiddleware)({
         chain: rest_1.RestTags.REST_MIDDLEWARE_CHAIN,
         group: rest_1.RestMiddlewareGroups.SEND_RESPONSE,
     })),
     __metadata("design:paramtypes", [])
 ], RequestSpyMiddleware);
-exports.RequestSpyMiddleware = RequestSpyMiddleware;
 //# sourceMappingURL=request-spy.middleware.js.map

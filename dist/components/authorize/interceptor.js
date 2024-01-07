@@ -96,12 +96,12 @@ let AuthorizateInterceptor = AuthorizateInterceptor_1 = class AuthorizateInterce
         });
     }
 };
-AuthorizateInterceptor = AuthorizateInterceptor_1 = __decorate([
+exports.AuthorizateInterceptor = AuthorizateInterceptor;
+exports.AuthorizateInterceptor = AuthorizateInterceptor = AuthorizateInterceptor_1 = __decorate([
     (0, core_1.injectable)((0, core_1.asGlobalInterceptor)('authorization')),
     __param(0, (0, core_1.config)({ fromBinding: authorization_1.AuthorizationBindings.COMPONENT })),
     __metadata("design:paramtypes", [Object])
 ], AuthorizateInterceptor);
-exports.AuthorizateInterceptor = AuthorizateInterceptor;
 function loadAuthorizers(ctx) {
     return __awaiter(this, void 0, void 0, function* () {
         const authorizerFunctions = [];

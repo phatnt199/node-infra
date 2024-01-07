@@ -18,6 +18,7 @@ let ViewAuthorizePolicy = class ViewAuthorizePolicy extends base_model_1.BaseEnt
         super(data);
     }
 };
+exports.ViewAuthorizePolicy = ViewAuthorizePolicy;
 __decorate([
     (0, repository_1.property)({ type: 'string', id: true }),
     __metadata("design:type", String)
@@ -49,7 +50,7 @@ __decorate([
     }),
     __metadata("design:type", Object)
 ], ViewAuthorizePolicy.prototype, "subjectId", void 0);
-ViewAuthorizePolicy = __decorate([
+exports.ViewAuthorizePolicy = ViewAuthorizePolicy = __decorate([
     (0, repository_1.model)({
         settings: {
             postgresql: {
@@ -66,5 +67,4 @@ ViewAuthorizePolicy = __decorate([
     }),
     __metadata("design:paramtypes", [Object])
 ], ViewAuthorizePolicy);
-exports.ViewAuthorizePolicy = ViewAuthorizePolicy;
 //# sourceMappingURL=view-authorize-policy.model.js.map

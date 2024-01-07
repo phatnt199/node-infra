@@ -23,6 +23,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var AuthorizeComponent_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizeComponent = void 0;
 const base_application_1 = require("../../base/base.application");
@@ -39,9 +40,9 @@ const flatten_1 = __importDefault(require("lodash/flatten"));
 const path_1 = __importDefault(require("path"));
 const interceptor_1 = require("./interceptor");
 const authorizeConfPath = path_1.default.resolve(__dirname, '../../../static/security/authorize_model.conf');
-let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseComponent {
+let AuthorizeComponent = AuthorizeComponent_1 = class AuthorizeComponent extends base_component_1.BaseComponent {
     constructor(application) {
-        super({ scope: AuthorizeComponent.name });
+        super({ scope: AuthorizeComponent_1.name });
         this.application = application;
         this.bindings = [
             // Model bindings
@@ -145,9 +146,9 @@ let AuthorizeComponent = class AuthorizeComponent extends base_component_1.BaseC
         });
     }
 };
-AuthorizeComponent = __decorate([
+exports.AuthorizeComponent = AuthorizeComponent;
+exports.AuthorizeComponent = AuthorizeComponent = AuthorizeComponent_1 = __decorate([
     __param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
     __metadata("design:paramtypes", [base_application_1.BaseApplication])
 ], AuthorizeComponent);
-exports.AuthorizeComponent = AuthorizeComponent;
 //# sourceMappingURL=component.js.map

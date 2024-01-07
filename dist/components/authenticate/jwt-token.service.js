@@ -120,12 +120,12 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
         return token;
     }
 };
-JWTTokenService = JWTTokenService_1 = __decorate([
+exports.JWTTokenService = JWTTokenService;
+exports.JWTTokenService = JWTTokenService = JWTTokenService_1 = __decorate([
     (0, core_1.injectable)({ scope: core_1.BindingScope.SINGLETON }),
     __param(0, (0, core_1.inject)(common_1.AuthenticateKeys.APPLICATION_SECRET)),
     __param(1, (0, core_1.inject)(authentication_jwt_1.TokenServiceBindings.TOKEN_SECRET)),
     __param(2, (0, core_1.inject)(authentication_jwt_1.TokenServiceBindings.TOKEN_EXPIRES_IN)),
     __metadata("design:paramtypes", [String, String, String])
 ], JWTTokenService);
-exports.JWTTokenService = JWTTokenService;
 //# sourceMappingURL=jwt-token.service.js.map

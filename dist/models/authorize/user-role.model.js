@@ -19,7 +19,8 @@ let UserRole = class UserRole extends BaseUserRole {
         super(data);
     }
 };
-UserRole = __decorate([
+exports.UserRole = UserRole;
+exports.UserRole = UserRole = __decorate([
     (0, repository_1.model)({
         settings: {
             postgresql: {
@@ -31,5 +32,4 @@ UserRole = __decorate([
     }),
     __metadata("design:paramtypes", [Object])
 ], UserRole);
-exports.UserRole = UserRole;
 //# sourceMappingURL=user-role.model.js.map

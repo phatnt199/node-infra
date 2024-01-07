@@ -23,6 +23,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var BaseApplicationSequence_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseApplicationSequence = void 0;
 const core_1 = require("@loopback/core");
@@ -30,13 +31,11 @@ const rest_1 = require("@loopback/rest");
 const common_1 = require("../common");
 const helpers_1 = require("../helpers");
 const get_1 = __importDefault(require("lodash/get"));
-let BaseApplicationSequence = class BaseApplicationSequence {
-    constructor(invokeMiddleware, 
-    // ----------------------------------------------------------------------------------------
-    middlewareOptions) {
+let BaseApplicationSequence = BaseApplicationSequence_1 = class BaseApplicationSequence {
+    constructor(invokeMiddleware, middlewareOptions) {
         this.invokeMiddleware = invokeMiddleware;
         this.middlewareOptions = middlewareOptions;
-        this.logger = helpers_1.LoggerFactory.getLogger([BaseApplicationSequence.name]);
+        this.logger = helpers_1.LoggerFactory.getLogger([BaseApplicationSequence_1.name]);
     }
     handle(context) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -58,10 +57,10 @@ let BaseApplicationSequence = class BaseApplicationSequence {
         });
     }
 };
-BaseApplicationSequence = __decorate([
+exports.BaseApplicationSequence = BaseApplicationSequence;
+exports.BaseApplicationSequence = BaseApplicationSequence = BaseApplicationSequence_1 = __decorate([
     __param(0, (0, core_1.inject)(rest_1.SequenceActions.INVOKE_MIDDLEWARE)),
     __param(1, (0, core_1.inject)(common_1.BindingKeys.APPLICATION_MIDDLEWARE_OPTIONS)),
     __metadata("design:paramtypes", [Function, Object])
 ], BaseApplicationSequence);
-exports.BaseApplicationSequence = BaseApplicationSequence;
 //# sourceMappingURL=base.sequence.js.map

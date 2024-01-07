@@ -18,7 +18,8 @@ let Permission = class Permission extends BasePermission {
         super(data);
     }
 };
-Permission = __decorate([
+exports.Permission = Permission;
+exports.Permission = Permission = __decorate([
     (0, repository_1.model)({
         settings: {
             postgresql: {
@@ -30,5 +31,4 @@ Permission = __decorate([
     }),
     __metadata("design:paramtypes", [Object])
 ], Permission);
-exports.Permission = Permission;
 //# sourceMappingURL=permission.model.js.map

@@ -75,7 +75,8 @@ let AuthenticationMiddleware = AuthenticationMiddleware_1 = class Authentication
         });
     }
 };
-AuthenticationMiddleware = AuthenticationMiddleware_1 = __decorate([
+exports.AuthenticationMiddleware = AuthenticationMiddleware;
+exports.AuthenticationMiddleware = AuthenticationMiddleware = AuthenticationMiddleware_1 = __decorate([
     (0, core_1.injectable)((0, rest_1.asMiddleware)({
         chain: rest_1.RestTags.REST_MIDDLEWARE_CHAIN,
         group: rest_1.RestMiddlewareGroups.AUTHENTICATION,
@@ -85,5 +86,4 @@ AuthenticationMiddleware = AuthenticationMiddleware_1 = __decorate([
     __param(1, core_1.inject.getter(common_1.RouteKeys.ALWAYS_ALLOW_PATHS)),
     __metadata("design:paramtypes", [Function, Function])
 ], AuthenticationMiddleware);
-exports.AuthenticationMiddleware = AuthenticationMiddleware;
 //# sourceMappingURL=middleware.js.map

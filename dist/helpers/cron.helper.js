@@ -12,12 +12,16 @@ const utilities_1 = require("../utilities");
 class CronHelper {
     constructor(opts) {
         this.logger = helpers_1.LoggerFactory.getLogger([CronHelper.name]);
-        const { cronTime, onTick, onCompleted, autoStart = false } = opts;
+        const { cronTime, onTick, onCompleted, autoStart = false, tz } = opts;
         this.cronTime = cronTime;
         this.onTick = onTick;
         this.onCompleted = onCompleted;
         this.autoStart = autoStart !== null && autoStart !== void 0 ? autoStart : false;
+        this.tz = tz;
         this.configure();
+    }
+    static newInstance(opts) {
+        return new CronHelper(opts);
     }
     configure() {
         if (!this.cronTime || (0, isEmpty_1.default)(this.cronTime)) {
@@ -25,13 +29,23 @@ class CronHelper {
                 message: '[CronHelper][configure] Invalid cronTime to configure application cron!',
             });
         }
-        this.instance = new cron_1.CronJob(this.cronTime, () => {
-            var _a;
-            (_a = this.onTick) === null || _a === void 0 ? void 0 : _a.call(this);
-        }, () => {
-            var _a;
-            (_a = this.onCompleted) === null || _a === void 0 ? void 0 : _a.call(this);
-        }, this.autoStart);
+        /* this.instance = new CronJob(
+          this.cronTime,
+          () => {
+            this.onTick?.();
+          },
+          () => {
+            this.onCompleted?.();
+          },
+          this.autoStart,
+        ); */
+        this.instance = cron_1.CronJob.from({
+            cronTime: this.cronTime,
+            onTick: this.onTick,
+            onComplete: this.onCompleted,
+            start: this.autoStart,
+            timeZone: this.tz,
+        });
     }
     start() {
         if (!this.instance) {

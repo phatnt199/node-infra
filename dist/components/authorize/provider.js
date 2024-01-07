@@ -23,6 +23,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var AuthorizeProvider_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizeProvider = void 0;
 const common_1 = require("../../common");
@@ -33,11 +34,11 @@ const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const intersection_1 = __importDefault(require("lodash/intersection"));
 const utilities_1 = require("../../utilities");
 const enforcer_service_1 = require("./enforcer.service");
-let AuthorizeProvider = class AuthorizeProvider {
+let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
     constructor(enforcerService, alwaysAllowRoles) {
         this.enforcerService = enforcerService;
         this.alwaysAllowRoles = alwaysAllowRoles;
-        this.logger = helpers_1.LoggerFactory.getLogger([AuthorizeProvider.name]);
+        this.logger = helpers_1.LoggerFactory.getLogger([AuthorizeProvider_1.name]);
     }
     value() {
         return this.authorize.bind(this);
@@ -142,10 +143,10 @@ let AuthorizeProvider = class AuthorizeProvider {
         });
     }
 };
-AuthorizeProvider = __decorate([
+exports.AuthorizeProvider = AuthorizeProvider;
+exports.AuthorizeProvider = AuthorizeProvider = AuthorizeProvider_1 = __decorate([
     __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.ENFORCER)),
     __param(1, (0, core_1.inject)(common_1.AuthorizerKeys.ALWAYS_ALLOW_ROLES)),
     __metadata("design:paramtypes", [enforcer_service_1.EnforcerService, Array])
 ], AuthorizeProvider);
-exports.AuthorizeProvider = AuthorizeProvider;
 //# sourceMappingURL=provider.js.map

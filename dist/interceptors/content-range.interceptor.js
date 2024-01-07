@@ -27,9 +27,7 @@ const common_1 = require("../common");
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
 let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInterceptor {
-    constructor(
-    // @inject(RestBindings.Http.REQUEST) private request: Request,
-    response) {
+    constructor(response) {
         this.response = response;
     }
     value() {
@@ -158,11 +156,11 @@ let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInte
         });
     }
 };
+exports.ContentRangeInterceptor = ContentRangeInterceptor;
 ContentRangeInterceptor.BINDING_KEY = `interceptors.${ContentRangeInterceptor_1.name}`;
-ContentRangeInterceptor = ContentRangeInterceptor_1 = __decorate([
-    (0, core_1.injectable)({ tags: { key: ContentRangeInterceptor_1.BINDING_KEY } }),
+exports.ContentRangeInterceptor = ContentRangeInterceptor = ContentRangeInterceptor_1 = __decorate([
+    (0, core_1.injectable)({ tags: { key: ContentRangeInterceptor.BINDING_KEY } }),
     __param(0, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
     __metadata("design:paramtypes", [Object])
 ], ContentRangeInterceptor);
-exports.ContentRangeInterceptor = ContentRangeInterceptor;
 //# sourceMappingURL=content-range.interceptor.js.map

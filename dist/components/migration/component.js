@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var MigrationComponent_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MigrationComponent = void 0;
 const base_application_1 = require("../../base/base.application");
@@ -19,9 +20,9 @@ const common_1 = require("../../common");
 const models_1 = require("../../models");
 const repositories_1 = require("../../repositories");
 const core_1 = require("@loopback/core");
-let MigrationComponent = class MigrationComponent extends base_component_1.BaseComponent {
+let MigrationComponent = MigrationComponent_1 = class MigrationComponent extends base_component_1.BaseComponent {
     constructor(application) {
-        super({ scope: MigrationComponent.name });
+        super({ scope: MigrationComponent_1.name });
         this.application = application;
         this.bindings = [
             // Model bindings
@@ -46,9 +47,9 @@ let MigrationComponent = class MigrationComponent extends base_component_1.BaseC
         this.defineRepositories();
     }
 };
-MigrationComponent = __decorate([
+exports.MigrationComponent = MigrationComponent;
+exports.MigrationComponent = MigrationComponent = MigrationComponent_1 = __decorate([
     __param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
     __metadata("design:paramtypes", [base_application_1.BaseApplication])
 ], MigrationComponent);
-exports.MigrationComponent = MigrationComponent;
 //# sourceMappingURL=component.js.map

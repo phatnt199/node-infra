@@ -19,35 +19,35 @@ exports.BaseEntity = BaseEntity;
 // ---------------------------------------------------------------------
 class BaseIdEntity extends BaseEntity {
 }
+exports.BaseIdEntity = BaseIdEntity;
 __decorate([
     (0, repository_1.property)({ type: 'number', id: true, generated: true }),
     __metadata("design:type", Number)
 ], BaseIdEntity.prototype, "id", void 0);
-exports.BaseIdEntity = BaseIdEntity;
 // ---------------------------------------------------------------------
 class BaseNumberIdEntity extends BaseEntity {
 }
+exports.BaseNumberIdEntity = BaseNumberIdEntity;
 __decorate([
     (0, repository_1.property)({ type: 'number', id: true, generated: true }),
     __metadata("design:type", Number)
 ], BaseNumberIdEntity.prototype, "id", void 0);
-exports.BaseNumberIdEntity = BaseNumberIdEntity;
 // ---------------------------------------------------------------------
 class BaseStringIdEntity extends BaseEntity {
 }
+exports.BaseStringIdEntity = BaseStringIdEntity;
 __decorate([
     (0, repository_1.property)({ type: 'string', id: true }),
     __metadata("design:type", String)
 ], BaseStringIdEntity.prototype, "id", void 0);
-exports.BaseStringIdEntity = BaseStringIdEntity;
 // ---------------------------------------------------------------------
 class BaseKVEntity extends BaseEntity {
 }
+exports.BaseKVEntity = BaseKVEntity;
 __decorate([
     (0, repository_1.property)({ type: 'object' }),
     __metadata("design:type", Object)
 ], BaseKVEntity.prototype, "payload", void 0);
-exports.BaseKVEntity = BaseKVEntity;
 // ---------------------------------------------------------------------
 class BaseTzEntity extends (0, mixins_1.TzMixin)(BaseIdEntity) {
 }

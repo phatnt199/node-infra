@@ -106,6 +106,7 @@ let StaticResourceController = StaticResourceController_1 = class StaticResource
         });
     }
 };
+exports.StaticResourceController = StaticResourceController;
 __decorate([
     (0, rest_1.post)('/upload', {
         responses: {
@@ -126,12 +127,11 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], StaticResourceController.prototype, "downloadObject", null);
-StaticResourceController = StaticResourceController_1 = __decorate([
+exports.StaticResourceController = StaticResourceController = StaticResourceController_1 = __decorate([
     (0, rest_1.api)({ basePath: '/static-resources' }),
     __param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
     __param(1, (0, core_1.inject)(rest_1.RestBindings.Http.REQUEST)),
     __param(2, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
     __metadata("design:paramtypes", [base_1.BaseApplication, Object, Object])
 ], StaticResourceController);
-exports.StaticResourceController = StaticResourceController;
 //# sourceMappingURL=resource.controller.js.map

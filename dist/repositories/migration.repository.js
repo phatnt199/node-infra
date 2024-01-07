@@ -38,9 +38,9 @@ let MigrationRepository = class MigrationRepository extends BaseMigrationReposit
         super({ entityClass: models_1.Migration, dataSource });
     }
 };
-MigrationRepository = __decorate([
+exports.MigrationRepository = MigrationRepository;
+exports.MigrationRepository = MigrationRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_MIGRATION}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], MigrationRepository);
-exports.MigrationRepository = MigrationRepository;
 //# sourceMappingURL=migration.repository.js.map

@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var StaticAssetComponent_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StaticAssetComponent = void 0;
 const base_application_1 = require("../../base/base.application");
@@ -21,9 +22,9 @@ const utilities_1 = require("../../utilities");
 const core_1 = require("@loopback/core");
 const asset_controller_1 = require("./asset.controller");
 const resource_controller_1 = require("./resource.controller");
-let StaticAssetComponent = class StaticAssetComponent extends base_component_1.BaseComponent {
+let StaticAssetComponent = StaticAssetComponent_1 = class StaticAssetComponent extends base_component_1.BaseComponent {
     constructor(application) {
-        super({ scope: StaticAssetComponent.name });
+        super({ scope: StaticAssetComponent_1.name });
         this.application = application;
         this.bindings = [
             core_1.Binding.bind(common_1.ResourceAssetKeys.COMPONENT_OPTIONS).to({
@@ -65,9 +66,9 @@ let StaticAssetComponent = class StaticAssetComponent extends base_component_1.B
         this.defineControllers({ useMinioAsset, useStaticResource });
     }
 };
-StaticAssetComponent = __decorate([
+exports.StaticAssetComponent = StaticAssetComponent;
+exports.StaticAssetComponent = StaticAssetComponent = StaticAssetComponent_1 = __decorate([
     __param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
     __metadata("design:paramtypes", [base_application_1.BaseApplication])
 ], StaticAssetComponent);
-exports.StaticAssetComponent = StaticAssetComponent;
 //# sourceMappingURL=component.js.map

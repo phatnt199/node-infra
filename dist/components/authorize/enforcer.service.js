@@ -89,11 +89,11 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
         });
     }
 };
-EnforcerService = EnforcerService_1 = __decorate([
+exports.EnforcerService = EnforcerService;
+exports.EnforcerService = EnforcerService = EnforcerService_1 = __decorate([
     (0, core_1.injectable)({ scope: core_1.BindingScope.SINGLETON }),
     __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.CONFIGURE_OPTIONS)),
     __param(1, (0, core_1.inject)(common_1.AuthorizerKeys.AUTHORIZE_DATASOURCE)),
     __metadata("design:paramtypes", [Object, base_1.BaseDataSource])
 ], EnforcerService);
-exports.EnforcerService = EnforcerService;
 //# sourceMappingURL=enforcer.service.js.map

@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var KvMemDataSource_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KvMemDataSource = void 0;
 const base_datasource_1 = require("../base/base.datasource");
@@ -19,17 +20,17 @@ const databaseConfigs = {
     name: 'kvmem',
     connector: 'kv-memory',
 };
-let KvMemDataSource = class KvMemDataSource extends base_datasource_1.BaseDataSource {
+let KvMemDataSource = KvMemDataSource_1 = class KvMemDataSource extends base_datasource_1.BaseDataSource {
     constructor(dsConfig = databaseConfigs) {
-        super({ dsConfig, scope: KvMemDataSource.name });
+        super({ dsConfig, scope: KvMemDataSource_1.name });
         this.logger.info('[Datasource] KvMem Datasource Config: %j', dsConfig);
     }
 };
+exports.KvMemDataSource = KvMemDataSource;
 KvMemDataSource.dataSourceName = databaseConfigs.name;
 KvMemDataSource.defaultConfig = databaseConfigs;
-KvMemDataSource = __decorate([
+exports.KvMemDataSource = KvMemDataSource = KvMemDataSource_1 = __decorate([
     __param(0, (0, core_1.inject)(`datasources.config.${databaseConfigs.name}`, { optional: true })),
     __metadata("design:paramtypes", [Object])
 ], KvMemDataSource);
-exports.KvMemDataSource = KvMemDataSource;
 //# sourceMappingURL=kvmem.datasource.js.map

@@ -56,9 +56,9 @@ let BasicAuthenticationStrategy = class BasicAuthenticationStrategy {
         });
     }
 };
-BasicAuthenticationStrategy = __decorate([
+exports.BasicAuthenticationStrategy = BasicAuthenticationStrategy;
+exports.BasicAuthenticationStrategy = BasicAuthenticationStrategy = __decorate([
     __param(0, (0, core_1.inject)('services.BasicTokenService')),
     __metadata("design:paramtypes", [basic_token_service_1.BasicTokenService])
 ], BasicAuthenticationStrategy);
-exports.BasicAuthenticationStrategy = BasicAuthenticationStrategy;
 //# sourceMappingURL=basic.strategy.js.map

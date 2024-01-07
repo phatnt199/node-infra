@@ -46,13 +46,13 @@ let RoleRepository = class RoleRepository extends AbstractAuthorizeRepository {
     }
     bindingRelations() { }
 };
-RoleRepository = __decorate([
+exports.RoleRepository = RoleRepository;
+exports.RoleRepository = RoleRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __param(1, repository_1.repository.getter('PermissionRepository')),
     __param(2, repository_1.repository.getter('PermissionMappingRepository')),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource, Function, Function])
 ], RoleRepository);
-exports.RoleRepository = RoleRepository;
 // ----------------------------------------------------------------------------
 let PermissionRepository = class PermissionRepository extends AbstractAuthorizeRepository {
     constructor(dataSource) {
@@ -60,11 +60,11 @@ let PermissionRepository = class PermissionRepository extends AbstractAuthorizeR
     }
     bindingRelations() { }
 };
-PermissionRepository = __decorate([
+exports.PermissionRepository = PermissionRepository;
+exports.PermissionRepository = PermissionRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], PermissionRepository);
-exports.PermissionRepository = PermissionRepository;
 // ----------------------------------------------------------------------------
 let PermissionMappingRepository = class PermissionMappingRepository extends AbstractAuthorizeRepository {
     constructor(dataSource) {
@@ -72,11 +72,11 @@ let PermissionMappingRepository = class PermissionMappingRepository extends Abst
     }
     bindingRelations() { }
 };
-PermissionMappingRepository = __decorate([
+exports.PermissionMappingRepository = PermissionMappingRepository;
+exports.PermissionMappingRepository = PermissionMappingRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], PermissionMappingRepository);
-exports.PermissionMappingRepository = PermissionMappingRepository;
 // ----------------------------------------------------------------------------
 let UserRoleRepository = class UserRoleRepository extends AbstractAuthorizeRepository {
     constructor(dataSource) {
@@ -84,20 +84,20 @@ let UserRoleRepository = class UserRoleRepository extends AbstractAuthorizeRepos
     }
     bindingRelations() { }
 };
-UserRoleRepository = __decorate([
+exports.UserRoleRepository = UserRoleRepository;
+exports.UserRoleRepository = UserRoleRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], UserRoleRepository);
-exports.UserRoleRepository = UserRoleRepository;
 // ----------------------------------------------------------------------------
 let ViewAuthorizePolicyRepository = class ViewAuthorizePolicyRepository extends base_repository_1.ViewRepository {
     constructor(dataSource) {
         super(models_1.ViewAuthorizePolicy, dataSource);
     }
 };
-ViewAuthorizePolicyRepository = __decorate([
+exports.ViewAuthorizePolicyRepository = ViewAuthorizePolicyRepository;
+exports.ViewAuthorizePolicyRepository = ViewAuthorizePolicyRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], ViewAuthorizePolicyRepository);
-exports.ViewAuthorizePolicyRepository = ViewAuthorizePolicyRepository;
 //# sourceMappingURL=authorize.repository.js.map
