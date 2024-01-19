@@ -20,4 +20,5 @@ __exportStar(require("./error.utility"), exports);
 __exportStar(require("./parse.utility"), exports);
 __exportStar(require("./text-search.utility"), exports);
 __exportStar(require("./url.utility"), exports);
+__exportStar(require("./performance.utility"), exports);
 //# sourceMappingURL=index.js.map
