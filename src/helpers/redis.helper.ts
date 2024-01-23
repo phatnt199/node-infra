@@ -1,5 +1,8 @@
+import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import Redis from 'ioredis';
-import { LoggerFactory, ApplicationLogger } from '@/helpers';
+import isEmpty from 'lodash/isEmpty';
+import zlib from 'zlib';
+import { getError } from '..';
 
 export class RedisHelper {
   client: Redis;
@@ -198,5 +201,63 @@ export class RedisHelper {
 
     const existedKeys = await this.client.keys(key);
     return existedKeys;
+  }
+
+  // ---------------------------------------------------------------------------------
+  async publish(opts: { topics: Array<string>; payload: any; compress?: boolean }) {
+    const { topics, payload, compress = false } = opts;
+
+    const validTopics = topics?.filter(topic => !isEmpty(topic));
+    if (!validTopics?.length) {
+      this.logger.error('[publish] No topic(s) to publish!');
+      return;
+    }
+
+    if (!payload) {
+      this.logger.error('[publish] Invalid payload to publish!');
+      return;
+    }
+
+    if (!this.client) {
+      this.logger.error('[publish] No valid Redis connection!');
+      return;
+    }
+
+    await Promise.all(
+      validTopics.map(topic => {
+        let packet = Buffer.from(JSON.stringify(payload));
+        if (compress) {
+          packet = zlib.deflateSync(Buffer.from(packet));
+        }
+
+        return this.client.publish(topic, packet);
+      }),
+    );
+  }
+
+  // ---------------------------------------------------------------------------------
+  subscribe(opts: { topic: string }) {
+    const { topic } = opts;
+
+    if (!topic || isEmpty(topic)) {
+      this.logger.error('[subscribe] No topic to subscribe!');
+      return;
+    }
+
+    if (!this.client) {
+      this.logger.error('[subscribe] No valid Redis connection!');
+      return;
+    }
+
+    this.client.subscribe(topic, (error, count) => {
+      if (error) {
+        throw getError({
+          statusCode: 500,
+          message: `[subscribe] Failed to subscribe to topic: ${topic}`,
+        });
+      }
+
+      this.logger.info('[subscribe] Subscribed to %s channel(s). Listening to channel: %s', count, topic);
+    });
   }
 }

@@ -71,4 +71,12 @@ export declare class RedisHelper {
     keys(opts: {
         key: string;
     }): Promise<string[]>;
+    publish(opts: {
+        topics: Array<string>;
+        payload: any;
+        compress?: boolean;
+    }): Promise<void>;
+    subscribe(opts: {
+        topic: string;
+    }): void;
 }

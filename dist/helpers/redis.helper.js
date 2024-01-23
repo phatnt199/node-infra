@@ -13,8 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RedisHelper = void 0;
-const ioredis_1 = __importDefault(require("ioredis"));
 const helpers_1 = require("../helpers");
+const ioredis_1 = __importDefault(require("ioredis"));
+const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
+const zlib_1 = __importDefault(require("zlib"));
+const __1 = require("..");
 class RedisHelper {
     // ---------------------------------------------------------------------------------
     constructor(options) {
@@ -181,6 +184,53 @@ class RedisHelper {
             }
             const existedKeys = yield this.client.keys(key);
             return existedKeys;
+        });
+    }
+    // ---------------------------------------------------------------------------------
+    publish(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { topics, payload, compress = false } = opts;
+            const validTopics = topics === null || topics === void 0 ? void 0 : topics.filter(topic => !(0, isEmpty_1.default)(topic));
+            if (!(validTopics === null || validTopics === void 0 ? void 0 : validTopics.length)) {
+                this.logger.error('[publish] No topic(s) to publish!');
+                return;
+            }
+            if (!payload) {
+                this.logger.error('[publish] Invalid payload to publish!');
+                return;
+            }
+            if (!this.client) {
+                this.logger.error('[publish] No valid Redis connection!');
+                return;
+            }
+            yield Promise.all(validTopics.map(topic => {
+                let packet = Buffer.from(JSON.stringify(payload));
+                if (compress) {
+                    packet = zlib_1.default.deflateSync(Buffer.from(packet));
+                }
+                return this.client.publish(topic, packet);
+            }));
+        });
+    }
+    // ---------------------------------------------------------------------------------
+    subscribe(opts) {
+        const { topic } = opts;
+        if (!topic || (0, isEmpty_1.default)(topic)) {
+            this.logger.error('[subscribe] No topic to subscribe!');
+            return;
+        }
+        if (!this.client) {
+            this.logger.error('[subscribe] No valid Redis connection!');
+            return;
+        }
+        this.client.subscribe(topic, (error, count) => {
+            if (error) {
+                throw (0, __1.getError)({
+                    statusCode: 500,
+                    message: `[subscribe] Failed to subscribe to topic: ${topic}`,
+                });
+            }
+            this.logger.info('[subscribe] Subscribed to %s channel(s). Listening to channel: %s', count, topic);
         });
     }
 }
