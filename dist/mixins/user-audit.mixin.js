@@ -19,7 +19,7 @@ const UserAuditMixin = (superClass) => {
             type: 'number',
             postgresql: {
                 columnName: 'created_by',
-                dataType: 'number',
+                dataType: 'integer',
             },
             hidden: true,
         }),
@@ -30,7 +30,7 @@ const UserAuditMixin = (superClass) => {
             type: 'number',
             postgresql: {
                 columnName: 'modified_by',
-                dataType: 'number',
+                dataType: 'integer',
             },
             hidden: true,
         }),

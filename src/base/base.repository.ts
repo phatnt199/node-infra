@@ -163,7 +163,8 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
 
   async createWithReturn(data: DataObject<E>, options?: Options): Promise<E> {
     const saved = await this.create(data, options);
-    return super.findById(saved.id);
+    const rs = await super.findById(saved.id);
+    return rs;
   }
 
   updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
@@ -175,7 +176,8 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
 
   async updateWithReturn(id: IdType, data: DataObject<E>, options?: Options): Promise<E> {
     await this.updateById(id, data, options);
-    return super.findById(id);
+    const rs = await super.findById(id);
+    return rs;
   }
 
   updateAll(data: DataObject<E>, where?: Where<any>, options?: Options): Promise<Count> {
@@ -185,15 +187,16 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
     return super.updateAll(enriched, where, options);
   }
 
-  async upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null> {
+  async upsertWith(data: DataObject<E>, where: Where<any>, options?: Options): Promise<E | null> {
     const isExisted = await this.existsWith(where);
     if (isExisted) {
-      await this.updateAll(data, where);
+      await this.updateAll(data, where, options);
       const rs = await this.findOne({ where });
       return rs;
     }
 
-    return this.create(data);
+    const rs = await this.create(data, options);
+    return rs;
   }
 
   replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {

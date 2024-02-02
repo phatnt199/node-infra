@@ -8,7 +8,7 @@ export const UserAuditMixin = <E extends MixinTarget<Entity>>(superClass: E) => 
       type: 'number',
       postgresql: {
         columnName: 'created_by',
-        dataType: 'number',
+        dataType: 'integer',
       },
       hidden: true,
     })
@@ -18,7 +18,7 @@ export const UserAuditMixin = <E extends MixinTarget<Entity>>(superClass: E) => 
       type: 'number',
       postgresql: {
         columnName: 'modified_by',
-        dataType: 'number',
+        dataType: 'integer',
       },
       hidden: true,
     })

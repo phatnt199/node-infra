@@ -47,7 +47,7 @@ export declare abstract class TzCrudRepository<E extends BaseTzEntity> extends A
     updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
     updateWithReturn(id: IdType, data: DataObject<E>, options?: Options): Promise<E>;
     updateAll(data: DataObject<E>, where?: Where<any>, options?: Options): Promise<Count>;
-    upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
+    upsertWith(data: DataObject<E>, where: Where<any>, options?: Options): Promise<E | null>;
     replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
     mixTimestamp(entity: DataObject<E>, options?: {
         newInstance: boolean;

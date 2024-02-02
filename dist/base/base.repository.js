@@ -144,7 +144,8 @@ class TzCrudRepository extends AbstractTzRepository {
         });
         return __awaiter(this, void 0, void 0, function* () {
             const saved = yield this.create(data, options);
-            return _super.findById.call(this, saved.id);
+            const rs = yield _super.findById.call(this, saved.id);
+            return rs;
         });
     }
     updateById(id, data, options) {
@@ -158,7 +159,8 @@ class TzCrudRepository extends AbstractTzRepository {
         });
         return __awaiter(this, void 0, void 0, function* () {
             yield this.updateById(id, data, options);
-            return _super.findById.call(this, id);
+            const rs = yield _super.findById.call(this, id);
+            return rs;
         });
     }
     updateAll(data, where, options) {
@@ -166,15 +168,16 @@ class TzCrudRepository extends AbstractTzRepository {
         enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         return super.updateAll(enriched, where, options);
     }
-    upsertWith(data, where) {
+    upsertWith(data, where, options) {
         return __awaiter(this, void 0, void 0, function* () {
             const isExisted = yield this.existsWith(where);
             if (isExisted) {
-                yield this.updateAll(data, where);
+                yield this.updateAll(data, where, options);
                 const rs = yield this.findOne({ where });
                 return rs;
             }
-            return this.create(data);
+            const rs = yield this.create(data, options);
+            return rs;
         });
     }
     replaceById(id, data, options) {
