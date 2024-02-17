@@ -164,4 +164,11 @@ export class MinioHelper {
     const { bucket, name } = opts;
     this.client.removeObject(bucket, name);
   }
+
+  // ---------------------------------------------------------------------
+  getListObjects(opts: { bucket: string; prefix?: string; recursive?: boolean }) {
+    const { bucket, prefix = '', recursive = false } = opts;
+    const listObjects = this.client.listObjects(bucket, prefix, recursive);
+    return listObjects;
+  }
 }
