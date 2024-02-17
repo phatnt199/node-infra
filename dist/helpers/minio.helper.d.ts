@@ -45,4 +45,9 @@ export declare class MinioHelper {
         bucket: string;
         name: string;
     }): void;
+    getListObjects(opts: {
+        bucket: string;
+        prefix?: string;
+        recursive?: boolean;
+    }): import("minio").BucketStream<import("minio").BucketItem>;
 }
