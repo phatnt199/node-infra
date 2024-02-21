@@ -154,6 +154,12 @@ class MinioHelper {
         const { bucket, name } = opts;
         this.client.removeObject(bucket, name);
     }
+    // ---------------------------------------------------------------------
+    getListObjects(opts) {
+        const { bucket, prefix = '', recursive = false } = opts;
+        const listObjects = this.client.listObjects(bucket, prefix, recursive);
+        return listObjects;
+    }
 }
 exports.MinioHelper = MinioHelper;
 //# sourceMappingURL=minio.helper.js.map
