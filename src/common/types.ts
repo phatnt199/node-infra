@@ -1,5 +1,5 @@
 import { BaseIdEntity, BaseTzEntity } from '@/base';
-import { Count, DataObject, Entity, Options, Where } from '@loopback/repository';
+import { Count, DataObject, Entity, Filter, Options, Where } from '@loopback/repository';
 import { UserProfile } from '@loopback/security';
 
 export interface IApplication {
@@ -56,6 +56,11 @@ export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepos
   mixTimestamp(entity: DataObject<E>, options?: { newInstance: boolean }): DataObject<E>;
   mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean; authorId: IdType }): DataObject<E>;
   // mixTextSearch(entity: DataObject<E>, options?: { moreData: any; ignoreUpdate: boolean }): DataObject<E>;
+}
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export interface IDangerFilter extends Omit<Filter, 'order'> {
+  // !DANGER this will not compatible with LB3
+  order: string | string[];
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------

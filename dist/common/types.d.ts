@@ -1,5 +1,5 @@
 import { BaseIdEntity, BaseTzEntity } from '../base';
-import { Count, DataObject, Entity, Options, Where } from '@loopback/repository';
+import { Count, DataObject, Entity, Filter, Options, Where } from '@loopback/repository';
 import { UserProfile } from '@loopback/security';
 export interface IApplication {
     models: Set<string>;
@@ -51,6 +51,9 @@ export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepos
         newInstance: boolean;
         authorId: IdType;
     }): DataObject<E>;
+}
+export interface IDangerFilter extends Omit<Filter, 'order'> {
+    order: string | string[];
 }
 export interface IService {
 }

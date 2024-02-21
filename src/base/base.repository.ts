@@ -35,7 +35,7 @@ export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends Ent
   abstract existsWith(where?: Where<any>, options?: any): Promise<boolean>;
   abstract createWithReturn(data: DataObject<E>, options?: any): Promise<E>;
   abstract updateWithReturn(id: IdType, data: DataObject<E>, options?: any): Promise<E>;
-  abstract upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
+  abstract upsertWith(data: DataObject<E>, where: Where<any>, options?: any): Promise<E | null>;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------

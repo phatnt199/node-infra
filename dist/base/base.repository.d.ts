@@ -14,7 +14,7 @@ export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R ext
     abstract existsWith(where?: Where<any>, options?: any): Promise<boolean>;
     abstract createWithReturn(data: DataObject<E>, options?: any): Promise<E>;
     abstract updateWithReturn(id: IdType, data: DataObject<E>, options?: any): Promise<E>;
-    abstract upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
+    abstract upsertWith(data: DataObject<E>, where: Where<any>, options?: any): Promise<E | null>;
 }
 export declare abstract class AbstractKVRepository<E extends BaseKVEntity> extends DefaultKeyValueRepository<E> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
