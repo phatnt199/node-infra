@@ -10,7 +10,7 @@ const net_1 = require("net");
 const DEFAULT_MAX_RETRY = 5;
 class NetworkTcpClient {
     constructor(opts) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         this.retry = {
             maxReconnect: DEFAULT_MAX_RETRY,
             currentReconnect: 0,
@@ -18,11 +18,15 @@ class NetworkTcpClient {
         this.logger = helpers_1.LoggerFactory.getLogger([NetworkTcpClient.name]);
         this.identifier = opts.identifier;
         this.options = opts.options;
-        this.onConnected = (_a = opts === null || opts === void 0 ? void 0 : opts.onConnected) !== null && _a !== void 0 ? _a : this.handleConnected;
-        this.onData = (_b = opts === null || opts === void 0 ? void 0 : opts.onData) !== null && _b !== void 0 ? _b : this.handleData;
-        this.onClosed = (_c = opts === null || opts === void 0 ? void 0 : opts.onClosed) !== null && _c !== void 0 ? _c : this.handleClosed;
-        this.onError = (_d = opts === null || opts === void 0 ? void 0 : opts.onError) !== null && _d !== void 0 ? _d : this.handleError;
-        this.reconnect = (_e = opts === null || opts === void 0 ? void 0 : opts.reconnect) !== null && _e !== void 0 ? _e : false;
+        this.retry = {
+            maxReconnect: (_a = opts.maxRetry) !== null && _a !== void 0 ? _a : DEFAULT_MAX_RETRY,
+            currentReconnect: 0,
+        };
+        this.onConnected = (_b = opts === null || opts === void 0 ? void 0 : opts.onConnected) !== null && _b !== void 0 ? _b : this.handleConnected;
+        this.onData = (_c = opts === null || opts === void 0 ? void 0 : opts.onData) !== null && _c !== void 0 ? _c : this.handleData;
+        this.onClosed = (_d = opts === null || opts === void 0 ? void 0 : opts.onClosed) !== null && _d !== void 0 ? _d : this.handleClosed;
+        this.onError = (_e = opts === null || opts === void 0 ? void 0 : opts.onError) !== null && _e !== void 0 ? _e : this.handleError;
+        this.reconnect = (_f = opts === null || opts === void 0 ? void 0 : opts.reconnect) !== null && _f !== void 0 ? _f : false;
         this.encoding = opts === null || opts === void 0 ? void 0 : opts.encoding;
     }
     static newInstance(opts) {
@@ -45,7 +49,7 @@ class NetworkTcpClient {
             return;
         }
         const { currentReconnect, maxReconnect } = this.retry;
-        if (currentReconnect >= maxReconnect) {
+        if (maxReconnect > -1 && currentReconnect >= maxReconnect) {
             this.logger.info('[handleData] Exceeded max retry to reconnect! Max: %d | Current: %d', maxReconnect, currentReconnect);
             return;
         }

@@ -7,6 +7,7 @@ interface NetworkTcpClientProps {
         localAddress: string;
     };
     reconnect?: boolean;
+    maxRetry?: number;
     encoding?: BufferEncoding;
     onConnected?: () => void;
     onData?: (raw: any) => void;

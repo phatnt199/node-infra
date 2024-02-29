@@ -9,6 +9,7 @@ interface NetworkTcpClientProps {
   identifier: string;
   options: { host: string; port: number; localAddress: string };
   reconnect?: boolean;
+  maxRetry?: number;
   encoding?: BufferEncoding;
 
   // handlers
@@ -42,6 +43,12 @@ export class NetworkTcpClient {
 
     this.identifier = opts.identifier;
     this.options = opts.options;
+
+    this.retry = {
+      maxReconnect: opts.maxRetry ?? DEFAULT_MAX_RETRY,
+      currentReconnect: 0,
+    };
+
     this.onConnected = opts?.onConnected ?? this.handleConnected;
     this.onData = opts?.onData ?? this.handleData;
     this.onClosed = opts?.onClosed ?? this.handleClosed;
@@ -81,7 +88,7 @@ export class NetworkTcpClient {
     }
 
     const { currentReconnect, maxReconnect } = this.retry;
-    if (currentReconnect >= maxReconnect) {
+    if (maxReconnect > -1 && currentReconnect >= maxReconnect) {
       this.logger.info(
         '[handleData] Exceeded max retry to reconnect! Max: %d | Current: %d',
         maxReconnect,
