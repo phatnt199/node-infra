@@ -84,7 +84,10 @@ class NetworkTcpClient {
         if (this.encoding) {
             this.client.setEncoding(this.encoding);
         }
-        this.client.connect(this.options, this.onConnected);
+        this.client.connect(this.options, () => {
+            var _a;
+            (_a = this.onConnected) === null || _a === void 0 ? void 0 : _a.call(this);
+        });
         this.client.on('data', (message) => {
             this.onData({ identifier: this.identifier, message });
         });
