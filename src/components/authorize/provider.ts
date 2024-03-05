@@ -18,6 +18,12 @@ export class AuthorizeProvider implements Provider<Authorizer> {
   constructor(
     @inject(AuthorizerKeys.ENFORCER) private enforcerService: EnforcerService,
     @inject(AuthorizerKeys.ALWAYS_ALLOW_ROLES) private alwaysAllowRoles: string[],
+    @inject(AuthorizerKeys.NORMALIZE_PAYLOAD_FN)
+    private normalizePayloadFn: (opts: { subject: string; object: string; scope?: string }) => {
+      subject: string;
+      object: string;
+      action: string;
+    },
   ) {
     this.logger = LoggerFactory.getLogger([AuthorizeProvider.name]);
   }
@@ -27,7 +33,8 @@ export class AuthorizeProvider implements Provider<Authorizer> {
   }
 
   // -------------------------------------------------------------------------------------------------------------------
-  normalizeEnforcePayload(subject: string, object: string, scope?: string) {
+  normalizeEnforcePayload(opts: { subject: string; object: string; scope?: string }) {
+    const { subject, object, scope } = opts;
     return {
       subject: subject?.toLowerCase() || '',
       object:
@@ -49,7 +56,9 @@ export class AuthorizeProvider implements Provider<Authorizer> {
 
     const subject = `${EnforcerDefinitions.PREFIX_USER}_${userId}`;
     for (const scope of scopes ?? []) {
-      const enforcePayload = this.normalizeEnforcePayload(subject, object, scope);
+      const enforcePayload =
+        this.normalizePayloadFn?.({ subject, object, scope }) ??
+        this.normalizeEnforcePayload({ subject, object, scope });
       scopeAuthRs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
       this.logger.debug('[authorizePermission] Payload: %j | scopeAuthRs: %s', enforcePayload, scopeAuthRs);
 
@@ -64,7 +73,8 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     }
 
     if (object) {
-      const enforcePayload = this.normalizeEnforcePayload(subject, object);
+      const enforcePayload =
+        this.normalizePayloadFn?.({ subject, object }) ?? this.normalizeEnforcePayload({ subject, object });
       singleAuthRs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
       this.logger.debug('[authorizePermission] Payload: %j | singleAuthRs: %s', enforcePayload, singleAuthRs);
     }

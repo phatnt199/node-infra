@@ -33,6 +33,7 @@ export class AuthorizerKeys {
   static readonly ALWAYS_ALLOW_ROLES = '@app/authorize/always_allow_roles';
   static readonly AUTHORIZE_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
   static readonly CONFIGURE_OPTIONS = '@app/authorize/configure_options';
+  static readonly NORMALIZE_PAYLOAD_FN = '@app/authorize/normalize_payload_fn';
 }
 
 // -----------------------------------------------------------------------------

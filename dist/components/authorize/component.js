@@ -59,6 +59,7 @@ let AuthorizeComponent = AuthorizeComponent_1 = class AuthorizeComponent extends
             // Binding.bind(AuthorizerKeys.AUTHORIZE_DATASOURCE).to(null),
             // Configure path
             core_1.Binding.bind(common_1.AuthorizerKeys.CONFIGURE_OPTIONS).to({ confPath: authorizeConfPath, useCache: false }),
+            core_1.Binding.bind(common_1.AuthorizerKeys.NORMALIZE_PAYLOAD_FN).to(null),
         ];
         this.binding();
     }
@@ -93,8 +94,8 @@ let AuthorizeComponent = AuthorizeComponent_1 = class AuthorizeComponent extends
             const checkTableExecutions = ['Role', 'Permission', 'UserRole', 'PermissionMapping'].map(tableName => {
                 return datasource.execute(`
         SELECT EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_schema='public' 
+          SELECT FROM information_schema.tables
+          WHERE table_schema='public'
             AND table_name='${tableName}'
         ) as "isTableExisted"`);
             });
@@ -110,8 +111,8 @@ let AuthorizeComponent = AuthorizeComponent_1 = class AuthorizeComponent extends
             }
             const checkAuthorizeViewRs = yield datasource.execute(`
         SELECT EXISTS (
-          SELECT FROM information_schema.views 
-          WHERE table_schema='public' 
+          SELECT FROM information_schema.views
+          WHERE table_schema='public'
             AND table_name='ViewAuthorizePolicy'
         ) as "isViewExisted"`);
             for (const rs of checkAuthorizeViewRs) {

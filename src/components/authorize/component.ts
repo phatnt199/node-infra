@@ -3,17 +3,13 @@ import { BaseComponent } from '@/base/base.component';
 import { AuthorizerKeys } from '@/common';
 import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from '@/models/authorize';
 import {
-  PermissionMappingRepository,
-  PermissionRepository,
-  RoleRepository,
-  UserRoleRepository,
-  ViewAuthorizePolicyRepository,
+    PermissionMappingRepository,
+    PermissionRepository,
+    RoleRepository,
+    UserRoleRepository,
+    ViewAuthorizePolicyRepository,
 } from '@/repositories';
-import {
-  AuthorizationBindings,
-  AuthorizationDecision,
-  AuthorizationTags,
-} from '@loopback/authorization';
+import { AuthorizationBindings, AuthorizationDecision, AuthorizationTags } from '@loopback/authorization';
 import { Binding, CoreBindings, inject } from '@loopback/core';
 import { EnforcerService } from './enforcer.service';
 import { AuthorizeProvider } from './provider';
@@ -45,6 +41,7 @@ export class AuthorizeComponent extends BaseComponent {
 
     // Configure path
     Binding.bind(AuthorizerKeys.CONFIGURE_OPTIONS).to({ confPath: authorizeConfPath, useCache: false }),
+    Binding.bind(AuthorizerKeys.NORMALIZE_PAYLOAD_FN).to(null),
   ];
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
@@ -88,8 +85,8 @@ export class AuthorizeComponent extends BaseComponent {
     const checkTableExecutions = ['Role', 'Permission', 'UserRole', 'PermissionMapping'].map(tableName => {
       return datasource.execute(`
         SELECT EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_schema='public' 
+          SELECT FROM information_schema.tables
+          WHERE table_schema='public'
             AND table_name='${tableName}'
         ) as "isTableExisted"`);
     });
@@ -108,8 +105,8 @@ export class AuthorizeComponent extends BaseComponent {
 
     const checkAuthorizeViewRs = await datasource.execute(`
         SELECT EXISTS (
-          SELECT FROM information_schema.views 
-          WHERE table_schema='public' 
+          SELECT FROM information_schema.views
+          WHERE table_schema='public'
             AND table_name='ViewAuthorizePolicy'
         ) as "isViewExisted"`);
     for (const rs of checkAuthorizeViewRs) {

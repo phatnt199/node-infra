@@ -35,17 +35,19 @@ const intersection_1 = __importDefault(require("lodash/intersection"));
 const utilities_1 = require("../../utilities");
 const enforcer_service_1 = require("./enforcer.service");
 let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
-    constructor(enforcerService, alwaysAllowRoles) {
+    constructor(enforcerService, alwaysAllowRoles, normalizePayloadFn) {
         this.enforcerService = enforcerService;
         this.alwaysAllowRoles = alwaysAllowRoles;
+        this.normalizePayloadFn = normalizePayloadFn;
         this.logger = helpers_1.LoggerFactory.getLogger([AuthorizeProvider_1.name]);
     }
     value() {
         return this.authorize.bind(this);
     }
     // -------------------------------------------------------------------------------------------------------------------
-    normalizeEnforcePayload(subject, object, scope) {
+    normalizeEnforcePayload(opts) {
         var _a, _b, _c;
+        const { subject, object, scope } = opts;
         return {
             subject: (subject === null || subject === void 0 ? void 0 : subject.toLowerCase()) || '',
             object: (_a = scope === null || scope === void 0 ? void 0 : scope.toLowerCase()) !== null && _a !== void 0 ? _a : (_c = (_b = ((object === null || object === void 0 ? void 0 : object.toLowerCase()) || '')) === null || _b === void 0 ? void 0 : _b.replace(/controller/g, '')) === null || _c === void 0 ? void 0 : _c.replace(/.prototype/g, ''),
@@ -54,6 +56,7 @@ let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
     }
     // -------------------------------------------------------------------------------------------------------------------
     authorizePermission(userId, object, scopes) {
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             let singleAuthRs = false;
             let scopeAuthRs = true;
@@ -64,7 +67,7 @@ let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
             }
             const subject = `${common_1.EnforcerDefinitions.PREFIX_USER}_${userId}`;
             for (const scope of scopes !== null && scopes !== void 0 ? scopes : []) {
-                const enforcePayload = this.normalizeEnforcePayload(subject, object, scope);
+                const enforcePayload = (_b = (_a = this.normalizePayloadFn) === null || _a === void 0 ? void 0 : _a.call(this, { subject, object, scope })) !== null && _b !== void 0 ? _b : this.normalizeEnforcePayload({ subject, object, scope });
                 scopeAuthRs = yield enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
                 this.logger.debug('[authorizePermission] Payload: %j | scopeAuthRs: %s', enforcePayload, scopeAuthRs);
                 if (!scopeAuthRs) {
@@ -76,7 +79,7 @@ let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
                 return scopeAuthRs;
             }
             if (object) {
-                const enforcePayload = this.normalizeEnforcePayload(subject, object);
+                const enforcePayload = (_d = (_c = this.normalizePayloadFn) === null || _c === void 0 ? void 0 : _c.call(this, { subject, object })) !== null && _d !== void 0 ? _d : this.normalizeEnforcePayload({ subject, object });
                 singleAuthRs = yield enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
                 this.logger.debug('[authorizePermission] Payload: %j | singleAuthRs: %s', enforcePayload, singleAuthRs);
             }
@@ -147,6 +150,7 @@ exports.AuthorizeProvider = AuthorizeProvider;
 exports.AuthorizeProvider = AuthorizeProvider = AuthorizeProvider_1 = __decorate([
     __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.ENFORCER)),
     __param(1, (0, core_1.inject)(common_1.AuthorizerKeys.ALWAYS_ALLOW_ROLES)),
-    __metadata("design:paramtypes", [enforcer_service_1.EnforcerService, Array])
+    __param(2, (0, core_1.inject)(common_1.AuthorizerKeys.NORMALIZE_PAYLOAD_FN)),
+    __metadata("design:paramtypes", [enforcer_service_1.EnforcerService, Array, Function])
 ], AuthorizeProvider);
 //# sourceMappingURL=provider.js.map

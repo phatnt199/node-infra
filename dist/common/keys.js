@@ -35,6 +35,7 @@ AuthorizerKeys.ENFORCER = '@app/authorize/enforcer';
 AuthorizerKeys.ALWAYS_ALLOW_ROLES = '@app/authorize/always_allow_roles';
 AuthorizerKeys.AUTHORIZE_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
 AuthorizerKeys.CONFIGURE_OPTIONS = '@app/authorize/configure_options';
+AuthorizerKeys.NORMALIZE_PAYLOAD_FN = '@app/authorize/normalize_payload_fn';
 // -----------------------------------------------------------------------------
 class SocketIOKeys {
 }

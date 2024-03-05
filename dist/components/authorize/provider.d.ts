@@ -4,10 +4,23 @@ import { EnforcerService } from './enforcer.service';
 export declare class AuthorizeProvider implements Provider<Authorizer> {
     private enforcerService;
     private alwaysAllowRoles;
+    private normalizePayloadFn;
     private logger;
-    constructor(enforcerService: EnforcerService, alwaysAllowRoles: string[]);
+    constructor(enforcerService: EnforcerService, alwaysAllowRoles: string[], normalizePayloadFn: (opts: {
+        subject: string;
+        object: string;
+        scope?: string;
+    }) => {
+        subject: string;
+        object: string;
+        action: string;
+    });
     value(): Authorizer<AuthorizationMetadata>;
-    normalizeEnforcePayload(subject: string, object: string, scope?: string): {
+    normalizeEnforcePayload(opts: {
+        subject: string;
+        object: string;
+        scope?: string;
+    }): {
         subject: string;
         object: string;
         action: string;
