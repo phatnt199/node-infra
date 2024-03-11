@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TextSearchTzCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.KVRepository = exports.AbstractKVRepository = exports.AbstractTzRepository = void 0;
-const repository_1 = require("@loopback/repository");
 const utilities_1 = require("../utilities");
+const repository_1 = require("@loopback/repository");
 const get_1 = __importDefault(require("lodash/get"));
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractTzRepository extends repository_1.DefaultCrudRepository {
@@ -127,13 +127,15 @@ class TzCrudRepository extends AbstractTzRepository {
         });
     }
     create(data, options) {
-        let enriched = this.mixTimestamp(data, { newInstance: true });
+        var _a;
+        let enriched = this.mixTimestamp(data, { newInstance: true, ignoreModified: (_a = options === null || options === void 0 ? void 0 : options.ignoreModified) !== null && _a !== void 0 ? _a : false });
         enriched = this.mixUserAudit(enriched, { newInstance: true, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         return super.create(enriched, options);
     }
     createAll(datum, options) {
         const enriched = datum.map(data => {
-            const tmp = this.mixTimestamp(data, { newInstance: true });
+            var _a;
+            const tmp = this.mixTimestamp(data, { newInstance: true, ignoreModified: (_a = options === null || options === void 0 ? void 0 : options.ignoreModified) !== null && _a !== void 0 ? _a : false });
             return this.mixUserAudit(tmp, { newInstance: true, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         });
         return super.createAll(enriched, options);
@@ -149,7 +151,8 @@ class TzCrudRepository extends AbstractTzRepository {
         });
     }
     updateById(id, data, options) {
-        let enriched = this.mixTimestamp(data, { newInstance: false });
+        var _a;
+        let enriched = this.mixTimestamp(data, { newInstance: false, ignoreModified: (_a = options === null || options === void 0 ? void 0 : options.ignoreModified) !== null && _a !== void 0 ? _a : false });
         enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         return super.updateById(id, enriched, options);
     }
@@ -164,7 +167,8 @@ class TzCrudRepository extends AbstractTzRepository {
         });
     }
     updateAll(data, where, options) {
-        let enriched = this.mixTimestamp(data, { newInstance: false });
+        var _a;
+        let enriched = this.mixTimestamp(data, { newInstance: false, ignoreModified: (_a = options === null || options === void 0 ? void 0 : options.ignoreModified) !== null && _a !== void 0 ? _a : false });
         enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         return super.updateAll(enriched, where, options);
     }
@@ -181,15 +185,21 @@ class TzCrudRepository extends AbstractTzRepository {
         });
     }
     replaceById(id, data, options) {
-        let enriched = this.mixTimestamp(data, { newInstance: false });
+        var _a;
+        let enriched = this.mixTimestamp(data, { newInstance: false, ignoreModified: (_a = options === null || options === void 0 ? void 0 : options.ignoreModified) !== null && _a !== void 0 ? _a : false });
         enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         return super.replaceById(id, enriched, options);
     }
-    mixTimestamp(entity, options = { newInstance: false }) {
+    mixTimestamp(entity, options = {
+        newInstance: false,
+        ignoreModified: false,
+    }) {
         if (options === null || options === void 0 ? void 0 : options.newInstance) {
             entity.createdAt = new Date();
         }
-        entity.modifiedAt = new Date();
+        if (!options.ignoreModified) {
+            entity.modifiedAt = new Date();
+        }
         return entity;
     }
     mixUserAudit(entity, options) {
