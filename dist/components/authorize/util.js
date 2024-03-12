@@ -77,7 +77,7 @@ class GeneratePermissionService {
                 code: `${permissionSubject}.${m}`,
                 subject: permissionSubject,
                 action: common_1.EnforcerDefinitions.ACTION_EXECUTE,
-                scope: m.match(/get|find|search/gim) ? common_1.EnforcerDefinitions.ACTION_READ : common_1.EnforcerDefinitions.ACTION_WRITE,
+                scope: m.match(/get|find|search|count/gim) ? common_1.EnforcerDefinitions.ACTION_READ : common_1.EnforcerDefinitions.ACTION_WRITE,
                 pType: 'p',
                 parentId,
                 details: allPermissionDecoratorData === null || allPermissionDecoratorData === void 0 ? void 0 : allPermissionDecoratorData[m],

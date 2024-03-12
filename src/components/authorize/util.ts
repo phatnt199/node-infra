@@ -56,7 +56,7 @@ export class GeneratePermissionService {
         code: `${permissionSubject}.${m}`,
         subject: permissionSubject,
         action: EnforcerDefinitions.ACTION_EXECUTE,
-        scope: m.match(/get|find|search/gim) ? EnforcerDefinitions.ACTION_READ : EnforcerDefinitions.ACTION_WRITE,
+        scope: m.match(/get|find|search|count/gim) ? EnforcerDefinitions.ACTION_READ : EnforcerDefinitions.ACTION_WRITE,
         pType: 'p',
         parentId,
         details: allPermissionDecoratorData?.[m],
