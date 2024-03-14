@@ -98,12 +98,11 @@ export class AuthorizeProvider implements Provider<Authorizer> {
         continue;
       }
 
-      const [roleId, roleIdentifier] = encodedRole.split('|');
+      const { id, identifier } = encodedRole;
 
-      const id = int(roleId);
-      roleIds.push(id);
-      roleIdentifiers.push(roleIdentifier);
-      roles.push({ id, identifier: roleIdentifier });
+      roleIds.push(int(id));
+      roleIdentifiers.push(identifier);
+      roles.push({ id, identifier });
     }
 
     // DENY all unknown user and unknow roles
