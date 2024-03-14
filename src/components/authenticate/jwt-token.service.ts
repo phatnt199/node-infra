@@ -53,7 +53,10 @@ export class JWTTokenService extends BaseService {
 
     return {
       [userKey]: encrypt(userId, this.applicationSecret),
-      [rolesKey]: encrypt(JSON.stringify(roles.map(el => `${el.id}|${el.identifier}`)), this.applicationSecret),
+      [rolesKey]: encrypt(
+        JSON.stringify(roles.map(el => `${el.id}|${el.identifier}|${el.priority}`)),
+        this.applicationSecret,
+      ),
     };
   }
 
@@ -72,7 +75,10 @@ export class JWTTokenService extends BaseService {
           break;
         }
         case 'roles': {
-          rs.roles = JSON.parse(decryptedValue);
+          rs.roles = (JSON.parse(decryptedValue) as string[]).map(el => {
+            const [id, identifier, priority] = el.split('|');
+            return { id, identifier, priority };
+          });
           break;
         }
         default: {
