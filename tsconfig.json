@@ -14,5 +14,5 @@
     "esModuleInterop": true,
     "importHelpers": false
   },
-  "include": ["src"]
+  "include": ["src", "./.eslintrc.cjs"]
 }

@@ -29,4 +29,5 @@ __exportStar(require("./queue.helper"), exports);
 __exportStar(require("./redis.helper"), exports);
 __exportStar(require("./socket-io-client.helper"), exports);
 __exportStar(require("./socket-io-server.helper"), exports);
+__exportStar(require("./query-builder.helper"), exports);
 //# sourceMappingURL=index.js.map

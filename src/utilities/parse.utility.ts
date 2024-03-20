@@ -21,7 +21,6 @@ export const parseMultipartBody = (request: Request, response: Response) => {
 
   return new Promise<any>((resolve, reject) => {
     upload.any()(request, response, (err: any) => {
-
       if (err) {
         reject(err);
         return;

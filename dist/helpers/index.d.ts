@@ -13,3 +13,4 @@ export * from './queue.helper';
 export * from './redis.helper';
 export * from './socket-io-client.helper';
 export * from './socket-io-server.helper';
+export * from './query-builder.helper';
