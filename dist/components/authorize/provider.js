@@ -102,11 +102,10 @@ let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
                 if (!encodedRole || (0, isEmpty_1.default)(encodedRole)) {
                     continue;
                 }
-                const [roleId, roleIdentifier] = encodedRole.split('|');
-                const id = (0, utilities_1.int)(roleId);
-                roleIds.push(id);
-                roleIdentifiers.push(roleIdentifier);
-                roles.push({ id, identifier: roleIdentifier });
+                const { id, identifier } = encodedRole;
+                roleIds.push((0, utilities_1.int)(id));
+                roleIdentifiers.push(identifier);
+                roles.push({ id, identifier });
             }
             // DENY all unknown user and unknow roles
             if (!userId || !(roles === null || roles === void 0 ? void 0 : roles.length)) {
