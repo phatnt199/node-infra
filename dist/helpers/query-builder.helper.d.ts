@@ -12,7 +12,7 @@ export declare class QueryBuilderHelper {
     getQueryBuilder(opts: {
         clientType: TQueryBuilerClientType;
     }): knex.Knex.QueryBuilder<any, any[]>;
-    static getPostgresQueryBuilder(): knex.QueryBuilder;
-    static getMySQLQueryBuilder(): knex.QueryBuilder;
+    static getPostgresQueryBuilder(): knex.Knex.QueryBuilder<any, any[]>;
+    static getMySQLQueryBuilder(): knex.Knex.QueryBuilder<any, any[]>;
 }
 export {};

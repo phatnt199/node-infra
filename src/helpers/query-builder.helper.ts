@@ -36,13 +36,13 @@ export class QueryBuilderHelper {
     return queryClient.queryBuilder();
   }
 
-  static getPostgresQueryBuilder(): knex.QueryBuilder {
+  static getPostgresQueryBuilder() {
     const clientType = 'pg';
     const ins = QueryBuilderHelper.getInstance({ clientType });
     return ins.getQueryBuilder({ clientType });
   }
 
-  static getMySQLQueryBuilder(): knex.QueryBuilder {
+  static getMySQLQueryBuilder() {
     const clientType = 'mysql';
     const ins = QueryBuilderHelper.getInstance({ clientType });
     return ins.getQueryBuilder({ clientType });
