@@ -17,8 +17,9 @@ const INTL_2_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
 });
 // -------------------------------------------------------------------------
-const parseMultipartBody = (request, response) => {
-    const storage = multer_1.default.memoryStorage();
+const parseMultipartBody = (opts) => {
+    const { storage: cStorage, request, response } = opts;
+    const storage = cStorage !== null && cStorage !== void 0 ? cStorage : multer_1.default.memoryStorage();
     const upload = (0, multer_1.default)({ storage });
     return new Promise((resolve, reject) => {
         upload.any()(request, response, (err) => {

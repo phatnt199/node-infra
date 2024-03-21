@@ -15,8 +15,9 @@ const INTL_2_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
 });
 
 // -------------------------------------------------------------------------
-export const parseMultipartBody = (request: Request, response: Response) => {
-  const storage = multer.memoryStorage();
+export const parseMultipartBody = (opts: { storage?: multer.StorageEngine; request: Request; response: Response }) => {
+  const { storage: cStorage, request, response } = opts;
+  const storage = cStorage ?? multer.memoryStorage();
   const upload = multer({ storage });
 
   return new Promise<any>((resolve, reject) => {
