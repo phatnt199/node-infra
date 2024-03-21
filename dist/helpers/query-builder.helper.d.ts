@@ -2,7 +2,7 @@ import knex from 'knex';
 type TQueryBuilerClientType = 'pg' | 'mysql';
 export declare class QueryBuilderHelper {
     private static instance;
-    clients: Record<TQueryBuilerClientType, knex.Knex>;
+    clients: Map<TQueryBuilerClientType, knex.Knex>;
     constructor(opts: {
         clientType: TQueryBuilerClientType;
     });
@@ -11,8 +11,8 @@ export declare class QueryBuilderHelper {
     }): QueryBuilderHelper;
     getQueryBuilder(opts: {
         clientType: TQueryBuilerClientType;
-    }): knex.Knex.QueryBuilder<any, any[]> | null;
-    static getPostgresQueryBuilder(): knex.Knex.QueryBuilder<any, any[]> | null;
-    static getMySQLQueryBuilder(): knex.Knex.QueryBuilder<any, any[]> | null;
+    }): knex.Knex.QueryBuilder<any, any[]>;
+    static getPostgresQueryBuilder(): knex.QueryBuilder;
+    static getMySQLQueryBuilder(): knex.QueryBuilder;
 }
 export {};
