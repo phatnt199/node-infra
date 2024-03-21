@@ -1,14 +1,18 @@
 import knex from 'knex';
 
+type TQueryBuilerClientType = 'pg' | 'mysql';
+
 export class QueryBuilderHelper {
   private static instance: QueryBuilderHelper;
-  client: knex.Knex;
 
-  constructor(opts: { clientType: 'pg' | 'mysql' }) {
-    this.client = knex({ client: opts.clientType });
+  clients: Record<TQueryBuilerClientType, knex.Knex>;
+
+  constructor(opts: { clientType: TQueryBuilerClientType }) {
+    const { clientType } = opts;
+    this.clients[clientType] = knex({ client: clientType });
   }
 
-  static getInstance(opts: { clientType: 'pg' | 'mysql' }) {
+  static getInstance(opts: { clientType: TQueryBuilerClientType }) {
     if (!this.instance) {
       this.instance = new QueryBuilderHelper(opts);
     }
@@ -16,7 +20,24 @@ export class QueryBuilderHelper {
     return this.instance;
   }
 
-  getQueryBuilder() {
-    return this.client.queryBuilder();
+  getQueryBuilder(opts: { clientType: TQueryBuilerClientType }) {
+    const { clientType } = opts;
+    if (!this.clients?.[clientType]) {
+      return null;
+    }
+
+    return this.clients[clientType].queryBuilder();
+  }
+
+  static getPostgresQueryBuilder() {
+    const clientType = 'pg';
+    const ins = QueryBuilderHelper.getInstance({ clientType });
+    return ins.getQueryBuilder({ clientType });
+  }
+
+  static getMySQLQueryBuilder() {
+    const clientType = 'mysql';
+    const ins = QueryBuilderHelper.getInstance({ clientType });
+    return ins.getQueryBuilder({ clientType });
   }
 }

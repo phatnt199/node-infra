@@ -7,7 +7,8 @@ exports.QueryBuilderHelper = void 0;
 const knex_1 = __importDefault(require("knex"));
 class QueryBuilderHelper {
     constructor(opts) {
-        this.client = (0, knex_1.default)({ client: opts.clientType });
+        const { clientType } = opts;
+        this.clients[clientType] = (0, knex_1.default)({ client: clientType });
     }
     static getInstance(opts) {
         if (!this.instance) {
@@ -15,8 +16,23 @@ class QueryBuilderHelper {
         }
         return this.instance;
     }
-    getQueryBuilder() {
-        return this.client.queryBuilder();
+    getQueryBuilder(opts) {
+        var _a;
+        const { clientType } = opts;
+        if (!((_a = this.clients) === null || _a === void 0 ? void 0 : _a[clientType])) {
+            return null;
+        }
+        return this.clients[clientType].queryBuilder();
+    }
+    static getPostgresQueryBuilder() {
+        const clientType = 'pg';
+        const ins = QueryBuilderHelper.getInstance({ clientType });
+        return ins.getQueryBuilder({ clientType });
+    }
+    static getMySQLQueryBuilder() {
+        const clientType = 'mysql';
+        const ins = QueryBuilderHelper.getInstance({ clientType });
+        return ins.getQueryBuilder({ clientType });
     }
 }
 exports.QueryBuilderHelper = QueryBuilderHelper;

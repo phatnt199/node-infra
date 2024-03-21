@@ -1,12 +1,18 @@
 import knex from 'knex';
+type TQueryBuilerClientType = 'pg' | 'mysql';
 export declare class QueryBuilderHelper {
     private static instance;
-    client: knex.Knex;
+    clients: Record<TQueryBuilerClientType, knex.Knex>;
     constructor(opts: {
-        clientType: 'pg' | 'mysql';
+        clientType: TQueryBuilerClientType;
     });
     static getInstance(opts: {
-        clientType: 'pg' | 'mysql';
+        clientType: TQueryBuilerClientType;
     }): QueryBuilderHelper;
-    getQueryBuilder(): knex.Knex.QueryBuilder<any, any[]>;
+    getQueryBuilder(opts: {
+        clientType: TQueryBuilerClientType;
+    }): knex.Knex.QueryBuilder<any, any[]> | null;
+    static getPostgresQueryBuilder(): knex.Knex.QueryBuilder<any, any[]> | null;
+    static getMySQLQueryBuilder(): knex.Knex.QueryBuilder<any, any[]> | null;
 }
+export {};
