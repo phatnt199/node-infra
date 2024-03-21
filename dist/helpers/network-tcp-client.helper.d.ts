@@ -37,6 +37,7 @@ export declare class NetworkTcpClient {
         resetReconnectCounter: boolean;
     }): void;
     disconnect(): void;
+    forceReconnect(): void;
     isConnected(): boolean | null | undefined;
     emit(opts: {
         payload: string;

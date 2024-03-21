@@ -171,6 +171,11 @@ export class NetworkTcpClient {
     this.logger.info('[disconnect][%s] NetworkTcpClient is destroyed!', this.identifier);
   }
 
+  forceReconnect() {
+    this.disconnect();
+    this.connect({ resetReconnectCounter: true });
+  }
+
   isConnected() {
     return this.client && this.client.readyState !== 'closed';
   }
