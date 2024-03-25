@@ -15,14 +15,18 @@ import {
 } from '@loopback/repository';
 import get from 'lodash/get';
 import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
+import { ApplicationLogger, LoggerFactory } from '@/helpers';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation>
   extends DefaultCrudRepository<E, IdType, R>
   implements ITzRepository<E>, TransactionalEntityRepository<E, IdType, R>
 {
-  constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
+  protected logger: ApplicationLogger;
+
+  constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource, scope?: string) {
     super(entityClass, dataSource);
+    this.logger = LoggerFactory.getLogger([scope ?? '']);
   }
 
   async beginTransaction(options?: IsolationLevel | Options): Promise<Transaction> {
@@ -139,8 +143,8 @@ export abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRe
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractTzRepository<E, any> {
-  constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
-    super(entityClass, dataSource);
+  constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource, scope?: string) {
+    super(entityClass, dataSource, scope);
   }
 
   async existsWith(where?: Where<any>, options?: Options): Promise<boolean> {

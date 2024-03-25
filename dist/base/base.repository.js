@@ -16,10 +16,12 @@ exports.TextSearchTzCrudRepository = exports.TzCrudRepository = exports.ViewRepo
 const utilities_1 = require("../utilities");
 const repository_1 = require("@loopback/repository");
 const get_1 = __importDefault(require("lodash/get"));
+const helpers_1 = require("../helpers");
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractTzRepository extends repository_1.DefaultCrudRepository {
-    constructor(entityClass, dataSource) {
+    constructor(entityClass, dataSource, scope) {
         super(entityClass, dataSource);
+        this.logger = helpers_1.LoggerFactory.getLogger([scope !== null && scope !== void 0 ? scope : '']);
     }
     beginTransaction(options) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -117,8 +119,8 @@ class ViewRepository extends repository_1.DefaultCrudRepository {
 exports.ViewRepository = ViewRepository;
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class TzCrudRepository extends AbstractTzRepository {
-    constructor(entityClass, dataSource) {
-        super(entityClass, dataSource);
+    constructor(entityClass, dataSource, scope) {
+        super(entityClass, dataSource, scope);
     }
     existsWith(where, options) {
         return __awaiter(this, void 0, void 0, function* () {

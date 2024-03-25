@@ -92,7 +92,7 @@ export class UserTypes {
   }
 }
 
-export class AccountTypes extends UserTypes { }
+export class AccountTypes extends UserTypes {}
 
 export class SocketIOConstants {
   static readonly EVENT_PING = 'ping';
@@ -113,4 +113,18 @@ export class MimeTypes {
   static readonly IMAGE = 'image';
   static readonly VIDEO = 'video';
   static readonly TEXT = 'text';
+}
+
+export class ConfigurationDataType {
+  static readonly NUMBER = 'NUMBER';
+  static readonly TEXT = 'TEXT';
+  static readonly BYTE = 'BYTE';
+  static readonly JSON = 'JSON';
+  static readonly BOOLEAN = 'BOOLEAN';
+
+  static readonly TYPE_SET = new Set([this.NUMBER, this.TEXT, this.BYTE, this.JSON, this.BOOLEAN]);
+
+  static isValid(orgType: string): boolean {
+    return this.TYPE_SET.has(orgType);
+  }
 }

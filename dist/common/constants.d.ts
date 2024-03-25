@@ -90,3 +90,12 @@ export declare class MimeTypes {
     static readonly VIDEO = "video";
     static readonly TEXT = "text";
 }
+export declare class ConfigurationDataType {
+    static readonly NUMBER = "NUMBER";
+    static readonly TEXT = "TEXT";
+    static readonly BYTE = "BYTE";
+    static readonly JSON = "JSON";
+    static readonly BOOLEAN = "BOOLEAN";
+    static readonly TYPE_SET: Set<string>;
+    static isValid(orgType: string): boolean;
+}

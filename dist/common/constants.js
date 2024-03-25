@@ -1,8 +1,8 @@
 "use strict";
 var _a;
-var _b, _c, _d;
+var _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MimeTypes = exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EnforcerDefinitions = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.FixedUserRoles = exports.ApplicationRoles = exports.Formatters = exports.Authentication = exports.App = void 0;
+exports.ConfigurationDataType = exports.MimeTypes = exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EnforcerDefinitions = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.FixedUserRoles = exports.ApplicationRoles = exports.Formatters = exports.Authentication = exports.App = void 0;
 class App {
 }
 exports.App = App;
@@ -118,4 +118,17 @@ MimeTypes.UNKNOWN = 'unknown';
 MimeTypes.IMAGE = 'image';
 MimeTypes.VIDEO = 'video';
 MimeTypes.TEXT = 'text';
+class ConfigurationDataType {
+    static isValid(orgType) {
+        return this.TYPE_SET.has(orgType);
+    }
+}
+exports.ConfigurationDataType = ConfigurationDataType;
+_e = ConfigurationDataType;
+ConfigurationDataType.NUMBER = 'NUMBER';
+ConfigurationDataType.TEXT = 'TEXT';
+ConfigurationDataType.BYTE = 'BYTE';
+ConfigurationDataType.JSON = 'JSON';
+ConfigurationDataType.BOOLEAN = 'BOOLEAN';
+ConfigurationDataType.TYPE_SET = new Set([_e.NUMBER, _e.TEXT, _e.BYTE, _e.JSON, _e.BOOLEAN]);
 //# sourceMappingURL=constants.js.map
