@@ -42,12 +42,15 @@ export const getNextWeekday = () => {
   return date;
 };
 
-internalDayJS.prototype.isWeekday = isWeekday;
-internalDayJS.prototype.getPreviousWeekday = getPreviousWeekday;
-internalDayJS.prototype.getNextWeekday = getNextWeekday;
-internalDayJS.prototype.withTz = (opts: { date: string; timezone: string; timeOffset?: number }) => {
+export const withTz = (opts: { date: string; timezone: string; timeOffset?: number }) => {
   const { date, timezone, timeOffset = 0 } = opts;
-  return dayjs(date).tz(timezone, true).add(timeOffset);
+  return internalDayJS(date).tz(timezone, true).add(timeOffset);
 };
+
+isWeekday.bind(internalDayJS);
+isWeekday.bind(internalDayJS);
+getPreviousWeekday.bind(internalDayJS);
+getNextWeekday.bind(internalDayJS);
+withTz.bind(internalDayJS);
 
 export const dayjs = internalDayJS;
