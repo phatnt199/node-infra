@@ -44,7 +44,7 @@ export const getNextWeekday = () => {
 
 export const getDateTz = (opts: { date: string; timezone: string; timeOffset?: number }) => {
   const { date, timezone, timeOffset = 0 } = opts;
-  return dayjs(date).tz(timezone, true).add(timeOffset);
+  return dayjs(date).tz(timezone, true).add(timeOffset, 'hour');
 };
 
 export { dayjs };
