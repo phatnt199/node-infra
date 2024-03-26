@@ -6,7 +6,6 @@ var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dayjs = exports.getNextWeekday = exports.getPreviousWeekday = exports.isWeekday = exports.sleep = void 0;
 const dayjs_1 = __importDefault(require("dayjs"));
-exports.dayjs = dayjs_1.default;
 const customParseFormat_1 = __importDefault(require("dayjs/plugin/customParseFormat"));
 const isoWeek_1 = __importDefault(require("dayjs/plugin/isoWeek"));
 const timezone_1 = __importDefault(require("dayjs/plugin/timezone"));
@@ -45,4 +44,12 @@ const getNextWeekday = () => {
     return date;
 };
 exports.getNextWeekday = getNextWeekday;
+dayjs_1.default.prototype.isWeekday = exports.isWeekday;
+dayjs_1.default.prototype.getPreviousWeekday = exports.getPreviousWeekday;
+dayjs_1.default.prototype.getNextWeekday = exports.getNextWeekday;
+dayjs_1.default.prototype.withTz = (opts) => {
+    const { date, timezone, timeOffset = 0 } = opts;
+    return (0, exports.dayjs)(date).tz(timezone, true).add(timeOffset);
+};
+exports.dayjs = dayjs_1.default;
 //# sourceMappingURL=date.utility.js.map
