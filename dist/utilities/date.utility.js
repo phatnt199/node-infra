@@ -46,8 +46,8 @@ const getNextWeekday = () => {
 };
 exports.getNextWeekday = getNextWeekday;
 const getDateTz = (opts) => {
-    const { date, timezone, timeOffset = 0 } = opts;
-    return (0, dayjs_1.default)(date).tz(timezone, true).add(timeOffset, 'hour');
+    const { date, timezone, useClientTz = false, timeOffset = 0 } = opts;
+    return (0, dayjs_1.default)(date).tz(timezone, useClientTz).add(timeOffset, 'hour');
 };
 exports.getDateTz = getDateTz;
 //# sourceMappingURL=date.utility.js.map
