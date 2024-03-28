@@ -82,7 +82,7 @@ class SocketIOClientHelper {
         if (!log) {
             return;
         }
-        this.logger.info('[emit][%s] Topic: %s | Message: %j', topic, message);
+        this.logger.info('[emit][%s] Topic: %s | Message: %j', this.identifier, topic, message);
     }
 }
 exports.SocketIOClientHelper = SocketIOClientHelper;
