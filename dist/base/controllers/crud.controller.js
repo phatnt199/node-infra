@@ -11,15 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defineCrudController = void 0;
 const core_1 = require("@loopback/core");
@@ -141,30 +132,32 @@ const defineCrudController = (opts) => {
             super(repository);
         }
         create(data) {
-            return __awaiter(this, void 0, void 0, function* () {
-                const rs = yield this.repository.create(data);
-                return rs;
-            });
+            return this.repository.create(data);
         }
         updateAll(data, where) {
-            return __awaiter(this, void 0, void 0, function* () {
-                return this.repository.updateAll(data, where);
-            });
+            return this.repository.updateAll(data, where);
         }
         updateById(id, data) {
-            return __awaiter(this, void 0, void 0, function* () {
-                const rs = yield this.repository.updateWithReturn(id, data);
-                return rs;
-            });
+            return this.repository.updateWithReturn(id, data);
         }
         replaceById(id, data) {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield this.repository.replaceById(id, data);
+            return new Promise((resolve, reject) => {
+                this.repository
+                    .replaceById(id, data)
+                    .then(() => {
+                    resolve(Object.assign(Object.assign({}, data), { id }));
+                })
+                    .catch(reject);
             });
         }
         deleteById(id) {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield this.repository.deleteById(id);
+            return new Promise((resolve, reject) => {
+                this.repository
+                    .deleteById(id)
+                    .then(() => {
+                    resolve({ id });
+                })
+                    .catch(reject);
             });
         }
     }
@@ -276,7 +269,18 @@ const defineCrudController = (opts) => {
     __decorate([
         (0, rest_1.del)('/{id}', {
             responses: {
-                '204': { description: `${entityOptions} was deleted` },
+                // '204': { description: `${entityOptions} was deleted` },
+                '200': {
+                    description: `${entityOptions.name} was deleted`,
+                    content: {
+                        'application/json': {
+                            schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                                partial: true,
+                                title: `Deleted ${entityOptions.name} models`,
+                            }),
+                        },
+                    },
+                },
             },
         }),
         __param(0, (0, rest_1.param)(idPathParam)),

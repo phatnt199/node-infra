@@ -145,7 +145,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
         },
       },
     })
-    async create(
+    create(
       @requestBody({
         content: {
           'application/json': {
@@ -158,8 +158,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
       })
       data: Omit<E, 'id'>,
     ): Promise<E> {
-      const rs = await this.repository.create(data as DataObject<E>);
-      return rs;
+      return this.repository.create(data as DataObject<E>);
     }
 
     @patch('/', {
@@ -174,7 +173,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
         },
       },
     })
-    async updateAll(
+    updateAll(
       @requestBody({
         content: {
           'application/json': {
@@ -206,7 +205,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
         },
       },
     })
-    async updateById(
+    updateById(
       @param(idPathParam) id: IdType,
       @requestBody({
         content: {
@@ -220,8 +219,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
       })
       data: Partial<E>,
     ): Promise<E> {
-      const rs = await this.repository.updateWithReturn(id, data as DataObject<E>);
-      return rs;
+      return this.repository.updateWithReturn(id, data as DataObject<E>);
     }
 
     @put('/{id}', {
@@ -229,7 +227,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
         '204': { description: `${entityOptions.name} was replaced` },
       },
     })
-    async replaceById(
+    replaceById(
       @param(idPathParam) id: IdType,
       @requestBody({
         content: {
@@ -241,17 +239,42 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
         },
       })
       data: E,
-    ): Promise<void> {
-      await this.repository.replaceById(id, data);
+    ): Promise<E> {
+      return new Promise((resolve, reject) => {
+        this.repository
+          .replaceById(id, data)
+          .then(() => {
+            resolve({ ...data, id });
+          })
+          .catch(reject);
+      });
     }
 
     @del('/{id}', {
       responses: {
-        '204': { description: `${entityOptions} was deleted` },
+        // '204': { description: `${entityOptions} was deleted` },
+        '200': {
+          description: `${entityOptions.name} was deleted`,
+          content: {
+            'application/json': {
+              schema: getModelSchemaRef(entityOptions, {
+                partial: true,
+                title: `Deleted ${entityOptions.name} models`,
+              }),
+            },
+          },
+        },
       },
     })
-    async deleteById(@param(idPathParam) id: IdType): Promise<void> {
-      await this.repository.deleteById(id);
+    deleteById(@param(idPathParam) id: IdType): Promise<{ id: IdType }> {
+      return new Promise((resolve, reject) => {
+        this.repository
+          .deleteById(id)
+          .then(() => {
+            resolve({ id });
+          })
+          .catch(reject);
+      });
     }
   }
 
