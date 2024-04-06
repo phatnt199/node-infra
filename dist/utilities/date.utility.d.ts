@@ -9,4 +9,5 @@ export declare const getDateTz: (opts: {
     useClientTz?: boolean;
     timeOffset?: number;
 }) => dayjs.Dayjs;
+export declare const hrTime: () => number;
 export { dayjs };

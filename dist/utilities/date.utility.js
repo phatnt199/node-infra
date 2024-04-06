@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dayjs = exports.getDateTz = exports.getNextWeekday = exports.getPreviousWeekday = exports.isWeekday = exports.sleep = void 0;
+exports.dayjs = exports.hrTime = exports.getDateTz = exports.getNextWeekday = exports.getPreviousWeekday = exports.isWeekday = exports.sleep = void 0;
 const dayjs_1 = __importDefault(require("dayjs"));
 exports.dayjs = dayjs_1.default;
 const customParseFormat_1 = __importDefault(require("dayjs/plugin/customParseFormat"));
@@ -12,6 +12,7 @@ const isoWeek_1 = __importDefault(require("dayjs/plugin/isoWeek"));
 const timezone_1 = __importDefault(require("dayjs/plugin/timezone"));
 const utc_1 = __importDefault(require("dayjs/plugin/utc"));
 const weekday_1 = __importDefault(require("dayjs/plugin/weekday"));
+const parse_utility_1 = require("./parse.utility");
 dayjs_1.default.extend(customParseFormat_1.default);
 dayjs_1.default.extend(utc_1.default);
 dayjs_1.default.extend(timezone_1.default);
@@ -50,4 +51,9 @@ const getDateTz = (opts) => {
     return (0, dayjs_1.default)(date).tz(timezone, useClientTz).add(timeOffset, 'hour');
 };
 exports.getDateTz = getDateTz;
+const hrTime = () => {
+    const curr = process.hrtime();
+    return (0, parse_utility_1.float)(curr[0] + curr[1] / Math.pow(10, 9), 9);
+};
+exports.hrTime = hrTime;
 //# sourceMappingURL=date.utility.js.map

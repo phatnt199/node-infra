@@ -5,6 +5,7 @@ import IsoWeekPlugin from 'dayjs/plugin/isoWeek';
 import TimezonePlugin from 'dayjs/plugin/timezone';
 import UTCPlugin from 'dayjs/plugin/utc';
 import WeekdayPlugin from 'dayjs/plugin/weekday';
+import { float } from './parse.utility';
 
 dayjs.extend(CustomParseFormatPlugin);
 dayjs.extend(UTCPlugin);
@@ -45,6 +46,11 @@ export const getNextWeekday = () => {
 export const getDateTz = (opts: { date: string; timezone: string; useClientTz?: boolean; timeOffset?: number }) => {
   const { date, timezone, useClientTz = false, timeOffset = 0 } = opts;
   return dayjs(date).tz(timezone, useClientTz).add(timeOffset, 'hour');
+};
+
+export const hrTime = () => {
+  const curr = process.hrtime();
+  return float(curr[0] + curr[1] / 10 ** 9, 9);
 };
 
 export { dayjs };
