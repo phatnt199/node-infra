@@ -94,8 +94,8 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
         return modelByDs;
     }
     migrateModels(opts) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const { existingSchema, ignoreModels = [], migrateModels } = opts;
             this.logger.info('[migrateModels] Loading legacy migratable models...!');
             const reps = (yield this.getMigrateModels({ ignoreModels, migrateModels }));

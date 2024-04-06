@@ -46,8 +46,8 @@ let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInte
     }
     // -------------------------------------------------------------------------------------
     handleSingleEntity(opts) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const { context } = opts;
             const { args, target } = context;
             const controller = target;
@@ -73,8 +73,8 @@ let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInte
     }
     // -------------------------------------------------------------------------------------
     handleRelationalEntity(opts) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const { context, result } = opts;
             const { args, target } = context;
             const controller = target;

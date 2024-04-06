@@ -54,8 +54,8 @@ class GeneratePermissionService {
         return Reflect.ownKeys(controllerPrototype).slice(1);
     }
     generateParentPermissions(opts) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const { controller, permissionRepository } = opts !== null && opts !== void 0 ? opts : {};
             const controllerName = controller.name;
             const permissionSubject = (_a = controllerName.replace(/Controller/g, '')) === null || _a === void 0 ? void 0 : _a.toLowerCase();
@@ -100,8 +100,8 @@ class GeneratePermissionService {
         return permissionRecords;
     }
     updatePermissionByChangeMethodName(permissionSubject, allPermissionDecoratorData, permissionRepository) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             if (!Object.values(allPermissionDecoratorData).length) {
                 return;
             }
@@ -125,8 +125,8 @@ class GeneratePermissionService {
         });
     }
     startMigration(opts) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const { permissionRepository, controllers } = opts;
             const permissions = [];
             for (const controller of controllers) {

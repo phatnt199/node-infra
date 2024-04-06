@@ -56,8 +56,8 @@ let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
     }
     // -------------------------------------------------------------------------------------------------------------------
     authorizePermission(userId, object, scopes) {
-        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d;
             let singleAuthRs = false;
             let scopeAuthRs = true;
             const enforcer = yield this.enforcerService.getTypeEnforcer(userId);
@@ -88,8 +88,8 @@ let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
     }
     // -------------------------------------------------------------------------------------------------------------------
     authorize(context, metadata) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const t = new Date().getTime();
             if ((context === null || context === void 0 ? void 0 : context.principals.length) <= 0) {
                 return authorization_1.AuthorizationDecision.DENY;

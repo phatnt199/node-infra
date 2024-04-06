@@ -38,8 +38,8 @@ class CasbinLBAdapter {
     }
     // -----------------------------------------------------------------------------------------
     loadFilteredPolicy(model, filter) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             if (((_a = filter === null || filter === void 0 ? void 0 : filter.principalType) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === 'role') {
                 throw (0, __1.getError)({
                     statusCode: 500,

@@ -36,8 +36,8 @@ let AuthorizateInterceptor = AuthorizateInterceptor_1 = class AuthorizateInterce
         return this.intercept.bind(this);
     }
     intercept(invocationCtx, next) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let metadata = (0, authorization_1.getAuthorizationMetadata)(invocationCtx.target, invocationCtx.methodName);
             const description = invocationCtx.description;
             if (!metadata) {

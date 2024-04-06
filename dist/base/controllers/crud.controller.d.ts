@@ -17,9 +17,9 @@ export declare const defineCrudController: <E extends BaseTzEntity>(opts: CrudCo
     new (repository: AbstractTzRepository<E, EntityRelation>): {
         repository: AbstractTzRepository<E, EntityRelation>;
         defaultLimit: number;
-        find(filter?: Filter<E> | undefined): Promise<(E & EntityRelation)[]>;
-        findById(id: IdType, filter?: FilterExcludingWhere<E> | undefined): Promise<E & EntityRelation>;
-        findOne(filter?: FilterExcludingWhere<E> | undefined): Promise<(E & EntityRelation) | null>;
-        count(where?: Where<E> | undefined): Promise<Count>;
+        find(filter?: Filter<E>): Promise<(E & EntityRelation)[]>;
+        findById(id: IdType, filter?: FilterExcludingWhere<E>): Promise<E & EntityRelation>;
+        findOne(filter?: FilterExcludingWhere<E>): Promise<(E & EntityRelation) | null>;
+        count(where?: Where<E>): Promise<Count>;
     };
 };

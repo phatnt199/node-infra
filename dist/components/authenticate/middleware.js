@@ -35,8 +35,8 @@ let AuthenticationMiddleware = AuthenticationMiddleware_1 = class Authentication
         this.alwaysAllowPathGetter = alwaysAllowPathGetter;
     }
     authenticate(request) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             try {
                 const { url = '' } = request;
                 this.logger.debug('[authenticate] Authenticating request | Url: %s', (_a = decodeURIComponent(url)) === null || _a === void 0 ? void 0 : _a.replace(/(?:\r\n|\r|\n)/g, ''));
