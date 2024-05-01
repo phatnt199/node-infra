@@ -7,19 +7,17 @@ exports.decryptFile = exports.decrypt = exports.encryptFile = exports.encrypt = 
 const crypto_js_1 = __importDefault(require("crypto-js"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const fs_1 = __importDefault(require("fs"));
-const hash = (text, options = { type: 'MD5', secret: null }) => {
-    if (!(options === null || options === void 0 ? void 0 : options.type)) {
-        return text;
-    }
-    switch (options === null || options === void 0 ? void 0 : options.type) {
+const hash = (text, options) => {
+    const { encryptType, secret, outputType } = options;
+    switch (encryptType) {
         case 'SHA256': {
-            if (!(options === null || options === void 0 ? void 0 : options.secret)) {
+            if (!secret) {
                 return text;
             }
-            return crypto_js_1.default.HmacSHA256(text, options.secret).toString(crypto_js_1.default.enc.Hex);
+            return crypto_js_1.default.HmacSHA256(text, options.secret).toString(outputType);
         }
         case 'MD5': {
-            return crypto_js_1.default.MD5(text).toString(crypto_js_1.default.enc.Utf8);
+            return crypto_js_1.default.MD5(text).toString(outputType);
         }
         default: {
             return text;

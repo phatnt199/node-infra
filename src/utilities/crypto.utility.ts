@@ -2,21 +2,22 @@ import CryptoJS from 'crypto-js';
 import isEmpty from 'lodash/isEmpty';
 import fs from 'fs';
 
-export const hash = (text: string, options = { type: 'MD5', secret: null }): string => {
-  if (!options?.type) {
-    return text;
-  }
+export const hash = (
+  text: string,
+  options: { encryptType: 'SHA256' | 'MD5'; secret: string; outputType: typeof CryptoJS.enc.Base64 },
+): string => {
+  const { encryptType, secret, outputType } = options;
 
-  switch (options?.type) {
+  switch (encryptType) {
     case 'SHA256': {
-      if (!options?.secret) {
+      if (!secret) {
         return text;
       }
 
-      return CryptoJS.HmacSHA256(text, options.secret).toString(CryptoJS.enc.Hex);
+      return CryptoJS.HmacSHA256(text, options.secret).toString(outputType);
     }
     case 'MD5': {
-      return CryptoJS.MD5(text).toString(CryptoJS.enc.Utf8);
+      return CryptoJS.MD5(text).toString(outputType);
     }
     default: {
       return text;
