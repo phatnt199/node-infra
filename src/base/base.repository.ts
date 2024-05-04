@@ -39,10 +39,10 @@ export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends Ent
   ): DataObject<E>;
   abstract mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean; authorId: IdType }): DataObject<E>;
 
-  abstract existsWith(where?: Where<any>, options?: any): Promise<boolean>;
+  abstract existsWith(where?: Where<E>, options?: any): Promise<boolean>;
   abstract createWithReturn(data: DataObject<E>, options?: any): Promise<E>;
   abstract updateWithReturn(id: IdType, data: DataObject<E>, options?: any): Promise<E>;
-  abstract upsertWith(data: DataObject<E>, where: Where<any>, options?: any): Promise<E | null>;
+  abstract upsertWith(data: DataObject<E>, where: Where<E>, options?: any): Promise<E | null>;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ export abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRe
     super(entityClass, dataSource);
   }
 
-  async existsWith(where?: Where<any>, options?: Options): Promise<boolean> {
+  async existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
     const rs = await this.findOne({ where }, options);
     return rs !== null && rs !== undefined;
   }
@@ -105,7 +105,7 @@ export abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRe
     });
   }
 
-  updateAll(_data: DataObject<E>, _where?: Where<any>, _options?: Options): Promise<Count> {
+  updateAll(_data: DataObject<E>, _where?: Where<E>, _options?: Options): Promise<Count> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
@@ -147,7 +147,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
     super(entityClass, dataSource, scope);
   }
 
-  async existsWith(where?: Where<any>, options?: Options): Promise<boolean> {
+  async existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
     const rs = await this.findOne({ where }, options);
     return rs !== null && rs !== undefined;
   }
@@ -200,7 +200,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
 
   updateAll(
     data: DataObject<E>,
-    where?: Where<any>,
+    where?: Where<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<Count> {
     let enriched = this.mixTimestamp(data, { newInstance: false, ignoreModified: options?.ignoreModified ?? false });
@@ -211,7 +211,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
 
   async upsertWith(
     data: DataObject<E>,
-    where: Where<any>,
+    where: Where<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<E | null> {
     const isExisted = await this.existsWith(where);
@@ -279,7 +279,7 @@ export abstract class TextSearchTzCrudRepository<E extends BaseTextSearchTzEntit
 
   abstract renderTextSearch(entity: DataObject<E>, moreData: AnyObject): string;
 
-  async existsWith(where?: Where<any>, options?: Options): Promise<boolean> {
+  async existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
     const rs = await this.findOne({ where }, options);
     return rs !== null && rs !== undefined;
   }
@@ -312,13 +312,13 @@ export abstract class TextSearchTzCrudRepository<E extends BaseTextSearchTzEntit
     return super.findById(id);
   }
 
-  updateAll(data: DataObject<E>, where?: Where<any>, options?: Options): Promise<Count> {
+  updateAll(data: DataObject<E>, where?: Where<E>, options?: Options): Promise<Count> {
     const enriched = this.mixTextSearch(data, options);
 
     return super.updateAll(enriched, where, options);
   }
 
-  async upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null> {
+  async upsertWith(data: DataObject<E>, where: Where<E>): Promise<E | null> {
     const isExisted = await this.existsWith(where);
     if (isExisted) {
       await this.updateAll(data, where);

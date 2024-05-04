@@ -36,13 +36,13 @@ export declare class SocketIOServerHelper {
     }): {
         id: string;
         socket: IOSocket<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>;
-        state: "authenticated" | "unauthorized" | "authenticating";
+        state: "unauthorized" | "authenticating" | "authenticated";
         interval?: NodeJS.Timeout | undefined;
         authenticateTimeout: NodeJS.Timeout;
     } | Record<string, {
         id: string;
         socket: IOSocket<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>;
-        state: "authenticated" | "unauthorized" | "authenticating";
+        state: "unauthorized" | "authenticating" | "authenticated";
         interval?: NodeJS.Timeout | undefined;
         authenticateTimeout: NodeJS.Timeout;
     }>;
