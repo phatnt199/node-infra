@@ -14,10 +14,10 @@ export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R ext
         newInstance: boolean;
         authorId: IdType;
     }): DataObject<E>;
-    abstract existsWith(where?: Where<any>, options?: any): Promise<boolean>;
+    abstract existsWith(where?: Where<E>, options?: any): Promise<boolean>;
     abstract createWithReturn(data: DataObject<E>, options?: any): Promise<E>;
     abstract updateWithReturn(id: IdType, data: DataObject<E>, options?: any): Promise<E>;
-    abstract upsertWith(data: DataObject<E>, where: Where<any>, options?: any): Promise<E | null>;
+    abstract upsertWith(data: DataObject<E>, where: Where<E>, options?: any): Promise<E | null>;
 }
 export declare abstract class AbstractKVRepository<E extends BaseKVEntity> extends DefaultKeyValueRepository<E> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
@@ -27,13 +27,13 @@ export declare abstract class KVRepository<E extends BaseKVEntity> extends Abstr
 }
 export declare abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRepository<E, IdType, any> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
-    existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
+    existsWith(where?: Where<E>, options?: Options): Promise<boolean>;
     create(_data: DataObject<E>, _options?: Options): Promise<E>;
     createAll(_datum: DataObject<E>[], _options?: Options): Promise<E[]>;
     save(_entity: E, _options?: Options): Promise<E>;
     update(_entity: E, _options?: Options): Promise<void>;
     delete(_entity: E, _options?: Options): Promise<void>;
-    updateAll(_data: DataObject<E>, _where?: Where<any>, _options?: Options): Promise<Count>;
+    updateAll(_data: DataObject<E>, _where?: Where<E>, _options?: Options): Promise<Count>;
     updateById(_id: IdType, _data: DataObject<E>, _options?: Options): Promise<void>;
     replaceById(_id: IdType, _data: DataObject<E>, _options?: Options): Promise<void>;
     deleteAll(_where?: Where<E>, _options?: Options): Promise<Count>;
@@ -41,7 +41,7 @@ export declare abstract class ViewRepository<E extends BaseEntity> extends Defau
 }
 export declare abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractTzRepository<E, any> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource, scope?: string);
-    existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
+    existsWith(where?: Where<E>, options?: Options): Promise<boolean>;
     create(data: DataObject<E>, options?: Options & {
         authorId?: IdType;
         ignoreModified?: boolean;
@@ -62,11 +62,11 @@ export declare abstract class TzCrudRepository<E extends BaseTzEntity> extends A
         authorId?: IdType;
         ignoreModified?: boolean;
     }): Promise<E>;
-    updateAll(data: DataObject<E>, where?: Where<any>, options?: Options & {
+    updateAll(data: DataObject<E>, where?: Where<E>, options?: Options & {
         authorId?: IdType;
         ignoreModified?: boolean;
     }): Promise<Count>;
-    upsertWith(data: DataObject<E>, where: Where<any>, options?: Options & {
+    upsertWith(data: DataObject<E>, where: Where<E>, options?: Options & {
         authorId?: IdType;
         ignoreModified?: boolean;
     }): Promise<E | null>;
@@ -86,14 +86,14 @@ export declare abstract class TzCrudRepository<E extends BaseTzEntity> extends A
 export declare abstract class TextSearchTzCrudRepository<E extends BaseTextSearchTzEntity> extends TzCrudRepository<E> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
     abstract renderTextSearch(entity: DataObject<E>, moreData: AnyObject): string;
-    existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
+    existsWith(where?: Where<E>, options?: Options): Promise<boolean>;
     create(data: DataObject<E>, options?: Options): Promise<E>;
     createAll(datum: DataObject<E>[], options?: Options): Promise<E[]>;
     createWithReturn(data: DataObject<E>, options?: Options): Promise<E>;
     updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
     updateWithReturn(id: IdType, data: DataObject<E>, options?: Options): Promise<E>;
-    updateAll(data: DataObject<E>, where?: Where<any>, options?: Options): Promise<Count>;
-    upsertWith(data: DataObject<E>, where: Where<any>): Promise<E | null>;
+    updateAll(data: DataObject<E>, where?: Where<E>, options?: Options): Promise<Count>;
+    upsertWith(data: DataObject<E>, where: Where<E>): Promise<E | null>;
     replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
     mixTextSearch(entity: DataObject<E>, options?: Options): DataObject<E>;
 }
