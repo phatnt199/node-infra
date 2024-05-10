@@ -106,7 +106,6 @@ export class JWTTokenService extends BaseService {
     }
 
     const jwtTokenPayload = this.decryptPayload(decodedToken);
-    // console.log('[verify] ', jwtTokenPayload);
     return jwtTokenPayload;
   }
 
