@@ -103,7 +103,6 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
             throw new rest_1.HttpErrors.Unauthorized(`Error verifying token : ${error.message}`);
         }
         const jwtTokenPayload = this.decryptPayload(decodedToken);
-        // console.log('[verify] ', jwtTokenPayload);
         return jwtTokenPayload;
     }
     // --------------------------------------------------------------------------------------
