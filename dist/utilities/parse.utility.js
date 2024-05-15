@@ -48,7 +48,13 @@ const keysToCamel = (object) => {
     const keys = Object.keys(object);
     for (const key of keys) {
         const value = (0, get_1.default)(object, key);
-        const valueType = Array.isArray(value) ? 'array' : typeof value;
+        let valueType = typeof value;
+        if (Array.isArray(value)) {
+            valueType = 'array';
+        }
+        else if (value instanceof Date) {
+            valueType = 'date';
+        }
         switch (valueType) {
             case 'object': {
                 if (!value) {
@@ -58,10 +64,10 @@ const keysToCamel = (object) => {
                 n[(0, exports.toCamel)(key)] = (0, exports.keysToCamel)(value);
                 break;
             }
-            case 'array': {
-                n[(0, exports.toCamel)(key)] = value;
-                break;
-            }
+            /* case 'array': {
+              n[toCamel(key)] = value;
+              break;
+            } */
             default: {
                 n[(0, exports.toCamel)(key)] = value;
                 break;
