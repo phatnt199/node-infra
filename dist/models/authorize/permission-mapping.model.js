@@ -33,6 +33,32 @@ exports.PermissionMapping = PermissionMapping = __decorate([
                     options: { unique: true },
                 },
             },
+            foreignKeys: {
+                FK_PermissionMapping_userId_User_id: {
+                    name: "FK_PermissionMapping_userId_User_id",
+                    entity: "User",
+                    entityKey: "id",
+                    foreignKey: "user_id",
+                    onDelete: "NO ACTION",
+                    onUpdate: "SET NULL",
+                },
+                FK_PermissionMapping_roleId_Role_id: {
+                    name: "FK_PermissionMapping_roleId_Role_id",
+                    entity: "Role",
+                    entityKey: "id",
+                    foreignKey: "role_id",
+                    onDelete: "NO ACTION",
+                    onUpdate: "SET NULL",
+                },
+                FK_PermissionMapping_permissionId_Permission_id: {
+                    name: "FK_PermissionMapping_permissionId_Permission_id",
+                    entity: "Permission",
+                    entityKey: "id",
+                    foreignKey: "permission_id",
+                    onDelete: "NO ACTION",
+                    onUpdate: "SET NULL",
+                },
+            },
         },
     }),
     __metadata("design:paramtypes", [Object])

@@ -27,6 +27,16 @@ exports.Permission = Permission = __decorate([
                 table: 'Permission',
             },
             hiddenProperties: ['createdAt', 'modifiedAt'],
+            foreignKeys: {
+                FK_Permission_parentId_Permission_id: {
+                    name: "FK_Permission_parentId_Permission_id",
+                    entity: "Permission",
+                    entityKey: "id",
+                    foreignKey: "parent_id",
+                    onDelete: "NO ACTION",
+                    onUpdate: "SET NULL",
+                },
+            },
         },
     }),
     __metadata("design:paramtypes", [Object])
