@@ -26,6 +26,7 @@ export interface RelationCrudControllerOptions {
   options?: {
     controlTarget: boolean;
     defaultLimit?: number;
+    endPoint?: string;
   };
 }
 
@@ -35,10 +36,11 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
   relationType: TRelationType;
   relationName: string;
   defaultLimit?: number;
+  endPoint?: string;
 }): ControllerClass => {
-  const { baseClass, relationType, relationName, defaultLimit = App.DEFAULT_QUERY_LIMIT } = opts;
+  const { baseClass, relationType, relationName, defaultLimit = App.DEFAULT_QUERY_LIMIT, endPoint = '' } = opts;
 
-  const restPath = `/{id}/${relationName}`;
+  const restPath = `/{id}/${endPoint ? endPoint : relationName}`;
   const BaseClass = baseClass ?? BaseController;
 
   class ViewController extends BaseClass implements IController {
@@ -118,9 +120,10 @@ export const defineAssociateController = <
   baseClass?: Class<BaseController>;
   relationName: string;
   defaultLimit?: number;
+  endPoint?: string;
 }): ControllerClass => {
-  const { baseClass, relationName, defaultLimit = App.DEFAULT_QUERY_LIMIT } = opts;
-  const restPath = `/{id}/${relationName}`;
+  const { baseClass, relationName, defaultLimit = App.DEFAULT_QUERY_LIMIT, endPoint = '' } = opts;
+  const restPath = `/{id}/${endPoint ? endPoint : relationName}`;
 
   const BaseClass = baseClass ?? BaseController;
 
@@ -213,7 +216,7 @@ export const defineRelationCrudController = <
   const {
     association,
     schema,
-    options = { controlTarget: false, defaultLimit: App.DEFAULT_QUERY_LIMIT },
+    options = { controlTarget: false, defaultLimit: App.DEFAULT_QUERY_LIMIT, endPoint: '' },
   } = controllerOptions;
   const { relationName, relationType } = association;
 
@@ -225,9 +228,9 @@ export const defineRelationCrudController = <
   }
 
   const { target: targetSchema } = schema;
-  const { controlTarget = true, defaultLimit = App.DEFAULT_QUERY_LIMIT } = options;
+  const { controlTarget = true, defaultLimit = App.DEFAULT_QUERY_LIMIT, endPoint = '' } = options;
 
-  const restPath = `{id}/${relationName}`;
+  const restPath = `{id}/${endPoint ? endPoint : relationName}`;
   const ViewController = defineRelationViewController<S, T>({
     baseClass: BaseController,
     relationType,
