@@ -205,11 +205,13 @@ const defineRelationCrudController = (controllerOptions) => {
         relationType,
         relationName,
         defaultLimit,
+        endPoint
     });
     const AssociationController = (0, exports.defineAssociateController)({
         baseClass: ViewController,
         relationName,
         defaultLimit,
+        endPoint
     });
     // -----------------------------------------------------------------------------------------------
     const ExtendsableClass = relationType === common_1.EntityRelations.HAS_MANY_THROUGH ? AssociationController : ViewController;

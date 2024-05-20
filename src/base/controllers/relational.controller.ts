@@ -236,11 +236,13 @@ export const defineRelationCrudController = <
     relationType,
     relationName,
     defaultLimit,
+    endPoint
   });
   const AssociationController = defineAssociateController<S, T, R>({
     baseClass: ViewController,
     relationName,
     defaultLimit,
+    endPoint
   });
 
   // -----------------------------------------------------------------------------------------------
