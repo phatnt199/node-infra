@@ -19,6 +19,7 @@ export interface RelationCrudControllerOptions {
     options?: {
         controlTarget: boolean;
         defaultLimit?: number;
+        endpoint?: string;
     };
 }
 export declare const defineRelationViewController: <S extends BaseTzEntity, T extends BaseTzEntity>(opts: {
@@ -26,10 +27,12 @@ export declare const defineRelationViewController: <S extends BaseTzEntity, T ex
     relationType: TRelationType;
     relationName: string;
     defaultLimit?: number;
+    endpoint?: string;
 }) => ControllerClass;
 export declare const defineAssociateController: <S extends BaseTzEntity, T extends BaseTzEntity, R extends BaseTzEntity | NullableType>(opts: {
     baseClass?: Class<BaseController>;
     relationName: string;
     defaultLimit?: number;
+    endpoint?: string;
 }) => ControllerClass;
 export declare const defineRelationCrudController: <S extends BaseTzEntity, T extends BaseTzEntity, R extends BaseTzEntity | NullableType>(controllerOptions: RelationCrudControllerOptions) => ControllerClass;

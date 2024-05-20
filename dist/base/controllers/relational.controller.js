@@ -33,8 +33,8 @@ const common_1 = require("../../common");
 const common_2 = require("./common");
 // --------------------------------------------------------------------------------------------------------------
 const defineRelationViewController = (opts) => {
-    const { baseClass, relationType, relationName, defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT } = opts;
-    const restPath = `/{id}/${relationName}`;
+    const { baseClass, relationType, relationName, defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT, endpoint = '' } = opts;
+    const restPath = `/{id}/${endpoint ? endpoint : relationName}`;
     const BaseClass = baseClass !== null && baseClass !== void 0 ? baseClass : common_2.BaseController;
     class ViewController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
@@ -103,8 +103,8 @@ const defineRelationViewController = (opts) => {
 exports.defineRelationViewController = defineRelationViewController;
 // --------------------------------------------------------------------------------------------------------------
 const defineAssociateController = (opts) => {
-    const { baseClass, relationName, defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT } = opts;
-    const restPath = `/{id}/${relationName}`;
+    const { baseClass, relationName, defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT, endpoint = '' } = opts;
+    const restPath = `/{id}/${endpoint ? endpoint : relationName}`;
     const BaseClass = baseClass !== null && baseClass !== void 0 ? baseClass : common_2.BaseController;
     class AssociationController extends BaseClass {
         constructor(sourceRepository, targetRepository) {
@@ -189,7 +189,7 @@ const defineAssociateController = (opts) => {
 exports.defineAssociateController = defineAssociateController;
 // --------------------------------------------------------------------------------------------------------------
 const defineRelationCrudController = (controllerOptions) => {
-    const { association, schema, options = { controlTarget: false, defaultLimit: common_1.App.DEFAULT_QUERY_LIMIT }, } = controllerOptions;
+    const { association, schema, options = { controlTarget: false, defaultLimit: common_1.App.DEFAULT_QUERY_LIMIT, endpoint: '' }, } = controllerOptions;
     const { relationName, relationType } = association;
     if (!common_1.EntityRelations.isValid(relationType)) {
         throw (0, utilities_1.getError)({
@@ -198,8 +198,8 @@ const defineRelationCrudController = (controllerOptions) => {
         });
     }
     const { target: targetSchema } = schema;
-    const { controlTarget = true, defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT } = options;
-    const restPath = `{id}/${relationName}`;
+    const { controlTarget = true, defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT, endpoint = '' } = options;
+    const restPath = `{id}/${endpoint ? endpoint : relationName}`;
     const ViewController = (0, exports.defineRelationViewController)({
         baseClass: common_2.BaseController,
         relationType,
