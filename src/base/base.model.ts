@@ -1,5 +1,6 @@
 import { Entity, property } from '@loopback/repository';
 import { DataTypeMixin, TextSearchMixin, TzMixin, UserAuditMixin } from '@/mixins';
+import { SoftDeleteModelMixin } from '@/mixins/soft-delete.mixin';
 
 // ---------------------------------------------------------------------
 export class BaseEntity extends Entity {}
@@ -39,3 +40,6 @@ export class BaseDataTypeTzEntity extends DataTypeMixin(BaseTzEntity) {}
 
 // ---------------------------------------------------------------------
 export class BaseTextSearchTzEntity extends TextSearchMixin(BaseTzEntity) {}
+
+// ---------------------------------------------------------------------
+export class BaseSoftDeleteTzEntity extends SoftDeleteModelMixin(BaseTzEntity) {}
