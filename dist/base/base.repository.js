@@ -195,8 +195,11 @@ class TzCrudRepository extends AbstractTzRepository {
     softDelete(where, options) {
         return new Promise((resolve, reject) => {
             var _a, _b;
-            const tableName = this.modelClass.definition.tableName((_a = options === null || options === void 0 ? void 0 : options.connectorType) !== null && _a !== void 0 ? _a : 'postgresql');
-            const isSoftDeleteFieldExist = (0, get_1.default)(this.modelClass.definition.rawProperties, (_b = options === null || options === void 0 ? void 0 : options.softDeleteField) !== null && _b !== void 0 ? _b : 'isDeleted');
+            const connectorType = (_a = options === null || options === void 0 ? void 0 : options.connectorType) !== null && _a !== void 0 ? _a : 'postgresql';
+            const softDeleteField = (_b = options === null || options === void 0 ? void 0 : options.softDeleteField) !== null && _b !== void 0 ? _b : 'isDeleted';
+            const tableName = this.modelClass.definition.tableName(connectorType);
+            const columnName = this.modelClass.definition.columnName(connectorType, softDeleteField);
+            const isSoftDeleteFieldExist = (0, get_1.default)(this.modelClass.definition.rawProperties, softDeleteField);
             if (!isSoftDeleteFieldExist) {
                 throw (0, utilities_1.getError)({ message: `[softDelete] Model: ${this.modelClass.name} | Soft delete is not supported!` });
             }
@@ -204,7 +207,7 @@ class TzCrudRepository extends AbstractTzRepository {
                 .then(rs => {
                 const sql = helpers_1.QueryBuilderHelper.getPostgresQueryBuilder()
                     .from(tableName)
-                    .update({ is_deleted: true })
+                    .update({ [columnName]: true })
                     .whereIn('id', rs.map(el => el.id))
                     .toQuery();
                 this.execute(sql, null, options).then(resolve).catch(reject);
