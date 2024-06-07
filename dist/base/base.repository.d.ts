@@ -74,6 +74,10 @@ export declare abstract class TzCrudRepository<E extends BaseTzEntity> extends A
         authorId?: IdType;
         ignoreModified?: boolean;
     }): Promise<void>;
+    softDelete(where: Where<E>, options?: Options & {
+        connectorType?: string;
+        softDeleteField?: string;
+    }): Promise<unknown>;
     mixTimestamp(entity: DataObject<E>, options?: Options & {
         newInstance?: boolean;
         ignoreModified?: boolean;

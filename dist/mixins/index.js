@@ -20,4 +20,5 @@ __exportStar(require("./principal.mixin"), exports);
 __exportStar(require("./text-search.mixin"), exports);
 __exportStar(require("./user-audit.mixin"), exports);
 __exportStar(require("./soft-persistent.mixin"), exports);
+__exportStar(require("./soft-delete.mixin"), exports);
 //# sourceMappingURL=index.js.map

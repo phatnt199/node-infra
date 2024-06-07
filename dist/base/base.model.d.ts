@@ -63,4 +63,15 @@ declare const BaseTextSearchTzEntity_base: {
 } & typeof BaseTzEntity;
 export declare class BaseTextSearchTzEntity extends BaseTextSearchTzEntity_base {
 }
+declare const BaseSoftDeleteTzEntity_base: {
+    new (...args: any[]): {
+        isDeleted?: boolean | undefined;
+        getId: () => any;
+        getIdObject: () => Object;
+        toJSON: () => Object;
+        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+    };
+} & typeof BaseTzEntity;
+export declare class BaseSoftDeleteTzEntity extends BaseSoftDeleteTzEntity_base {
+}
 export {};
