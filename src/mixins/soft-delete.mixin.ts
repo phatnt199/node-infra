@@ -1,6 +1,6 @@
 import { MixinTarget } from '@loopback/core';
 import { Entity, Options, Where, property } from '@loopback/repository';
-import { AbstractTzRepository, BaseTzEntity, QueryBuilderHelper } from '..';
+import { BaseTzEntity, QueryBuilderHelper, TzCrudRepository } from '..';
 
 export const SoftDeleteModelMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
   class Mixed extends superClass {
@@ -17,7 +17,7 @@ export const SoftDeleteModelMixin = <E extends MixinTarget<Entity>>(superClass: 
   return Mixed;
 };
 
-export const SoftDeleteRepositoryMixin = <E extends BaseTzEntity, R extends MixinTarget<AbstractTzRepository<E, any>>>(
+export const SoftDeleteRepositoryMixin = <E extends BaseTzEntity, R extends MixinTarget<TzCrudRepository<E>>>(
   superClass: R,
   connectorType?: string,
 ) => {
@@ -26,7 +26,6 @@ export const SoftDeleteRepositoryMixin = <E extends BaseTzEntity, R extends Mixi
       return new Promise((resolve, reject) => {
         const queryBuilder = QueryBuilderHelper.getPostgresQueryBuilder();
         const tableName = this.modelClass.definition.tableName(connectorType ?? 'postgresql');
-
         this.find({ fields: { id: true }, where })
           .then(rs => {
             const sql = queryBuilder
