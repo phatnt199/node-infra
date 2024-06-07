@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseSoftDeleteTzEntity = exports.BaseTextSearchTzEntity = exports.BaseDataTypeTzEntity = exports.BaseUserAuditTzEntity = exports.BaseTzEntity = exports.BaseKVEntity = exports.BaseStringIdEntity = exports.BaseNumberIdEntity = exports.BaseIdEntity = exports.BaseEntity = void 0;
 const repository_1 = require("@loopback/repository");
 const mixins_1 = require("../mixins");
-const soft_delete_mixin_1 = require("../mixins/soft-delete.mixin");
 // ---------------------------------------------------------------------
 class BaseEntity extends repository_1.Entity {
 }
@@ -66,7 +65,7 @@ class BaseTextSearchTzEntity extends (0, mixins_1.TextSearchMixin)(BaseTzEntity)
 }
 exports.BaseTextSearchTzEntity = BaseTextSearchTzEntity;
 // ---------------------------------------------------------------------
-class BaseSoftDeleteTzEntity extends (0, soft_delete_mixin_1.SoftDeleteModelMixin)(BaseTzEntity) {
+class BaseSoftDeleteTzEntity extends (0, mixins_1.SoftDeleteModelMixin)(BaseTzEntity) {
 }
 exports.BaseSoftDeleteTzEntity = BaseSoftDeleteTzEntity;
 //# sourceMappingURL=base.model.js.map
