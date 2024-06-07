@@ -11,6 +11,16 @@ export const SoftDeleteModelMixin = <E extends MixinTarget<Entity>>(superClass: 
       },
     })
     isDeleted?: boolean;
+
+    @property({
+      type: 'date',
+      defaultFn: 'now',
+      postgresql: {
+        columnName: 'deleted_at',
+        dataType: 'TIMESTAMPTZ',
+      },
+    })
+    deletedAt?: Date;
   }
 
   return Mixed;
