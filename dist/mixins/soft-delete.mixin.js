@@ -9,9 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SoftDeleteRepositoryMixin = exports.SoftDeleteModelMixin = void 0;
+exports.SoftDeleteModelMixin = void 0;
 const repository_1 = require("@loopback/repository");
-const __1 = require("..");
 const SoftDeleteModelMixin = (superClass) => {
     class Mixed extends superClass {
     }
@@ -28,26 +27,4 @@ const SoftDeleteModelMixin = (superClass) => {
     return Mixed;
 };
 exports.SoftDeleteModelMixin = SoftDeleteModelMixin;
-const SoftDeleteRepositoryMixin = (superClass, connectorType) => {
-    class Mixed extends superClass {
-        softDelete(where, options) {
-            return new Promise((resolve, reject) => {
-                const queryBuilder = __1.QueryBuilderHelper.getPostgresQueryBuilder();
-                const tableName = this.modelClass.definition.tableName(connectorType !== null && connectorType !== void 0 ? connectorType : 'postgresql');
-                this.find({ fields: { id: true }, where })
-                    .then(rs => {
-                    const sql = queryBuilder
-                        .from(tableName)
-                        .update({ is_deleted: true })
-                        .whereIn('id', rs.map(el => el.id))
-                        .toQuery();
-                    this.execute(sql, null, options).then(resolve).catch(reject);
-                })
-                    .catch(reject);
-            });
-        }
-    }
-    return Mixed;
-};
-exports.SoftDeleteRepositoryMixin = SoftDeleteRepositoryMixin;
 //# sourceMappingURL=soft-delete.mixin.js.map

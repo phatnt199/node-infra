@@ -192,6 +192,26 @@ class TzCrudRepository extends AbstractTzRepository {
         enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         return super.replaceById(id, enriched, options);
     }
+    softDelete(where, options) {
+        return new Promise((resolve, reject) => {
+            var _a, _b;
+            const tableName = this.modelClass.definition.tableName((_a = options === null || options === void 0 ? void 0 : options.connectorType) !== null && _a !== void 0 ? _a : 'postgresql');
+            const isSoftDeleteFieldExist = (0, get_1.default)(this.modelClass.definition.rawProperties, (_b = options === null || options === void 0 ? void 0 : options.softDeleteField) !== null && _b !== void 0 ? _b : 'isDeleted');
+            if (!isSoftDeleteFieldExist) {
+                throw (0, utilities_1.getError)({ message: `[softDelete] Model: ${this.modelClass.name} | Soft delete is not supported!` });
+            }
+            this.find({ fields: { id: true }, where })
+                .then(rs => {
+                const sql = helpers_1.QueryBuilderHelper.getPostgresQueryBuilder()
+                    .from(tableName)
+                    .update({ is_deleted: true })
+                    .whereIn('id', rs.map(el => el.id))
+                    .toQuery();
+                this.execute(sql, null, options).then(resolve).catch(reject);
+            })
+                .catch(reject);
+        });
+    }
     mixTimestamp(entity, options = {
         newInstance: false,
         ignoreModified: false,

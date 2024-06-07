@@ -15,7 +15,7 @@ import {
 } from '@loopback/repository';
 import get from 'lodash/get';
 import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
-import { ApplicationLogger, LoggerFactory } from '@/helpers';
+import { ApplicationLogger, LoggerFactory, QueryBuilderHelper } from '@/helpers';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation>
@@ -234,6 +234,35 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
     enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options?.authorId });
 
     return super.replaceById(id, enriched, options);
+  }
+
+  softDelete(where: Where<E>, options?: Options & { connectorType?: string; softDeleteField?: string }) {
+    return new Promise((resolve, reject) => {
+      const tableName = this.modelClass.definition.tableName(options?.connectorType ?? 'postgresql');
+      const isSoftDeleteFieldExist = get(
+        this.modelClass.definition.rawProperties,
+        options?.softDeleteField ?? 'isDeleted',
+      );
+
+      if (!isSoftDeleteFieldExist) {
+        throw getError({ message: `[softDelete] Model: ${this.modelClass.name} | Soft delete is not supported!` });
+      }
+
+      this.find({ fields: { id: true }, where })
+        .then(rs => {
+          const sql = QueryBuilderHelper.getPostgresQueryBuilder()
+            .from(tableName)
+            .update({ is_deleted: true })
+            .whereIn(
+              'id',
+              rs.map(el => el.id),
+            )
+            .toQuery();
+
+          this.execute(sql, null, options).then(resolve).catch(reject);
+        })
+        .catch(reject);
+    });
   }
 
   mixTimestamp(
