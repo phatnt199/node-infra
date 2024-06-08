@@ -66,7 +66,6 @@ export declare class BaseTextSearchTzEntity extends BaseTextSearchTzEntity_base 
 declare const BaseSoftDeleteTzEntity_base: {
     new (...args: any[]): {
         isDeleted?: boolean | undefined;
-        deletedAt?: Date | undefined;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;

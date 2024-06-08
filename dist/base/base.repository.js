@@ -194,20 +194,17 @@ class TzCrudRepository extends AbstractTzRepository {
     }
     softDelete(where, options) {
         return new Promise((resolve, reject) => {
-            var _a, _b, _c;
+            var _a, _b;
             const connectorType = (_a = options === null || options === void 0 ? void 0 : options.connectorType) !== null && _a !== void 0 ? _a : 'postgresql';
             const softDeleteField = (_b = options === null || options === void 0 ? void 0 : options.softDeleteField) !== null && _b !== void 0 ? _b : 'isDeleted';
-            const softDeleteTzField = (_c = options === null || options === void 0 ? void 0 : options.softDeleteTzField) !== null && _c !== void 0 ? _c : 'deletedAt';
             const tableName = this.modelClass.definition.tableName(connectorType);
             const softDeleteColumnName = this.modelClass.definition.columnName(connectorType, softDeleteField);
-            const softDeleteTzColumnName = this.modelClass.definition.columnName(connectorType, softDeleteTzField);
             // Mix Timestamp
             const mixTimestampColumnName = this.modelClass.definition.columnName(connectorType, 'modifiedAt');
             // Mix User Audit
             const mixUserAuditColumnName = this.modelClass.definition.columnName(connectorType, 'modifiedBy');
             const isSoftDeleteFieldExist = (0, get_1.default)(this.modelClass.definition.rawProperties, softDeleteField);
-            const isSoftDeleteTzFieldExist = (0, get_1.default)(this.modelClass.definition.rawProperties, softDeleteTzField);
-            if (!isSoftDeleteFieldExist || !isSoftDeleteTzFieldExist) {
+            if (!isSoftDeleteFieldExist) {
                 throw (0, utilities_1.getError)({ message: `[softDelete] Model: ${this.modelClass.name} | Soft delete is not supported!` });
             }
             const now = new Date();
@@ -215,7 +212,7 @@ class TzCrudRepository extends AbstractTzRepository {
                 .then(rs => {
                 const sqlBuilder = helpers_1.QueryBuilderHelper.getPostgresQueryBuilder()
                     .from(tableName)
-                    .update({ [softDeleteColumnName]: true, [softDeleteTzColumnName]: now })
+                    .update({ [softDeleteColumnName]: true })
                     .whereIn('id', rs.map(el => el.id));
                 if (mixTimestampColumnName && !(options === null || options === void 0 ? void 0 : options.ignoreModified)) {
                     sqlBuilder.update(mixTimestampColumnName, now);

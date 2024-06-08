@@ -24,17 +24,6 @@ const SoftDeleteModelMixin = (superClass) => {
         }),
         __metadata("design:type", Boolean)
     ], Mixed.prototype, "isDeleted", void 0);
-    __decorate([
-        (0, repository_1.property)({
-            type: 'date',
-            defaultFn: 'now',
-            postgresql: {
-                columnName: 'deleted_at',
-                dataType: 'TIMESTAMPTZ',
-            },
-        }),
-        __metadata("design:type", Date)
-    ], Mixed.prototype, "deletedAt", void 0);
     return Mixed;
 };
 exports.SoftDeleteModelMixin = SoftDeleteModelMixin;
