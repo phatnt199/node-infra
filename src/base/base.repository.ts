@@ -241,7 +241,6 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
     options?: Options & {
       connectorType?: string;
       softDeleteField?: string;
-      softDeleteTzField?: string;
       authorId?: IdType;
       ignoreModified?: boolean;
     },
@@ -249,11 +248,9 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
     return new Promise((resolve, reject) => {
       const connectorType = options?.connectorType ?? 'postgresql';
       const softDeleteField = options?.softDeleteField ?? 'isDeleted';
-      const softDeleteTzField = options?.softDeleteTzField ?? 'deletedAt';
 
       const tableName = this.modelClass.definition.tableName(connectorType);
       const softDeleteColumnName = this.modelClass.definition.columnName(connectorType, softDeleteField);
-      const softDeleteTzColumnName = this.modelClass.definition.columnName(connectorType, softDeleteTzField);
 
       // Mix Timestamp
       const mixTimestampColumnName = this.modelClass.definition.columnName(connectorType, 'modifiedAt');
@@ -262,8 +259,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
       const mixUserAuditColumnName = this.modelClass.definition.columnName(connectorType, 'modifiedBy');
 
       const isSoftDeleteFieldExist = get(this.modelClass.definition.rawProperties, softDeleteField);
-      const isSoftDeleteTzFieldExist = get(this.modelClass.definition.rawProperties, softDeleteTzField);
-      if (!isSoftDeleteFieldExist || !isSoftDeleteTzFieldExist) {
+      if (!isSoftDeleteFieldExist) {
         throw getError({ message: `[softDelete] Model: ${this.modelClass.name} | Soft delete is not supported!` });
       }
 
@@ -272,7 +268,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
         .then(rs => {
           const sqlBuilder = QueryBuilderHelper.getPostgresQueryBuilder()
             .from(tableName)
-            .update({ [softDeleteColumnName]: true, [softDeleteTzColumnName]: now })
+            .update({ [softDeleteColumnName]: true })
             .whereIn(
               'id',
               rs.map(el => el.id),
