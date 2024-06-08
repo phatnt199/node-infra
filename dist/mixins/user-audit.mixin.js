@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserAuditMixin = void 0;
+exports.UserAuditWithRelationMixin = exports.UserAuditMixin = void 0;
 const repository_1 = require("@loopback/repository");
 const UserAuditMixin = (superClass) => {
     class Mixed extends superClass {
@@ -39,4 +39,36 @@ const UserAuditMixin = (superClass) => {
     return Mixed;
 };
 exports.UserAuditMixin = UserAuditMixin;
+const UserAuditWithRelationMixin = (superClass, authorClass) => {
+    class Mixed extends superClass {
+    }
+    __decorate([
+        (0, repository_1.belongsTo)(() => authorClass, {
+            keyFrom: 'createdBy',
+            name: 'creator',
+        }, {
+            postgresql: {
+                columnName: 'created_by',
+                dataType: 'integer',
+            },
+            hidden: true,
+        }),
+        __metadata("design:type", Object)
+    ], Mixed.prototype, "createdBy", void 0);
+    __decorate([
+        (0, repository_1.belongsTo)(() => authorClass, {
+            keyFrom: 'modifiedBy',
+            name: 'modifier',
+        }, {
+            postgresql: {
+                columnName: 'modified_by',
+                dataType: 'integer',
+            },
+            hidden: true,
+        }),
+        __metadata("design:type", Object)
+    ], Mixed.prototype, "modifiedBy", void 0);
+    return Mixed;
+};
+exports.UserAuditWithRelationMixin = UserAuditWithRelationMixin;
 //# sourceMappingURL=user-audit.mixin.js.map
