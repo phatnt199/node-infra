@@ -27,7 +27,7 @@ export declare class MinioHelper {
     }): Promise<boolean>;
     getFileType(opts: {
         mimeType: string;
-    }): "unknown" | "text" | "image" | "video";
+    }): "unknown" | "image" | "video" | "text";
     upload(opts: {
         bucket: string;
         files: Array<IUploadFile>;
