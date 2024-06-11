@@ -12,6 +12,7 @@ import {
   post,
   put,
   requestBody,
+  SchemaRef,
 } from '@loopback/rest';
 
 import { BaseIdEntity, BaseTzEntity, AbstractTzRepository } from './../';
@@ -24,11 +25,29 @@ export interface CrudControllerOptions<E extends BaseIdEntity> {
   entity: typeof BaseIdEntity & { prototype: E };
   repository: { name: string };
   controller: CrudRestControllerOptions & { defaultLimit?: number };
+  schema?: {
+    find?: SchemaRef;
+    findOne?: SchemaRef;
+    findById?: SchemaRef;
+    count?: SchemaRef;
+    createRequestBody?: SchemaRef;
+    create?: SchemaRef;
+    updateAll?: SchemaRef;
+    updateByIdRequestBody?: SchemaRef;
+    updateById?: SchemaRef;
+    replaceById?: SchemaRef;
+    deleteById?: SchemaRef;
+  };
 }
 
 // --------------------------------------------------------------------------------------------------------------
 export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControllerOptions<E>) => {
-  const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = opts;
+  const {
+    entity: entityOptions,
+    repository: repositoryOptions,
+    controller: controllerOptions,
+    schema: schemaOptions,
+  } = opts;
 
   const idPathParam: ParameterObject = {
     name: 'id',
@@ -53,7 +72,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
             'application/json': {
               schema: {
                 type: 'array',
-                items: getModelSchemaRef(entityOptions, { includeRelations: true }),
+                items: schemaOptions?.find ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
               },
             },
           },
@@ -70,7 +89,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
           description: `Find ${entityOptions.name} model instance`,
           content: {
             'application/json': {
-              schema: getModelSchemaRef(entityOptions, { includeRelations: true }),
+              schema: schemaOptions?.findById ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
             },
           },
         },
@@ -90,7 +109,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
           description: `Find one ${entityOptions.name} model instance`,
           content: {
             'application/json': {
-              schema: getModelSchemaRef(entityOptions, { includeRelations: true }),
+              schema: schemaOptions?.findOne ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
             },
           },
         },
@@ -139,7 +158,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
           description: `Create ${entityOptions.name} model instance`,
           content: {
             'application/json': {
-              schema: getModelSchemaRef(entityOptions),
+              schema: schemaOptions?.create ?? getModelSchemaRef(entityOptions),
             },
           },
         },
@@ -149,10 +168,12 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
       @requestBody({
         content: {
           'application/json': {
-            schema: getModelSchemaRef(entityOptions, {
-              title: `New ${entityOptions.name} payload`,
-              exclude: ['id', 'createdAt', 'modifiedAt'],
-            }),
+            schema:
+              schemaOptions?.createRequestBody ??
+              getModelSchemaRef(entityOptions, {
+                title: `New ${entityOptions.name} payload`,
+                exclude: ['id', 'createdAt', 'modifiedAt'],
+              }),
           },
         },
       })
@@ -177,10 +198,12 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
       @requestBody({
         content: {
           'application/json': {
-            schema: getModelSchemaRef(entityOptions, {
-              title: `Partial fields of ${entityOptions.name}`,
-              partial: true,
-            }),
+            schema:
+              schemaOptions?.updateAll ??
+              getModelSchemaRef(entityOptions, {
+                title: `Partial fields of ${entityOptions.name}`,
+                partial: true,
+              }),
           },
         },
       })
@@ -197,9 +220,11 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
           description: `Updated ${entityOptions.name} models`,
           content: {
             'application/json': {
-              schema: getModelSchemaRef(entityOptions, {
-                title: `Updated ${entityOptions.name} models`,
-              }),
+              schema:
+                schemaOptions?.updateById ??
+                getModelSchemaRef(entityOptions, {
+                  title: `Updated ${entityOptions.name} models`,
+                }),
             },
           },
         },
@@ -210,10 +235,12 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
       @requestBody({
         content: {
           'application/json': {
-            schema: getModelSchemaRef(entityOptions, {
-              title: `Partial fields of ${entityOptions.name}`,
-              partial: true,
-            }),
+            schema:
+              schemaOptions?.updateByIdRequestBody ??
+              getModelSchemaRef(entityOptions, {
+                title: `Partial fields of ${entityOptions.name}`,
+                partial: true,
+              }),
           },
         },
       })
@@ -232,9 +259,11 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
       @requestBody({
         content: {
           'application/json': {
-            schema: getModelSchemaRef(entityOptions, {
-              title: `Fields of ${entityOptions.name}`,
-            }),
+            schema:
+              schemaOptions?.replaceById ??
+              getModelSchemaRef(entityOptions, {
+                title: `Fields of ${entityOptions.name}`,
+              }),
           },
         },
       })
@@ -252,15 +281,16 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
 
     @del('/{id}', {
       responses: {
-        // '204': { description: `${entityOptions} was deleted` },
         '200': {
           description: `${entityOptions.name} was deleted`,
           content: {
             'application/json': {
-              schema: getModelSchemaRef(entityOptions, {
-                partial: true,
-                title: `Deleted ${entityOptions.name} models`,
-              }),
+              schema:
+                schemaOptions?.deleteById ??
+                getModelSchemaRef(entityOptions, {
+                  partial: true,
+                  title: `Deleted ${entityOptions.name} models`,
+                }),
             },
           },
         },

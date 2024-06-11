@@ -10,7 +10,7 @@ export const SoftPersistentMixin = <E extends MixinTarget<Entity>>(superClass: E
         dataType: 'integer',
       },
     })
-    persistentState?: number; // This number can descibe state value more than just deleted or not
+    persistentState?: number; // This number can describe state value more than just deleted or not
   }
 
   return Mixed;

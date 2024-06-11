@@ -20,7 +20,8 @@ const common_1 = require("../../common");
 const common_2 = require("./common");
 // --------------------------------------------------------------------------------------------------------------
 const defineCrudController = (opts) => {
-    const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = opts;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions, schema: schemaOptions, } = opts;
     const idPathParam = {
         name: 'id',
         in: 'path',
@@ -54,7 +55,7 @@ const defineCrudController = (opts) => {
                         'application/json': {
                             schema: {
                                 type: 'array',
-                                items: (0, rest_1.getModelSchemaRef)(entityOptions, { includeRelations: true }),
+                                items: (_a = schemaOptions === null || schemaOptions === void 0 ? void 0 : schemaOptions.find) !== null && _a !== void 0 ? _a : (0, rest_1.getModelSchemaRef)(entityOptions, { includeRelations: true }),
                             },
                         },
                     },
@@ -73,7 +74,7 @@ const defineCrudController = (opts) => {
                     description: `Find ${entityOptions.name} model instance`,
                     content: {
                         'application/json': {
-                            schema: (0, rest_1.getModelSchemaRef)(entityOptions, { includeRelations: true }),
+                            schema: (_b = schemaOptions === null || schemaOptions === void 0 ? void 0 : schemaOptions.findById) !== null && _b !== void 0 ? _b : (0, rest_1.getModelSchemaRef)(entityOptions, { includeRelations: true }),
                         },
                     },
                 },
@@ -92,7 +93,7 @@ const defineCrudController = (opts) => {
                     description: `Find one ${entityOptions.name} model instance`,
                     content: {
                         'application/json': {
-                            schema: (0, rest_1.getModelSchemaRef)(entityOptions, { includeRelations: true }),
+                            schema: (_c = schemaOptions === null || schemaOptions === void 0 ? void 0 : schemaOptions.findOne) !== null && _c !== void 0 ? _c : (0, rest_1.getModelSchemaRef)(entityOptions, { includeRelations: true }),
                         },
                     },
                 },
@@ -168,7 +169,7 @@ const defineCrudController = (opts) => {
                     description: `Create ${entityOptions.name} model instance`,
                     content: {
                         'application/json': {
-                            schema: (0, rest_1.getModelSchemaRef)(entityOptions),
+                            schema: (_d = schemaOptions === null || schemaOptions === void 0 ? void 0 : schemaOptions.create) !== null && _d !== void 0 ? _d : (0, rest_1.getModelSchemaRef)(entityOptions),
                         },
                     },
                 },
@@ -177,7 +178,7 @@ const defineCrudController = (opts) => {
         __param(0, (0, rest_1.requestBody)({
             content: {
                 'application/json': {
-                    schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                    schema: (_e = schemaOptions === null || schemaOptions === void 0 ? void 0 : schemaOptions.createRequestBody) !== null && _e !== void 0 ? _e : (0, rest_1.getModelSchemaRef)(entityOptions, {
                         title: `New ${entityOptions.name} payload`,
                         exclude: ['id', 'createdAt', 'modifiedAt'],
                     }),
@@ -204,7 +205,7 @@ const defineCrudController = (opts) => {
         __param(0, (0, rest_1.requestBody)({
             content: {
                 'application/json': {
-                    schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                    schema: (_f = schemaOptions === null || schemaOptions === void 0 ? void 0 : schemaOptions.updateAll) !== null && _f !== void 0 ? _f : (0, rest_1.getModelSchemaRef)(entityOptions, {
                         title: `Partial fields of ${entityOptions.name}`,
                         partial: true,
                     }),
@@ -223,7 +224,7 @@ const defineCrudController = (opts) => {
                     description: `Updated ${entityOptions.name} models`,
                     content: {
                         'application/json': {
-                            schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                            schema: (_g = schemaOptions === null || schemaOptions === void 0 ? void 0 : schemaOptions.updateById) !== null && _g !== void 0 ? _g : (0, rest_1.getModelSchemaRef)(entityOptions, {
                                 title: `Updated ${entityOptions.name} models`,
                             }),
                         },
@@ -235,7 +236,7 @@ const defineCrudController = (opts) => {
         __param(1, (0, rest_1.requestBody)({
             content: {
                 'application/json': {
-                    schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                    schema: (_h = schemaOptions === null || schemaOptions === void 0 ? void 0 : schemaOptions.updateByIdRequestBody) !== null && _h !== void 0 ? _h : (0, rest_1.getModelSchemaRef)(entityOptions, {
                         title: `Partial fields of ${entityOptions.name}`,
                         partial: true,
                     }),
@@ -256,7 +257,7 @@ const defineCrudController = (opts) => {
         __param(1, (0, rest_1.requestBody)({
             content: {
                 'application/json': {
-                    schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                    schema: (_j = schemaOptions === null || schemaOptions === void 0 ? void 0 : schemaOptions.replaceById) !== null && _j !== void 0 ? _j : (0, rest_1.getModelSchemaRef)(entityOptions, {
                         title: `Fields of ${entityOptions.name}`,
                     }),
                 },
@@ -269,12 +270,11 @@ const defineCrudController = (opts) => {
     __decorate([
         (0, rest_1.del)('/{id}', {
             responses: {
-                // '204': { description: `${entityOptions} was deleted` },
                 '200': {
                     description: `${entityOptions.name} was deleted`,
                     content: {
                         'application/json': {
-                            schema: (0, rest_1.getModelSchemaRef)(entityOptions, {
+                            schema: (_k = schemaOptions === null || schemaOptions === void 0 ? void 0 : schemaOptions.deleteById) !== null && _k !== void 0 ? _k : (0, rest_1.getModelSchemaRef)(entityOptions, {
                                 partial: true,
                                 title: `Deleted ${entityOptions.name} models`,
                             }),
