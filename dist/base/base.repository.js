@@ -194,9 +194,7 @@ class TzCrudRepository extends AbstractTzRepository {
     }
     softDelete(where, options) {
         return new Promise((resolve, reject) => {
-            var _a, _b;
-            const connectorType = (_a = options === null || options === void 0 ? void 0 : options.connectorType) !== null && _a !== void 0 ? _a : 'postgresql';
-            const softDeleteField = (_b = options === null || options === void 0 ? void 0 : options.softDeleteField) !== null && _b !== void 0 ? _b : 'isDeleted';
+            const { databaseSchema = 'public', connectorType = 'postgresql', softDeleteField = 'isDeleted', ignoreModified = false, authorId, } = options !== null && options !== void 0 ? options : {};
             const tableName = this.modelClass.definition.tableName(connectorType);
             const softDeleteColumnName = this.modelClass.definition.columnName(connectorType, softDeleteField);
             // Mix Timestamp
@@ -211,14 +209,15 @@ class TzCrudRepository extends AbstractTzRepository {
             this.find({ fields: { id: true }, where })
                 .then(rs => {
                 const sqlBuilder = helpers_1.QueryBuilderHelper.getPostgresQueryBuilder()
+                    .withSchema(databaseSchema)
                     .from(tableName)
                     .update({ [softDeleteColumnName]: true })
                     .whereIn('id', rs.map(el => el.id));
-                if (mixTimestampColumnName && !(options === null || options === void 0 ? void 0 : options.ignoreModified)) {
+                if (mixTimestampColumnName && !ignoreModified) {
                     sqlBuilder.update(mixTimestampColumnName, now);
                 }
-                if (mixUserAuditColumnName && (options === null || options === void 0 ? void 0 : options.authorId)) {
-                    sqlBuilder.update(mixUserAuditColumnName, options.authorId);
+                if (mixUserAuditColumnName && authorId) {
+                    sqlBuilder.update(mixUserAuditColumnName, authorId);
                 }
                 this.execute(sqlBuilder.toQuery(), null, options).then(resolve).catch(reject);
             })

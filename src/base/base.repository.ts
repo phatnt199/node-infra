@@ -239,6 +239,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
   softDelete(
     where: Where<E>,
     options?: Options & {
+      databaseSchema?: string;
       connectorType?: string;
       softDeleteField?: string;
       authorId?: IdType;
@@ -246,8 +247,13 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
     },
   ) {
     return new Promise((resolve, reject) => {
-      const connectorType = options?.connectorType ?? 'postgresql';
-      const softDeleteField = options?.softDeleteField ?? 'isDeleted';
+      const {
+        databaseSchema = 'public',
+        connectorType = 'postgresql',
+        softDeleteField = 'isDeleted',
+        ignoreModified = false,
+        authorId,
+      } = options ?? {};
 
       const tableName = this.modelClass.definition.tableName(connectorType);
       const softDeleteColumnName = this.modelClass.definition.columnName(connectorType, softDeleteField);
@@ -267,6 +273,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
       this.find({ fields: { id: true }, where })
         .then(rs => {
           const sqlBuilder = QueryBuilderHelper.getPostgresQueryBuilder()
+            .withSchema(databaseSchema)
             .from(tableName)
             .update({ [softDeleteColumnName]: true })
             .whereIn(
@@ -274,12 +281,12 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
               rs.map(el => el.id),
             );
 
-          if (mixTimestampColumnName && !options?.ignoreModified) {
+          if (mixTimestampColumnName && !ignoreModified) {
             sqlBuilder.update(mixTimestampColumnName, now);
           }
 
-          if (mixUserAuditColumnName && options?.authorId) {
-            sqlBuilder.update(mixUserAuditColumnName, options.authorId);
+          if (mixUserAuditColumnName && authorId) {
+            sqlBuilder.update(mixUserAuditColumnName, authorId);
           }
 
           this.execute(sqlBuilder.toQuery(), null, options).then(resolve).catch(reject);

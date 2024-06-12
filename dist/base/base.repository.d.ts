@@ -75,6 +75,7 @@ export declare abstract class TzCrudRepository<E extends BaseTzEntity> extends A
         ignoreModified?: boolean;
     }): Promise<void>;
     softDelete(where: Where<E>, options?: Options & {
+        databaseSchema?: string;
         connectorType?: string;
         softDeleteField?: string;
         authorId?: IdType;
