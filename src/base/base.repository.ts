@@ -248,7 +248,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
   ) {
     return new Promise((resolve, reject) => {
       const {
-        databaseSchema = 'public',
+        databaseSchema,
         connectorType = 'postgresql',
         softDeleteField = 'isDeleted',
         ignoreModified = false,
@@ -260,6 +260,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
 
       // Mix Timestamp
       const mixTimestampColumnName = this.modelClass.definition.columnName(connectorType, 'modifiedAt');
+      const schema = get(this.modelClass.definition.settings, `${connectorType}.schema`, 'public');
 
       // Mix User Audit
       const mixUserAuditColumnName = this.modelClass.definition.columnName(connectorType, 'modifiedBy');
@@ -273,7 +274,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
       this.find({ fields: { id: true }, where })
         .then(rs => {
           const sqlBuilder = QueryBuilderHelper.getPostgresQueryBuilder()
-            .withSchema(databaseSchema)
+            .withSchema(databaseSchema ?? schema ?? 'public')
             .from(tableName)
             .update({ [softDeleteColumnName]: true })
             .whereIn(

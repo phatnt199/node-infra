@@ -194,11 +194,12 @@ class TzCrudRepository extends AbstractTzRepository {
     }
     softDelete(where, options) {
         return new Promise((resolve, reject) => {
-            const { databaseSchema = 'public', connectorType = 'postgresql', softDeleteField = 'isDeleted', ignoreModified = false, authorId, } = options !== null && options !== void 0 ? options : {};
+            const { databaseSchema, connectorType = 'postgresql', softDeleteField = 'isDeleted', ignoreModified = false, authorId, } = options !== null && options !== void 0 ? options : {};
             const tableName = this.modelClass.definition.tableName(connectorType);
             const softDeleteColumnName = this.modelClass.definition.columnName(connectorType, softDeleteField);
             // Mix Timestamp
             const mixTimestampColumnName = this.modelClass.definition.columnName(connectorType, 'modifiedAt');
+            const schema = (0, get_1.default)(this.modelClass.definition.settings, `${connectorType}.schema`, 'public');
             // Mix User Audit
             const mixUserAuditColumnName = this.modelClass.definition.columnName(connectorType, 'modifiedBy');
             const isSoftDeleteFieldExist = (0, get_1.default)(this.modelClass.definition.rawProperties, softDeleteField);
@@ -208,8 +209,9 @@ class TzCrudRepository extends AbstractTzRepository {
             const now = new Date();
             this.find({ fields: { id: true }, where })
                 .then(rs => {
+                var _a;
                 const sqlBuilder = helpers_1.QueryBuilderHelper.getPostgresQueryBuilder()
-                    .withSchema(databaseSchema)
+                    .withSchema((_a = databaseSchema !== null && databaseSchema !== void 0 ? databaseSchema : schema) !== null && _a !== void 0 ? _a : 'public')
                     .from(tableName)
                     .update({ [softDeleteColumnName]: true })
                     .whereIn('id', rs.map(el => el.id));
