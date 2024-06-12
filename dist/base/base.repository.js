@@ -8,15 +8,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TextSearchTzCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.KVRepository = exports.AbstractKVRepository = exports.AbstractTzRepository = void 0;
+const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
 const repository_1 = require("@loopback/repository");
 const get_1 = __importDefault(require("lodash/get"));
-const helpers_1 = require("../helpers");
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractTzRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource, scope) {
@@ -27,6 +38,15 @@ class AbstractTzRepository extends repository_1.DefaultCrudRepository {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.dataSource.beginTransaction(options !== null && options !== void 0 ? options : {}));
         });
+    }
+    getObservers(opts) {
+        const { operation } = opts;
+        return (0, get_1.default)(this.modelClass, `_observers.${operation}`, []);
+    }
+    notifyObservers(opts) {
+        const { operation } = opts, rest = __rest(opts, ["operation"]);
+        const observers = this.getObservers({ operation });
+        observers.forEach(observer => observer(this.modelClass, rest));
     }
 }
 exports.AbstractTzRepository = AbstractTzRepository;
@@ -192,7 +212,7 @@ class TzCrudRepository extends AbstractTzRepository {
         enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options === null || options === void 0 ? void 0 : options.authorId });
         return super.replaceById(id, enriched, options);
     }
-    softDelete(where, options) {
+    _softDelete(where, options) {
         return new Promise((resolve, reject) => {
             const { databaseSchema, connectorType = 'postgresql', softDeleteField = 'isDeleted', ignoreModified = false, authorId, } = options !== null && options !== void 0 ? options : {};
             const tableName = this.modelClass.definition.tableName(connectorType);
@@ -224,6 +244,19 @@ class TzCrudRepository extends AbstractTzRepository {
                 this.execute(sqlBuilder.toQuery(), null, options).then(resolve).catch(reject);
             })
                 .catch(reject);
+        });
+    }
+    softDelete(where, options) {
+        return new Promise((resolve, reject) => {
+            this._softDelete(where, options)
+                .then(rs => {
+                resolve(rs);
+                this.notifyObservers({ operation: 'after softDelete', where, options, data: rs });
+            })
+                .catch(error => {
+                reject(error);
+                this.notifyObservers({ operation: 'after softDelete error', where, options, data: null });
+            });
         });
     }
     mixTimestamp(entity, options = {

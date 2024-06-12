@@ -1,4 +1,5 @@
 import { EntityClassType, EntityRelation, IdType, ITzRepository } from '@/common/types';
+import { ApplicationLogger, LoggerFactory, QueryBuilderHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import {
   AnyObject,
@@ -15,7 +16,6 @@ import {
 } from '@loopback/repository';
 import get from 'lodash/get';
 import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
-import { ApplicationLogger, LoggerFactory, QueryBuilderHelper } from '@/helpers';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation>
@@ -31,6 +31,17 @@ export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends Ent
 
   async beginTransaction(options?: IsolationLevel | Options): Promise<Transaction> {
     return (await this.dataSource.beginTransaction(options ?? {})) as Transaction;
+  }
+
+  protected getObservers(opts: { operation: string }): Array<Function> {
+    const { operation } = opts;
+    return get(this.modelClass, `_observers.${operation}`, []);
+  }
+
+  protected notifyObservers(opts: { operation: string; [extra: symbol | string]: unknown | string }) {
+    const { operation, ...rest } = opts;
+    const observers = this.getObservers({ operation });
+    observers.forEach(observer => observer(this.modelClass, rest));
   }
 
   abstract mixTimestamp(
@@ -236,7 +247,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
     return super.replaceById(id, enriched, options);
   }
 
-  softDelete(
+  private _softDelete(
     where: Where<E>,
     options?: Options & {
       databaseSchema?: string;
@@ -293,6 +304,29 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
           this.execute(sqlBuilder.toQuery(), null, options).then(resolve).catch(reject);
         })
         .catch(reject);
+    });
+  }
+
+  softDelete(
+    where: Where<E>,
+    options?: Options & {
+      databaseSchema?: string;
+      connectorType?: string;
+      softDeleteField?: string;
+      authorId?: IdType;
+      ignoreModified?: boolean;
+    },
+  ) {
+    return new Promise((resolve, reject) => {
+      this._softDelete(where, options)
+        .then(rs => {
+          resolve(rs);
+          this.notifyObservers({ operation: 'after softDelete', where, options, data: rs });
+        })
+        .catch(error => {
+          reject(error);
+          this.notifyObservers({ operation: 'after softDelete error', where, options, data: null });
+        });
     });
   }
 

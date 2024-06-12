@@ -1,11 +1,18 @@
 import { EntityClassType, EntityRelation, IdType, ITzRepository } from '../common/types';
+import { ApplicationLogger } from '../helpers';
 import { AnyObject, Count, DataObject, DefaultCrudRepository, DefaultKeyValueRepository, IsolationLevel, juggler, Options, Transaction, TransactionalEntityRepository, Where } from '@loopback/repository';
 import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity } from './base.model';
-import { ApplicationLogger } from '../helpers';
 export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation> extends DefaultCrudRepository<E, IdType, R> implements ITzRepository<E>, TransactionalEntityRepository<E, IdType, R> {
     protected logger: ApplicationLogger;
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource, scope?: string);
     beginTransaction(options?: IsolationLevel | Options): Promise<Transaction>;
+    protected getObservers(opts: {
+        operation: string;
+    }): Array<Function>;
+    protected notifyObservers(opts: {
+        operation: string;
+        [extra: symbol | string]: unknown | string;
+    }): void;
     abstract mixTimestamp(entity: DataObject<E>, options?: {
         newInstance: boolean;
         ignoreModified?: boolean;
@@ -74,6 +81,7 @@ export declare abstract class TzCrudRepository<E extends BaseTzEntity> extends A
         authorId?: IdType;
         ignoreModified?: boolean;
     }): Promise<void>;
+    private _softDelete;
     softDelete(where: Where<E>, options?: Options & {
         databaseSchema?: string;
         connectorType?: string;
