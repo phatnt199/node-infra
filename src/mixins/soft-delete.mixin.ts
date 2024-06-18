@@ -5,6 +5,7 @@ export const SoftDeleteModelMixin = <E extends MixinTarget<Entity>>(superClass: 
   class Mixed extends superClass {
     @property({
       type: 'boolean',
+      default: false,
       postgresql: {
         columnName: 'is_deleted',
         dataType: 'boolean',
