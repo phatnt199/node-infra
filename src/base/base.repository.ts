@@ -1,4 +1,4 @@
-import { EntityClassType, EntityRelation, IdType, ITzRepository } from '@/common/types';
+import { AnyType, EntityClassType, EntityRelation, IdType, ITzRepository } from '@/common/types';
 import { ApplicationLogger, LoggerFactory, QueryBuilderHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import {
@@ -155,7 +155,7 @@ export abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRe
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export abstract class TzCrudRepository<
   E extends BaseTzEntity,
-  R extends EntityRelation = {},
+  R extends EntityRelation = AnyType,
 > extends AbstractTzRepository<E, R> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource, scope?: string) {
     super(entityClass, dataSource, scope);
@@ -371,7 +371,7 @@ export abstract class TzCrudRepository<
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export abstract class TextSearchTzCrudRepository<
   E extends BaseTextSearchTzEntity,
-  R extends EntityRelation = {},
+  R extends EntityRelation = AnyType,
 > extends TzCrudRepository<E, R> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
