@@ -208,7 +208,7 @@ export abstract class TzCrudRepository<
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<E> {
     await this.updateById(id, data, options);
-    const rs = await super.findById(id);
+    const rs = await super.findById(id, undefined, options);
     return rs;
   }
 
