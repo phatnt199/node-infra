@@ -17,6 +17,7 @@ const SoftDeleteModelMixin = (superClass) => {
     __decorate([
         (0, repository_1.property)({
             type: 'boolean',
+            default: false,
             postgresql: {
                 columnName: 'is_deleted',
                 dataType: 'boolean',

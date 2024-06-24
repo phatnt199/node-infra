@@ -184,7 +184,7 @@ class TzCrudRepository extends AbstractTzRepository {
         });
         return __awaiter(this, void 0, void 0, function* () {
             yield this.updateById(id, data, options);
-            const rs = yield _super.findById.call(this, id);
+            const rs = yield _super.findById.call(this, id, undefined, options);
             return rs;
         });
     }

@@ -1,4 +1,4 @@
-import { EntityClassType, EntityRelation, IdType, ITzRepository } from '@/common/types';
+import { AnyType, EntityClassType, EntityRelation, IdType, ITzRepository } from '@/common/types';
 import { ApplicationLogger, LoggerFactory, QueryBuilderHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import {
@@ -153,7 +153,10 @@ export abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRe
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractTzRepository<E, any> {
+export abstract class TzCrudRepository<
+  E extends BaseTzEntity,
+  R extends EntityRelation = AnyType,
+> extends AbstractTzRepository<E, R> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource, scope?: string) {
     super(entityClass, dataSource, scope);
   }
@@ -205,7 +208,7 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<E> {
     await this.updateById(id, data, options);
-    const rs = await super.findById(id);
+    const rs = await super.findById(id, undefined, options);
     return rs;
   }
 
@@ -366,7 +369,10 @@ export abstract class TzCrudRepository<E extends BaseTzEntity> extends AbstractT
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class TextSearchTzCrudRepository<E extends BaseTextSearchTzEntity> extends TzCrudRepository<E> {
+export abstract class TextSearchTzCrudRepository<
+  E extends BaseTextSearchTzEntity,
+  R extends EntityRelation = AnyType,
+> extends TzCrudRepository<E, R> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }
