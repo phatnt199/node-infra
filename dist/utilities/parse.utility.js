@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNumberValue = exports.toStringDecimal = exports.float = exports.int = exports.isFloat = exports.isInt = exports.keysToCamel = exports.toCamel = exports.getUID = exports.parseMultipartBody = void 0;
+exports.getSchemaObject = exports.getNumberValue = exports.toStringDecimal = exports.float = exports.int = exports.isFloat = exports.isInt = exports.keysToCamel = exports.toCamel = exports.getUID = exports.parseMultipartBody = void 0;
 const get_1 = __importDefault(require("lodash/get"));
 const round_1 = __importDefault(require("lodash/round"));
 const multer_1 = __importDefault(require("multer"));
+const rest_1 = require("@loopback/rest");
 // -------------------------------------------------------------------------
 const INTL_0_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 0,
@@ -165,4 +166,10 @@ const getNumberValue = (input, method = 'int') => {
     }
 };
 exports.getNumberValue = getNumberValue;
+// -------------------------------------------------------------------------
+const getSchemaObject = (opts) => {
+    const name = opts.contructor.name;
+    return (0, rest_1.getModelSchemaRef)(opts.contructor).definitions[name];
+};
+exports.getSchemaObject = getSchemaObject;
 //# sourceMappingURL=parse.utility.js.map

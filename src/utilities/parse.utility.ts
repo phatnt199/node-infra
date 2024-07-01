@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 import round from 'lodash/round';
 import multer from 'multer';
-import { Request, Response } from '@loopback/rest';
+import { Request, Response, getModelSchemaRef } from '@loopback/rest';
 
 // -------------------------------------------------------------------------
 const INTL_0_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
@@ -176,4 +176,10 @@ export const getNumberValue = (input: string, method: 'int' | 'float' = 'int') =
       return float(raw);
     }
   }
+};
+
+// -------------------------------------------------------------------------
+export const getSchemaObject = <T extends object>(opts: { contructor: Function & { prototype: T } }) => {
+  const name = opts.contructor.name;
+  return getModelSchemaRef(opts.contructor).definitions[name];
 };
