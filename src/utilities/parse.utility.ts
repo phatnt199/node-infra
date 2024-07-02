@@ -179,7 +179,7 @@ export const getNumberValue = (input: string, method: 'int' | 'float' = 'int') =
 };
 
 // -------------------------------------------------------------------------
-export const getSchemaObject = <T extends object>(opts: { contructor: Function & { prototype: T } }) => {
-  const name = opts.contructor.name;
-  return getModelSchemaRef(opts.contructor).definitions[name];
+export const getSchemaObject = <T extends object>(ctor: Function & { prototype: T }) => {
+  const name = ctor.name;
+  return getModelSchemaRef(ctor).definitions[name];
 };

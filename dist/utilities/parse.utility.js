@@ -167,9 +167,9 @@ const getNumberValue = (input, method = 'int') => {
 };
 exports.getNumberValue = getNumberValue;
 // -------------------------------------------------------------------------
-const getSchemaObject = (opts) => {
-    const name = opts.contructor.name;
-    return (0, rest_1.getModelSchemaRef)(opts.contructor).definitions[name];
+const getSchemaObject = (ctor) => {
+    const name = ctor.name;
+    return (0, rest_1.getModelSchemaRef)(ctor).definitions[name];
 };
 exports.getSchemaObject = getSchemaObject;
 //# sourceMappingURL=parse.utility.js.map
