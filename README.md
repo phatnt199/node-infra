@@ -1,3 +1,7 @@
+## HUGE THANKS TO [@StrongLoop](https://x.com/strongloop) team
+
+<img src="https://raw.githubusercontent.com/loopbackio/loopback.io/gh-pages/images/branding/logo/blue/loopback-sm.png" alt="LoopBack4 logo" width="400"/>
+
 ## Loopback 4 Infrastructure
 
 Require to pre-setup ENV:
@@ -453,16 +457,16 @@ migratePermissions();
 
 Note:
 The script migrate permission have to point to the file you create to generate permission
-> "migrate-permission": "npm run build && node --trace-warnings -r dotenv-flow/config ./dist/your-migrate-permission-file",
 
+> "migrate-permission": "npm run build && node --trace-warnings -r dotenv-flow/config ./dist/your-migrate-permission-file",
 
 When you create new APIs that we will run the script and repeat this process when you create new APIs:
 Eg:
 The script: `yarn generatePermission:local` -> migrate for local database
 
 ### Customize generatePermissions:
-You can also extends to custom your logic about generate permissions 
 
+You can also extends to custom your logic about generate permissions
 
 ```mermaid
 classDiagram
@@ -477,10 +481,12 @@ classDiagram
         +startMigration(opts)
     }
 ```
-Description: 
+
+Description:
+
 1. getMethodsClass: get all methods in a class.
 2. generateParentPermissions: generate permission for parent permissions.
-3. generatePermissionBaseInherit: generate permission for base on controller extends parent class to get suitable methods that avoid redundant generate. 
+3. generatePermissionBaseInherit: generate permission for base on controller extends parent class to get suitable methods that avoid redundant generate.
 4. generatePermissionRecords: generate permission for permissions records which finally insert to table `Permission` return `IPermission[]`.
 5. updatePermissionByChangeMethodName: update the permission base on `@permission` .
 6. startMigration: start migration process which run all methods above.
@@ -492,7 +498,6 @@ Eg:
 
 // import things ......
 class CustomGeneratePermission extends GeneratePermissionService {
-
   generatePermissionBaseInherit = (opts: {
     methodsParentsMethods: string[];
     methodsChildClass: string[];
@@ -572,8 +577,6 @@ const migratePermissions = async () => {
 
 migratePermissions();
 ```
-
-
 
 #### Permission decorator
 
