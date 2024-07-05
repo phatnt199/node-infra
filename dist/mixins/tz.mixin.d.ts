@@ -7,6 +7,6 @@ export declare const TzMixin: <E extends MixinTarget<Entity>>(superClass: E) => 
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
     };
 } & E;

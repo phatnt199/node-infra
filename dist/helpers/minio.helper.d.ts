@@ -1,5 +1,6 @@
-/// <reference types="node" />
 import { Client, ClientOptions } from 'minio';
+import { GetObjectOpts } from 'minio/dist/main/internal/type';
+import { Readable } from 'stream';
 export interface IUploadFile {
     originalname: string;
     mimetype: string;
@@ -35,8 +36,8 @@ export declare class MinioHelper {
     getFile(opts: {
         bucket: string;
         name: string;
-        onStreamData: (error: Error | null, result: any) => void;
-    }): void;
+        options?: GetObjectOpts;
+    }): Promise<Readable>;
     getStat(opts: {
         bucket: string;
         name: string;

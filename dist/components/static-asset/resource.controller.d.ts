@@ -1,4 +1,3 @@
-/// <reference types="express" />
 import { Request, Response } from '@loopback/rest';
 import { BaseApplication } from '../../base';
 import { IController } from '../../common';

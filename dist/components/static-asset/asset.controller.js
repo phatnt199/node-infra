@@ -69,21 +69,23 @@ let StaticAssetController = StaticAssetController_1 = class StaticAssetControlle
             minioInstance.getStat({ bucket: bucketName, name: objectName }).then(fileStat => {
                 const { size, metaData } = fileStat;
                 this.response.set(Object.assign(Object.assign({}, metaData), { 'Content-Length': size, 'Content-Disposition': `attachment; filename=${objectName}` }));
-                minioInstance.getFile({
+                minioInstance
+                    .getFile({
                     bucket: bucketName,
                     name: objectName,
-                    onStreamData: (error, stream) => {
-                        if (error) {
-                            throw (0, utilities_1.getError)({
-                                message: `[downloadObject] Cannot download ${objectName}! Error while streaming data to client!`,
-                                statusCode: 500,
-                            });
-                        }
-                        stream.pipe(this.response);
-                        stream.on('end', () => {
-                            this.response.end();
-                        });
-                    },
+                })
+                    .then(stream => {
+                    stream.pipe(this.response);
+                    stream.on('end', () => {
+                        this.response.end();
+                    });
+                })
+                    .catch(error => {
+                    this.logger.error('[downloadObject] Error: %s', error);
+                    throw (0, utilities_1.getError)({
+                        message: `[downloadObject] Cannot download ${objectName}! Error while streaming data to client!`,
+                        statusCode: 500,
+                    });
                 });
             });
         });
@@ -94,18 +96,20 @@ let StaticAssetController = StaticAssetController_1 = class StaticAssetControlle
             minioInstance.getStat({ bucket: bucketName, name: objectName }).then(fileStat => {
                 const { size, metaData } = fileStat;
                 this.response.writeHead(206, Object.assign(Object.assign({}, metaData), { 'Content-Length': size }));
-                minioInstance.getFile({
+                minioInstance
+                    .getFile({
                     bucket: bucketName,
                     name: objectName,
-                    onStreamData: (error, stream) => {
-                        if (error) {
-                            throw (0, utilities_1.getError)({
-                                message: `[getStaticObject] Cannot stream ${objectName}! Error while streaming data to client!`,
-                                statusCode: 500,
-                            });
-                        }
-                        stream.pipe(this.response);
-                    },
+                })
+                    .then(stream => {
+                    stream.pipe(this.response);
+                })
+                    .catch(error => {
+                    this.logger.error('[getStaticObject] Error: %s', error);
+                    throw (0, utilities_1.getError)({
+                        message: `[getStaticObject] Cannot stream ${objectName}! Error while streaming data to client!`,
+                        statusCode: 500,
+                    });
                 });
             });
         });

@@ -2,7 +2,10 @@ import { MimeTypes } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
+
 import { Client, ClientOptions } from 'minio';
+import { GetObjectOpts } from 'minio/dist/main/internal/type';
+import { Readable } from 'stream';
 
 // ---------------------------------------------------------------------
 export interface IUploadFile {
@@ -147,9 +150,9 @@ export class MinioHelper {
   }
 
   // ---------------------------------------------------------------------
-  getFile(opts: { bucket: string; name: string; onStreamData: (error: Error | null, result: any) => void }) {
-    const { bucket, name, onStreamData } = opts;
-    this.client.getObject(bucket, name, onStreamData);
+  getFile(opts: { bucket: string; name: string; options?: GetObjectOpts }): Promise<Readable> {
+    const { bucket, name, options } = opts;
+    return this.client.getObject(bucket, name, options);
   }
 
   // ---------------------------------------------------------------------

@@ -1,4 +1,3 @@
-/// <reference types="express" />
 import { BaseApplication } from '../../base';
 import { IController } from '../../common';
 import { ApplicationLogger } from '../../helpers';

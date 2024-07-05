@@ -8,6 +8,6 @@ export declare const UserAuditMixin: <E extends MixinTarget<Entity>>(superClass:
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
     };
 } & E;
