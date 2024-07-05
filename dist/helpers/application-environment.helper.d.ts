@@ -1,4 +1,4 @@
-import { IApplicationEnvironment } from '@/common';
+import { IApplicationEnvironment } from '../common';
 export declare class ApplicationEnvironment implements IApplicationEnvironment {
     private arguments;
     constructor(props: Record<string, any>);

@@ -28,8 +28,8 @@ exports.defineRelationCrudController = exports.defineAssociateController = expor
 const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
 const get_1 = __importDefault(require("lodash/get"));
-const utilities_1 = require("@/utilities");
-const common_1 = require("@/common");
+const utilities_1 = require("../../utilities");
+const common_1 = require("../../common");
 const common_2 = require("./common");
 // --------------------------------------------------------------------------------------------------------------
 const defineRelationViewController = (opts) => {

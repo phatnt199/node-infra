@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ViewAuthorizePolicy = void 0;
-const base_model_1 = require("@/base/base.model");
+const base_model_1 = require("../../base/base.model");
 const repository_1 = require("@loopback/repository");
 // ---------------------------------------------------------------
 let ViewAuthorizePolicy = class ViewAuthorizePolicy extends base_model_1.BaseEntity {

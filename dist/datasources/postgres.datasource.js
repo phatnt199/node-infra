@@ -17,8 +17,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var PostgresDataSource_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostgresDataSource = void 0;
-const base_datasource_1 = require("@/base/base.datasource");
-const utilities_1 = require("@/utilities");
+const base_datasource_1 = require("../base/base.datasource");
+const utilities_1 = require("../utilities");
 const core_1 = require("@loopback/core");
 const get_1 = __importDefault(require("lodash/get"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));

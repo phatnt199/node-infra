@@ -21,13 +21,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var AuthorizateInterceptor_1;
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizateInterceptor = void 0;
 const core_1 = require("@loopback/core");
 const security_1 = require("@loopback/security");
 const authorization_1 = require("@loopback/authorization");
-const helpers_1 = require("@/helpers");
+const helpers_1 = require("../../helpers");
 let AuthorizateInterceptor = AuthorizateInterceptor_1 = class AuthorizateInterceptor {
     constructor(options = {}) {
         this.options = Object.assign({ defaultDecision: authorization_1.AuthorizationDecision.DENY, precedence: authorization_1.AuthorizationDecision.DENY, defaultStatusCodeForDeny: 403 }, options);
@@ -101,7 +100,7 @@ exports.AuthorizateInterceptor = AuthorizateInterceptor;
 exports.AuthorizateInterceptor = AuthorizateInterceptor = AuthorizateInterceptor_1 = __decorate([
     (0, core_1.injectable)((0, core_1.asGlobalInterceptor)('authorization')),
     __param(0, (0, core_1.config)({ fromBinding: authorization_1.AuthorizationBindings.COMPONENT })),
-    __metadata("design:paramtypes", [typeof (_a = typeof authorization_1.AuthorizationOptions !== "undefined" && authorization_1.AuthorizationOptions) === "function" ? _a : Object])
+    __metadata("design:paramtypes", [Object])
 ], AuthorizateInterceptor);
 function loadAuthorizers(ctx) {
     return __awaiter(this, void 0, void 0, function* () {

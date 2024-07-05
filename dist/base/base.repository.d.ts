@@ -1,5 +1,5 @@
-import { AnyType, EntityClassType, EntityRelation, IdType, ITzRepository } from '@/common/types';
-import { ApplicationLogger } from '@/helpers';
+import { AnyType, EntityClassType, EntityRelation, IdType, ITzRepository } from '../common/types';
+import { ApplicationLogger } from '../helpers';
 import { AnyObject, Count, DataObject, DefaultCrudRepository, DefaultKeyValueRepository, IsolationLevel, juggler, Options, Transaction, TransactionalEntityRepository, Where } from '@loopback/repository';
 import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity } from './base.model';
 export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation = AnyType> extends DefaultCrudRepository<E, IdType, R> implements ITzRepository<E>, TransactionalEntityRepository<E, IdType, R> {

@@ -5,4 +5,4 @@ export interface IPermissionDecorator {
     idx: number;
 }
 export declare function permission(spec: IPermissionDecorator): MethodDecorator;
-export declare const getDecoratorData: (controllerPrototype: object, keyTargetDecorator: string) => any;
+export declare const getDecoratorData: (controllerPrototype: object, keyTargetDecorator: string) => import("@loopback/metadata").MetadataMap<any> | undefined;

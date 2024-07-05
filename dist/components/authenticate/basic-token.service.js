@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BasicTokenService = void 0;
-const base_service_1 = require("@/base/base.service");
+const base_service_1 = require("../../base/base.service");
 const rest_1 = require("@loopback/rest");
 // import { securityId } from '@loopback/security';
 class BasicTokenService extends base_service_1.BaseService {

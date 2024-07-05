@@ -9,9 +9,9 @@ const redis_adapter_1 = require("@socket.io/redis-adapter");
 const redis_emitter_1 = require("@socket.io/redis-emitter");
 const rxjs_1 = require("rxjs");
 const operators_1 = require("rxjs/operators");
-const helpers_1 = require("@/helpers");
-const utilities_1 = require("@/utilities");
-const common_1 = require("@/common");
+const helpers_1 = require("../helpers");
+const utilities_1 = require("../utilities");
+const common_1 = require("../common");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const CLIENT_AUTHENTICATE_TIMEOUT = 10 * 1000;
 // -------------------------------------------------------------------------------------------------------------

@@ -10,9 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defineUserRole = exports.definePermissionMapping = exports.definePermission = exports.defineRole = exports.defineUser = void 0;
-const base_model_1 = require("@/base/base.model");
-const common_1 = require("@/common");
-const mixins_1 = require("@/mixins");
+const base_model_1 = require("../../base/base.model");
+const common_1 = require("../../common");
+const mixins_1 = require("../../mixins");
 const repository_1 = require("@loopback/repository");
 // -----------------------------------------------------------------------
 const defineUser = () => {

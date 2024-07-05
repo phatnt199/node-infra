@@ -1,7 +1,8 @@
+/// <reference types="express" />
 import { Request, Response } from '@loopback/rest';
-import { BaseApplication } from '@/base';
-import { IController } from '@/common';
-import { ApplicationLogger } from '@/helpers';
+import { BaseApplication } from '../../base';
+import { IController } from '../../common';
+import { ApplicationLogger } from '../../helpers';
 export declare class StaticResourceController implements IController {
     protected application: BaseApplication;
     private request;

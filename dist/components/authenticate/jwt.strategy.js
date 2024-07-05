@@ -22,7 +22,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JWTAuthenticationStrategy = void 0;
-const common_1 = require("@/common");
+const common_1 = require("../../common");
 const core_1 = require("@loopback/core");
 const jwt_token_service_1 = require("./jwt-token.service");
 let JWTAuthenticationStrategy = class JWTAuthenticationStrategy {

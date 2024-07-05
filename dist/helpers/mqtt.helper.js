@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MQTTClientHelper = void 0;
-const utilities_1 = require("@/utilities");
+const utilities_1 = require("../utilities");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const mqtt_1 = __importDefault(require("mqtt"));
 const logger_helper_1 = require("./logger.helper");

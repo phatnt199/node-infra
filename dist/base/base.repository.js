@@ -24,8 +24,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TextSearchTzCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.KVRepository = exports.AbstractKVRepository = exports.AbstractTzRepository = void 0;
-const helpers_1 = require("@/helpers");
-const utilities_1 = require("@/utilities");
+const helpers_1 = require("../helpers");
+const utilities_1 = require("../utilities");
 const repository_1 = require("@loopback/repository");
 const get_1 = __importDefault(require("lodash/get"));
 // ----------------------------------------------------------------------------------------------------------------------------------------

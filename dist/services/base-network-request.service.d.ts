@@ -1,4 +1,4 @@
-import { NetworkHelper } from '@/helpers/network.helper';
+import { NetworkHelper } from '../helpers/network.helper';
 import { AxiosRequestConfig } from 'axios';
 export declare abstract class BaseNetworkRequest {
     protected baseUrl: string;

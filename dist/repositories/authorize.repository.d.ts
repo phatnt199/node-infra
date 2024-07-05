@@ -1,8 +1,8 @@
-import { BaseDataSource } from '@/base/base.datasource';
-import { BaseTzEntity } from '@/base/base.model';
-import { TzCrudRepository, ViewRepository } from '@/base/base.repository';
-import { EntityClassType, IdType } from '@/common';
-import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from '@/models';
+import { BaseDataSource } from '../base/base.datasource';
+import { BaseTzEntity } from '../base/base.model';
+import { TzCrudRepository, ViewRepository } from '../base/base.repository';
+import { EntityClassType, IdType } from '../common';
+import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from '../models';
 import { Getter } from '@loopback/core';
 import { HasManyThroughRepositoryFactory } from '@loopback/repository';
 export declare abstract class AbstractAuthorizeRepository<T extends BaseTzEntity> extends TzCrudRepository<T> {

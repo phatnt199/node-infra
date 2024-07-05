@@ -11,8 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Migration = void 0;
 const repository_1 = require("@loopback/repository");
-const common_1 = require("@/common");
-const base_model_1 = require("@/base/base.model");
+const common_1 = require("../common");
+const base_model_1 = require("../base/base.model");
 let Migration = class Migration extends base_model_1.BaseTzEntity {
     constructor(data) {
         super(data);

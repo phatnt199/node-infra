@@ -1,4 +1,4 @@
-import { BaseIdEntity, BaseTzEntity } from '@/base';
+import { BaseIdEntity, BaseTzEntity } from '../base';
 import { Count, DataObject, Entity, Filter, Options, Where } from '@loopback/repository';
 import { UserProfile } from '@loopback/security';
 export interface IApplication {

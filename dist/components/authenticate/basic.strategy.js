@@ -22,7 +22,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BasicAuthenticationStrategy = void 0;
-const common_1 = require("@/common");
+const common_1 = require("../../common");
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
 const basic_token_service_1 = require("./basic-token.service");

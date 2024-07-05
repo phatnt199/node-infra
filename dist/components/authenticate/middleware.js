@@ -21,11 +21,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var AuthenticationMiddleware_1;
-var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthenticationMiddleware = void 0;
-const base_1 = require("@/base");
-const common_1 = require("@/common");
+const base_1 = require("../../base");
+const common_1 = require("../../common");
 const authentication_1 = require("@loopback/authentication");
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
@@ -85,6 +84,6 @@ exports.AuthenticationMiddleware = AuthenticationMiddleware = AuthenticationMidd
     })),
     __param(0, (0, core_1.inject)(authentication_1.AuthenticationBindings.AUTH_ACTION)),
     __param(1, core_1.inject.getter(common_1.RouteKeys.ALWAYS_ALLOW_PATHS)),
-    __metadata("design:paramtypes", [typeof (_a = typeof authentication_1.AuthenticateFn !== "undefined" && authentication_1.AuthenticateFn) === "function" ? _a : Object, typeof (_b = typeof core_1.Getter !== "undefined" && core_1.Getter) === "function" ? _b : Object])
+    __metadata("design:paramtypes", [Function, Function])
 ], AuthenticationMiddleware);
 //# sourceMappingURL=middleware.js.map

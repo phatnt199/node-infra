@@ -1,6 +1,7 @@
+import { ControllerClass } from '@loopback/core';
 import { SchemaObject } from '@loopback/rest';
 import { BaseTzEntity } from './..';
-import { NullableType, TRelationType } from '@/common/types';
+import { NullableType, TRelationType } from '../../common/types';
 import { Class } from '@loopback/service-proxy';
 import { BaseController } from './common';
 export interface RelationCrudControllerOptions {

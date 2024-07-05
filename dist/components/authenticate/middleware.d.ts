@@ -1,4 +1,5 @@
-import { BaseProvider } from '@/base';
+/// <reference types="express" />
+import { BaseProvider } from '../../base';
 import { AuthenticateFn } from '@loopback/authentication';
 import { Getter, Provider, ValueOrPromise } from '@loopback/core';
 import { Middleware, Request } from '@loopback/rest';

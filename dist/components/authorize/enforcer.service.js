@@ -26,10 +26,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var EnforcerService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnforcerService = void 0;
-const base_1 = require("@/base");
-const common_1 = require("@/common");
-const helpers_1 = require("@/helpers");
-const utilities_1 = require("@/utilities");
+const base_1 = require("../../base");
+const common_1 = require("../../common");
+const helpers_1 = require("../../helpers");
+const utilities_1 = require("../../utilities");
 const core_1 = require("@loopback/core");
 const casbin_1 = require("casbin");
 const fs_1 = __importDefault(require("fs"));
