@@ -135,6 +135,9 @@ let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInte
     intercept(context, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield next();
+            if (this.response.writableEnded) {
+                return result;
+            }
             this.response.set('Access-Control-Expose-Headers', 'Content-Length, Content-Type, Content-Range');
             if (!(context === null || context === void 0 ? void 0 : context.methodName)) {
                 return result;

@@ -18,7 +18,7 @@ import get from 'lodash/get';
 import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation>
+export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation = AnyType>
   extends DefaultCrudRepository<E, IdType, R>
   implements ITzRepository<E>, TransactionalEntityRepository<E, IdType, R>
 {
@@ -71,7 +71,10 @@ export abstract class KVRepository<E extends BaseKVEntity> extends AbstractKVRep
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRepository<E, IdType, any> {
+export abstract class ViewRepository<
+  E extends BaseEntity,
+  R extends EntityRelation = AnyType,
+> extends DefaultCrudRepository<E, IdType, R> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }
