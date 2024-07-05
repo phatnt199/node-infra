@@ -1,6 +1,6 @@
 {
   "name": "@lb/infra",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Loopback 4 Infrastructure",
   "keywords": [
     "loopback",
@@ -13,8 +13,6 @@
     "node": "18 || 20"
   },
   "scripts": {
-    "build": "lb-tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
-    "build:watch": "lb-tsc --watch",
     "lint": "yarn eslint && yarn prettier:check",
     "lint:fix": "yarn eslint --fix && yarn prettier:fix",
     "prettier:cli": "lb-prettier \"**/*.ts\" \"**/*.js\"",
@@ -22,9 +20,10 @@
     "prettier:fix": "yarn prettier:cli --write",
     "eslint": "lb-eslint --report-unused-disable-directives .",
     "clean": "sh ./scripts/clean.sh",
-    "rebuild:major": "sh ./scripts/rebuild.sh major",
-    "rebuild:minor": "sh ./scripts/rebuild.sh minor",
-    "rebuild:patch": "sh ./scripts/rebuild.sh patch"
+    "rebuild:major": "sh ./scripts/rebuild.sh --major",
+    "rebuild:minor": "sh ./scripts/rebuild.sh --minor",
+    "rebuild:patch": "sh ./scripts/rebuild.sh --patch",
+    "rebuild:no-version": "sh ./scripts/rebuild.sh --no-version"
   },
   "repository": {
     "type": "git",
