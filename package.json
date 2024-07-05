@@ -1,6 +1,6 @@
 {
   "name": "@tanphat199/lb-infra",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Loopback 4 Infrastructure",
   "keywords": [
     "loopback",
@@ -43,7 +43,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@loopback/authentication": "11.0.1",
+    "@loopback/authentication": "^11.0.3",
     "@loopback/authentication-jwt": "0.15.1",
     "@loopback/authentication-passport": "7.0.1",
     "@loopback/authorization": "0.15.1",
@@ -97,6 +97,13 @@
     "tsc-alias": "^1.8.7",
     "tsconfig-paths": "^4.2.0",
     "typescript": "5.4.4"
+  },
+  "peerDependencies": {
+    "@loopback/authentication": "^11.0.3",
+    "@loopback/authorization": "0.15.1",
+    "@loopback/core": "6.0.1",
+    "@loopback/repository": "7.0.1",
+    "@loopback/rest": "14.0.1"
   },
   "bugs": {
     "url": "https://github.com/phatnt199/lb-infra/issues"
