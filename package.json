@@ -22,10 +22,10 @@
     "prettier:fix": "yarn prettier:cli --write",
     "eslint": "lb-eslint --report-unused-disable-directives .",
     "clean": "sh ./scripts/clean.sh",
+    "rebuild": "sh ./scripts/rebuild.sh --no-version",
     "rebuild:major": "sh ./scripts/rebuild.sh --major",
     "rebuild:minor": "sh ./scripts/rebuild.sh --minor",
-    "rebuild:patch": "sh ./scripts/rebuild.sh --patch",
-    "rebuild:no-version": "sh ./scripts/rebuild.sh --no-version"
+    "rebuild:patch": "sh ./scripts/rebuild.sh --patch"
   },
   "repository": {
     "type": "git",
