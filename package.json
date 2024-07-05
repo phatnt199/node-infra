@@ -1,6 +1,6 @@
 {
   "name": "@lb/infra",
-  "version": "0.0.4",
+  "version": "0.0.8",
   "description": "Loopback 4 Infrastructure",
   "keywords": [
     "loopback",
@@ -21,8 +21,11 @@
     "prettier:check": "yarn prettier:cli",
     "prettier:fix": "yarn prettier:cli --write",
     "eslint": "lb-eslint --report-unused-disable-directives .",
-    "clean": "sh clean.sh",
-    "rebuild": "yarn clean && yarn build"
+    "clean": "sh ./scripts/clean.sh",
+    "rebuild": "sh ./scripts/rebuild.sh --no-version",
+    "rebuild:major": "sh ./scripts/rebuild.sh --major",
+    "rebuild:minor": "sh ./scripts/rebuild.sh --minor",
+    "rebuild:patch": "sh ./scripts/rebuild.sh --patch"
   },
   "repository": {
     "type": "git",
