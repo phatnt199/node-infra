@@ -1,4 +1,4 @@
-import { BaseDataSource } from '../base/base.datasource';
+import { BaseDataSource } from '@/base/base.datasource';
 export declare class PostgresDataSource extends BaseDataSource {
     static dataSourceName: string | undefined;
     static readonly defaultConfig: {

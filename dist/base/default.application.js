@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DefaultRestApplication = void 0;
-const common_1 = require("../common");
-const components_1 = require("../components");
-const datasources_1 = require("../datasources");
-const helpers_1 = require("../helpers");
-const content_range_interceptor_1 = require("../interceptors/content-range.interceptor");
+const common_1 = require("@/common");
+const components_1 = require("@/components");
+const datasources_1 = require("@/datasources");
+const helpers_1 = require("@/helpers");
+const content_range_interceptor_1 = require("@/interceptors/content-range.interceptor");
 const rest_1 = require("@loopback/rest");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const base_application_1 = require("./base.application");

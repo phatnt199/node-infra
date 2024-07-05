@@ -43,15 +43,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@loopback/authentication": "^11.0.3",
     "@loopback/authentication-jwt": "0.15.1",
     "@loopback/authentication-passport": "7.0.1",
-    "@loopback/authorization": "0.15.1",
     "@loopback/boot": "7.0.1",
-    "@loopback/core": "6.0.1",
     "@loopback/http-server": "6.0.1",
-    "@loopback/repository": "7.0.1",
-    "@loopback/rest": "14.0.1",
     "@loopback/rest-crud": "0.18.1",
     "@loopback/rest-explorer": "7.0.1",
     "@loopback/service-proxy": "7.0.1",
@@ -103,7 +98,8 @@
     "@loopback/authorization": "0.15.1",
     "@loopback/core": "6.0.1",
     "@loopback/repository": "7.0.1",
-    "@loopback/rest": "14.0.1"
+    "@loopback/rest": "14.0.1",
+    "@loopback/security": "^0.11.3"
   },
   "bugs": {
     "url": "https://github.com/phatnt199/lb-infra/issues"

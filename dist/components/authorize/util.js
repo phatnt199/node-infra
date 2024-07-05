@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GeneratePermissionService = void 0;
-const common_1 = require("../../common");
-const helpers_1 = require("../../helpers");
+const common_1 = require("@/common");
+const helpers_1 = require("@/helpers");
 const decorator_1 = require("./decorator");
 const union_1 = __importDefault(require("lodash/union"));
 class GeneratePermissionService {

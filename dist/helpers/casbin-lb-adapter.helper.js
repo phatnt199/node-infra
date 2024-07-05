@@ -19,7 +19,7 @@ const flatten_1 = __importDefault(require("lodash/flatten"));
 const get_1 = __importDefault(require("lodash/get"));
 const logger_helper_1 = require("./logger.helper");
 const __1 = require("..");
-const constants_1 = require("../common/constants");
+const constants_1 = require("@/common/constants");
 // -----------------------------------------------------------------------------------------
 class CasbinLBAdapter {
     constructor(datasource) {

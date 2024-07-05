@@ -14,13 +14,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ViewAuthorizePolicyRepository = exports.UserRoleRepository = exports.PermissionMappingRepository = exports.PermissionRepository = exports.RoleRepository = exports.AbstractAuthorizeRepository = void 0;
-const base_datasource_1 = require("../base/base.datasource");
-const base_repository_1 = require("../base/base.repository");
-const models_1 = require("../models");
+const base_datasource_1 = require("@/base/base.datasource");
+const base_repository_1 = require("@/base/base.repository");
+const models_1 = require("@/models");
 const core_1 = require("@loopback/core");
-const utilities_1 = require("../utilities");
+const utilities_1 = require("@/utilities");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const repository_1 = require("@loopback/repository");
 const DS_AUTHORIZE = process.env.APP_ENV_APPLICATION_DS_AUTHORIZE;
@@ -51,7 +52,7 @@ exports.RoleRepository = RoleRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __param(1, repository_1.repository.getter('PermissionRepository')),
     __param(2, repository_1.repository.getter('PermissionMappingRepository')),
-    __metadata("design:paramtypes", [base_datasource_1.BaseDataSource, Function, Function])
+    __metadata("design:paramtypes", [base_datasource_1.BaseDataSource, typeof (_a = typeof core_1.Getter !== "undefined" && core_1.Getter) === "function" ? _a : Object, typeof (_b = typeof core_1.Getter !== "undefined" && core_1.Getter) === "function" ? _b : Object])
 ], RoleRepository);
 // ----------------------------------------------------------------------------
 let PermissionRepository = class PermissionRepository extends AbstractAuthorizeRepository {

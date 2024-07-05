@@ -10,11 +10,6 @@ declare const BasePermission: {
         details: any;
         createdAt: Date;
         modifiedAt: Date;
-        getId: () => any;
-        getIdObject: () => Object;
-        toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
-        id: number;
     }> | undefined): {
         code: string;
         name: string;
@@ -26,17 +21,7 @@ declare const BasePermission: {
         details: any;
         createdAt: Date;
         modifiedAt: Date;
-        getId: () => any;
-        getIdObject: () => Object;
-        toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
-        id: number;
     };
-    getIdProperties(): string[];
-    getIdOf(entityOrData: import("@loopback/repository").AnyObject): any;
-    buildWhereForId(id: any): any;
-    readonly modelName: string;
-    definition: import("@loopback/repository").ModelDefinition;
 };
 export declare class Permission extends BasePermission {
     constructor(data?: Partial<Permission>);

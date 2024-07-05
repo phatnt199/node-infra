@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CronHelper = void 0;
 const cron_1 = require("cron");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
-const helpers_1 = require("../helpers");
-const utilities_1 = require("../utilities");
+const helpers_1 = require("@/helpers");
+const utilities_1 = require("@/utilities");
 // --------------------------------------------------------
 class CronHelper {
     constructor(opts) {

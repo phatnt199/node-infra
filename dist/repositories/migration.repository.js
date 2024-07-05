@@ -16,10 +16,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MigrationRepository = exports.BaseMigrationRepository = void 0;
-const base_datasource_1 = require("../base/base.datasource");
-const base_repository_1 = require("../base/base.repository");
-const models_1 = require("../models");
-const utilities_1 = require("../utilities");
+const base_datasource_1 = require("@/base/base.datasource");
+const base_repository_1 = require("@/base/base.repository");
+const models_1 = require("@/models");
+const utilities_1 = require("@/utilities");
 const core_1 = require("@loopback/core");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const DS_MIGRATION = process.env.APP_ENV_APPLICATION_DS_MIGRATION;

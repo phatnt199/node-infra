@@ -25,7 +25,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NetworkHelper = void 0;
 const axios_1 = __importDefault(require("axios"));
-const utilities_1 = require("../utilities");
+const utilities_1 = require("@/utilities");
 const https_1 = __importDefault(require("https"));
 const HTTP = 'http';
 const HTTPS = 'https';

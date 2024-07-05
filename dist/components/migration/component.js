@@ -14,11 +14,11 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var MigrationComponent_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MigrationComponent = void 0;
-const base_application_1 = require("../../base/base.application");
-const base_component_1 = require("../../base/base.component");
-const common_1 = require("../../common");
-const models_1 = require("../../models");
-const repositories_1 = require("../../repositories");
+const base_application_1 = require("@/base/base.application");
+const base_component_1 = require("@/base/base.component");
+const common_1 = require("@/common");
+const models_1 = require("@/models");
+const repositories_1 = require("@/repositories");
 const core_1 = require("@loopback/core");
 let MigrationComponent = MigrationComponent_1 = class MigrationComponent extends base_component_1.BaseComponent {
     constructor(application) {

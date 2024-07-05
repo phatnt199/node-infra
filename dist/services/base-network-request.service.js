@@ -15,8 +15,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseNetworkRequest = void 0;
-const network_helper_1 = require("../helpers/network.helper");
-const utilities_1 = require("../utilities");
+const network_helper_1 = require("@/helpers/network.helper");
+const utilities_1 = require("@/utilities");
 const get_1 = __importDefault(require("lodash/get"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 class BaseNetworkRequest {

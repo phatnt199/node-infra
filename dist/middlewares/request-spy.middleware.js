@@ -16,7 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RequestSpyMiddleware = void 0;
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
-const base_1 = require("../base");
+const base_1 = require("@/base");
 const set_1 = __importDefault(require("lodash/set"));
 const __1 = require("..");
 let RequestSpyMiddleware = RequestSpyMiddleware_1 = class RequestSpyMiddleware extends base_1.BaseProvider {

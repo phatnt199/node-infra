@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from 'axios';
-import { AnyObject } from '../common/types';
+import { AnyObject } from '@/common/types';
 export interface IRequestOptions {
     url: string;
     method?: 'get' | 'post' | 'put' | 'patch' | 'delete' | 'options';

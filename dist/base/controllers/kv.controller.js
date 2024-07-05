@@ -24,7 +24,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.defineKVController = void 0;
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
-const common_1 = require("../../common");
+const common_1 = require("@/common");
 // --------------------------------------------------------------------------------------------------------------
 const defineKVController = (opts) => {
     const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = opts;

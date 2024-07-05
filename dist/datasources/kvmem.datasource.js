@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var KvMemDataSource_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KvMemDataSource = void 0;
-const base_datasource_1 = require("../base/base.datasource");
+const base_datasource_1 = require("@/base/base.datasource");
 const core_1 = require("@loopback/core");
 const databaseConfigs = {
     name: 'kvmem',

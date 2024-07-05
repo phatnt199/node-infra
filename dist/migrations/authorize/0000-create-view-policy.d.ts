@@ -1,4 +1,4 @@
-import { BaseApplication } from '../../base/base.application';
+import { BaseApplication } from '@/base/base.application';
 export declare const createViewPolicy: (opts: {
     datasourceKey: string;
 }) => {

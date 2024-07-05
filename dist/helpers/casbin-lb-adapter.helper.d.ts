@@ -1,5 +1,5 @@
 import { FilteredAdapter, Model } from 'casbin';
-import { BaseDataSource } from '../base/base.datasource';
+import { BaseDataSource } from '@/base/base.datasource';
 export interface EnforcerFilterValue {
     principalType: string;
     principalValue: string | number | object;

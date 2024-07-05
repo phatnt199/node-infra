@@ -14,11 +14,11 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var StaticAssetComponent_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StaticAssetComponent = void 0;
-const base_application_1 = require("../../base/base.application");
-const base_component_1 = require("../../base/base.component");
-const common_1 = require("../../common");
-const helpers_1 = require("../../helpers");
-const utilities_1 = require("../../utilities");
+const base_application_1 = require("@/base/base.application");
+const base_component_1 = require("@/base/base.component");
+const common_1 = require("@/common");
+const helpers_1 = require("@/helpers");
+const utilities_1 = require("@/utilities");
 const core_1 = require("@loopback/core");
 const asset_controller_1 = require("./asset.controller");
 const resource_controller_1 = require("./resource.controller");

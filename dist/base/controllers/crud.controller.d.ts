@@ -2,7 +2,7 @@ import { CrudRestControllerOptions } from '@loopback/rest-crud';
 import { Count, Filter, FilterExcludingWhere, Where } from '@loopback/repository';
 import { SchemaRef } from '@loopback/rest';
 import { BaseIdEntity, BaseTzEntity, AbstractTzRepository } from './../';
-import { EntityRelation, IdType } from '../../common/types';
+import { EntityRelation, IdType } from '@/common/types';
 export interface CrudControllerOptions<E extends BaseIdEntity> {
     entity: typeof BaseIdEntity & {
         prototype: E;

@@ -14,64 +14,44 @@ export declare class BaseKVEntity extends BaseEntity {
     payload: any;
 }
 declare const BaseTzEntity_base: {
-    new (...args: any[]): {
+    new (): {
         createdAt: Date;
         modifiedAt: Date;
-        getId: () => any;
-        getIdObject: () => Object;
-        toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
-} & typeof BaseIdEntity;
+};
 export declare class BaseTzEntity extends BaseTzEntity_base {
 }
 declare const BaseUserAuditTzEntity_base: {
-    new (...args: any[]): {
+    new (): {
         createdBy: import("..").IdType;
         modifiedBy: import("..").IdType;
-        getId: () => any;
-        getIdObject: () => Object;
-        toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
-} & typeof BaseTzEntity;
+};
 export declare class BaseUserAuditTzEntity extends BaseUserAuditTzEntity_base {
 }
 declare const BaseDataTypeTzEntity_base: {
-    new (...args: any[]): {
+    new (): {
         tValue?: string | undefined;
         nValue?: number | undefined;
         jValue?: any;
         bValue?: number[] | undefined;
         dataType?: string | undefined;
-        getId: () => any;
-        getIdObject: () => Object;
-        toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
-} & typeof BaseTzEntity;
+};
 export declare class BaseDataTypeTzEntity extends BaseDataTypeTzEntity_base {
 }
 declare const BaseTextSearchTzEntity_base: {
-    new (...args: any[]): {
+    new (): {
         textSearch?: string | undefined;
-        getId: () => any;
-        getIdObject: () => Object;
-        toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
-} & typeof BaseTzEntity;
+};
 export declare class BaseTextSearchTzEntity extends BaseTextSearchTzEntity_base {
 }
 declare const BaseSoftDeleteTzEntity_base: {
-    new (...args: any[]): {
+    new (): {
         isDeleted?: boolean | undefined;
-        getId: () => any;
-        getIdObject: () => Object;
-        toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
     };
-} & typeof BaseTzEntity;
+};
 export declare class BaseSoftDeleteTzEntity extends BaseSoftDeleteTzEntity_base {
 }
 export {};

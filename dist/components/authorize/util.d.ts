@@ -1,7 +1,7 @@
-import { IController } from '../../common';
+import { IController } from '@/common';
 import { Constructor, MetadataMap } from '@loopback/core';
-import { Permission } from '../../models';
-import { PermissionRepository } from '../../repositories';
+import { Permission } from '@/models';
+import { PermissionRepository } from '@/repositories';
 export interface IPermission {
     code: string;
     subject: string;

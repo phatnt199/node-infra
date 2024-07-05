@@ -21,9 +21,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var ContentRangeInterceptor_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContentRangeInterceptor = void 0;
-const common_1 = require("../common");
+const common_1 = require("@/common");
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
 let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInterceptor {
@@ -164,6 +165,6 @@ ContentRangeInterceptor.BINDING_KEY = `interceptors.${ContentRangeInterceptor_1.
 exports.ContentRangeInterceptor = ContentRangeInterceptor = ContentRangeInterceptor_1 = __decorate([
     (0, core_1.injectable)({ tags: { key: ContentRangeInterceptor.BINDING_KEY } }),
     __param(0, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
-    __metadata("design:paramtypes", [Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof rest_1.Response !== "undefined" && rest_1.Response) === "function" ? _a : Object])
 ], ContentRangeInterceptor);
 //# sourceMappingURL=content-range.interceptor.js.map

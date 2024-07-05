@@ -15,12 +15,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 var StaticAssetController_1;
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StaticAssetController = void 0;
-const base_1 = require("../../base");
-const common_1 = require("../../common");
-const helpers_1 = require("../../helpers");
-const utilities_1 = require("../../utilities");
+const base_1 = require("@/base");
+const common_1 = require("@/common");
+const helpers_1 = require("@/helpers");
+const utilities_1 = require("@/utilities");
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
 const multer_1 = __importDefault(require("multer"));
@@ -202,6 +203,6 @@ exports.StaticAssetController = StaticAssetController = StaticAssetController_1 
     __param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
     __param(1, (0, core_1.inject)(rest_1.RestBindings.Http.REQUEST)),
     __param(2, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
-    __metadata("design:paramtypes", [base_1.BaseApplication, Object, Object])
+    __metadata("design:paramtypes", [base_1.BaseApplication, typeof (_a = typeof rest_1.Request !== "undefined" && rest_1.Request) === "function" ? _a : Object, typeof (_b = typeof rest_1.Response !== "undefined" && rest_1.Response) === "function" ? _b : Object])
 ], StaticAssetController);
 //# sourceMappingURL=asset.controller.js.map

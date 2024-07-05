@@ -13,9 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MinioHelper = void 0;
-const common_1 = require("../common");
-const helpers_1 = require("../helpers");
-const utilities_1 = require("../utilities");
+const common_1 = require("@/common");
+const helpers_1 = require("@/helpers");
+const utilities_1 = require("@/utilities");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const minio_1 = require("minio");
 // ---------------------------------------------------------------------

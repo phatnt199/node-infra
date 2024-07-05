@@ -1,4 +1,4 @@
-import { EnvironmentValidationResult } from '../common';
+import { EnvironmentValidationResult } from '@/common';
 import { ApplicationConfig, Constructor } from '@loopback/core';
 import { SequenceHandler } from '@loopback/rest';
 import { BaseApplication } from './base.application';

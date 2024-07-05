@@ -16,7 +16,7 @@ exports.defineCrudController = void 0;
 const core_1 = require("@loopback/core");
 const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
-const common_1 = require("../../common");
+const common_1 = require("@/common");
 const common_2 = require("./common");
 // --------------------------------------------------------------------------------------------------------------
 const defineCrudController = (opts) => {

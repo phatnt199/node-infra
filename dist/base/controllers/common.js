@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIdSchema = exports.BaseController = exports.applyLimit = void 0;
-const common_1 = require("../../common");
-const helpers_1 = require("../../helpers");
+const common_1 = require("@/common");
+const helpers_1 = require("@/helpers");
 const rest_1 = require("@loopback/rest");
 // --------------------------------------------------------------------------------------------------------------
 const applyLimit = (filter) => {

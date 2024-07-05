@@ -14,12 +14,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var SocketIOComponent_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SocketIOComponent = void 0;
-const base_application_1 = require("../../base/base.application");
-const base_component_1 = require("../../base/base.component");
-const utilities_1 = require("../../utilities");
+const base_application_1 = require("@/base/base.application");
+const base_component_1 = require("@/base/base.component");
+const utilities_1 = require("@/utilities");
 const core_1 = require("@loopback/core");
-const common_1 = require("../../common");
-const helpers_1 = require("../../helpers");
+const common_1 = require("@/common");
+const helpers_1 = require("@/helpers");
 let SocketIOComponent = SocketIOComponent_1 = class SocketIOComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: SocketIOComponent_1.name });
