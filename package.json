@@ -1,6 +1,6 @@
 {
   "name": "@lb/infra",
-  "version": "3.0.0",
+  "version": "0.0.6",
   "description": "Loopback 4 Infrastructure",
   "keywords": [
     "loopback",
