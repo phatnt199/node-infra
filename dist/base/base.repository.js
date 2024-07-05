@@ -23,11 +23,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TextSearchTzCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.KVRepository = exports.AbstractKVRepository = exports.AbstractTzRepository = void 0;
+exports.TextSearchTzCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.KVRepository = exports.AbstractKVRepository = exports.AbstractTzRepository = exports.WhereBuilder = void 0;
 const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
 const repository_1 = require("@loopback/repository");
 const get_1 = __importDefault(require("lodash/get"));
+const cloneDeep_1 = __importDefault(require("lodash/cloneDeep"));
+// ----------------------------------------------------------------------------------------------------------------------------------------
+class WhereBuilder extends repository_1.WhereBuilder {
+    constructor(opts) {
+        super(opts);
+    }
+    newInstance(opts) {
+        return new WhereBuilder(opts);
+    }
+    clone() {
+        return new WhereBuilder((0, cloneDeep_1.default)(this.build()));
+    }
+}
+exports.WhereBuilder = WhereBuilder;
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractTzRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource, scope) {
