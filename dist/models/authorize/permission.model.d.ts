@@ -5,7 +5,7 @@ declare const BasePermission: {
         subject: string;
         pType: string;
         action: string;
-        scope?: string | undefined;
+        scope?: string;
         parentId: number;
         details: any;
         createdAt: Date;
@@ -13,15 +13,15 @@ declare const BasePermission: {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
-    }> | undefined): {
+    }>): {
         code: string;
         name: string;
         subject: string;
         pType: string;
         action: string;
-        scope?: string | undefined;
+        scope?: string;
         parentId: number;
         details: any;
         createdAt: Date;
@@ -29,7 +29,7 @@ declare const BasePermission: {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
     };
     getIdProperties(): string[];

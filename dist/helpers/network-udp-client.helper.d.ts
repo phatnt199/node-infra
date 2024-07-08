@@ -1,5 +1,3 @@
-/// <reference types="node" />
-/// <reference types="node" />
 import dgram from 'dgram';
 interface NetworkUdpClientProps {
     identifier: string;

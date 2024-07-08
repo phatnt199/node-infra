@@ -1,8 +1,13 @@
 import { AnyType, EntityClassType, EntityRelation, IdType, ITzRepository } from '../common/types';
 import { ApplicationLogger } from '../helpers';
-import { AnyObject, Count, DataObject, DefaultCrudRepository, DefaultKeyValueRepository, IsolationLevel, juggler, Options, Transaction, TransactionalEntityRepository, Where } from '@loopback/repository';
+import { AnyObject, Count, DataObject, DefaultCrudRepository, DefaultKeyValueRepository, IsolationLevel, juggler, Options, Transaction, TransactionalEntityRepository, Where, WhereBuilder as BaseWhereBuilder } from '@loopback/repository';
 import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity } from './base.model';
-export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation> extends DefaultCrudRepository<E, IdType, R> implements ITzRepository<E>, TransactionalEntityRepository<E, IdType, R> {
+export declare class WhereBuilder<E extends object = AnyObject> extends BaseWhereBuilder {
+    constructor(opts?: Where<E>);
+    newInstance(opts?: Where<E>): WhereBuilder<E>;
+    clone(): WhereBuilder<import("@loopback/filter/dist/types").AnyObject>;
+}
+export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation = AnyType> extends DefaultCrudRepository<E, IdType, R> implements ITzRepository<E>, TransactionalEntityRepository<E, IdType, R> {
     protected logger: ApplicationLogger;
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource, scope?: string);
     beginTransaction(options?: IsolationLevel | Options): Promise<Transaction>;
@@ -32,7 +37,7 @@ export declare abstract class AbstractKVRepository<E extends BaseKVEntity> exten
 export declare abstract class KVRepository<E extends BaseKVEntity> extends AbstractKVRepository<E> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
 }
-export declare abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRepository<E, IdType, any> {
+export declare abstract class ViewRepository<E extends BaseEntity, R extends EntityRelation = AnyType> extends DefaultCrudRepository<E, IdType, R> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
     existsWith(where?: Where<E>, options?: Options): Promise<boolean>;
     create(_data: DataObject<E>, _options?: Options): Promise<E>;

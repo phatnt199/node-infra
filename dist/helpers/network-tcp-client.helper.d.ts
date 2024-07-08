@@ -1,4 +1,3 @@
-/// <reference types="node" />
 interface NetworkTcpClientProps {
     identifier: string;
     options: {

@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 export declare const hash: (text: string, options: {
-    encryptType: 'SHA256' | 'MD5';
+    encryptType: "SHA256" | "MD5";
     secret: string;
     outputType: typeof CryptoJS.enc.Base64;
 }) => string;

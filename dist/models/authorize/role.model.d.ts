@@ -3,7 +3,7 @@ declare const BaseRole: {
     new (data?: Partial<{
         identifier: string;
         name: string;
-        description?: string | undefined;
+        description?: string;
         priority: number;
         status: string;
         createdAt: Date;
@@ -11,12 +11,12 @@ declare const BaseRole: {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
-    }> | undefined): {
+    }>): {
         identifier: string;
         name: string;
-        description?: string | undefined;
+        description?: string;
         priority: number;
         status: string;
         createdAt: Date;
@@ -24,7 +24,7 @@ declare const BaseRole: {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
     };
     getIdProperties(): string[];

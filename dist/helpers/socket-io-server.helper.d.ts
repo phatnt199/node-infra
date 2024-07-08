@@ -1,5 +1,3 @@
-/// <reference types="node" />
-/// <reference types="node" />
 import { Server as IOServer, ServerOptions, Socket as IOSocket } from 'socket.io';
 import Redis from 'ioredis';
 import { Server } from 'http';
@@ -35,15 +33,15 @@ export declare class SocketIOServerHelper {
         id: string;
     }): {
         id: string;
-        socket: IOSocket<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>;
-        state: "authenticated" | "unauthorized" | "authenticating";
-        interval?: NodeJS.Timeout | undefined;
+        socket: IOSocket;
+        state: "unauthorized" | "authenticating" | "authenticated";
+        interval?: NodeJS.Timeout;
         authenticateTimeout: NodeJS.Timeout;
     } | Record<string, {
         id: string;
-        socket: IOSocket<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>;
-        state: "authenticated" | "unauthorized" | "authenticating";
-        interval?: NodeJS.Timeout | undefined;
+        socket: IOSocket;
+        state: "unauthorized" | "authenticating" | "authenticated";
+        interval?: NodeJS.Timeout;
         authenticateTimeout: NodeJS.Timeout;
     }>;
     on(opts: {

@@ -1,4 +1,3 @@
-/// <reference types="express" />
 import { AuthenticationStrategy } from '@loopback/authentication';
 import { Request } from '@loopback/rest';
 import { JWTTokenService } from './jwt-token.service';

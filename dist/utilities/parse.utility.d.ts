@@ -15,7 +15,7 @@ export declare const float: (input: any, digit?: number) => number;
 export declare const toStringDecimal: (input: any, digit?: number, options?: {
     localeFormat: boolean;
 }) => string | 0;
-export declare const getNumberValue: (input: string, method?: 'int' | 'float') => number;
+export declare const getNumberValue: (input: string, method?: "int" | "float") => number;
 export declare const getSchemaObject: <T extends object>(ctor: Function & {
     prototype: T;
 }) => import("@loopback/rest").SchemaObject;
