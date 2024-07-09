@@ -9,9 +9,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BaseSoftDeleteTzEntity = exports.BaseTextSearchTzEntity = exports.BaseDataTypeTzEntity = exports.BaseUserAuditTzEntity = exports.BaseTzEntity = exports.BaseKVEntity = exports.BaseStringIdEntity = exports.BaseNumberIdEntity = exports.BaseIdEntity = exports.BaseEntity = void 0;
-const repository_1 = require("@loopback/repository");
+exports.BaseSoftDeleteTzEntity = exports.BaseSearchableTzEntity = exports.BaseObjectSearchTzEntity = exports.BaseTextSearchTzEntity = exports.BaseDataTypeTzEntity = exports.BaseUserAuditTzEntity = exports.BaseTzEntity = exports.BaseKVEntity = exports.BaseStringIdEntity = exports.BaseNumberIdEntity = exports.BaseIdEntity = exports.BaseEntity = void 0;
 const mixins_1 = require("../mixins");
+const repository_1 = require("@loopback/repository");
 // ---------------------------------------------------------------------
 class BaseEntity extends repository_1.Entity {
 }
@@ -64,6 +64,14 @@ exports.BaseDataTypeTzEntity = BaseDataTypeTzEntity;
 class BaseTextSearchTzEntity extends (0, mixins_1.TextSearchMixin)(BaseTzEntity) {
 }
 exports.BaseTextSearchTzEntity = BaseTextSearchTzEntity;
+// ---------------------------------------------------------------------
+class BaseObjectSearchTzEntity extends (0, mixins_1.ObjectSearchMixin)(BaseTzEntity) {
+}
+exports.BaseObjectSearchTzEntity = BaseObjectSearchTzEntity;
+// ---------------------------------------------------------------------
+class BaseSearchableTzEntity extends (0, mixins_1.ObjectSearchMixin)((0, mixins_1.TextSearchMixin)(BaseTzEntity)) {
+}
+exports.BaseSearchableTzEntity = BaseSearchableTzEntity;
 // ---------------------------------------------------------------------
 class BaseSoftDeleteTzEntity extends (0, mixins_1.SoftDeleteModelMixin)(BaseTzEntity) {
 }
