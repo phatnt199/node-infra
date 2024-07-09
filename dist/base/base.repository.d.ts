@@ -1,7 +1,7 @@
 import { AnyType, EntityClassType, EntityRelation, IdType, ITzRepository } from '../common/types';
 import { ApplicationLogger } from '../helpers';
-import { AnyObject, Count, DataObject, DefaultCrudRepository, DefaultKeyValueRepository, IsolationLevel, juggler, Options, Transaction, TransactionalEntityRepository, Where, WhereBuilder as BaseWhereBuilder } from '@loopback/repository';
-import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity } from './base.model';
+import { AnyObject, WhereBuilder as BaseWhereBuilder, Count, DataObject, DefaultCrudRepository, DefaultKeyValueRepository, IsolationLevel, juggler, Options, Transaction, TransactionalEntityRepository, Where } from '@loopback/repository';
+import { BaseEntity, BaseKVEntity, BaseObjectSearchTzEntity, BaseSearchableTzEntity, BaseTextSearchTzEntity, BaseTzEntity } from './base.model';
 export declare class WhereBuilder<E extends object = AnyObject> extends BaseWhereBuilder {
     constructor(opts?: Where<E>);
     newInstance(opts?: Where<E>): WhereBuilder<E>;
@@ -103,17 +103,14 @@ export declare abstract class TzCrudRepository<E extends BaseTzEntity, R extends
         authorId?: IdType;
     } | undefined): DataObject<E>;
 }
-export declare abstract class TextSearchTzCrudRepository<E extends BaseTextSearchTzEntity, R extends EntityRelation = AnyType> extends TzCrudRepository<E, R> {
+export declare abstract class SearchableTzCrudRepository<E extends BaseTextSearchTzEntity | BaseObjectSearchTzEntity | BaseSearchableTzEntity, R extends EntityRelation = AnyType> extends TzCrudRepository<E, R> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
-    abstract renderTextSearch(entity: DataObject<E>, moreData: AnyObject): string;
-    existsWith(where?: Where<E>, options?: Options): Promise<boolean>;
+    abstract renderTextSearch(entity: DataObject<E>, extra?: AnyObject): string | Promise<string>;
+    abstract renderObjectSearch(entity: DataObject<E>, extra?: AnyObject): object | Promise<object>;
     create(data: DataObject<E>, options?: Options): Promise<E>;
     createAll(datum: DataObject<E>[], options?: Options): Promise<E[]>;
-    createWithReturn(data: DataObject<E>, options?: Options): Promise<E>;
     updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
-    updateWithReturn(id: IdType, data: DataObject<E>, options?: Options): Promise<E>;
     updateAll(data: DataObject<E>, where?: Where<E>, options?: Options): Promise<Count>;
-    upsertWith(data: DataObject<E>, where: Where<E>): Promise<E | null>;
     replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
-    mixTextSearch(entity: DataObject<E>, options?: Options): DataObject<E>;
+    mixSearchFields(entity: DataObject<E>, options?: Options): DataObject<E>;
 }

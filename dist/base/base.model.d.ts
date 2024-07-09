@@ -63,6 +63,36 @@ declare const BaseTextSearchTzEntity_base: {
 } & typeof BaseTzEntity;
 export declare class BaseTextSearchTzEntity extends BaseTextSearchTzEntity_base {
 }
+declare const BaseObjectSearchTzEntity_base: {
+    new (...args: any[]): {
+        objectSearch?: import("..").AnyObject | undefined;
+        getId: () => any;
+        getIdObject: () => Object;
+        toJSON: () => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
+    };
+} & typeof BaseTzEntity;
+export declare class BaseObjectSearchTzEntity extends BaseObjectSearchTzEntity_base {
+}
+declare const BaseSearchableTzEntity_base: {
+    new (...args: any[]): {
+        objectSearch?: import("..").AnyObject | undefined;
+        getId: () => any;
+        getIdObject: () => Object;
+        toJSON: () => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
+    };
+} & {
+    new (...args: any[]): {
+        textSearch?: string;
+        getId: () => any;
+        getIdObject: () => Object;
+        toJSON: () => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
+    };
+} & typeof BaseTzEntity;
+export declare class BaseSearchableTzEntity extends BaseSearchableTzEntity_base {
+}
 declare const BaseSoftDeleteTzEntity_base: {
     new (...args: any[]): {
         isDeleted?: boolean;
