@@ -111,6 +111,12 @@ export declare abstract class SearchableTzCrudRepository<E extends BaseTextSearc
     abstract renderObjectSearch(entity: DataObject<E>, options?: Options & {
         where?: Where;
     }): Promise<object>;
+    _renderTextSearch(entity: DataObject<E>, options?: Options & {
+        where?: Where;
+    }): Promise<string | null>;
+    _renderObjectSearch(entity: DataObject<E>, options?: Options & {
+        where?: Where;
+    }): Promise<object | null>;
     create(data: DataObject<E>, options?: Options): Promise<E>;
     createAll(datum: DataObject<E>[], options?: Options): Promise<E[]>;
     updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;

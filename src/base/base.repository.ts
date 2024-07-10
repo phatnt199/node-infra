@@ -436,6 +436,30 @@ export abstract class SearchableTzCrudRepository<
   abstract renderTextSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<string>;
   abstract renderObjectSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<object>;
 
+  _renderTextSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+      const isTextSearchModel = get(this.modelClass.definition.properties, 'textSearch', null) !== null;
+      if (!isTextSearchModel) {
+        resolve(null);
+        return;
+      }
+
+      this.renderTextSearch(entity, options).then(resolve).catch(reject);
+    });
+  }
+
+  _renderObjectSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<object | null> {
+    return new Promise((resolve, reject) => {
+      const isObjectSearchModel = get(this.modelClass.definition.properties, 'objectSearch', null) !== null;
+      if (!isObjectSearchModel) {
+        resolve(null);
+        return;
+      }
+
+      this.renderObjectSearch(entity, options).then(resolve).catch(reject);
+    });
+  }
+
   create(data: DataObject<E>, options?: Options): Promise<E> {
     return new Promise((resolve, reject) => {
       this.mixSearchFields(data, options)
@@ -488,40 +512,23 @@ export abstract class SearchableTzCrudRepository<
         return entity;
       }
 
-      const isTextSearchModel = get(this.modelClass.definition.properties, 'textSearch', null) !== null;
-      const isObjectSearchModel = get(this.modelClass.definition.properties, 'objectSearch', null) !== null;
+      this._renderTextSearch(entity, options)
+        .then(rsTextSearch => {
+          if (rsTextSearch) {
+            set(entity, 'textSearch', rsTextSearch);
+          }
 
-      if (isTextSearchModel && !isObjectSearchModel) {
-        return this.renderTextSearch(entity, options)
-          .then(rs => {
-            set(entity, 'textSearch', rs);
-            resolve(entity);
-          })
-          .catch(reject);
-      }
-
-      if (!isTextSearchModel && isObjectSearchModel) {
-        return this.renderObjectSearch(entity, options)
-          .then(rs => {
-            set(entity, 'objectSearch', rs);
-            resolve(entity);
-          })
-          .catch(reject);
-      }
-
-      if (isTextSearchModel && isObjectSearchModel) {
-        return this.renderTextSearch(entity, options).then(rsTextSearch => {
-          this.renderObjectSearch(entity, options)
+          this._renderObjectSearch(entity, options)
             .then(rsObjectSearch => {
-              set(entity, 'textSearch', rsTextSearch);
-              set(entity, 'objectSearch', rsObjectSearch);
+              if (rsObjectSearch) {
+                set(entity, 'objectSearch', rsObjectSearch);
+              }
+
               resolve(entity);
             })
             .catch(reject);
-        });
-      }
-
-      reject();
+        })
+        .catch(reject);
     });
   }
 }
