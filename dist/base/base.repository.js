@@ -314,49 +314,80 @@ class SearchableTzCrudRepository extends TzCrudRepository {
         super(entityClass, dataSource);
     }
     create(data, options) {
-        const enriched = this.mixSearchFields(data, options);
-        return super.create(enriched, options);
+        return new Promise((resolve, reject) => {
+            this.mixSearchFields(data, options)
+                .then(enriched => {
+                resolve(super.create(enriched, options));
+            })
+                .catch(reject);
+        });
     }
     createAll(datum, options) {
-        const enriched = datum.map(data => {
-            return this.mixSearchFields(data, options);
+        return new Promise((resolve, reject) => {
+            Promise.all(datum.map(data => {
+                return this.mixSearchFields(data, options);
+            }))
+                .then(enriched => {
+                resolve(super.createAll(enriched, options));
+            })
+                .catch(reject);
         });
-        return super.createAll(enriched, options);
     }
     updateById(id, data, options) {
-        const _super = Object.create(null, {
-            updateById: { get: () => super.updateById }
+        return new Promise((resolve, reject) => {
+            this.mixSearchFields(data, Object.assign(Object.assign({}, options), { where: { id } }))
+                .then(enriched => {
+                resolve(super.updateById(id, enriched, options));
+            })
+                .catch(reject);
         });
-        return __awaiter(this, void 0, void 0, function* () {
-            yield _super.updateById.call(this, id, data, options);
-            const updated = yield this.findById(id, undefined, options);
-            const enriched = this.mixSearchFields(updated, options);
-            yield _super.updateById.call(this, id, enriched, options);
-        });
-    }
-    updateAll(data, where, options) {
-        const enriched = this.mixSearchFields(data, options);
-        return super.updateAll(enriched, where, options);
     }
     replaceById(id, data, options) {
-        const enriched = this.mixSearchFields(data, options);
-        return super.replaceById(id, enriched, options);
+        return new Promise((resolve, reject) => {
+            this.mixSearchFields(data, options)
+                .then(enriched => {
+                resolve(super.replaceById(id, enriched, options));
+            })
+                .catch(reject);
+        });
     }
     mixSearchFields(entity, options) {
-        const moreData = (0, get_1.default)(options, 'moreData');
-        const ignoreUpdate = (0, get_1.default)(options, 'ignoreUpdate');
-        if (ignoreUpdate) {
-            return entity;
-        }
-        const isTextSearchModel = (0, get_1.default)(this.modelClass.definition.properties, 'textSearch', null) !== null;
-        if (isTextSearchModel) {
-            (0, set_1.default)(entity, 'textSearch', this.renderTextSearch(entity, moreData));
-        }
-        const isObjectSearchModel = (0, get_1.default)(this.modelClass.definition.properties, 'objectSearch', null) !== null;
-        if (isObjectSearchModel) {
-            (0, set_1.default)(entity, 'objectSearch', this.renderObjectSearch(entity, moreData));
-        }
-        return entity;
+        return new Promise((resolve, reject) => {
+            const ignoreUpdate = (0, get_1.default)(options, 'ignoreUpdate');
+            if (ignoreUpdate) {
+                return entity;
+            }
+            const isTextSearchModel = (0, get_1.default)(this.modelClass.definition.properties, 'textSearch', null) !== null;
+            const isObjectSearchModel = (0, get_1.default)(this.modelClass.definition.properties, 'objectSearch', null) !== null;
+            if (isTextSearchModel && !isObjectSearchModel) {
+                return this.renderTextSearch(entity, options)
+                    .then(rs => {
+                    (0, set_1.default)(entity, 'textSearch', rs);
+                    resolve(entity);
+                })
+                    .catch(reject);
+            }
+            if (!isTextSearchModel && isObjectSearchModel) {
+                return this.renderObjectSearch(entity, options)
+                    .then(rs => {
+                    (0, set_1.default)(entity, 'objectSearch', rs);
+                    resolve(entity);
+                })
+                    .catch(reject);
+            }
+            if (isTextSearchModel && isObjectSearchModel) {
+                return this.renderTextSearch(entity, options).then(rsTextSearch => {
+                    this.renderObjectSearch(entity, options)
+                        .then(rsObjectSearch => {
+                        (0, set_1.default)(entity, 'textSearch', rsTextSearch);
+                        (0, set_1.default)(entity, 'objectSearch', rsObjectSearch);
+                        resolve(entity);
+                    })
+                        .catch(reject);
+                });
+            }
+            reject();
+        });
     }
 }
 exports.SearchableTzCrudRepository = SearchableTzCrudRepository;

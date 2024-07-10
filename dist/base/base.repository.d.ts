@@ -105,12 +105,17 @@ export declare abstract class TzCrudRepository<E extends BaseTzEntity, R extends
 }
 export declare abstract class SearchableTzCrudRepository<E extends BaseTextSearchTzEntity | BaseObjectSearchTzEntity | BaseSearchableTzEntity, R extends EntityRelation = AnyType> extends TzCrudRepository<E, R> {
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
-    abstract renderTextSearch(entity: DataObject<E>, extra?: AnyObject): string | Promise<string>;
-    abstract renderObjectSearch(entity: DataObject<E>, extra?: AnyObject): object | Promise<object>;
+    abstract renderTextSearch(entity: DataObject<E>, options?: Options & {
+        where?: Where;
+    }): Promise<string>;
+    abstract renderObjectSearch(entity: DataObject<E>, options?: Options & {
+        where?: Where;
+    }): Promise<object>;
     create(data: DataObject<E>, options?: Options): Promise<E>;
     createAll(datum: DataObject<E>[], options?: Options): Promise<E[]>;
     updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
-    updateAll(data: DataObject<E>, where?: Where<E>, options?: Options): Promise<Count>;
     replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
-    mixSearchFields(entity: DataObject<E>, options?: Options): DataObject<E>;
+    mixSearchFields(entity: DataObject<E>, options?: Options & {
+        where?: Where;
+    }): Promise<DataObject<E>>;
 }

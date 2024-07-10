@@ -433,57 +433,95 @@ export abstract class SearchableTzCrudRepository<
     super(entityClass, dataSource);
   }
 
-  abstract renderTextSearch(entity: DataObject<E>, extra?: AnyObject): string | Promise<string>;
-  abstract renderObjectSearch(entity: DataObject<E>, extra?: AnyObject): object | Promise<object>;
+  abstract renderTextSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<string>;
+  abstract renderObjectSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<object>;
 
   create(data: DataObject<E>, options?: Options): Promise<E> {
-    const enriched = this.mixSearchFields(data, options);
-    return super.create(enriched, options);
+    return new Promise((resolve, reject) => {
+      this.mixSearchFields(data, options)
+        .then(enriched => {
+          resolve(super.create(enriched, options));
+        })
+        .catch(reject);
+    });
   }
 
   createAll(datum: DataObject<E>[], options?: Options): Promise<E[]> {
-    const enriched = datum.map(data => {
-      return this.mixSearchFields(data, options);
+    return new Promise((resolve, reject) => {
+      Promise.all(
+        datum.map(data => {
+          return this.mixSearchFields(data, options);
+        }),
+      )
+        .then(enriched => {
+          resolve(super.createAll(enriched, options));
+        })
+        .catch(reject);
     });
-
-    return super.createAll(enriched, options);
   }
 
-  async updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
-    await super.updateById(id, data, options);
-    const updated = await this.findById(id, undefined, options);
-    const enriched = this.mixSearchFields(updated, options);
-    await super.updateById(id, enriched, options);
-  }
-
-  updateAll(data: DataObject<E>, where?: Where<E>, options?: Options): Promise<Count> {
-    const enriched = this.mixSearchFields(data, options);
-    return super.updateAll(enriched, where, options);
+  updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.mixSearchFields(data, { ...options, where: { id } })
+        .then(enriched => {
+          resolve(super.updateById(id, enriched, options));
+        })
+        .catch(reject);
+    });
   }
 
   replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
-    const enriched = this.mixSearchFields(data, options);
-    return super.replaceById(id, enriched, options);
+    return new Promise((resolve, reject) => {
+      this.mixSearchFields(data, options)
+        .then(enriched => {
+          resolve(super.replaceById(id, enriched, options));
+        })
+        .catch(reject);
+    });
   }
 
-  mixSearchFields(entity: DataObject<E>, options?: Options): DataObject<E> {
-    const moreData = get(options, 'moreData');
-    const ignoreUpdate = get(options, 'ignoreUpdate');
+  mixSearchFields(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<DataObject<E>> {
+    return new Promise((resolve, reject) => {
+      const ignoreUpdate = get(options, 'ignoreUpdate');
 
-    if (ignoreUpdate) {
-      return entity;
-    }
+      if (ignoreUpdate) {
+        return entity;
+      }
 
-    const isTextSearchModel = get(this.modelClass.definition.properties, 'textSearch', null) !== null;
-    if (isTextSearchModel) {
-      set(entity, 'textSearch', this.renderTextSearch(entity, moreData));
-    }
+      const isTextSearchModel = get(this.modelClass.definition.properties, 'textSearch', null) !== null;
+      const isObjectSearchModel = get(this.modelClass.definition.properties, 'objectSearch', null) !== null;
 
-    const isObjectSearchModel = get(this.modelClass.definition.properties, 'objectSearch', null) !== null;
-    if (isObjectSearchModel) {
-      set(entity, 'objectSearch', this.renderObjectSearch(entity, moreData));
-    }
+      if (isTextSearchModel && !isObjectSearchModel) {
+        return this.renderTextSearch(entity, options)
+          .then(rs => {
+            set(entity, 'textSearch', rs);
+            resolve(entity);
+          })
+          .catch(reject);
+      }
 
-    return entity;
+      if (!isTextSearchModel && isObjectSearchModel) {
+        return this.renderObjectSearch(entity, options)
+          .then(rs => {
+            set(entity, 'objectSearch', rs);
+            resolve(entity);
+          })
+          .catch(reject);
+      }
+
+      if (isTextSearchModel && isObjectSearchModel) {
+        return this.renderTextSearch(entity, options).then(rsTextSearch => {
+          this.renderObjectSearch(entity, options)
+            .then(rsObjectSearch => {
+              set(entity, 'textSearch', rsTextSearch);
+              set(entity, 'objectSearch', rsObjectSearch);
+              resolve(entity);
+            })
+            .catch(reject);
+        });
+      }
+
+      reject();
+    });
   }
 }
