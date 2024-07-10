@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import mqtt from 'mqtt';
 export interface IMQTTClientOptions {
     identifier: string;

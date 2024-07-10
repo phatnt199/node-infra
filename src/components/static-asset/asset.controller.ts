@@ -112,23 +112,24 @@ export class StaticAssetController implements IController {
           'Content-Disposition': `attachment; filename=${objectName}`,
         });
 
-        minioInstance.getFile({
-          bucket: bucketName,
-          name: objectName,
-          onStreamData: (error, stream) => {
-            if (error) {
-              throw getError({
-                message: `[downloadObject] Cannot download ${objectName}! Error while streaming data to client!`,
-                statusCode: 500,
-              });
-            }
-
+        minioInstance
+          .getFile({
+            bucket: bucketName,
+            name: objectName,
+          })
+          .then(stream => {
             stream.pipe(this.response);
             stream.on('end', () => {
               this.response.end();
             });
-          },
-        });
+          })
+          .catch(error => {
+            this.logger.error('[downloadObject] Error: %s', error);
+            throw getError({
+              message: `[downloadObject] Cannot download ${objectName}! Error while streaming data to client!`,
+              statusCode: 500,
+            });
+          });
       });
     });
   }
@@ -144,20 +145,21 @@ export class StaticAssetController implements IController {
         const { size, metaData } = fileStat;
         this.response.writeHead(206, { ...metaData, 'Content-Length': size });
 
-        minioInstance.getFile({
-          bucket: bucketName,
-          name: objectName,
-          onStreamData: (error, stream) => {
-            if (error) {
-              throw getError({
-                message: `[getStaticObject] Cannot stream ${objectName}! Error while streaming data to client!`,
-                statusCode: 500,
-              });
-            }
-
+        minioInstance
+          .getFile({
+            bucket: bucketName,
+            name: objectName,
+          })
+          .then(stream => {
             stream.pipe(this.response);
-          },
-        });
+          })
+          .catch(error => {
+            this.logger.error('[getStaticObject] Error: %s', error);
+            throw getError({
+              message: `[getStaticObject] Cannot stream ${objectName}! Error while streaming data to client!`,
+              statusCode: 500,
+            });
+          });
       });
     });
   }

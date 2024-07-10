@@ -138,8 +138,8 @@ class MinioHelper {
     }
     // ---------------------------------------------------------------------
     getFile(opts) {
-        const { bucket, name, onStreamData } = opts;
-        this.client.getObject(bucket, name, onStreamData);
+        const { bucket, name, options } = opts;
+        return this.client.getObject(bucket, name, options);
     }
     // ---------------------------------------------------------------------
     getStat(opts) {

@@ -1,9 +1,9 @@
+import { AnyObject } from '../common';
 import { MixinTarget } from '@loopback/core';
 import { Entity } from '@loopback/repository';
-export declare const TzMixin: <E extends MixinTarget<Entity>>(superClass: E) => {
+export declare const ObjectSearchMixin: <E extends MixinTarget<Entity>, T extends object = AnyObject>(superClass: E) => {
     new (...args: any[]): {
-        createdAt: Date;
-        modifiedAt: Date;
+        objectSearch?: T;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;

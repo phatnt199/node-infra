@@ -1,4 +1,3 @@
-/// <reference types="express" />
 import { BaseIdEntity } from '../base';
 import { IController } from '../common';
 import { Interceptor, InvocationContext, InvocationResult, Provider, ValueOrPromise } from '@loopback/core';
@@ -7,7 +6,7 @@ export declare class ContentRangeInterceptor implements Provider<Interceptor> {
     private response;
     static readonly BINDING_KEY: string;
     constructor(response: Response);
-    value(): (context: InvocationContext, next: () => any) => Promise<any>;
+    value(): (context: InvocationContext, next: () => ValueOrPromise<InvocationResult>) => Promise<any>;
     identifyControllerType(opts: {
         target: IController;
     }): 'single-entity' | 'relation-entity' | undefined;

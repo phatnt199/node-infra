@@ -3,6 +3,7 @@ import { ApplicationLogger, LoggerFactory, QueryBuilderHelper } from '@/helpers'
 import { getError } from '@/utilities';
 import {
   AnyObject,
+  WhereBuilder as BaseWhereBuilder,
   Count,
   DataObject,
   DefaultCrudRepository,
@@ -14,11 +15,37 @@ import {
   TransactionalEntityRepository,
   Where,
 } from '@loopback/repository';
+import {
+  BaseEntity,
+  BaseKVEntity,
+  BaseObjectSearchTzEntity,
+  BaseSearchableTzEntity,
+  BaseTextSearchTzEntity,
+  BaseTzEntity,
+  BaseUserAuditTzEntity,
+} from './base.model';
+
+import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
-import { BaseEntity, BaseKVEntity, BaseTextSearchTzEntity, BaseTzEntity, BaseUserAuditTzEntity } from './base.model';
+import set from 'lodash/set';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation>
+export class WhereBuilder<E extends object = AnyObject> extends BaseWhereBuilder {
+  constructor(opts?: Where<E>) {
+    super(opts);
+  }
+
+  newInstance(opts?: Where<E>) {
+    return new WhereBuilder(opts);
+  }
+
+  clone() {
+    return new WhereBuilder(cloneDeep(this.build()));
+  }
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends EntityRelation = AnyType>
   extends DefaultCrudRepository<E, IdType, R>
   implements ITzRepository<E>, TransactionalEntityRepository<E, IdType, R>
 {
@@ -29,8 +56,15 @@ export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends Ent
     this.logger = LoggerFactory.getLogger([scope ?? '']);
   }
 
-  async beginTransaction(options?: IsolationLevel | Options): Promise<Transaction> {
-    return (await this.dataSource.beginTransaction(options ?? {})) as Transaction;
+  beginTransaction(options?: IsolationLevel | Options): Promise<Transaction> {
+    return new Promise((resolve, reject) => {
+      this.dataSource
+        .beginTransaction(options ?? {})
+        .then(rs => {
+          resolve(rs as Transaction);
+        })
+        .catch(reject);
+    });
   }
 
   protected getObservers(opts: { operation: string }): Array<Function> {
@@ -71,14 +105,22 @@ export abstract class KVRepository<E extends BaseKVEntity> extends AbstractKVRep
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class ViewRepository<E extends BaseEntity> extends DefaultCrudRepository<E, IdType, any> {
+export abstract class ViewRepository<
+  E extends BaseEntity,
+  R extends EntityRelation = AnyType,
+> extends DefaultCrudRepository<E, IdType, R> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }
 
-  async existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
-    const rs = await this.findOne({ where }, options);
-    return rs !== null && rs !== undefined;
+  existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.findOne({ where }, options)
+        .then(rs => {
+          resolve(rs !== null && rs !== undefined);
+        })
+        .catch(reject);
+    });
   }
 
   create(_data: DataObject<E>, _options?: Options): Promise<E> {
@@ -161,9 +203,14 @@ export abstract class TzCrudRepository<
     super(entityClass, dataSource, scope);
   }
 
-  async existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
-    const rs = await this.findOne({ where }, options);
-    return rs !== null && rs !== undefined;
+  existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.findOne({ where }, options)
+        .then(rs => {
+          resolve(rs !== null && rs !== undefined);
+        })
+        .catch(reject);
+    });
   }
 
   create(data: DataObject<E>, options?: Options & { authorId?: IdType; ignoreModified?: boolean }): Promise<E> {
@@ -182,13 +229,14 @@ export abstract class TzCrudRepository<
     return super.createAll(enriched, options);
   }
 
-  async createWithReturn(
+  /*
+   * @deprecated | Redundant | Please .create
+   */
+  createWithReturn(
     data: DataObject<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<E> {
-    const saved = await this.create(data, options);
-    const rs = await super.findById(saved.id);
-    return rs;
+    return this.create(data, options);
   }
 
   updateById(
@@ -202,14 +250,22 @@ export abstract class TzCrudRepository<
     return super.updateById(id, enriched, options);
   }
 
-  async updateWithReturn(
+  updateWithReturn(
     id: IdType,
     data: DataObject<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<E> {
-    await this.updateById(id, data, options);
-    const rs = await super.findById(id, undefined, options);
-    return rs;
+    return new Promise((resolve, reject) => {
+      this.updateById(id, data, options)
+        .then(() => {
+          this.findById(id, undefined, options)
+            .then(rs => {
+              resolve(rs);
+            })
+            .catch(reject);
+        })
+        .catch(reject);
+    });
   }
 
   updateAll(
@@ -228,10 +284,10 @@ export abstract class TzCrudRepository<
     where: Where<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<E | null> {
-    const isExisted = await this.existsWith(where);
+    const isExisted = await this.existsWith(where, options);
     if (isExisted) {
       await this.updateAll(data, where, options);
-      const rs = await this.findOne({ where });
+      const rs = await this.findOne({ where }, options);
       return rs;
     }
 
@@ -369,80 +425,110 @@ export abstract class TzCrudRepository<
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export abstract class TextSearchTzCrudRepository<
-  E extends BaseTextSearchTzEntity,
+export abstract class SearchableTzCrudRepository<
+  E extends BaseTextSearchTzEntity | BaseObjectSearchTzEntity | BaseSearchableTzEntity,
   R extends EntityRelation = AnyType,
 > extends TzCrudRepository<E, R> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
     super(entityClass, dataSource);
   }
 
-  abstract renderTextSearch(entity: DataObject<E>, moreData: AnyObject): string;
+  abstract renderTextSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<string>;
+  abstract renderObjectSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<object>;
 
-  async existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
-    const rs = await this.findOne({ where }, options);
-    return rs !== null && rs !== undefined;
+  _renderTextSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+      const isTextSearchModel = get(this.modelClass.definition.properties, 'textSearch', null) !== null;
+      if (!isTextSearchModel) {
+        resolve(null);
+        return;
+      }
+
+      this.renderTextSearch(entity, options).then(resolve).catch(reject);
+    });
+  }
+
+  _renderObjectSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<object | null> {
+    return new Promise((resolve, reject) => {
+      const isObjectSearchModel = get(this.modelClass.definition.properties, 'objectSearch', null) !== null;
+      if (!isObjectSearchModel) {
+        resolve(null);
+        return;
+      }
+
+      this.renderObjectSearch(entity, options).then(resolve).catch(reject);
+    });
   }
 
   create(data: DataObject<E>, options?: Options): Promise<E> {
-    const enriched = this.mixTextSearch(data, options);
-    return super.create(enriched, options);
+    return new Promise((resolve, reject) => {
+      this.mixSearchFields(data, options)
+        .then(enriched => {
+          resolve(super.create(enriched, options));
+        })
+        .catch(reject);
+    });
   }
 
   createAll(datum: DataObject<E>[], options?: Options): Promise<E[]> {
-    const enriched = datum.map(data => {
-      return this.mixTextSearch(data, options);
+    return new Promise((resolve, reject) => {
+      Promise.all(
+        datum.map(data => {
+          return this.mixSearchFields(data, options);
+        }),
+      )
+        .then(enriched => {
+          resolve(super.createAll(enriched, options));
+        })
+        .catch(reject);
     });
-
-    return super.createAll(enriched, options);
-  }
-
-  async createWithReturn(data: DataObject<E>, options?: Options): Promise<E> {
-    const saved = await this.create(data, options);
-    return super.findById(saved.id);
   }
 
   updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
-    const enriched = this.mixTextSearch(data, options);
-    return super.updateById(id, enriched, options);
-  }
-
-  async updateWithReturn(id: IdType, data: DataObject<E>, options?: Options): Promise<E> {
-    await this.updateById(id, data, options);
-    return super.findById(id);
-  }
-
-  updateAll(data: DataObject<E>, where?: Where<E>, options?: Options): Promise<Count> {
-    const enriched = this.mixTextSearch(data, options);
-
-    return super.updateAll(enriched, where, options);
-  }
-
-  async upsertWith(data: DataObject<E>, where: Where<E>): Promise<E | null> {
-    const isExisted = await this.existsWith(where);
-    if (isExisted) {
-      await this.updateAll(data, where);
-      const rs = await this.findOne({ where });
-      return rs;
-    }
-
-    return this.create(data);
+    return new Promise((resolve, reject) => {
+      this.mixSearchFields(data, { ...options, where: { id } })
+        .then(enriched => {
+          resolve(super.updateById(id, enriched, options));
+        })
+        .catch(reject);
+    });
   }
 
   replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
-    const enriched = this.mixTextSearch(data, options);
-    return super.replaceById(id, enriched, options);
+    return new Promise((resolve, reject) => {
+      this.mixSearchFields(data, options)
+        .then(enriched => {
+          resolve(super.replaceById(id, enriched, options));
+        })
+        .catch(reject);
+    });
   }
 
-  mixTextSearch(entity: DataObject<E>, options?: Options): DataObject<E> {
-    const moreData = get(options, 'moreData');
-    const ignoreUpdate = get(options, 'ignoreUpdate');
+  mixSearchFields(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<DataObject<E>> {
+    return new Promise((resolve, reject) => {
+      const ignoreUpdate = get(options, 'ignoreUpdate');
 
-    if (ignoreUpdate) {
-      return entity;
-    }
+      if (ignoreUpdate) {
+        return entity;
+      }
 
-    entity.textSearch = this.renderTextSearch(entity, moreData);
-    return entity;
+      this._renderTextSearch(entity, options)
+        .then(rsTextSearch => {
+          if (rsTextSearch) {
+            set(entity, 'textSearch', rsTextSearch);
+          }
+
+          this._renderObjectSearch(entity, options)
+            .then(rsObjectSearch => {
+              if (rsObjectSearch) {
+                set(entity, 'objectSearch', rsObjectSearch);
+              }
+
+              resolve(entity);
+            })
+            .catch(reject);
+        })
+        .catch(reject);
+    });
   }
 }

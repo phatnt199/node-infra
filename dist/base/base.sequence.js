@@ -31,6 +31,7 @@ const rest_1 = require("@loopback/rest");
 const common_1 = require("../common");
 const helpers_1 = require("../helpers");
 const get_1 = __importDefault(require("lodash/get"));
+const __1 = require("..");
 let BaseApplicationSequence = BaseApplicationSequence_1 = class BaseApplicationSequence {
     constructor(invokeMiddleware, middlewareOptions) {
         this.invokeMiddleware = invokeMiddleware;
@@ -39,12 +40,10 @@ let BaseApplicationSequence = BaseApplicationSequence_1 = class BaseApplicationS
     }
     handle(context) {
         return __awaiter(this, void 0, void 0, function* () {
-            const t = new Date().getTime();
+            const t = performance.now();
             const { request } = context;
             try {
-                const pT = new Date().getTime();
                 yield this.invokeMiddleware(context, this.middlewareOptions);
-                this.logger.debug('[handle] Invoked middlewares | Took: %d(ms)', new Date().getTime() - pT);
             }
             catch (error) {
                 const requestId = (0, get_1.default)(request, 'requestId');
@@ -52,7 +51,7 @@ let BaseApplicationSequence = BaseApplicationSequence_1 = class BaseApplicationS
             }
             finally {
                 const requestedRemark = (0, get_1.default)(request, 'requestedRemark');
-                this.logger.info('[handle][%s] DONE | Took: %d(ms) | Url: %s', requestedRemark === null || requestedRemark === void 0 ? void 0 : requestedRemark.id, new Date().getTime() - t, requestedRemark === null || requestedRemark === void 0 ? void 0 : requestedRemark.url);
+                this.logger.info('[handle][%s] DONE | Took: %d(ms) | Url: %s', requestedRemark === null || requestedRemark === void 0 ? void 0 : requestedRemark.id, (0, __1.getExecutedPerformance)({ from: t, digit: 6 }), requestedRemark === null || requestedRemark === void 0 ? void 0 : requestedRemark.url);
             }
         });
     }

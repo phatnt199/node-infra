@@ -1,31 +1,31 @@
 export declare const defineUser: () => {
     new (data?: Partial<{
-        realm?: string | undefined;
+        realm?: string;
         status: string;
-        userType?: string | undefined;
-        activatedAt?: Date | undefined;
-        lastLoginAt?: Date | undefined;
+        userType?: string;
+        activatedAt?: Date;
+        lastLoginAt?: Date;
         parentId: number;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
-    }> | undefined): {
-        realm?: string | undefined;
+    }>): {
+        realm?: string;
         status: string;
-        userType?: string | undefined;
-        activatedAt?: Date | undefined;
-        lastLoginAt?: Date | undefined;
+        userType?: string;
+        activatedAt?: Date;
+        lastLoginAt?: Date;
         parentId: number;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
     };
     getIdProperties(): string[];
@@ -38,7 +38,7 @@ export declare const defineRole: () => {
     new (data?: Partial<{
         identifier: string;
         name: string;
-        description?: string | undefined;
+        description?: string;
         priority: number;
         status: string;
         createdAt: Date;
@@ -46,12 +46,12 @@ export declare const defineRole: () => {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
-    }> | undefined): {
+    }>): {
         identifier: string;
         name: string;
-        description?: string | undefined;
+        description?: string;
         priority: number;
         status: string;
         createdAt: Date;
@@ -59,7 +59,7 @@ export declare const defineRole: () => {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
     };
     getIdProperties(): string[];
@@ -75,7 +75,7 @@ export declare const definePermission: () => {
         subject: string;
         pType: string;
         action: string;
-        scope?: string | undefined;
+        scope?: string;
         parentId: number;
         details: any;
         createdAt: Date;
@@ -83,15 +83,15 @@ export declare const definePermission: () => {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
-    }> | undefined): {
+    }>): {
         code: string;
         name: string;
         subject: string;
         pType: string;
         action: string;
-        scope?: string | undefined;
+        scope?: string;
         parentId: number;
         details: any;
         createdAt: Date;
@@ -99,7 +99,7 @@ export declare const definePermission: () => {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
     };
     getIdProperties(): string[];
@@ -110,7 +110,7 @@ export declare const definePermission: () => {
 };
 export declare const definePermissionMapping: () => {
     new (data?: Partial<{
-        userId?: number | undefined;
+        userId?: number;
         roleId: number;
         permissionId: number;
         effect: string;
@@ -119,10 +119,10 @@ export declare const definePermissionMapping: () => {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
-    }> | undefined): {
-        userId?: number | undefined;
+    }>): {
+        userId?: number;
         roleId: number;
         permissionId: number;
         effect: string;
@@ -131,7 +131,7 @@ export declare const definePermissionMapping: () => {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
     };
     getIdProperties(): string[];
@@ -143,23 +143,23 @@ export declare const definePermissionMapping: () => {
 export declare const defineUserRole: () => {
     new (data?: Partial<{
         userId: number;
-        principalType?: string | undefined;
-        principalId?: import("../../common").IdType | undefined;
+        principalType?: string;
+        principalId?: import("../../common").IdType;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         createdAt: Date;
         modifiedAt: Date;
         id: number;
-    }> | undefined): {
+    }>): {
         userId: number;
-        principalType?: string | undefined;
-        principalId?: import("../../common").IdType | undefined;
+        principalType?: string;
+        principalId?: import("../../common").IdType;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         createdAt: Date;
         modifiedAt: Date;
         id: number;

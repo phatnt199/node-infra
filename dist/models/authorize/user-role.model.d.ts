@@ -1,23 +1,23 @@
 declare const BaseUserRole: {
     new (data?: Partial<{
         userId: number;
-        principalType?: string | undefined;
-        principalId?: import("../..").IdType | undefined;
+        principalType?: string;
+        principalId?: import("../..").IdType;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         createdAt: Date;
         modifiedAt: Date;
         id: number;
-    }> | undefined): {
+    }>): {
         userId: number;
-        principalType?: string | undefined;
-        principalId?: import("../..").IdType | undefined;
+        principalType?: string;
+        principalId?: import("../..").IdType;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
         createdAt: Date;
         modifiedAt: Date;
         id: number;

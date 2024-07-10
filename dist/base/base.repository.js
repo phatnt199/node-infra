@@ -23,11 +23,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TextSearchTzCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.KVRepository = exports.AbstractKVRepository = exports.AbstractTzRepository = void 0;
+exports.SearchableTzCrudRepository = exports.TzCrudRepository = exports.ViewRepository = exports.KVRepository = exports.AbstractKVRepository = exports.AbstractTzRepository = exports.WhereBuilder = void 0;
 const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
 const repository_1 = require("@loopback/repository");
+const cloneDeep_1 = __importDefault(require("lodash/cloneDeep"));
 const get_1 = __importDefault(require("lodash/get"));
+const set_1 = __importDefault(require("lodash/set"));
+// ----------------------------------------------------------------------------------------------------------------------------------------
+class WhereBuilder extends repository_1.WhereBuilder {
+    constructor(opts) {
+        super(opts);
+    }
+    newInstance(opts) {
+        return new WhereBuilder(opts);
+    }
+    clone() {
+        return new WhereBuilder((0, cloneDeep_1.default)(this.build()));
+    }
+}
+exports.WhereBuilder = WhereBuilder;
 // ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractTzRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource, scope) {
@@ -35,8 +50,13 @@ class AbstractTzRepository extends repository_1.DefaultCrudRepository {
         this.logger = helpers_1.LoggerFactory.getLogger([scope !== null && scope !== void 0 ? scope : '']);
     }
     beginTransaction(options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.dataSource.beginTransaction(options !== null && options !== void 0 ? options : {}));
+        return new Promise((resolve, reject) => {
+            this.dataSource
+                .beginTransaction(options !== null && options !== void 0 ? options : {})
+                .then(rs => {
+                resolve(rs);
+            })
+                .catch(reject);
         });
     }
     getObservers(opts) {
@@ -70,9 +90,12 @@ class ViewRepository extends repository_1.DefaultCrudRepository {
         super(entityClass, dataSource);
     }
     existsWith(where, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rs = yield this.findOne({ where }, options);
-            return rs !== null && rs !== undefined;
+        return new Promise((resolve, reject) => {
+            this.findOne({ where }, options)
+                .then(rs => {
+                resolve(rs !== null && rs !== undefined);
+            })
+                .catch(reject);
         });
     }
     create(_data, _options) {
@@ -143,9 +166,12 @@ class TzCrudRepository extends AbstractTzRepository {
         super(entityClass, dataSource, scope);
     }
     existsWith(where, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rs = yield this.findOne({ where }, options);
-            return rs !== null && rs !== undefined;
+        return new Promise((resolve, reject) => {
+            this.findOne({ where }, options)
+                .then(rs => {
+                resolve(rs !== null && rs !== undefined);
+            })
+                .catch(reject);
         });
     }
     create(data, options) {
@@ -162,15 +188,11 @@ class TzCrudRepository extends AbstractTzRepository {
         });
         return super.createAll(enriched, options);
     }
+    /*
+     * @deprecated | Redundant | Please .create
+     */
     createWithReturn(data, options) {
-        const _super = Object.create(null, {
-            findById: { get: () => super.findById }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            const saved = yield this.create(data, options);
-            const rs = yield _super.findById.call(this, saved.id);
-            return rs;
-        });
+        return this.create(data, options);
     }
     updateById(id, data, options) {
         var _a;
@@ -179,13 +201,16 @@ class TzCrudRepository extends AbstractTzRepository {
         return super.updateById(id, enriched, options);
     }
     updateWithReturn(id, data, options) {
-        const _super = Object.create(null, {
-            findById: { get: () => super.findById }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.updateById(id, data, options);
-            const rs = yield _super.findById.call(this, id, undefined, options);
-            return rs;
+        return new Promise((resolve, reject) => {
+            this.updateById(id, data, options)
+                .then(() => {
+                this.findById(id, undefined, options)
+                    .then(rs => {
+                    resolve(rs);
+                })
+                    .catch(reject);
+            })
+                .catch(reject);
         });
     }
     updateAll(data, where, options) {
@@ -196,10 +221,10 @@ class TzCrudRepository extends AbstractTzRepository {
     }
     upsertWith(data, where, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isExisted = yield this.existsWith(where);
+            const isExisted = yield this.existsWith(where, options);
             if (isExisted) {
                 yield this.updateAll(data, where, options);
-                const rs = yield this.findOne({ where });
+                const rs = yield this.findOne({ where }, options);
                 return rs;
             }
             const rs = yield this.create(data, options);
@@ -284,76 +309,91 @@ class TzCrudRepository extends AbstractTzRepository {
 }
 exports.TzCrudRepository = TzCrudRepository;
 // ----------------------------------------------------------------------------------------------------------------------------------------
-class TextSearchTzCrudRepository extends TzCrudRepository {
+class SearchableTzCrudRepository extends TzCrudRepository {
     constructor(entityClass, dataSource) {
         super(entityClass, dataSource);
     }
-    existsWith(where, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rs = yield this.findOne({ where }, options);
-            return rs !== null && rs !== undefined;
+    _renderTextSearch(entity, options) {
+        return new Promise((resolve, reject) => {
+            const isTextSearchModel = (0, get_1.default)(this.modelClass.definition.properties, 'textSearch', null) !== null;
+            if (!isTextSearchModel) {
+                resolve(null);
+                return;
+            }
+            this.renderTextSearch(entity, options).then(resolve).catch(reject);
+        });
+    }
+    _renderObjectSearch(entity, options) {
+        return new Promise((resolve, reject) => {
+            const isObjectSearchModel = (0, get_1.default)(this.modelClass.definition.properties, 'objectSearch', null) !== null;
+            if (!isObjectSearchModel) {
+                resolve(null);
+                return;
+            }
+            this.renderObjectSearch(entity, options).then(resolve).catch(reject);
         });
     }
     create(data, options) {
-        const enriched = this.mixTextSearch(data, options);
-        return super.create(enriched, options);
+        return new Promise((resolve, reject) => {
+            this.mixSearchFields(data, options)
+                .then(enriched => {
+                resolve(super.create(enriched, options));
+            })
+                .catch(reject);
+        });
     }
     createAll(datum, options) {
-        const enriched = datum.map(data => {
-            return this.mixTextSearch(data, options);
-        });
-        return super.createAll(enriched, options);
-    }
-    createWithReturn(data, options) {
-        const _super = Object.create(null, {
-            findById: { get: () => super.findById }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            const saved = yield this.create(data, options);
-            return _super.findById.call(this, saved.id);
+        return new Promise((resolve, reject) => {
+            Promise.all(datum.map(data => {
+                return this.mixSearchFields(data, options);
+            }))
+                .then(enriched => {
+                resolve(super.createAll(enriched, options));
+            })
+                .catch(reject);
         });
     }
     updateById(id, data, options) {
-        const enriched = this.mixTextSearch(data, options);
-        return super.updateById(id, enriched, options);
-    }
-    updateWithReturn(id, data, options) {
-        const _super = Object.create(null, {
-            findById: { get: () => super.findById }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.updateById(id, data, options);
-            return _super.findById.call(this, id);
-        });
-    }
-    updateAll(data, where, options) {
-        const enriched = this.mixTextSearch(data, options);
-        return super.updateAll(enriched, where, options);
-    }
-    upsertWith(data, where) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const isExisted = yield this.existsWith(where);
-            if (isExisted) {
-                yield this.updateAll(data, where);
-                const rs = yield this.findOne({ where });
-                return rs;
-            }
-            return this.create(data);
+        return new Promise((resolve, reject) => {
+            this.mixSearchFields(data, Object.assign(Object.assign({}, options), { where: { id } }))
+                .then(enriched => {
+                resolve(super.updateById(id, enriched, options));
+            })
+                .catch(reject);
         });
     }
     replaceById(id, data, options) {
-        const enriched = this.mixTextSearch(data, options);
-        return super.replaceById(id, enriched, options);
+        return new Promise((resolve, reject) => {
+            this.mixSearchFields(data, options)
+                .then(enriched => {
+                resolve(super.replaceById(id, enriched, options));
+            })
+                .catch(reject);
+        });
     }
-    mixTextSearch(entity, options) {
-        const moreData = (0, get_1.default)(options, 'moreData');
-        const ignoreUpdate = (0, get_1.default)(options, 'ignoreUpdate');
-        if (ignoreUpdate) {
-            return entity;
-        }
-        entity.textSearch = this.renderTextSearch(entity, moreData);
-        return entity;
+    mixSearchFields(entity, options) {
+        return new Promise((resolve, reject) => {
+            const ignoreUpdate = (0, get_1.default)(options, 'ignoreUpdate');
+            if (ignoreUpdate) {
+                return entity;
+            }
+            this._renderTextSearch(entity, options)
+                .then(rsTextSearch => {
+                if (rsTextSearch) {
+                    (0, set_1.default)(entity, 'textSearch', rsTextSearch);
+                }
+                this._renderObjectSearch(entity, options)
+                    .then(rsObjectSearch => {
+                    if (rsObjectSearch) {
+                        (0, set_1.default)(entity, 'objectSearch', rsObjectSearch);
+                    }
+                    resolve(entity);
+                })
+                    .catch(reject);
+            })
+                .catch(reject);
+        });
     }
 }
-exports.TextSearchTzCrudRepository = TextSearchTzCrudRepository;
+exports.SearchableTzCrudRepository = SearchableTzCrudRepository;
 //# sourceMappingURL=base.repository.js.map

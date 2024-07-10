@@ -11,6 +11,7 @@ import { BindingKeys } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 
 import get from 'lodash/get';
+import { getExecutedPerformance } from '..';
 
 export class BaseApplicationSequence implements SequenceHandler {
   private logger: ApplicationLogger;
@@ -27,13 +28,11 @@ export class BaseApplicationSequence implements SequenceHandler {
   }
 
   async handle(context: RequestContext): Promise<void> {
-    const t = new Date().getTime();
+    const t = performance.now();
     const { request } = context;
 
     try {
-      const pT = new Date().getTime();
       await this.invokeMiddleware(context, this.middlewareOptions);
-      this.logger.debug('[handle] Invoked middlewares | Took: %d(ms)', new Date().getTime() - pT);
     } catch (error) {
       const requestId = get(request, 'requestId');
       this.logger.error('[handle][%s] ERROR | Error: %s', requestId, error);
@@ -42,7 +41,7 @@ export class BaseApplicationSequence implements SequenceHandler {
       this.logger.info(
         '[handle][%s] DONE | Took: %d(ms) | Url: %s',
         requestedRemark?.id,
-        new Date().getTime() - t,
+        getExecutedPerformance({ from: t, digit: 6 }),
         requestedRemark?.url,
       );
     }

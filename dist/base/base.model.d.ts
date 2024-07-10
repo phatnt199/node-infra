@@ -20,7 +20,7 @@ declare const BaseTzEntity_base: {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
     };
 } & typeof BaseIdEntity;
 export declare class BaseTzEntity extends BaseTzEntity_base {
@@ -32,44 +32,74 @@ declare const BaseUserAuditTzEntity_base: {
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
     };
 } & typeof BaseTzEntity;
 export declare class BaseUserAuditTzEntity extends BaseUserAuditTzEntity_base {
 }
 declare const BaseDataTypeTzEntity_base: {
     new (...args: any[]): {
-        tValue?: string | undefined;
-        nValue?: number | undefined;
+        tValue?: string;
+        nValue?: number;
         jValue?: any;
-        bValue?: number[] | undefined;
-        dataType?: string | undefined;
+        bValue?: Array<number>;
+        dataType?: string;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
     };
 } & typeof BaseTzEntity;
 export declare class BaseDataTypeTzEntity extends BaseDataTypeTzEntity_base {
 }
 declare const BaseTextSearchTzEntity_base: {
     new (...args: any[]): {
-        textSearch?: string | undefined;
+        textSearch?: string;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
     };
 } & typeof BaseTzEntity;
 export declare class BaseTextSearchTzEntity extends BaseTextSearchTzEntity_base {
 }
-declare const BaseSoftDeleteTzEntity_base: {
+declare const BaseObjectSearchTzEntity_base: {
     new (...args: any[]): {
-        isDeleted?: boolean | undefined;
+        objectSearch?: import("..").AnyObject | undefined;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
-        toObject: (options?: import("@loopback/repository").AnyObject | undefined) => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
+    };
+} & typeof BaseTzEntity;
+export declare class BaseObjectSearchTzEntity extends BaseObjectSearchTzEntity_base {
+}
+declare const BaseSearchableTzEntity_base: {
+    new (...args: any[]): {
+        objectSearch?: import("..").AnyObject | undefined;
+        getId: () => any;
+        getIdObject: () => Object;
+        toJSON: () => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
+    };
+} & {
+    new (...args: any[]): {
+        textSearch?: string;
+        getId: () => any;
+        getIdObject: () => Object;
+        toJSON: () => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
+    };
+} & typeof BaseTzEntity;
+export declare class BaseSearchableTzEntity extends BaseSearchableTzEntity_base {
+}
+declare const BaseSoftDeleteTzEntity_base: {
+    new (...args: any[]): {
+        isDeleted?: boolean;
+        getId: () => any;
+        getIdObject: () => Object;
+        toJSON: () => Object;
+        toObject: (options?: import("@loopback/repository").Options) => Object;
     };
 } & typeof BaseTzEntity;
 export declare class BaseSoftDeleteTzEntity extends BaseSoftDeleteTzEntity_base {
