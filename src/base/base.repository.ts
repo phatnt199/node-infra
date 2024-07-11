@@ -450,63 +450,6 @@ export abstract class SearchableTzCrudRepository<
   abstract renderTextSearch(entity: DataObject<E>, moreData?: string): string;
   abstract renderObjectSearch(entity: DataObject<E>, moreData?: object): object;
 
-  _covertRelationConfig(relationConfigs: RelationConfig[]) {
-    return {
-      include: relationConfigs.map(rc => {
-        const { relationName, relationConfigs } = rc;
-        const rs = {
-          relation: relationName,
-        };
-        if (relationConfigs?.length) {
-          set(rs, 'scope', this._covertRelationConfig(relationConfigs));
-        }
-        return rs;
-      }),
-    };
-  }
-
-  /**
-   * @param relationConfig - 
-   * @returns InclusionFilter
-   *
-   * @example
-   * Param: 
-   * {
-   *    relationName: 'user',
-   *    relationConfig: [
-   *        { relationName: 'profile' },
-   *        { relationName: 'identifiers', relationConfigs: [{ relationName: 'user' }]}
-   *    ],
-   * }
-   *
-   * Result: 
-   * {
-   *    relation: 'user',
-   *    scope: {
-   *        include: [
-   *            { relation: 'profile'},
-   *            { 
-   *                relation: 'identifiers',
-   *                scope: {
-   *                    include: [
-   *                        { relation: 'user' }
-   *                    ]
-   *                }
-   *            }
-   *        ]
-   *    }
-   * }
-   */
-  _buildInclusionFilter(relationConfig: RelationConfig): InclusionFilter {
-    const { relationName, relationConfigs } = relationConfig;
-    const inclusionFilter: InclusionFilter = { relation: relationName };
-    if (relationConfigs?.length) {
-      set(inclusionFilter, 'scope', this._covertRelationConfig(relationConfigs));
-    }
-
-    return inclusionFilter;
-  }
-
   _renderTextSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<string | null> {
     return new Promise(resolve => {
       const moreData = get(options, 'moreData', '');
@@ -521,48 +464,179 @@ export abstract class SearchableTzCrudRepository<
     });
   }
 
+  // ----------------------------------------------------------------------------------------------------
+  private convertRelationConfig(opts: { relationConfigs: RelationConfig[] }) {
+    const { relationConfigs } = opts;
+    return {
+      include: relationConfigs.map(rc => {
+        const { relationName, relationConfigs } = rc;
+        const rs = {
+          relation: relationName,
+        };
+
+        if (!relationConfigs?.length) {
+          return rs;
+        }
+
+        set(rs, 'scope', this.convertRelationConfig({ relationConfigs }));
+      }),
+    };
+  }
+
+  /**
+   * @param opts: { relationConfig: RelationConfig }
+   * @returns InclusionFilter
+   *
+   * @example
+   * Param:
+   * {
+   *    relationName: 'user',
+   *    relationConfig: [
+   *        { relationName: 'profile' },
+   *        { relationName: 'identifiers', relationConfigs: [{ relationName: 'user' }]}
+   *    ],
+   * }
+   *
+   * Result:
+   * {
+   *    relation: 'user',
+   *    scope: {
+   *        include: [
+   *            { relation: 'profile'},
+   *            {
+   *                relation: 'identifiers',
+   *                scope: {
+   *                    include: [
+   *                        { relation: 'user' }
+   *                    ]
+   *                }
+   *            }
+   *        ]
+   *    }
+   * }
+   */
+  private buildInclusionFilter(opts: { relationConfig: RelationConfig }): InclusionFilter {
+    const { relationConfig } = opts;
+    const { relationName, relationConfigs } = relationConfig;
+    const inclusionFilter: InclusionFilter = { relation: relationName };
+    if (relationConfigs?.length) {
+      set(inclusionFilter, 'scope', this.convertRelationConfig({ relationConfigs }));
+    }
+
+    return inclusionFilter;
+  }
+
+  private handleCurrentObjectSearch(opts: { where?: Where; moreData?: object }): Promise<object> {
+    return new Promise((resolve, reject) => {
+      const { where, moreData } = opts;
+      let objectSearch = {};
+
+      if (!where) {
+        resolve(objectSearch);
+      }
+      this.findOne({ where })
+        .then(found => {
+          if (found) {
+            objectSearch = this.renderObjectSearch(found, moreData);
+          }
+          resolve(objectSearch);
+        })
+        .catch(reject);
+    });
+  }
+
+  private handleNewObjectSearch(opts: { entity: DataObject<E>; moreData?: object }): Promise<object> {
+    return new Promise((resolve, reject) => {
+      const { entity, moreData } = opts;
+      let objectSearch = {};
+      const clonedEntity = cloneDeep(entity);
+
+      if (!this.inclusionRelations) {
+        resolve(objectSearch);
+      }
+      if (!this.relationConfigs.length) {
+        resolve(objectSearch);
+      }
+
+      Promise.all(
+        this.relationConfigs.map(relationConf => {
+          return new Promise((subResolve, subReject) => {
+            const { relationName } = relationConf;
+            const inclusionFilter = this.buildInclusionFilter({ relationConfig: relationConf });
+            this.inclusionResolvers
+              .get(relationName)?.([clonedEntity as AnyType], inclusionFilter)
+              .then(rs => {
+                const relationData = rs[0];
+                if (relationData) {
+                  set(clonedEntity, relationName, relationData);
+                }
+                subResolve(null);
+              })
+              .catch(subReject);
+          });
+        }),
+      )
+        .then(() => {
+          objectSearch = this.renderObjectSearch(clonedEntity, moreData);
+          resolve(objectSearch);
+        })
+        .catch(reject);
+    });
+  }
+
   _renderObjectSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<object | null> {
-    return new Promise(async resolve => {
+    return new Promise((resolve, reject) => {
       const moreData = get(options, 'moreData', {});
+      const where = get(options, 'where');
+
       const isObjectSearchModel = get(this.modelClass.definition.properties, 'objectSearch', null) !== null;
       if (!isObjectSearchModel) {
         resolve(null);
         return;
       }
 
-      const clonedEntity = cloneDeep(entity);
-      let objectSearch = {};
-
-      const where = get(options, 'where');
-      if (where) {
-        const found = await this.findOne({ where });
-        if (found) {
-          objectSearch = this.renderObjectSearch(found, moreData);
-        }
-      }
-
-      if (this.inclusionRelations && this.relationConfigs.length) {
-        for await (const relationConf of this.relationConfigs) {
-          const inclusionFilter = this._buildInclusionFilter(relationConf);
-          const relationData = (
-            await this.inclusionResolvers.get(relationConf.relationName)?.([clonedEntity as AnyType], inclusionFilter)
-          )?.[0];
-
-          if (relationData) {
-            set(clonedEntity, relationConf.relationName, relationData);
-          }
-        }
-      }
-
-      objectSearch = {
-        ...objectSearch,
-        ...this.renderObjectSearch(clonedEntity, moreData),
-      };
-
-      resolve(objectSearch);
+      Promise.all([
+        this.handleCurrentObjectSearch({ where, moreData }),
+        this.handleNewObjectSearch({ entity, moreData }),
+      ])
+        .then(([currentObjectSearch, newObjectSearch]) => {
+          const objectSearch = { ...currentObjectSearch, ...newObjectSearch };
+          resolve(objectSearch);
+        })
+        .catch(reject);
     });
   }
 
+  // ----------------------------------------------------------------------------------------------------
+  mixSearchFields(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<DataObject<E>> {
+    return new Promise((resolve, reject) => {
+      const ignoreUpdate = get(options, 'ignoreUpdate');
+
+      if (ignoreUpdate) {
+        return entity;
+      }
+
+      this._renderTextSearch(entity, options)
+        .then(rsTextSearch => {
+          if (rsTextSearch) {
+            set(entity, 'textSearch', rsTextSearch);
+          }
+
+          this._renderObjectSearch(entity, options)
+            .then(rsObjectSearch => {
+              if (rsObjectSearch) {
+                set(entity, 'objectSearch', rsObjectSearch);
+              }
+
+              resolve(entity);
+            })
+            .catch(reject);
+        })
+        .catch(reject);
+    });
+  }
+
+  // ----------------------------------------------------------------------------------------------------
   create(data: DataObject<E>, options?: Options): Promise<E> {
     return new Promise((resolve, reject) => {
       this.mixSearchFields(data, options)
@@ -602,34 +676,6 @@ export abstract class SearchableTzCrudRepository<
       this.mixSearchFields(data, options)
         .then(enriched => {
           resolve(super.replaceById(id, enriched, options));
-        })
-        .catch(reject);
-    });
-  }
-
-  mixSearchFields(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<DataObject<E>> {
-    return new Promise((resolve, reject) => {
-      const ignoreUpdate = get(options, 'ignoreUpdate');
-
-      if (ignoreUpdate) {
-        return entity;
-      }
-
-      this._renderTextSearch(entity, options)
-        .then(rsTextSearch => {
-          if (rsTextSearch) {
-            set(entity, 'textSearch', rsTextSearch);
-          }
-
-          this._renderObjectSearch(entity, options)
-            .then(rsObjectSearch => {
-              if (rsObjectSearch) {
-                set(entity, 'objectSearch', rsObjectSearch);
-              }
-
-              resolve(entity);
-            })
-            .catch(reject);
         })
         .catch(reject);
     });
