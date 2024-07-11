@@ -529,17 +529,18 @@ export abstract class SearchableTzCrudRepository<
   private handleCurrentObjectSearch(opts: { where?: Where; moreData?: object }): Promise<object> {
     return new Promise((resolve, reject) => {
       const { where, moreData } = opts;
-      let objectSearch = {};
 
       if (!where) {
-        resolve(objectSearch);
+        resolve({});
       }
       this.findOne({ where })
         .then(found => {
           if (found) {
-            objectSearch = this.renderObjectSearch(found, moreData);
+            const objectSearch = this.renderObjectSearch(found, moreData);
+            resolve(objectSearch);
+          } else {
+            resolve({});
           }
-          resolve(objectSearch);
         })
         .catch(reject);
     });
@@ -548,14 +549,10 @@ export abstract class SearchableTzCrudRepository<
   private handleNewObjectSearch(opts: { entity: DataObject<E>; moreData?: object }): Promise<object> {
     return new Promise((resolve, reject) => {
       const { entity, moreData } = opts;
-      let objectSearch = {};
       const clonedEntity = cloneDeep(entity);
 
-      if (!this.inclusionRelations) {
-        resolve(objectSearch);
-      }
-      if (!this.relationConfigs.length) {
-        resolve(objectSearch);
+      if (!this.inclusionRelations || !this.relationConfigs.length) {
+        resolve({});
       }
 
       Promise.all(
@@ -577,7 +574,7 @@ export abstract class SearchableTzCrudRepository<
         }),
       )
         .then(() => {
-          objectSearch = this.renderObjectSearch(clonedEntity, moreData);
+          const objectSearch = this.renderObjectSearch(clonedEntity, moreData);
           resolve(objectSearch);
         })
         .catch(reject);

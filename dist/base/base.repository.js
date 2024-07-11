@@ -387,16 +387,18 @@ class SearchableTzCrudRepository extends TzCrudRepository {
     handleCurrentObjectSearch(opts) {
         return new Promise((resolve, reject) => {
             const { where, moreData } = opts;
-            let objectSearch = {};
             if (!where) {
-                resolve(objectSearch);
+                resolve({});
             }
             this.findOne({ where })
                 .then(found => {
                 if (found) {
-                    objectSearch = this.renderObjectSearch(found, moreData);
+                    const objectSearch = this.renderObjectSearch(found, moreData);
+                    resolve(objectSearch);
                 }
-                resolve(objectSearch);
+                else {
+                    resolve({});
+                }
             })
                 .catch(reject);
         });
@@ -404,13 +406,9 @@ class SearchableTzCrudRepository extends TzCrudRepository {
     handleNewObjectSearch(opts) {
         return new Promise((resolve, reject) => {
             const { entity, moreData } = opts;
-            let objectSearch = {};
             const clonedEntity = (0, cloneDeep_1.default)(entity);
-            if (!this.inclusionRelations) {
-                resolve(objectSearch);
-            }
-            if (!this.relationConfigs.length) {
-                resolve(objectSearch);
+            if (!this.inclusionRelations || !this.relationConfigs.length) {
+                resolve({});
             }
             Promise.all(this.relationConfigs.map(relationConf => {
                 return new Promise((subResolve, subReject) => {
@@ -428,7 +426,7 @@ class SearchableTzCrudRepository extends TzCrudRepository {
                 });
             }))
                 .then(() => {
-                objectSearch = this.renderObjectSearch(clonedEntity, moreData);
+                const objectSearch = this.renderObjectSearch(clonedEntity, moreData);
                 resolve(objectSearch);
             })
                 .catch(reject);
