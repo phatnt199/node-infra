@@ -308,31 +308,175 @@ class TzCrudRepository extends AbstractTzRepository {
     }
 }
 exports.TzCrudRepository = TzCrudRepository;
-// ----------------------------------------------------------------------------------------------------------------------------------------
 class SearchableTzCrudRepository extends TzCrudRepository {
-    constructor(entityClass, dataSource) {
+    constructor(entityClass, dataSource, opts) {
+        var _a;
         super(entityClass, dataSource);
+        this.inclusionRelations = opts.inclusionRelations;
+        this.relationConfigs = (_a = opts.relationConfigs) !== null && _a !== void 0 ? _a : [];
     }
     _renderTextSearch(entity, options) {
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
+            const moreData = (0, get_1.default)(options, 'moreData', '');
             const isTextSearchModel = (0, get_1.default)(this.modelClass.definition.properties, 'textSearch', null) !== null;
             if (!isTextSearchModel) {
                 resolve(null);
                 return;
             }
-            this.renderTextSearch(entity, options).then(resolve).catch(reject);
+            const textSearch = this.renderTextSearch(entity, moreData);
+            resolve(textSearch);
+        });
+    }
+    // ----------------------------------------------------------------------------------------------------
+    convertRelationConfig(opts) {
+        const { relationConfigs } = opts;
+        return {
+            include: relationConfigs.map(rc => {
+                const { relationName, relationConfigs } = rc;
+                const rs = {
+                    relation: relationName,
+                };
+                if (!(relationConfigs === null || relationConfigs === void 0 ? void 0 : relationConfigs.length)) {
+                    return rs;
+                }
+                (0, set_1.default)(rs, 'scope', this.convertRelationConfig({ relationConfigs }));
+            }),
+        };
+    }
+    /**
+     * @param opts: { relationConfig: RelationConfig }
+     * @returns InclusionFilter
+     *
+     * @example
+     * Param:
+     * {
+     *    relationName: 'user',
+     *    relationConfig: [
+     *        { relationName: 'profile' },
+     *        { relationName: 'identifiers', relationConfigs: [{ relationName: 'user' }]}
+     *    ],
+     * }
+     *
+     * Result:
+     * {
+     *    relation: 'user',
+     *    scope: {
+     *        include: [
+     *            { relation: 'profile'},
+     *            {
+     *                relation: 'identifiers',
+     *                scope: {
+     *                    include: [
+     *                        { relation: 'user' }
+     *                    ]
+     *                }
+     *            }
+     *        ]
+     *    }
+     * }
+     */
+    buildInclusionFilter(opts) {
+        const { relationConfig } = opts;
+        const { relationName, relationConfigs } = relationConfig;
+        const inclusionFilter = { relation: relationName };
+        if (relationConfigs === null || relationConfigs === void 0 ? void 0 : relationConfigs.length) {
+            (0, set_1.default)(inclusionFilter, 'scope', this.convertRelationConfig({ relationConfigs }));
+        }
+        return inclusionFilter;
+    }
+    handleCurrentObjectSearch(opts) {
+        return new Promise((resolve, reject) => {
+            const { where, moreData } = opts;
+            if (!where) {
+                resolve({});
+            }
+            this.findOne({ where })
+                .then(found => {
+                if (found) {
+                    const objectSearch = this.renderObjectSearch(found, moreData);
+                    resolve(objectSearch);
+                }
+                else {
+                    resolve({});
+                }
+            })
+                .catch(reject);
+        });
+    }
+    handleNewObjectSearch(opts) {
+        return new Promise((resolve, reject) => {
+            const { entity, moreData } = opts;
+            const clonedEntity = (0, cloneDeep_1.default)(entity);
+            if (!this.inclusionRelations || !this.relationConfigs.length) {
+                resolve({});
+            }
+            Promise.all(this.relationConfigs.map(relationConf => {
+                return new Promise((subResolve, subReject) => {
+                    var _a;
+                    const { relationName } = relationConf;
+                    const inclusionFilter = this.buildInclusionFilter({ relationConfig: relationConf });
+                    (_a = this.inclusionResolvers
+                        .get(relationName)) === null || _a === void 0 ? void 0 : _a([clonedEntity], inclusionFilter).then(rs => {
+                        const relationData = rs[0];
+                        if (relationData) {
+                            (0, set_1.default)(clonedEntity, relationName, relationData);
+                        }
+                        subResolve(null);
+                    }).catch(subReject);
+                });
+            }))
+                .then(() => {
+                const objectSearch = this.renderObjectSearch(clonedEntity, moreData);
+                resolve(objectSearch);
+            })
+                .catch(reject);
         });
     }
     _renderObjectSearch(entity, options) {
         return new Promise((resolve, reject) => {
+            const moreData = (0, get_1.default)(options, 'moreData', {});
+            const where = (0, get_1.default)(options, 'where');
             const isObjectSearchModel = (0, get_1.default)(this.modelClass.definition.properties, 'objectSearch', null) !== null;
             if (!isObjectSearchModel) {
                 resolve(null);
                 return;
             }
-            this.renderObjectSearch(entity, options).then(resolve).catch(reject);
+            Promise.all([
+                this.handleCurrentObjectSearch({ where, moreData }),
+                this.handleNewObjectSearch({ entity, moreData }),
+            ])
+                .then(([currentObjectSearch, newObjectSearch]) => {
+                const objectSearch = Object.assign(Object.assign({}, currentObjectSearch), newObjectSearch);
+                resolve(objectSearch);
+            })
+                .catch(reject);
         });
     }
+    // ----------------------------------------------------------------------------------------------------
+    mixSearchFields(entity, options) {
+        return new Promise((resolve, reject) => {
+            const ignoreUpdate = (0, get_1.default)(options, 'ignoreUpdate');
+            if (ignoreUpdate) {
+                return entity;
+            }
+            this._renderTextSearch(entity, options)
+                .then(rsTextSearch => {
+                if (rsTextSearch) {
+                    (0, set_1.default)(entity, 'textSearch', rsTextSearch);
+                }
+                this._renderObjectSearch(entity, options)
+                    .then(rsObjectSearch => {
+                    if (rsObjectSearch) {
+                        (0, set_1.default)(entity, 'objectSearch', rsObjectSearch);
+                    }
+                    resolve(entity);
+                })
+                    .catch(reject);
+            })
+                .catch(reject);
+        });
+    }
+    // ----------------------------------------------------------------------------------------------------
     create(data, options) {
         return new Promise((resolve, reject) => {
             this.mixSearchFields(data, options)
@@ -367,29 +511,6 @@ class SearchableTzCrudRepository extends TzCrudRepository {
             this.mixSearchFields(data, options)
                 .then(enriched => {
                 resolve(super.replaceById(id, enriched, options));
-            })
-                .catch(reject);
-        });
-    }
-    mixSearchFields(entity, options) {
-        return new Promise((resolve, reject) => {
-            const ignoreUpdate = (0, get_1.default)(options, 'ignoreUpdate');
-            if (ignoreUpdate) {
-                return entity;
-            }
-            this._renderTextSearch(entity, options)
-                .then(rsTextSearch => {
-                if (rsTextSearch) {
-                    (0, set_1.default)(entity, 'textSearch', rsTextSearch);
-                }
-                this._renderObjectSearch(entity, options)
-                    .then(rsObjectSearch => {
-                    if (rsObjectSearch) {
-                        (0, set_1.default)(entity, 'objectSearch', rsObjectSearch);
-                    }
-                    resolve(entity);
-                })
-                    .catch(reject);
             })
                 .catch(reject);
         });

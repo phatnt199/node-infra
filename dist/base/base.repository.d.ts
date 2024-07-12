@@ -103,25 +103,67 @@ export declare abstract class TzCrudRepository<E extends BaseTzEntity, R extends
         authorId?: IdType;
     } | undefined): DataObject<E>;
 }
+interface RelationConfig {
+    relationName: string;
+    relationConfigs?: RelationConfig[];
+}
 export declare abstract class SearchableTzCrudRepository<E extends BaseTextSearchTzEntity | BaseObjectSearchTzEntity | BaseSearchableTzEntity, R extends EntityRelation = AnyType> extends TzCrudRepository<E, R> {
-    constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource);
-    abstract renderTextSearch(entity: DataObject<E>, options?: Options & {
-        where?: Where;
-    }): Promise<string>;
-    abstract renderObjectSearch(entity: DataObject<E>, options?: Options & {
-        where?: Where;
-    }): Promise<object>;
+    private readonly relationConfigs;
+    private readonly inclusionRelations;
+    constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource, opts: {
+        inclusionRelations: boolean;
+        relationConfigs?: RelationConfig[];
+    });
+    abstract renderTextSearch(entity: DataObject<E>, moreData?: string): string;
+    abstract renderObjectSearch(entity: DataObject<E>, moreData?: object): object;
     _renderTextSearch(entity: DataObject<E>, options?: Options & {
         where?: Where;
     }): Promise<string | null>;
+    private convertRelationConfig;
+    /**
+     * @param opts: { relationConfig: RelationConfig }
+     * @returns InclusionFilter
+     *
+     * @example
+     * Param:
+     * {
+     *    relationName: 'user',
+     *    relationConfig: [
+     *        { relationName: 'profile' },
+     *        { relationName: 'identifiers', relationConfigs: [{ relationName: 'user' }]}
+     *    ],
+     * }
+     *
+     * Result:
+     * {
+     *    relation: 'user',
+     *    scope: {
+     *        include: [
+     *            { relation: 'profile'},
+     *            {
+     *                relation: 'identifiers',
+     *                scope: {
+     *                    include: [
+     *                        { relation: 'user' }
+     *                    ]
+     *                }
+     *            }
+     *        ]
+     *    }
+     * }
+     */
+    private buildInclusionFilter;
+    private handleCurrentObjectSearch;
+    private handleNewObjectSearch;
     _renderObjectSearch(entity: DataObject<E>, options?: Options & {
         where?: Where;
     }): Promise<object | null>;
+    mixSearchFields(entity: DataObject<E>, options?: Options & {
+        where?: Where;
+    }): Promise<DataObject<E>>;
     create(data: DataObject<E>, options?: Options): Promise<E>;
     createAll(datum: DataObject<E>[], options?: Options): Promise<E[]>;
     updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
     replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
-    mixSearchFields(entity: DataObject<E>, options?: Options & {
-        where?: Where;
-    }): Promise<DataObject<E>>;
 }
+export {};

@@ -8,6 +8,7 @@ import {
   DataObject,
   DefaultCrudRepository,
   DefaultKeyValueRepository,
+  InclusionFilter,
   IsolationLevel,
   juggler,
   Options,
@@ -425,41 +426,214 @@ export abstract class TzCrudRepository<
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
+interface RelationConfig {
+  relationName: string;
+  relationConfigs?: RelationConfig[];
+}
+
 export abstract class SearchableTzCrudRepository<
   E extends BaseTextSearchTzEntity | BaseObjectSearchTzEntity | BaseSearchableTzEntity,
   R extends EntityRelation = AnyType,
 > extends TzCrudRepository<E, R> {
-  constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource) {
+  private readonly relationConfigs: RelationConfig[];
+  private readonly inclusionRelations: boolean;
+  constructor(
+    entityClass: EntityClassType<E>,
+    dataSource: juggler.DataSource,
+    opts: { inclusionRelations: boolean; relationConfigs?: RelationConfig[] },
+  ) {
     super(entityClass, dataSource);
+    this.inclusionRelations = opts.inclusionRelations;
+    this.relationConfigs = opts.relationConfigs ?? [];
   }
 
-  abstract renderTextSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<string>;
-  abstract renderObjectSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<object>;
+  abstract renderTextSearch(entity: DataObject<E>, moreData?: string): string;
+  abstract renderObjectSearch(entity: DataObject<E>, moreData?: object): object;
 
   _renderTextSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<string | null> {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
+      const moreData = get(options, 'moreData', '');
       const isTextSearchModel = get(this.modelClass.definition.properties, 'textSearch', null) !== null;
       if (!isTextSearchModel) {
         resolve(null);
         return;
       }
 
-      this.renderTextSearch(entity, options).then(resolve).catch(reject);
+      const textSearch = this.renderTextSearch(entity, moreData);
+      resolve(textSearch);
+    });
+  }
+
+  // ----------------------------------------------------------------------------------------------------
+  private convertRelationConfig(opts: { relationConfigs: RelationConfig[] }) {
+    const { relationConfigs } = opts;
+    return {
+      include: relationConfigs.map(rc => {
+        const { relationName, relationConfigs } = rc;
+        const rs = {
+          relation: relationName,
+        };
+
+        if (!relationConfigs?.length) {
+          return rs;
+        }
+
+        set(rs, 'scope', this.convertRelationConfig({ relationConfigs }));
+      }),
+    };
+  }
+
+  /**
+   * @param opts: { relationConfig: RelationConfig }
+   * @returns InclusionFilter
+   *
+   * @example
+   * Param:
+   * {
+   *    relationName: 'user',
+   *    relationConfig: [
+   *        { relationName: 'profile' },
+   *        { relationName: 'identifiers', relationConfigs: [{ relationName: 'user' }]}
+   *    ],
+   * }
+   *
+   * Result:
+   * {
+   *    relation: 'user',
+   *    scope: {
+   *        include: [
+   *            { relation: 'profile'},
+   *            {
+   *                relation: 'identifiers',
+   *                scope: {
+   *                    include: [
+   *                        { relation: 'user' }
+   *                    ]
+   *                }
+   *            }
+   *        ]
+   *    }
+   * }
+   */
+  private buildInclusionFilter(opts: { relationConfig: RelationConfig }): InclusionFilter {
+    const { relationConfig } = opts;
+    const { relationName, relationConfigs } = relationConfig;
+    const inclusionFilter: InclusionFilter = { relation: relationName };
+    if (relationConfigs?.length) {
+      set(inclusionFilter, 'scope', this.convertRelationConfig({ relationConfigs }));
+    }
+
+    return inclusionFilter;
+  }
+
+  private handleCurrentObjectSearch(opts: { where?: Where; moreData?: object }): Promise<object> {
+    return new Promise((resolve, reject) => {
+      const { where, moreData } = opts;
+
+      if (!where) {
+        resolve({});
+      }
+      this.findOne({ where })
+        .then(found => {
+          if (found) {
+            const objectSearch = this.renderObjectSearch(found, moreData);
+            resolve(objectSearch);
+          } else {
+            resolve({});
+          }
+        })
+        .catch(reject);
+    });
+  }
+
+  private handleNewObjectSearch(opts: { entity: DataObject<E>; moreData?: object }): Promise<object> {
+    return new Promise((resolve, reject) => {
+      const { entity, moreData } = opts;
+      const clonedEntity = cloneDeep(entity);
+
+      if (!this.inclusionRelations || !this.relationConfigs.length) {
+        resolve({});
+      }
+
+      Promise.all(
+        this.relationConfigs.map(relationConf => {
+          return new Promise((subResolve, subReject) => {
+            const { relationName } = relationConf;
+            const inclusionFilter = this.buildInclusionFilter({ relationConfig: relationConf });
+            this.inclusionResolvers
+              .get(relationName)?.([clonedEntity as AnyType], inclusionFilter)
+              .then(rs => {
+                const relationData = rs[0];
+                if (relationData) {
+                  set(clonedEntity, relationName, relationData);
+                }
+                subResolve(null);
+              })
+              .catch(subReject);
+          });
+        }),
+      )
+        .then(() => {
+          const objectSearch = this.renderObjectSearch(clonedEntity, moreData);
+          resolve(objectSearch);
+        })
+        .catch(reject);
     });
   }
 
   _renderObjectSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<object | null> {
     return new Promise((resolve, reject) => {
+      const moreData = get(options, 'moreData', {});
+      const where = get(options, 'where');
+
       const isObjectSearchModel = get(this.modelClass.definition.properties, 'objectSearch', null) !== null;
       if (!isObjectSearchModel) {
         resolve(null);
         return;
       }
 
-      this.renderObjectSearch(entity, options).then(resolve).catch(reject);
+      Promise.all([
+        this.handleCurrentObjectSearch({ where, moreData }),
+        this.handleNewObjectSearch({ entity, moreData }),
+      ])
+        .then(([currentObjectSearch, newObjectSearch]) => {
+          const objectSearch = { ...currentObjectSearch, ...newObjectSearch };
+          resolve(objectSearch);
+        })
+        .catch(reject);
     });
   }
 
+  // ----------------------------------------------------------------------------------------------------
+  mixSearchFields(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<DataObject<E>> {
+    return new Promise((resolve, reject) => {
+      const ignoreUpdate = get(options, 'ignoreUpdate');
+
+      if (ignoreUpdate) {
+        return entity;
+      }
+
+      this._renderTextSearch(entity, options)
+        .then(rsTextSearch => {
+          if (rsTextSearch) {
+            set(entity, 'textSearch', rsTextSearch);
+          }
+
+          this._renderObjectSearch(entity, options)
+            .then(rsObjectSearch => {
+              if (rsObjectSearch) {
+                set(entity, 'objectSearch', rsObjectSearch);
+              }
+
+              resolve(entity);
+            })
+            .catch(reject);
+        })
+        .catch(reject);
+    });
+  }
+
+  // ----------------------------------------------------------------------------------------------------
   create(data: DataObject<E>, options?: Options): Promise<E> {
     return new Promise((resolve, reject) => {
       this.mixSearchFields(data, options)
@@ -499,34 +673,6 @@ export abstract class SearchableTzCrudRepository<
       this.mixSearchFields(data, options)
         .then(enriched => {
           resolve(super.replaceById(id, enriched, options));
-        })
-        .catch(reject);
-    });
-  }
-
-  mixSearchFields(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<DataObject<E>> {
-    return new Promise((resolve, reject) => {
-      const ignoreUpdate = get(options, 'ignoreUpdate');
-
-      if (ignoreUpdate) {
-        return entity;
-      }
-
-      this._renderTextSearch(entity, options)
-        .then(rsTextSearch => {
-          if (rsTextSearch) {
-            set(entity, 'textSearch', rsTextSearch);
-          }
-
-          this._renderObjectSearch(entity, options)
-            .then(rsObjectSearch => {
-              if (rsObjectSearch) {
-                set(entity, 'objectSearch', rsObjectSearch);
-              }
-
-              resolve(entity);
-            })
-            .catch(reject);
         })
         .catch(reject);
     });
