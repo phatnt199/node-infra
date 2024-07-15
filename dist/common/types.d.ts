@@ -12,6 +12,9 @@ export interface IDataSource {
     name: string;
     config: object;
 }
+export type ClassType<T> = Function & {
+    prototype: T;
+};
 export type EntityClassType<T extends Entity> = typeof Entity & {
     prototype: T & {
         id?: IdType;
@@ -23,6 +26,7 @@ export type StringIdType = string;
 export type IdType = string | number;
 export type AnyType = any;
 export type AnyObject = Record<string | symbol | number, any>;
+export type Promisable<T> = T | Promise<T>;
 export type NullableType = undefined | null | void;
 export type TRelationType = 'belongsTo' | 'hasOne' | 'hasMany' | 'hasManyThrough';
 export type TBullQueueRole = 'queue' | 'worker';

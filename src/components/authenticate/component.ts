@@ -10,11 +10,13 @@ import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
 import { App, AuthenticateKeys, Authentication } from '@/common';
 import { getError } from '@/utilities';
+import { defineAuthenticationController } from './authentication.controller';
 import { BasicTokenService } from './basic-token.service';
 import { BasicAuthenticationStrategy } from './basic.strategy';
 import { JWTTokenService } from './jwt-token.service';
 import { JWTAuthenticationStrategy } from './jwt.strategy';
 import { AuthenticationMiddleware } from './middleware';
+import { ChangePasswordRequest, IAuthenticationControllerRestOptions, SignInRequest, SignUpRequest } from './types';
 
 export class AuthenticateComponent extends BaseComponent {
   bindings: Binding[] = [
@@ -24,6 +26,13 @@ export class AuthenticateComponent extends BaseComponent {
       tokenExpiresIn: Authentication.ACCESS_TOKEN_EXPIRES_IN,
       refreshSecret: Authentication.REFRESH_TOKEN_SECRET,
       refreshExpiresIn: Authentication.REFRESH_TOKEN_EXPIRES_IN,
+    }),
+    Binding.bind(AuthenticateKeys.REST_OPTIONS).to({
+      restPath: '/auth',
+      requireAuthenticatedSignUp: false,
+      signInRequest: SignInRequest,
+      signUpRequest: SignUpRequest,
+      changePasswordRequest: ChangePasswordRequest,
     }),
   ];
 
@@ -66,6 +75,12 @@ export class AuthenticateComponent extends BaseComponent {
     this.application.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(tokenExpiresIn.toString());
     this.application.bind(RefreshTokenServiceBindings.REFRESH_SECRET).to(refreshSecret);
     this.application.bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(refreshExpiresIn?.toString());
+
+    const authenticationControllerRestOptions = this.application.isBound(AuthenticateKeys.REST_OPTIONS)
+      ? this.application.getSync<IAuthenticationControllerRestOptions>(AuthenticateKeys.REST_OPTIONS)
+      : {};
+    const authenticationController = defineAuthenticationController(authenticationControllerRestOptions);
+    this.application.controller(authenticationController);
   }
 
   binding() {

@@ -12,6 +12,7 @@ export class RouteKeys {
 export class AuthenticateKeys {
   static readonly APPLICATION_SECRET = '@app/authenticate/application_secret';
   static readonly TOKEN_OPTIONS = '@app/authenticate/token_options';
+  static readonly REST_OPTIONS = '@app/authenticate/rest_options';
 }
 
 // -----------------------------------------------------------------------------

@@ -168,8 +168,7 @@ const getNumberValue = (input, method = 'int') => {
 exports.getNumberValue = getNumberValue;
 // -------------------------------------------------------------------------
 const getSchemaObject = (ctor) => {
-    const name = ctor.name;
-    return (0, rest_1.getModelSchemaRef)(ctor).definitions[name];
+    return ctor ? (0, rest_1.getModelSchemaRef)(ctor).definitions[ctor.name] : {};
 };
 exports.getSchemaObject = getSchemaObject;
 //# sourceMappingURL=parse.utility.js.map

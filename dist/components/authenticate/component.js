@@ -21,11 +21,13 @@ const base_application_1 = require("../../base/base.application");
 const base_component_1 = require("../../base/base.component");
 const common_1 = require("../../common");
 const utilities_1 = require("../../utilities");
+const authentication_controller_1 = require("./authentication.controller");
 const basic_token_service_1 = require("./basic-token.service");
 const basic_strategy_1 = require("./basic.strategy");
 const jwt_token_service_1 = require("./jwt-token.service");
 const jwt_strategy_1 = require("./jwt.strategy");
 const middleware_1 = require("./middleware");
+const types_1 = require("./types");
 let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthenticateComponent_1.name });
@@ -37,6 +39,13 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
                 tokenExpiresIn: common_1.Authentication.ACCESS_TOKEN_EXPIRES_IN,
                 refreshSecret: common_1.Authentication.REFRESH_TOKEN_SECRET,
                 refreshExpiresIn: common_1.Authentication.REFRESH_TOKEN_EXPIRES_IN,
+            }),
+            core_1.Binding.bind(common_1.AuthenticateKeys.REST_OPTIONS).to({
+                restPath: '/auth',
+                requireAuthenticatedSignUp: false,
+                signInRequest: types_1.SignInRequest,
+                signUpRequest: types_1.SignUpRequest,
+                changePasswordRequest: types_1.ChangePasswordRequest,
             }),
         ];
         this.binding();
@@ -61,6 +70,11 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
         this.application.bind(authentication_jwt_1.TokenServiceBindings.TOKEN_EXPIRES_IN).to(tokenExpiresIn.toString());
         this.application.bind(authentication_jwt_1.RefreshTokenServiceBindings.REFRESH_SECRET).to(refreshSecret);
         this.application.bind(authentication_jwt_1.RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(refreshExpiresIn === null || refreshExpiresIn === void 0 ? void 0 : refreshExpiresIn.toString());
+        const authenticationControllerRestOptions = this.application.isBound(common_1.AuthenticateKeys.REST_OPTIONS)
+            ? this.application.getSync(common_1.AuthenticateKeys.REST_OPTIONS)
+            : {};
+        const authenticationController = (0, authentication_controller_1.defineAuthenticationController)(authenticationControllerRestOptions);
+        this.application.controller(authenticationController);
     }
     binding() {
         if (!this.application) {

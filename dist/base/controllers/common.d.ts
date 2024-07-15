@@ -5,7 +5,7 @@ import { SchemaObject } from '@loopback/rest';
 import { BaseIdEntity, BaseTzEntity } from '../base.model';
 export declare const applyLimit: <E extends BaseTzEntity>(filter?: Filter<E>) => Filter<E>;
 export declare class BaseController implements IController {
-    protected logger: ApplicationLogger;
+    logger: ApplicationLogger;
     defaultLimit: number;
     constructor(opts: {
         scope?: string;
