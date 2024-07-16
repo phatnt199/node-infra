@@ -8,7 +8,7 @@ import { getError, getSchemaObject } from '@/utilities';
 import {
   ChangePasswordRequest,
   IAuthenticationControllerRestOptions,
-  IUserService,
+  IAuthService,
   SignInRequest,
   SignUpRequest,
 } from './types';
@@ -25,12 +25,12 @@ export const defineAuthenticationController = <
 
   @api({ basePath: restPath })
   class BaseAuthenticationController extends BaseController {
-    userService: IUserService;
+    service: IAuthService;
     getCurrentUser: Getter<{ userId: IdType }>;
 
-    constructor(userService: IUserService, getCurrentUser: Getter<{ userId: IdType }>) {
+    constructor(authService: IAuthService, getCurrentUser: Getter<{ userId: IdType }>) {
       super({ scope: BaseAuthenticationController.name });
-      this.userService = userService;
+      this.service = authService;
       this.getCurrentUser = getCurrentUser;
     }
 
@@ -54,7 +54,7 @@ export const defineAuthenticationController = <
       })
       payload: SI_RQ,
     ) {
-      return this.userService.signIn(payload);
+      return this.service.signIn(payload);
     }
 
     // ------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ export const defineAuthenticationController = <
       })
       payload: SU_RQ,
     ) {
-      return this.userService.signUp(payload);
+      return this.service.signUp(payload);
     }
 
     //-------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ export const defineAuthenticationController = <
             return;
           }
 
-          this.userService
+          this.service
             .changePassword({ ...payload, userId: currentUser.userId })
             .then(resolve)
             .catch(reject);
@@ -108,7 +108,7 @@ export const defineAuthenticationController = <
     }
   }
 
-  inject('services.UserService')(BaseAuthenticationController, undefined, 0);
+  inject(opts.serviceKey ?? 'services.UserService')(BaseAuthenticationController, undefined, 0);
   inject.getter(SecurityBindings.USER, { optional: true })(BaseAuthenticationController, undefined, 1);
 
   return BaseAuthenticationController;

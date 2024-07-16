@@ -42,6 +42,7 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
             }),
             core_1.Binding.bind(common_1.AuthenticateKeys.REST_OPTIONS).to({
                 restPath: '/auth',
+                serviceKey: 'services.UserService',
                 requireAuthenticatedSignUp: false,
                 signInRequest: types_1.SignInRequest,
                 signUpRequest: types_1.SignUpRequest,

@@ -1,11 +1,11 @@
 import { Getter } from '@loopback/core';
 import { IdType } from '../../common';
-import { ChangePasswordRequest, IAuthenticationControllerRestOptions, IUserService, SignInRequest, SignUpRequest } from './types';
+import { ChangePasswordRequest, IAuthenticationControllerRestOptions, IAuthService, SignInRequest, SignUpRequest } from './types';
 export declare const defineAuthenticationController: <SI_RQ extends SignInRequest = SignInRequest, SU_RQ extends SignUpRequest = SignUpRequest, CP_RQ extends ChangePasswordRequest = ChangePasswordRequest>(opts: IAuthenticationControllerRestOptions) => {
-    new (userService: IUserService, getCurrentUser: Getter<{
+    new (authService: IAuthService, getCurrentUser: Getter<{
         userId: IdType;
     }>): {
-        userService: IUserService;
+        service: IAuthService;
         getCurrentUser: Getter<{
             userId: IdType;
         }>;

@@ -22,13 +22,13 @@ const utilities_1 = require("../../utilities");
 const types_1 = require("./types");
 const security_1 = require("@loopback/security");
 const defineAuthenticationController = (opts) => {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     var BaseAuthenticationController_1;
     const { restPath = '/auth', requireAuthenticatedSignUp = false } = opts;
     let BaseAuthenticationController = BaseAuthenticationController_1 = class BaseAuthenticationController extends base_1.BaseController {
-        constructor(userService, getCurrentUser) {
+        constructor(authService, getCurrentUser) {
             super({ scope: BaseAuthenticationController_1.name });
-            this.userService = userService;
+            this.service = authService;
             this.getCurrentUser = getCurrentUser;
         }
         // ------------------------------------------------------------------------------
@@ -37,11 +37,11 @@ const defineAuthenticationController = (opts) => {
         }
         // ------------------------------------------------------------------------------
         signIn(payload) {
-            return this.userService.signIn(payload);
+            return this.service.signIn(payload);
         }
         // ------------------------------------------------------------------------------
         signUp(payload) {
-            return this.userService.signUp(payload);
+            return this.service.signUp(payload);
         }
         //-------------------------------------------------------------------------------
         changePassword(payload) {
@@ -54,7 +54,7 @@ const defineAuthenticationController = (opts) => {
                         }));
                         return;
                     }
-                    this.userService
+                    this.service
                         .changePassword(Object.assign(Object.assign({}, payload), { userId: currentUser.userId }))
                         .then(resolve)
                         .catch(reject);
@@ -116,7 +116,7 @@ const defineAuthenticationController = (opts) => {
         (0, rest_1.api)({ basePath: restPath }),
         __metadata("design:paramtypes", [Object, Function])
     ], BaseAuthenticationController);
-    (0, core_1.inject)('services.UserService')(BaseAuthenticationController, undefined, 0);
+    (0, core_1.inject)((_d = opts.serviceKey) !== null && _d !== void 0 ? _d : 'services.UserService')(BaseAuthenticationController, undefined, 0);
     core_1.inject.getter(security_1.SecurityBindings.USER, { optional: true })(BaseAuthenticationController, undefined, 1);
     return BaseAuthenticationController;
 };

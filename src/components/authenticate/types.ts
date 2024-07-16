@@ -87,6 +87,7 @@ export interface IAuthenticationControllerRestOptions<
   CP_RQ extends ChangePasswordRequest = ChangePasswordRequest,
 > {
   restPath?: string;
+  serviceKey?: string;
   requireAuthenticatedSignUp?: boolean;
   signInRequest?: ClassType<SI_RQ>;
   signUpRequest?: ClassType<SU_RQ>;
@@ -94,7 +95,7 @@ export interface IAuthenticationControllerRestOptions<
 }
 
 // -------------------------------------------------------------------
-export interface IUserService<
+export interface IAuthService<
   SI_RQ extends SignInRequest = SignInRequest,
   SI_RS = AnyObject,
   SU_RQ extends SignUpRequest = SignUpRequest,
