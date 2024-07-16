@@ -16,11 +16,8 @@ import { SecurityBindings } from '@loopback/security';
 
 export const defineAuthenticationController = <
   SI_RQ extends SignInRequest = SignInRequest,
-  SI_RS = object,
   SU_RQ extends SignUpRequest = SignUpRequest,
-  SU_RS = object,
   CP_RQ extends ChangePasswordRequest = ChangePasswordRequest,
-  CP_RS = object,
 >(
   opts: IAuthenticationControllerRestOptions,
 ) => {
@@ -28,13 +25,10 @@ export const defineAuthenticationController = <
 
   @api({ basePath: restPath })
   class BaseAuthenticationController extends BaseController {
-    userService: IUserService<SI_RQ, SI_RS, SU_RQ, SU_RS, CP_RQ, CP_RS>;
+    userService: IUserService;
     getCurrentUser: Getter<{ userId: IdType }>;
 
-    constructor(
-      userService: IUserService<SI_RQ, SI_RS, SU_RQ, SU_RS, CP_RQ, CP_RS>,
-      getCurrentUser: Getter<{ userId: IdType }>,
-    ) {
+    constructor(userService: IUserService, getCurrentUser: Getter<{ userId: IdType }>) {
       super({ scope: BaseAuthenticationController.name });
       this.userService = userService;
       this.getCurrentUser = getCurrentUser;

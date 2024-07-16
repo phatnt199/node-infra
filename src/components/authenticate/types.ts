@@ -94,15 +94,10 @@ export interface IAuthenticationControllerRestOptions<
 }
 
 // -------------------------------------------------------------------
-export interface IUserService<
-  SI_RQ extends SignInRequest = SignInRequest,
-  SI_RS = AnyObject,
-  SU_RQ extends SignUpRequest = SignUpRequest,
-  SU_RS = AnyObject,
-  CP_RQ extends ChangePasswordRequest = ChangePasswordRequest,
-  CP_RS = AnyObject,
-> {
-  signIn(opts: SI_RQ): Promise<SI_RS>;
-  signUp(opts: SU_RQ): Promise<SU_RS>;
-  changePassword(opts: CP_RQ): Promise<CP_RS>;
+export interface IUserService {
+  signIn<SI_RQ extends SignInRequest = SignInRequest, SI_RS = AnyObject>(opts: SI_RQ): Promise<SI_RS>;
+  signUp<SU_RQ extends SignUpRequest = SignUpRequest, SU_RS = AnyObject>(opts: SU_RQ): Promise<SU_RS>;
+  changePassword<CP_RQ extends ChangePasswordRequest = ChangePasswordRequest, CP_RS = AnyObject>(
+    opts: CP_RQ,
+  ): Promise<CP_RS>;
 }
