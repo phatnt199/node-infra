@@ -1,18 +1,18 @@
 import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
 import { AuthorizerKeys } from '@/common';
-import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from '@/models/authorize';
-import {
-    PermissionMappingRepository,
-    PermissionRepository,
-    RoleRepository,
-    UserRoleRepository,
-    ViewAuthorizePolicyRepository,
-} from '@/repositories';
 import { AuthorizationBindings, AuthorizationDecision, AuthorizationTags } from '@loopback/authorization';
 import { Binding, CoreBindings, inject } from '@loopback/core';
-import { EnforcerService } from './enforcer.service';
+import { EnforcerService } from './services';
+import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from './models';
 import { AuthorizeProvider } from './provider';
+import {
+  PermissionMappingRepository,
+  PermissionRepository,
+  RoleRepository,
+  UserRoleRepository,
+  ViewAuthorizePolicyRepository,
+} from './repositories';
 
 import { BaseDataSource } from '@/base/base.datasource';
 import { getError } from '@/utilities';

@@ -1,6 +1,5 @@
 import { BaseIdEntity, BaseTzEntity } from '@/base';
 import { Count, DataObject, Entity, Filter, Options, Where } from '@loopback/repository';
-import { UserProfile } from '@loopback/security';
 
 export interface IApplication {
   models: Set<string>;
@@ -103,22 +102,3 @@ export interface IError<N extends number = number> extends Error {
   message: string;
   [key: string]: any;
 }
-
-// ----------------------------------------------------------------------------------------------------------------------------------------
-export type MigrationProcess = {
-  name: string;
-  cleanFn?: Function;
-  fn: Function;
-  options?: {
-    alwaysRun?: boolean;
-    [key: string | symbol]: any;
-  };
-};
-
-// ----------------------------------------------------------------------------------------------------------------------------------------
-export interface JWTTokenPayload extends UserProfile {
-  userId: IdType;
-  roles: { id: IdType; identifier: string; priority: number }[];
-}
-
-export interface TokenPayload extends JWTTokenPayload {}

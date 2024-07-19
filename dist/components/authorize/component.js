@@ -29,12 +29,12 @@ exports.AuthorizeComponent = void 0;
 const base_application_1 = require("../../base/base.application");
 const base_component_1 = require("../../base/base.component");
 const common_1 = require("../../common");
-const authorize_1 = require("../../models/authorize");
-const repositories_1 = require("../../repositories");
 const authorization_1 = require("@loopback/authorization");
 const core_1 = require("@loopback/core");
-const enforcer_service_1 = require("./enforcer.service");
+const services_1 = require("./services");
+const models_1 = require("./models");
 const provider_1 = require("./provider");
+const repositories_1 = require("./repositories");
 const utilities_1 = require("../../utilities");
 const flatten_1 = __importDefault(require("lodash/flatten"));
 const path_1 = __importDefault(require("path"));
@@ -46,10 +46,10 @@ let AuthorizeComponent = AuthorizeComponent_1 = class AuthorizeComponent extends
         this.application = application;
         this.bindings = [
             // Model bindings
-            core_1.Binding.bind(common_1.AuthorizerKeys.ROLE_MODEL).toClass(authorize_1.Role),
-            core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MODEL).toClass(authorize_1.Permission),
-            core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MAPPING_MODEL).toClass(authorize_1.PermissionMapping),
-            core_1.Binding.bind(common_1.AuthorizerKeys.USER_ROLE_MODEL).toClass(authorize_1.UserRole),
+            core_1.Binding.bind(common_1.AuthorizerKeys.ROLE_MODEL).toClass(models_1.Role),
+            core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MODEL).toClass(models_1.Permission),
+            core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MAPPING_MODEL).toClass(models_1.PermissionMapping),
+            core_1.Binding.bind(common_1.AuthorizerKeys.USER_ROLE_MODEL).toClass(models_1.UserRole),
             // Repository bindings
             core_1.Binding.bind(common_1.AuthorizerKeys.ROLE_REPOSITORY).toClass(repositories_1.RoleRepository),
             core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_REPOSITORY).toClass(repositories_1.PermissionRepository),
@@ -64,16 +64,16 @@ let AuthorizeComponent = AuthorizeComponent_1 = class AuthorizeComponent extends
         this.binding();
     }
     defineModels() {
-        this.application.model(authorize_1.Role);
-        this.application.model(authorize_1.Permission);
-        this.application.model(authorize_1.PermissionMapping);
-        this.application.model(authorize_1.UserRole);
-        this.application.model(authorize_1.ViewAuthorizePolicy);
-        this.application.models.add(authorize_1.Role.name);
-        this.application.models.add(authorize_1.Permission.name);
-        this.application.models.add(authorize_1.PermissionMapping.name);
-        this.application.models.add(authorize_1.UserRole.name);
-        this.application.models.add(authorize_1.ViewAuthorizePolicy.name);
+        this.application.model(models_1.Role);
+        this.application.model(models_1.Permission);
+        this.application.model(models_1.PermissionMapping);
+        this.application.model(models_1.UserRole);
+        this.application.model(models_1.ViewAuthorizePolicy);
+        this.application.models.add(models_1.Role.name);
+        this.application.models.add(models_1.Permission.name);
+        this.application.models.add(models_1.PermissionMapping.name);
+        this.application.models.add(models_1.UserRole.name);
+        this.application.models.add(models_1.ViewAuthorizePolicy.name);
     }
     defineRepositories() {
         this.application.repository(repositories_1.RoleRepository);
@@ -135,7 +135,7 @@ let AuthorizeComponent = AuthorizeComponent_1 = class AuthorizeComponent extends
         this.verify()
             .then(() => {
             this.application.interceptor(interceptor_1.AuthorizateInterceptor);
-            this.application.bind(common_1.AuthorizerKeys.ENFORCER).toInjectable(enforcer_service_1.EnforcerService);
+            this.application.bind(common_1.AuthorizerKeys.ENFORCER).toInjectable(services_1.EnforcerService);
             this.application.configure(authorization_1.AuthorizationBindings.COMPONENT).to({
                 precedence: authorization_1.AuthorizationDecision.DENY,
                 defaultDecision: authorization_1.AuthorizationDecision.DENY,

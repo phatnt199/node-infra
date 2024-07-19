@@ -5,8 +5,7 @@ import { MinioHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import { Binding, CoreBindings, inject } from '@loopback/core';
 import { ClientOptions } from 'minio';
-import { StaticAssetController } from './asset.controller';
-import { StaticResourceController } from './resource.controller';
+import { StaticAssetController, StaticResourceController } from './controllers';
 
 export class StaticAssetComponent extends BaseComponent {
   bindings: Binding[] = [

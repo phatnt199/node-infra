@@ -21,12 +21,10 @@ const base_application_1 = require("../../base/base.application");
 const base_component_1 = require("../../base/base.component");
 const common_1 = require("../../common");
 const utilities_1 = require("../../utilities");
-const authentication_controller_1 = require("./authentication.controller");
-const basic_token_service_1 = require("./basic-token.service");
-const basic_strategy_1 = require("./basic.strategy");
-const jwt_token_service_1 = require("./jwt-token.service");
-const jwt_strategy_1 = require("./jwt.strategy");
+const controllers_1 = require("./controllers");
 const middleware_1 = require("./middleware");
+const oauth2_1 = require("./oauth2");
+const services_1 = require("./services");
 const types_1 = require("./types");
 let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponent extends base_component_1.BaseComponent {
     constructor(application) {
@@ -48,6 +46,9 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
                 signUpRequest: types_1.SignUpRequest,
                 changePasswordRequest: types_1.ChangePasswordRequest,
             }),
+            core_1.Binding.bind(common_1.AuthenticateKeys.OAUTH2_OPTIONS).to({
+                enable: false,
+            }),
         ];
         this.binding();
     }
@@ -57,25 +58,44 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
     }
     defineServices() {
         this.logger.debug('[defineServices] Initializing authenticate component - services...!');
-        this.application.service(basic_token_service_1.BasicTokenService);
-        this.application.service(jwt_token_service_1.JWTTokenService);
+        this.application.service(services_1.BasicTokenService);
+        this.application.service(services_1.JWTTokenService);
+    }
+    defineControllers() {
+        const authenticationControllerRestOptions = this.application.isBound(common_1.AuthenticateKeys.REST_OPTIONS)
+            ? this.application.getSync(common_1.AuthenticateKeys.REST_OPTIONS)
+            : {};
+        const authenticationController = (0, controllers_1.defineAuthenticationController)(authenticationControllerRestOptions);
+        this.application.controller(authenticationController);
+    }
+    defineOAuth2() {
+        var _a;
+        const oauth2Options = this.application.getSync(common_1.AuthenticateKeys.OAUTH2_OPTIONS);
+        if (!oauth2Options.enable) {
+            return;
+        }
+        const authHandler = (_a = oauth2Options === null || oauth2Options === void 0 ? void 0 : oauth2Options.handler) !== null && _a !== void 0 ? _a : oauth2_1.OAuth2PasswordHandler.newInstance();
+        const oauth2Server = new oauth2_1.OAuth2ApplicationServer({
+            serverOptions: {
+                model: authHandler,
+                allowEmptyState: false,
+                allowBearerTokensInQueryString: true,
+                accessTokenLifetime: (0, utilities_1.int)(this.application.getSync(authentication_jwt_1.TokenServiceBindings.TOKEN_EXPIRES_IN) || `${1 * 24 * 60 * 60}`),
+            },
+        });
+        this.application.bind(common_1.AuthenticateKeys.OAUTH2_AUTH_SERVER).to(oauth2Server);
     }
     registerComponent() {
         this.application.component(authentication_1.AuthenticationComponent);
         this.application.component(authentication_jwt_1.JWTAuthenticationComponent);
-        (0, authentication_1.registerAuthenticationStrategy)(this.application, jwt_strategy_1.JWTAuthenticationStrategy);
-        (0, authentication_1.registerAuthenticationStrategy)(this.application, basic_strategy_1.BasicAuthenticationStrategy);
+        (0, authentication_1.registerAuthenticationStrategy)(this.application, services_1.JWTAuthenticationStrategy);
+        (0, authentication_1.registerAuthenticationStrategy)(this.application, services_1.BasicAuthenticationStrategy);
         const tokenOptions = this.application.getSync(common_1.AuthenticateKeys.TOKEN_OPTIONS);
         const { tokenSecret = common_1.Authentication.ACCESS_TOKEN_SECRET, tokenExpiresIn = common_1.Authentication.ACCESS_TOKEN_EXPIRES_IN, refreshSecret = common_1.Authentication.REFRESH_TOKEN_SECRET, refreshExpiresIn = common_1.Authentication.REFRESH_TOKEN_EXPIRES_IN, } = tokenOptions;
         this.application.bind(authentication_jwt_1.TokenServiceBindings.TOKEN_SECRET).to(tokenSecret);
         this.application.bind(authentication_jwt_1.TokenServiceBindings.TOKEN_EXPIRES_IN).to(tokenExpiresIn.toString());
         this.application.bind(authentication_jwt_1.RefreshTokenServiceBindings.REFRESH_SECRET).to(refreshSecret);
         this.application.bind(authentication_jwt_1.RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(refreshExpiresIn === null || refreshExpiresIn === void 0 ? void 0 : refreshExpiresIn.toString());
-        const authenticationControllerRestOptions = this.application.isBound(common_1.AuthenticateKeys.REST_OPTIONS)
-            ? this.application.getSync(common_1.AuthenticateKeys.REST_OPTIONS)
-            : {};
-        const authenticationController = (0, authentication_controller_1.defineAuthenticationController)(authenticationControllerRestOptions);
-        this.application.controller(authenticationController);
     }
     binding() {
         if (!this.application) {
@@ -87,6 +107,7 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
         this.logger.info('[binding] Binding authenticate component for application...');
         this.defineServices();
         this.registerComponent();
+        this.defineControllers();
         this.defineMiddlewares();
     }
 };

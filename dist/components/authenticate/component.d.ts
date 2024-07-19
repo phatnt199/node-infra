@@ -7,6 +7,8 @@ export declare class AuthenticateComponent extends BaseComponent {
     constructor(application: BaseApplication);
     defineMiddlewares(): void;
     defineServices(): void;
+    defineControllers(): void;
+    defineOAuth2(): void;
     registerComponent(): void;
     binding(): void;
 }

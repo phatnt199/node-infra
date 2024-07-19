@@ -56,6 +56,7 @@
     "@loopback/rest-explorer": "^7.0.3",
     "@loopback/security": "^0.11.3",
     "@loopback/service-proxy": "^7.0.3",
+    "@node-oauth/oauth2-server": "^5.1.0",
     "@socket.io/redis-adapter": "^8.3.0",
     "@socket.io/redis-emitter": "^5.1.0",
     "axios": "1.7.2",

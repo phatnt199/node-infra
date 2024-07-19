@@ -20,8 +20,7 @@ const common_1 = require("../../common");
 const helpers_1 = require("../../helpers");
 const utilities_1 = require("../../utilities");
 const core_1 = require("@loopback/core");
-const asset_controller_1 = require("./asset.controller");
-const resource_controller_1 = require("./resource.controller");
+const controllers_1 = require("./controllers");
 let StaticAssetComponent = StaticAssetComponent_1 = class StaticAssetComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: StaticAssetComponent_1.name });
@@ -39,10 +38,10 @@ let StaticAssetComponent = StaticAssetComponent_1 = class StaticAssetComponent e
     defineControllers(opts) {
         const { useMinioAsset, useStaticResource } = opts;
         if (useMinioAsset) {
-            this.application.controller(asset_controller_1.StaticAssetController);
+            this.application.controller(controllers_1.StaticAssetController);
         }
         if (useStaticResource) {
-            this.application.controller(resource_controller_1.StaticResourceController);
+            this.application.controller(controllers_1.StaticResourceController);
         }
     }
     binding() {

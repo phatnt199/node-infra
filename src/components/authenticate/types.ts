@@ -1,6 +1,46 @@
 import { AnyObject, ClassType, IdType } from '@/common';
 import { model, property } from '@loopback/repository';
+import { UserProfile } from '@loopback/security';
 
+import { IOAuth2AuthenticationHandler } from './oauth2/base';
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export interface JWTTokenPayload extends UserProfile {
+  userId: IdType;
+  roles: { id: IdType; identifier: string; priority: number }[];
+}
+
+export interface TokenPayload extends JWTTokenPayload {}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export interface IAuthenticateTokenOptions {
+  tokenSecret: string;
+  tokenExpiresIn: number;
+  refreshExpiresIn: number;
+  refreshSecret: string;
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export interface IAuthenticateRestOptions<
+  SI_RQ extends SignInRequest = SignInRequest,
+  SU_RQ extends SignUpRequest = SignUpRequest,
+  CP_RQ extends ChangePasswordRequest = ChangePasswordRequest,
+> {
+  restPath?: string;
+  serviceKey?: string;
+  requireAuthenticatedSignUp?: boolean;
+  signInRequest?: ClassType<SI_RQ>;
+  signUpRequest?: ClassType<SU_RQ>;
+  changePasswordRequest?: ClassType<CP_RQ>;
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export interface IAuthenticateOAuth2Options {
+  enable: boolean;
+  handler?: IOAuth2AuthenticationHandler;
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
 @model({
   name: 'SignInRequest',
   jsonSchema: {
@@ -79,19 +119,6 @@ export class SignUpRequest {
   credential: string;
 
   [additional: string | symbol]: any;
-}
-
-export interface IAuthenticationControllerRestOptions<
-  SI_RQ extends SignInRequest = SignInRequest,
-  SU_RQ extends SignUpRequest = SignUpRequest,
-  CP_RQ extends ChangePasswordRequest = ChangePasswordRequest,
-> {
-  restPath?: string;
-  serviceKey?: string;
-  requireAuthenticatedSignUp?: boolean;
-  signInRequest?: ClassType<SI_RQ>;
-  signUpRequest?: ClassType<SU_RQ>;
-  changePasswordRequest?: ClassType<CP_RQ>;
 }
 
 // -------------------------------------------------------------------

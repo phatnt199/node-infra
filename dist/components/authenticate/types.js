@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SignUpRequest = exports.ChangePasswordRequest = exports.SignInRequest = void 0;
 const repository_1 = require("@loopback/repository");
+// ----------------------------------------------------------------------------------------------------------------------------------------
 let SignInRequest = class SignInRequest {
 };
 exports.SignInRequest = SignInRequest;

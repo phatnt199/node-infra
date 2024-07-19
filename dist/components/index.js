@@ -14,14 +14,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./authenticate/component"), exports);
-__exportStar(require("./authenticate/jwt-token.service"), exports);
-__exportStar(require("./authenticate/types"), exports);
-__exportStar(require("./authorize/component"), exports);
-__exportStar(require("./authorize/decorator"), exports);
-__exportStar(require("./authorize/provider"), exports);
-__exportStar(require("./authorize/util"), exports);
-__exportStar(require("./migration/component"), exports);
-__exportStar(require("./socket-io/component"), exports);
+__exportStar(require("./authenticate"), exports);
+__exportStar(require("./authorize"), exports);
+__exportStar(require("./migration"), exports);
+__exportStar(require("./socket-io"), exports);
 __exportStar(require("./static-asset"), exports);
 //# sourceMappingURL=index.js.map

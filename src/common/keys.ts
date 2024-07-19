@@ -13,6 +13,9 @@ export class AuthenticateKeys {
   static readonly APPLICATION_SECRET = '@app/authenticate/application_secret';
   static readonly TOKEN_OPTIONS = '@app/authenticate/token_options';
   static readonly REST_OPTIONS = '@app/authenticate/rest_options';
+
+  static readonly OAUTH2_AUTH_SERVER = '@app/authenticate/oauth2_server';
+  static readonly OAUTH2_OPTIONS = '@app/authenticate/oauth2_options';
 }
 
 // -----------------------------------------------------------------------------

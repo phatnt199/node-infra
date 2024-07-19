@@ -33,8 +33,6 @@ __exportStar(require("./middlewares"), exports);
 __exportStar(require("./migrations"), exports);
 __exportStar(require("./migrations/authorize"), exports);
 __exportStar(require("./mixins"), exports);
-__exportStar(require("./models"), exports);
-__exportStar(require("./repositories"), exports);
 __exportStar(require("./services"), exports);
 __exportStar(require("./utilities"), exports);
 //# sourceMappingURL=index.js.map

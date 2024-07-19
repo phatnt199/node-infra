@@ -1,0 +1,1 @@
+{"version":3,"file":"base.js","sourceRoot":"","sources":["../../../../src/components/authenticate/oauth2/base.ts"],"names":[],"mappings":";;;AAAA,uCAA6D;AAK7D,MAAsB,mCAAmC;IAGvD,YAAY,IAAwB;;QAClC,IAAI,CAAC,MAAM,GAAG,uBAAa,CAAC,SAAS,CAAC,CAAC,MAAA,IAAI,aAAJ,IAAI,uBAAJ,IAAI,CAAE,KAAK,mCAAI,mCAAmC,CAAC,IAAI,CAAC,CAAC,CAAC;IACnG,CAAC;CAOF;AAZD,kFAYC"}

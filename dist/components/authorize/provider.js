@@ -28,12 +28,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizeProvider = void 0;
 const common_1 = require("../../common");
 const helpers_1 = require("../../helpers");
+const utilities_1 = require("../../utilities");
 const authorization_1 = require("@loopback/authorization");
 const core_1 = require("@loopback/core");
-const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const intersection_1 = __importDefault(require("lodash/intersection"));
-const utilities_1 = require("../../utilities");
-const enforcer_service_1 = require("./enforcer.service");
+const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
+const services_1 = require("./services");
 let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
     constructor(enforcerService, alwaysAllowRoles, normalizePayloadFn) {
         this.enforcerService = enforcerService;
@@ -150,6 +150,6 @@ exports.AuthorizeProvider = AuthorizeProvider = AuthorizeProvider_1 = __decorate
     __param(0, (0, core_1.inject)(common_1.AuthorizerKeys.ENFORCER)),
     __param(1, (0, core_1.inject)(common_1.AuthorizerKeys.ALWAYS_ALLOW_ROLES)),
     __param(2, (0, core_1.inject)(common_1.AuthorizerKeys.NORMALIZE_PAYLOAD_FN)),
-    __metadata("design:paramtypes", [enforcer_service_1.EnforcerService, Array, Function])
+    __metadata("design:paramtypes", [services_1.EnforcerService, Array, Function])
 ], AuthorizeProvider);
 //# sourceMappingURL=provider.js.map
