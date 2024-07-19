@@ -1,6 +1,11 @@
 import { AnyObject, ClassType, IdType } from '../../common';
 import { UserProfile } from '@loopback/security';
-import { IOAuth2AuthenticationHandler } from './oauth2/base';
+import { IOAuth2AuthenticationHandler } from './oauth2-handlers/base';
+import { Request as _Request, Response as _Response } from '@node-oauth/oauth2-server';
+export declare class OAuth2Request extends _Request {
+}
+export declare class OAuth2Response extends _Response {
+}
 export interface JWTTokenPayload extends UserProfile {
     userId: IdType;
     roles: {
@@ -25,9 +30,15 @@ export interface IAuthenticateRestOptions<SI_RQ extends SignInRequest = SignInRe
     signUpRequest?: ClassType<SU_RQ>;
     changePasswordRequest?: ClassType<CP_RQ>;
 }
+export interface IAuthenticateOAuth2RestOptions {
+    restPath?: string;
+    tokenPath?: string;
+    serviceKey?: string;
+}
 export interface IAuthenticateOAuth2Options {
     enable: boolean;
     handler?: IOAuth2AuthenticationHandler;
+    restOptions?: IAuthenticateOAuth2RestOptions;
 }
 export declare class SignInRequest {
     identifier: {
@@ -59,4 +70,10 @@ export interface IAuthService<SI_RQ extends SignInRequest = SignInRequest, SI_RS
     signIn(opts: SI_RQ): Promise<SI_RS>;
     signUp(opts: SU_RQ): Promise<SU_RS>;
     changePassword(opts: CP_RQ): Promise<CP_RS>;
+}
+export interface IOAuth2Service<T> {
+    generateToken(opts: {
+        request: OAuth2Request;
+        response: OAuth2Response;
+    }): T;
 }

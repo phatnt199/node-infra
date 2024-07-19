@@ -25,9 +25,8 @@ const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
 const multer_1 = __importDefault(require("multer"));
 let StaticAssetController = StaticAssetController_1 = class StaticAssetController {
-    constructor(application, request, response) {
+    constructor(application, response) {
         this.application = application;
-        this.request = request;
         this.response = response;
         this.logger = helpers_1.LoggerFactory.getLogger([StaticAssetController_1.name]);
         this.temporaryStorage = multer_1.default.memoryStorage();
@@ -48,15 +47,15 @@ let StaticAssetController = StaticAssetController_1 = class StaticAssetControlle
         const minioInstance = this.application.getSync(common_1.ResourceAssetKeys.MINIO_INSTANCE);
         return minioInstance.getBuckets();
     }
-    uploadObject(bucketName) {
+    uploadObject(request, bucketName) {
         const minioInstance = this.application.getSync(common_1.ResourceAssetKeys.MINIO_INSTANCE);
         return new Promise((resolve, reject) => {
-            (0, multer_1.default)({ storage: this.temporaryStorage }).array('files')(this.request, this.response, error => {
+            (0, multer_1.default)({ storage: this.temporaryStorage }).array('files')(request, this.response, error => {
                 if (error) {
                     this.logger.error('[uploadObject] Fail to upload files! Error: %s', error);
                     reject(error);
                 }
-                const { files } = this.request;
+                const { files } = request;
                 minioInstance.upload({ bucket: bucketName, files: files }).then(rs => {
                     resolve(rs);
                 });
@@ -180,9 +179,30 @@ __decorate([
             },
         },
     }),
-    __param(0, rest_1.param.path.string('bucket_name')),
+    __param(0, (0, rest_1.requestBody)({
+        description: 'Upload files to minio',
+        required: true,
+        content: {
+            'multipart/form-data': {
+                schema: {
+                    type: 'object',
+                    properties: {
+                        files: {
+                            type: 'array',
+                            nullable: false,
+                            items: {
+                                type: 'string',
+                                format: 'binary',
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    })),
+    __param(1, rest_1.param.path.string('bucket_name')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], StaticAssetController.prototype, "uploadObject", null);
 __decorate([
@@ -204,8 +224,7 @@ __decorate([
 exports.StaticAssetController = StaticAssetController = StaticAssetController_1 = __decorate([
     (0, rest_1.api)({ basePath: '/static-assets' }),
     __param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
-    __param(1, (0, core_1.inject)(rest_1.RestBindings.Http.REQUEST)),
-    __param(2, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
-    __metadata("design:paramtypes", [base_1.BaseApplication, Object, Object])
+    __param(1, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
+    __metadata("design:paramtypes", [base_1.BaseApplication, Object])
 ], StaticAssetController);
 //# sourceMappingURL=asset.controller.js.map

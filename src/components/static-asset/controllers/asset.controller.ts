@@ -3,7 +3,7 @@ import { IController, ResourceAssetKeys } from '@/common';
 import { ApplicationLogger, IUploadFile, LoggerFactory, MinioHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import { CoreBindings, inject } from '@loopback/core';
-import { api, del, get, param, post, Request, Response, RestBindings } from '@loopback/rest';
+import { api, del, get, param, post, Request, requestBody, Response, RestBindings } from '@loopback/rest';
 import multer from 'multer';
 
 @api({ basePath: '/static-assets' })
@@ -13,7 +13,7 @@ export class StaticAssetController implements IController {
 
   constructor(
     @inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication,
-    @inject(RestBindings.Http.REQUEST) private request: Request,
+    // @inject(RestBindings.Http.REQUEST) private request: Request,
     @inject(RestBindings.Http.RESPONSE) private response: Response,
   ) {
     this.logger = LoggerFactory.getLogger([StaticAssetController.name]);
@@ -80,16 +80,40 @@ export class StaticAssetController implements IController {
       },
     },
   })
-  uploadObject(@param.path.string('bucket_name') bucketName: string) {
+  uploadObject(
+    @requestBody({
+      description: 'Upload files to minio',
+      required: true,
+      content: {
+        'multipart/form-data': {
+          schema: {
+            type: 'object',
+            properties: {
+              files: {
+                type: 'array',
+                nullable: false,
+                items: {
+                  type: 'string',
+                  format: 'binary',
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+    request: Request,
+    @param.path.string('bucket_name') bucketName: string,
+  ) {
     const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
     return new Promise((resolve, reject) => {
-      multer({ storage: this.temporaryStorage }).array('files')(this.request, this.response, error => {
+      multer({ storage: this.temporaryStorage }).array('files')(request, this.response, error => {
         if (error) {
           this.logger.error('[uploadObject] Fail to upload files! Error: %s', error);
           reject(error);
         }
 
-        const { files } = this.request;
+        const { files } = request;
         minioInstance.upload({ bucket: bucketName, files: files as Array<IUploadFile> }).then(rs => {
           resolve(rs);
         });

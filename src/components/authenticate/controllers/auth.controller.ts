@@ -1,29 +1,29 @@
+import { authenticate } from '@loopback/authentication';
 import { Getter, inject } from '@loopback/core';
 import { api, get, post, requestBody } from '@loopback/rest';
-import { authenticate } from '@loopback/authentication';
 
-import { Authentication, IdType } from '@/common';
 import { BaseController } from '@/base';
+import { Authentication, IdType } from '@/common';
 import { getError, getSchemaObject } from '@/utilities';
-import { ChangePasswordRequest, IAuthenticateRestOptions, IAuthService, SignInRequest, SignUpRequest } from '../types';
 import { SecurityBindings } from '@loopback/security';
+import { ChangePasswordRequest, IAuthenticateRestOptions, IAuthService, SignInRequest, SignUpRequest } from '../types';
 
-export const defineAuthenticationController = <
+export const defineAuthController = <
   SI_RQ extends SignInRequest = SignInRequest,
   SU_RQ extends SignUpRequest = SignUpRequest,
   CP_RQ extends ChangePasswordRequest = ChangePasswordRequest,
 >(
   opts: IAuthenticateRestOptions,
 ) => {
-  const { restPath = '/auth', requireAuthenticatedSignUp = false } = opts;
+  const { restPath = '/auth', requireAuthenticatedSignUp = false, serviceKey = 'services.UserService' } = opts;
 
   @api({ basePath: restPath })
-  class BaseAuthenticationController extends BaseController {
+  class BaseAuthController extends BaseController {
     service: IAuthService;
     getCurrentUser: Getter<{ userId: IdType }>;
 
     constructor(authService: IAuthService, getCurrentUser: Getter<{ userId: IdType }>) {
-      super({ scope: BaseAuthenticationController.name });
+      super({ scope: BaseAuthController.name });
       this.service = authService;
       this.getCurrentUser = getCurrentUser;
     }
@@ -102,8 +102,8 @@ export const defineAuthenticationController = <
     }
   }
 
-  inject(opts.serviceKey ?? 'services.UserService')(BaseAuthenticationController, undefined, 0);
-  inject.getter(SecurityBindings.USER, { optional: true })(BaseAuthenticationController, undefined, 1);
+  inject(serviceKey)(BaseAuthController, undefined, 0);
+  inject.getter(SecurityBindings.USER, { optional: true })(BaseAuthController, undefined, 1);
 
-  return BaseAuthenticationController;
+  return BaseAuthController;
 };

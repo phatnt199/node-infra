@@ -11,30 +11,30 @@ export class OAuth2PasswordHandler extends AbstractOAuth2AuthenticationHandler i
   }
 
   getUser(_username: string, _password: string, _client: Client): Promise<User | Falsey> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve(null);
   }
 
   validateScope(_user: User, _client: Client, _scope?: string[]): Promise<string[] | Falsey> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve(null);
   }
 
   generateAccessToken(_client: Client, _user: User, _scope: string[]): Promise<string> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve('tmp_access_token');
   }
 
   getClient(_clientId: string, _clientSecret: string): Promise<Client | Falsey> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve(null);
   }
 
   saveToken(_token: Token, _client: Client, _user: User): Promise<Token | Falsey> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve(null);
   }
 
   getAccessToken(_accessToken: string): Promise<Token | Falsey> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve(null);
   }
 
   verifyScope(_token: Token, _scope: string[]): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve(false);
   }
 }

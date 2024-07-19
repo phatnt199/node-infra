@@ -18,7 +18,7 @@ __exportStar(require("./component"), exports);
 __exportStar(require("./controllers"), exports);
 __exportStar(require("./middleware"), exports);
 __exportStar(require("./models"), exports);
-__exportStar(require("./oauth2"), exports);
+__exportStar(require("./oauth2-server"), exports);
 __exportStar(require("./services"), exports);
 __exportStar(require("./types"), exports);
 //# sourceMappingURL=index.js.map

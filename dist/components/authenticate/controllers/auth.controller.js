@@ -12,22 +12,22 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineAuthenticationController = void 0;
+exports.defineAuthController = void 0;
+const authentication_1 = require("@loopback/authentication");
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
-const authentication_1 = require("@loopback/authentication");
-const common_1 = require("../../../common");
 const base_1 = require("../../../base");
+const common_1 = require("../../../common");
 const utilities_1 = require("../../../utilities");
-const types_1 = require("../types");
 const security_1 = require("@loopback/security");
-const defineAuthenticationController = (opts) => {
-    var _a, _b, _c, _d;
-    var BaseAuthenticationController_1;
-    const { restPath = '/auth', requireAuthenticatedSignUp = false } = opts;
-    let BaseAuthenticationController = BaseAuthenticationController_1 = class BaseAuthenticationController extends base_1.BaseController {
+const types_1 = require("../types");
+const defineAuthController = (opts) => {
+    var _a, _b, _c;
+    var BaseAuthController_1;
+    const { restPath = '/auth', requireAuthenticatedSignUp = false, serviceKey = 'services.UserService' } = opts;
+    let BaseAuthController = BaseAuthController_1 = class BaseAuthController extends base_1.BaseController {
         constructor(authService, getCurrentUser) {
-            super({ scope: BaseAuthenticationController_1.name });
+            super({ scope: BaseAuthController_1.name });
             this.service = authService;
             this.getCurrentUser = getCurrentUser;
         }
@@ -68,7 +68,7 @@ const defineAuthenticationController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
-    ], BaseAuthenticationController.prototype, "whoami", null);
+    ], BaseAuthController.prototype, "whoami", null);
     __decorate([
         (0, rest_1.post)('/sign-in'),
         __param(0, (0, rest_1.requestBody)({
@@ -82,7 +82,7 @@ const defineAuthenticationController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object]),
         __metadata("design:returntype", void 0)
-    ], BaseAuthenticationController.prototype, "signIn", null);
+    ], BaseAuthController.prototype, "signIn", null);
     __decorate([
         (requireAuthenticatedSignUp ? (0, authentication_1.authenticate)(common_1.Authentication.STRATEGY_JWT) : authentication_1.authenticate.skip()),
         (0, rest_1.post)('/sign-up'),
@@ -96,7 +96,7 @@ const defineAuthenticationController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object]),
         __metadata("design:returntype", void 0)
-    ], BaseAuthenticationController.prototype, "signUp", null);
+    ], BaseAuthController.prototype, "signUp", null);
     __decorate([
         (0, authentication_1.authenticate)(common_1.Authentication.STRATEGY_JWT),
         (0, rest_1.post)('/change-password'),
@@ -111,14 +111,14 @@ const defineAuthenticationController = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object]),
         __metadata("design:returntype", void 0)
-    ], BaseAuthenticationController.prototype, "changePassword", null);
-    BaseAuthenticationController = BaseAuthenticationController_1 = __decorate([
+    ], BaseAuthController.prototype, "changePassword", null);
+    BaseAuthController = BaseAuthController_1 = __decorate([
         (0, rest_1.api)({ basePath: restPath }),
         __metadata("design:paramtypes", [Object, Function])
-    ], BaseAuthenticationController);
-    (0, core_1.inject)((_d = opts.serviceKey) !== null && _d !== void 0 ? _d : 'services.UserService')(BaseAuthenticationController, undefined, 0);
-    core_1.inject.getter(security_1.SecurityBindings.USER, { optional: true })(BaseAuthenticationController, undefined, 1);
-    return BaseAuthenticationController;
+    ], BaseAuthController);
+    (0, core_1.inject)(serviceKey)(BaseAuthController, undefined, 0);
+    core_1.inject.getter(security_1.SecurityBindings.USER, { optional: true })(BaseAuthController, undefined, 1);
+    return BaseAuthController;
 };
-exports.defineAuthenticationController = defineAuthenticationController;
-//# sourceMappingURL=authentication.controller.js.map
+exports.defineAuthController = defineAuthController;
+//# sourceMappingURL=auth.controller.js.map

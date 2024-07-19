@@ -9,8 +9,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SignUpRequest = exports.ChangePasswordRequest = exports.SignInRequest = void 0;
+exports.SignUpRequest = exports.ChangePasswordRequest = exports.SignInRequest = exports.OAuth2Response = exports.OAuth2Request = void 0;
 const repository_1 = require("@loopback/repository");
+const oauth2_server_1 = require("@node-oauth/oauth2-server");
+class OAuth2Request extends oauth2_server_1.Request {
+}
+exports.OAuth2Request = OAuth2Request;
+class OAuth2Response extends oauth2_server_1.Response {
+}
+exports.OAuth2Response = OAuth2Response;
 // ----------------------------------------------------------------------------------------------------------------------------------------
 let SignInRequest = class SignInRequest {
 };

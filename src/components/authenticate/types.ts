@@ -1,8 +1,11 @@
 import { AnyObject, ClassType, IdType } from '@/common';
 import { model, property } from '@loopback/repository';
 import { UserProfile } from '@loopback/security';
+import { IOAuth2AuthenticationHandler } from './oauth2-handlers/base';
+import { Request as _Request, Response as _Response } from '@node-oauth/oauth2-server';
 
-import { IOAuth2AuthenticationHandler } from './oauth2/base';
+export class OAuth2Request extends _Request {}
+export class OAuth2Response extends _Response {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface JWTTokenPayload extends UserProfile {
@@ -35,9 +38,18 @@ export interface IAuthenticateRestOptions<
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
+export interface IAuthenticateOAuth2RestOptions {
+  restPath?: string;
+  tokenPath?: string;
+  serviceKey?: string;
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IAuthenticateOAuth2Options {
   enable: boolean;
   handler?: IOAuth2AuthenticationHandler;
+
+  restOptions?: IAuthenticateOAuth2RestOptions;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -133,4 +145,9 @@ export interface IAuthService<
   signIn(opts: SI_RQ): Promise<SI_RS>;
   signUp(opts: SU_RQ): Promise<SU_RS>;
   changePassword(opts: CP_RQ): Promise<CP_RS>;
+}
+
+// -------------------------------------------------------------------
+export interface IOAuth2Service<T> {
+  generateToken(opts: { request: OAuth2Request; response: OAuth2Response }): T;
 }

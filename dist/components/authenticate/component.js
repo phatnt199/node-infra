@@ -23,7 +23,8 @@ const common_1 = require("../../common");
 const utilities_1 = require("../../utilities");
 const controllers_1 = require("./controllers");
 const middleware_1 = require("./middleware");
-const oauth2_1 = require("./oauth2");
+const password_handler_1 = require("./oauth2-handlers/password.handler");
+const oauth2_server_1 = require("./oauth2-server");
 const services_1 = require("./services");
 const types_1 = require("./types");
 let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponent extends base_component_1.BaseComponent {
@@ -65,7 +66,7 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
         const authenticationControllerRestOptions = this.application.isBound(common_1.AuthenticateKeys.REST_OPTIONS)
             ? this.application.getSync(common_1.AuthenticateKeys.REST_OPTIONS)
             : {};
-        const authenticationController = (0, controllers_1.defineAuthenticationController)(authenticationControllerRestOptions);
+        const authenticationController = (0, controllers_1.defineAuthController)(authenticationControllerRestOptions);
         this.application.controller(authenticationController);
     }
     defineOAuth2() {
@@ -74,8 +75,8 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
         if (!oauth2Options.enable) {
             return;
         }
-        const authHandler = (_a = oauth2Options === null || oauth2Options === void 0 ? void 0 : oauth2Options.handler) !== null && _a !== void 0 ? _a : oauth2_1.OAuth2PasswordHandler.newInstance();
-        const oauth2Server = new oauth2_1.OAuth2ApplicationServer({
+        const authHandler = (_a = oauth2Options === null || oauth2Options === void 0 ? void 0 : oauth2Options.handler) !== null && _a !== void 0 ? _a : password_handler_1.OAuth2PasswordHandler.newInstance();
+        const oauth2Server = new oauth2_server_1.OAuth2ApplicationServer({
             serverOptions: {
                 model: authHandler,
                 allowEmptyState: false,
@@ -84,6 +85,8 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
             },
         });
         this.application.bind(common_1.AuthenticateKeys.OAUTH2_AUTH_SERVER).to(oauth2Server);
+        const oauth2Controller = (0, controllers_1.defineOAuth2Controller)(oauth2Options.restOptions);
+        this.application.controller(oauth2Controller);
     }
     registerComponent() {
         this.application.component(authentication_1.AuthenticationComponent);
@@ -96,6 +99,7 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
         this.application.bind(authentication_jwt_1.TokenServiceBindings.TOKEN_EXPIRES_IN).to(tokenExpiresIn.toString());
         this.application.bind(authentication_jwt_1.RefreshTokenServiceBindings.REFRESH_SECRET).to(refreshSecret);
         this.application.bind(authentication_jwt_1.RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(refreshExpiresIn === null || refreshExpiresIn === void 0 ? void 0 : refreshExpiresIn.toString());
+        this.defineOAuth2();
     }
     binding() {
         if (!this.application) {

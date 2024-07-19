@@ -10,9 +10,10 @@ import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
 import { App, AuthenticateKeys, Authentication } from '@/common';
 import { getError, int } from '@/utilities';
-import { defineAuthenticationController } from './controllers';
+import { defineAuthController, defineOAuth2Controller } from './controllers';
 import { AuthenticationMiddleware } from './middleware';
-import { OAuth2ApplicationServer, OAuth2PasswordHandler } from './oauth2';
+import { OAuth2PasswordHandler } from './oauth2-handlers/password.handler';
+import { OAuth2ApplicationServer } from './oauth2-server';
 import { BasicAuthenticationStrategy, BasicTokenService, JWTAuthenticationStrategy, JWTTokenService } from './services';
 import {
   ChangePasswordRequest,
@@ -68,7 +69,7 @@ export class AuthenticateComponent extends BaseComponent {
     const authenticationControllerRestOptions = this.application.isBound(AuthenticateKeys.REST_OPTIONS)
       ? this.application.getSync<IAuthenticateRestOptions>(AuthenticateKeys.REST_OPTIONS)
       : {};
-    const authenticationController = defineAuthenticationController(authenticationControllerRestOptions);
+    const authenticationController = defineAuthController(authenticationControllerRestOptions);
     this.application.controller(authenticationController);
   }
 
@@ -92,6 +93,9 @@ export class AuthenticateComponent extends BaseComponent {
     });
 
     this.application.bind(AuthenticateKeys.OAUTH2_AUTH_SERVER).to(oauth2Server);
+
+    const oauth2Controller = defineOAuth2Controller(oauth2Options.restOptions);
+    this.application.controller(oauth2Controller);
   }
 
   registerComponent() {
@@ -112,6 +116,8 @@ export class AuthenticateComponent extends BaseComponent {
     this.application.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(tokenExpiresIn.toString());
     this.application.bind(RefreshTokenServiceBindings.REFRESH_SECRET).to(refreshSecret);
     this.application.bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(refreshExpiresIn?.toString());
+
+    this.defineOAuth2();
   }
 
   binding() {
@@ -126,6 +132,7 @@ export class AuthenticateComponent extends BaseComponent {
 
     this.defineServices();
     this.registerComponent();
+
     this.defineControllers();
 
     this.defineMiddlewares();
