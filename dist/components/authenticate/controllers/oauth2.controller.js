@@ -32,7 +32,7 @@ const defineOAuth2Controller = (opts) => {
             return this.getCurrentUser();
         }
         // ------------------------------------------------------------------------------
-        signIn() {
+        generateToken() {
             const { request, response } = this.httpContext;
             return this.service.generateToken({
                 request: new types_1.OAuth2Request(request),
@@ -52,7 +52,7 @@ const defineOAuth2Controller = (opts) => {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
-    ], BaseOAuth2Controller.prototype, "signIn", null);
+    ], BaseOAuth2Controller.prototype, "generateToken", null);
     BaseOAuth2Controller = BaseOAuth2Controller_1 = __decorate([
         (0, rest_1.api)({ basePath: restPath }),
         __metadata("design:paramtypes", [Object, Function, rest_1.RequestContext])

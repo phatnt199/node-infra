@@ -71,6 +71,9 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
     }
     defineOAuth2() {
         var _a;
+        if (!this.application.isBound(common_1.AuthenticateKeys.OAUTH2_OPTIONS)) {
+            return;
+        }
         const oauth2Options = this.application.getSync(common_1.AuthenticateKeys.OAUTH2_OPTIONS);
         if (!oauth2Options.enable) {
             return;

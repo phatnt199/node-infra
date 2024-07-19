@@ -74,6 +74,10 @@ export class AuthenticateComponent extends BaseComponent {
   }
 
   defineOAuth2() {
+    if (!this.application.isBound(AuthenticateKeys.OAUTH2_OPTIONS)) {
+      return;
+    }
+
     const oauth2Options = this.application.getSync<IAuthenticateOAuth2Options>(AuthenticateKeys.OAUTH2_OPTIONS);
     if (!oauth2Options.enable) {
       return;

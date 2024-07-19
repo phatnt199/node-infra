@@ -38,6 +38,21 @@ let BaseApplicationSequence = BaseApplicationSequence_1 = class BaseApplicationS
         this.middlewareOptions = middlewareOptions;
         this.logger = helpers_1.LoggerFactory.getLogger([BaseApplicationSequence_1.name]);
     }
+    /* getParser(context: RequestContext) {
+      const { request } = context;
+  
+      const contentType = request.headers['content-type'];
+      switch(contentType) {
+        case 'application/x-www-form-urlencoded' : {
+          const urlencoded = new UrlEncodedBodyParser({urlencoded: { extended: true }})
+          entries
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    } */
     handle(context) {
         return __awaiter(this, void 0, void 0, function* () {
             const t = performance.now();

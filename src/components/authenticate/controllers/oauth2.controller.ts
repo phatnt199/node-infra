@@ -36,8 +36,9 @@ export const defineOAuth2Controller = (opts?: IAuthenticateOAuth2RestOptions) =>
 
     // ------------------------------------------------------------------------------
     @post(tokenPath)
-    signIn() {
+    generateToken() {
       const { request, response } = this.httpContext;
+
       return this.service.generateToken({
         request: new OAuth2Request(request),
         response: new OAuth2Response(response),

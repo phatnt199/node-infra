@@ -14,7 +14,7 @@ export declare const defineOAuth2Controller: (opts?: IAuthenticateOAuth2RestOpti
         whoami(): Promise<{
             userId: IdType;
         }>;
-        signIn(): any;
+        generateToken(): any;
         logger: import("../../..").ApplicationLogger;
         defaultLimit: number;
     };

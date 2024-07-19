@@ -86,12 +86,12 @@ export class StaticAssetController implements IController {
       required: true,
       content: {
         'multipart/form-data': {
+          'x-parser': 'stream',
           schema: {
             type: 'object',
             properties: {
               files: {
                 type: 'array',
-                nullable: false,
                 items: {
                   type: 'string',
                   format: 'binary',

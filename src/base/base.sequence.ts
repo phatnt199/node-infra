@@ -27,6 +27,22 @@ export class BaseApplicationSequence implements SequenceHandler {
     this.logger = LoggerFactory.getLogger([BaseApplicationSequence.name]);
   }
 
+  /* getParser(context: RequestContext) {
+    const { request } = context;
+
+    const contentType = request.headers['content-type'];
+    switch(contentType) {
+      case 'application/x-www-form-urlencoded' : {
+        const urlencoded = new UrlEncodedBodyParser({urlencoded: { extended: true }})
+        entries
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  } */
+
   async handle(context: RequestContext): Promise<void> {
     const t = performance.now();
     const { request } = context;
