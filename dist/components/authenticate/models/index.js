@@ -15,5 +15,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./oauth2-client.model"), exports);
-__exportStar(require("./oauth2-client-scope.model"), exports);
+__exportStar(require("./oauth2-scope.model"), exports);
+__exportStar(require("./oauth2-token.model"), exports);
 //# sourceMappingURL=index.js.map

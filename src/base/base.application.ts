@@ -11,7 +11,15 @@ import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
-import { BaseApplicationSequence, BaseDataSource, BaseEntity, BindingKeys, RequestSpyMiddleware, RouteKeys } from '..';
+import {
+  BaseApplicationSequence,
+  BaseDataSource,
+  BaseEntity,
+  BindingKeys,
+  RouteKeys,
+  RequestSpyMiddleware,
+  RequestBodyParserMiddleware,
+} from '..';
 
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
@@ -50,6 +58,7 @@ export abstract class BaseApplication
     this.models = this.declareModels();
 
     // Middlewares
+    this.middleware(RequestBodyParserMiddleware);
     this.middleware(RequestSpyMiddleware);
 
     // Do configure while modules for application.

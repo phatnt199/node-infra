@@ -9,7 +9,7 @@ import { getUID } from '..';
 @injectable(
   asMiddleware({
     chain: RestTags.REST_MIDDLEWARE_CHAIN,
-    group: RestMiddlewareGroups.SEND_RESPONSE,
+    group: RestMiddlewareGroups.FIND_ROUTE,
   }),
 )
 export class RequestSpyMiddleware extends BaseProvider implements Provider<Middleware> {
@@ -17,7 +17,7 @@ export class RequestSpyMiddleware extends BaseProvider implements Provider<Middl
     super({ scope: RequestSpyMiddleware.name });
   }
 
-  spy(context: MiddlewareContext) {
+  handle(context: MiddlewareContext) {
     try {
       const { request } = context;
 
@@ -32,7 +32,7 @@ export class RequestSpyMiddleware extends BaseProvider implements Provider<Middl
         method,
         path: path ?? 'N/A',
         query: query ?? 'N/A',
-        body: body ?? 'N/A',
+        body,
       };
       set(request, 'requestedRemark', requestedRemark);
 
@@ -44,7 +44,7 @@ export class RequestSpyMiddleware extends BaseProvider implements Provider<Middl
 
   value(): ValueOrPromise<Middleware> {
     return (context: MiddlewareContext, next: Next) => {
-      this.spy(context);
+      this.handle(context);
       return next();
     };
   }

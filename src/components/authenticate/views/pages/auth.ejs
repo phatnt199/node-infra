@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../fragments/head'); %>
+</head>
+<body class="container">
+
+<header>
+  <%- include('../fragments/header'); %>
+</header>
+
+<main>
+  <h1><%- payload.title %> - clientId: <%- payload.clientId %></h1>
+
+  <%- message %>
+
+  <% if (payload.clientId) { %>
+    <form method="post" action=<%- payload.action %>>
+      <p>
+      <label for="username">Username:</label>
+      <input type="text" name="username" />
+      </p>
+
+      <p>
+      <label for="password">Password:</label>
+      <input type="text" name="password" />
+      </p>
+
+      <input type="hidden" name="c" value=<%- payload.c %>>
+      <input type="hidden" name="r" value=<%- payload.r %>>
+      <input type="hidden" name="clientId" value=<%- payload.clientId %>>
+      <input type="hidden" name="redirectUrl" value=<%- payload.redirectUrl %>>
+
+      <p>
+      <input type="submit" value="Login">
+      </p>
+    </form>
+  <% } %>
+</main>
+
+<footer>
+  <%- include('../fragments/footer'); %>
+</footer>
+
+</body>
+</html>

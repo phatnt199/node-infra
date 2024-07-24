@@ -56,10 +56,12 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
     encryptPayload(payload) {
         const userKey = (0, utilities_1.encrypt)('userId', this.applicationSecret);
         const rolesKey = (0, utilities_1.encrypt)('roles', this.applicationSecret);
-        const { userId, roles } = payload;
+        const clientIdKey = (0, utilities_1.encrypt)('clientId', this.applicationSecret);
+        const { userId, roles, clientId = 'NA' } = payload;
         return {
             [userKey]: (0, utilities_1.encrypt)(userId, this.applicationSecret),
             [rolesKey]: (0, utilities_1.encrypt)(JSON.stringify(roles.map(el => `${el.id}|${el.identifier}|${el.priority}`)), this.applicationSecret),
+            [clientIdKey]: (0, utilities_1.encrypt)(clientId, this.applicationSecret),
         };
     }
     // --------------------------------------------------------------------------------------
@@ -74,6 +76,10 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
                     rs[security_1.securityId] = rs.userId.toString();
                     break;
                 }
+                case 'clientId': {
+                    rs.clientId = decryptedValue;
+                    break;
+                }
                 case 'roles': {
                     rs.roles = JSON.parse(decryptedValue).map(el => {
                         const [id, identifier, priority] = el.split('|');
@@ -82,6 +88,7 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
                     break;
                 }
                 default: {
+                    rs[encodedAttr] = decodedToken[encodedAttr];
                     break;
                 }
             }

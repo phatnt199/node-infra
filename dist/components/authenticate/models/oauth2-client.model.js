@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OAuth2Client = void 0;
 const base_1 = require("../../../base");
 const repository_1 = require("@loopback/repository");
-let OAuth2Client = class OAuth2Client extends base_1.BaseIdEntity {
+let OAuth2Client = class OAuth2Client extends base_1.BaseTzEntity {
     constructor(data) {
         super(data);
     }
@@ -25,6 +25,13 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], OAuth2Client.prototype, "identifier", void 0);
+__decorate([
+    (0, repository_1.property)({
+        type: 'string',
+        postgresql: { columnName: 'client_id' },
+    }),
+    __metadata("design:type", String)
+], OAuth2Client.prototype, "clientId", void 0);
 __decorate([
     (0, repository_1.property)({
         type: 'string',
@@ -42,10 +49,19 @@ __decorate([
 __decorate([
     (0, repository_1.property)({
         type: 'string',
-        postgresql: { columnName: 'client_id' },
+        postgresql: { columnName: 'client_secret' },
     }),
     __metadata("design:type", String)
-], OAuth2Client.prototype, "secret", void 0);
+], OAuth2Client.prototype, "clientSecret", void 0);
+__decorate([
+    (0, repository_1.property)({
+        type: 'array',
+        itemType: 'string',
+        default: [],
+        postgresql: { columnName: 'grants', dataType: 'jsonb' },
+    }),
+    __metadata("design:type", Array)
+], OAuth2Client.prototype, "grants", void 0);
 __decorate([
     (0, repository_1.property)({
         type: 'object',
@@ -57,18 +73,25 @@ __decorate([
                 originUrls: { type: 'array', items: { type: 'string' } },
             },
         },
-        postgresql: { columnName: 'endpoints' },
+        postgresql: { columnName: 'endpoints', dataType: 'jsonb' },
     }),
     __metadata("design:type", Object)
 ], OAuth2Client.prototype, "endpoints", void 0);
+__decorate([
+    (0, repository_1.property)({
+        type: 'number',
+        postgresql: { columnName: 'user_id', dataType: 'integer' },
+    }),
+    __metadata("design:type", Number)
+], OAuth2Client.prototype, "userId", void 0);
 exports.OAuth2Client = OAuth2Client = __decorate([
     (0, repository_1.model)({
         settings: {
             postgresql: {
                 schema: 'open_auth',
-                table: 'Client',
+                table: 'OAuth2Client',
             },
-            hiddenProperties: ['createdAt', 'modifiedAt'],
+            hiddenProperties: ['createdAt', 'modifiedAt', 'clientSecret'],
         },
     }),
     __metadata("design:paramtypes", [Object])

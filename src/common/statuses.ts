@@ -33,3 +33,15 @@ export class CommonStatuses {
 export class UserStatuses extends CommonStatuses {}
 
 export class RoleStatuses extends CommonStatuses {}
+
+export class OAuth2TokenStatuses {
+  static readonly UNKNOWN = Statuses.UNKNOWN;
+  static readonly ACTIVATED = Statuses.ACTIVATED;
+  static readonly DEACTIVATED = Statuses.DEACTIVATED;
+
+  static readonly SCHEME_SET = new Set([this.ACTIVATED, this.DEACTIVATED]);
+
+  static isValid(scheme: string): boolean {
+    return this.SCHEME_SET.has(scheme);
+  }
+}

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSchemaObject = exports.getNumberValue = exports.toStringDecimal = exports.float = exports.int = exports.isFloat = exports.isInt = exports.keysToCamel = exports.toCamel = exports.getUID = exports.parseMultipartBody = void 0;
+exports.getRequestRemark = exports.getRequestId = exports.getSchemaObject = exports.getNumberValue = exports.toStringDecimal = exports.float = exports.int = exports.isFloat = exports.isInt = exports.keysToCamel = exports.toCamel = exports.getUID = exports.parseMultipartBody = void 0;
 const get_1 = __importDefault(require("lodash/get"));
 const round_1 = __importDefault(require("lodash/round"));
 const multer_1 = __importDefault(require("multer"));
@@ -171,4 +171,14 @@ const getSchemaObject = (ctor) => {
     return ctor ? (0, rest_1.getModelSchemaRef)(ctor).definitions[ctor.name] : {};
 };
 exports.getSchemaObject = getSchemaObject;
+// -------------------------------------------------------------------------
+const getRequestId = (opts) => {
+    return (0, get_1.default)(opts.request, 'requestId');
+};
+exports.getRequestId = getRequestId;
+// -------------------------------------------------------------------------
+const getRequestRemark = (opts) => {
+    return (0, get_1.default)(opts.request, 'requestedRemark');
+};
+exports.getRequestRemark = getRequestRemark;
 //# sourceMappingURL=parse.utility.js.map

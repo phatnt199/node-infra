@@ -36,6 +36,7 @@ export interface IEntity {
 export interface IRepository {
 }
 export interface IPersistableRepository<E extends BaseIdEntity> extends IRepository {
+    findOne(filter?: Filter<E>, options?: Options): Promise<E | null>;
     existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
     create(data: DataObject<E>, options?: Options): Promise<E>;
     createAll(datum: DataObject<E>[], options?: Options): Promise<E[]>;
@@ -84,4 +85,10 @@ export interface IError<N extends number = number> extends Error {
     statusCode: N;
     message: string;
     [key: string]: any;
+}
+export interface IRequestedRemark {
+    id: string;
+    url: string;
+    method: string;
+    [extra: string | symbol]: any;
 }

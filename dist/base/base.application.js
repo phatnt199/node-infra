@@ -49,6 +49,7 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
         this.models = new Set([]);
         this.models = this.declareModels();
         // Middlewares
+        this.middleware(__1.RequestBodyParserMiddleware);
         this.middleware(__1.RequestSpyMiddleware);
         // Do configure while modules for application.
         this.logger.info('[Application] Executing Pre-Configure...');

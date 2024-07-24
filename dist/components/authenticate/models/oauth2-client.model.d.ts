@@ -1,14 +1,18 @@
-import { BaseIdEntity } from '../../../base';
-export declare class OAuth2Client extends BaseIdEntity {
+import { BaseTzEntity } from '../../../base';
+import { NumberIdType } from '../../../common';
+export declare class OAuth2Client extends BaseTzEntity {
     identifier: string;
+    clientId: string;
     name: string;
     description: string;
-    secret: string;
+    clientSecret: string;
+    grants: Array<string>;
     endpoints: {
         rootUrl: string;
         homeUrl: string;
         redirectUrls: Array<string>;
         originUrls: Array<string>;
     };
+    userId?: NumberIdType;
     constructor(data?: Partial<OAuth2Client>);
 }

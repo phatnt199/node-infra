@@ -1,15 +1,15 @@
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
-import OAuth2Server from '@node-oauth/oauth2-server';
+import _OAuth2Server from '@node-oauth/oauth2-server';
 
-export class OAuth2ApplicationServer extends OAuth2Server {
+export class OAuth2Handler extends _OAuth2Server {
   // private identifier: string;
   private logger: ApplicationLogger;
 
-  constructor(opts: { scope?: string; serverOptions: OAuth2Server.ServerOptions }) {
+  constructor(opts: { scope?: string; serverOptions: _OAuth2Server.ServerOptions }) {
     const { scope, serverOptions } = opts;
     super(serverOptions);
 
-    this.logger = LoggerFactory.getLogger([scope ?? OAuth2ApplicationServer.name]);
+    this.logger = LoggerFactory.getLogger([scope ?? OAuth2Handler.name]);
     this.configure();
   }
 
@@ -18,3 +18,4 @@ export class OAuth2ApplicationServer extends OAuth2Server {
     this.logger.info('[configure] DONE | Configured application OAuth2 server!');
   }
 }
+

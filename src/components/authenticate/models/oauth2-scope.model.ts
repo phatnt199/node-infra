@@ -1,16 +1,16 @@
-import { BaseIdEntity } from '@/base';
+import { BaseTzEntity } from '@/base';
 import { model, property } from '@loopback/repository';
 
 @model({
   settings: {
     postgresql: {
       schema: 'open_auth',
-      table: 'ClientScope',
+      table: 'OAuth2Scope',
     },
     hiddenProperties: ['createdAt', 'modifiedAt'],
   },
 })
-export class OAuth2ClientScope extends BaseIdEntity {
+export class OAuth2Scope extends BaseTzEntity {
   @property({
     type: 'string',
     postgresql: { columnName: 'identifier' },
@@ -35,7 +35,7 @@ export class OAuth2ClientScope extends BaseIdEntity {
   })
   protocol: string;
 
-  constructor(data?: Partial<OAuth2ClientScope>) {
+  constructor(data?: Partial<OAuth2Scope>) {
     super(data);
   }
 }

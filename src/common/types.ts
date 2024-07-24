@@ -9,6 +9,7 @@ export interface IApplication {
   postConfigure(): void;
 }
 
+// ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IDataSource {
   name: string;
   config: object;
@@ -45,6 +46,8 @@ export interface IEntity {
 export interface IRepository {}
 
 export interface IPersistableRepository<E extends BaseIdEntity> extends IRepository {
+  findOne(filter?: Filter<E>, options?: Options): Promise<E | null>;
+
   existsWith(where?: Where<any>, options?: Options): Promise<boolean>;
 
   create(data: DataObject<E>, options?: Options): Promise<E>;
@@ -59,7 +62,6 @@ export interface IPersistableRepository<E extends BaseIdEntity> extends IReposit
   replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void>;
 }
 
-// ----------------------------------------------------------------------------------------------------------------------------------------
 export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepository<E> {
   mixTimestamp(entity: DataObject<E>, options?: { newInstance: boolean }): DataObject<E>;
   mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean; authorId: IdType }): DataObject<E>;
@@ -101,4 +103,12 @@ export interface IError<N extends number = number> extends Error {
   statusCode: N;
   message: string;
   [key: string]: any;
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export interface IRequestedRemark {
+  id: string;
+  url: string;
+  method: string;
+  [extra: string | symbol]: any;
 }

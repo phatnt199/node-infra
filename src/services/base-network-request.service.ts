@@ -58,4 +58,8 @@ export abstract class BaseNetworkRequest {
 
     return `${baseUrl ?? this.baseUrl}${joined}`;
   }
+
+  getNetworkService() {
+    return this.networkService;
+  }
 }

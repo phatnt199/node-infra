@@ -1,7 +1,7 @@
 "use strict";
-var _a;
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RoleStatuses = exports.UserStatuses = exports.CommonStatuses = exports.MigrationStatuses = exports.Statuses = void 0;
+exports.OAuth2TokenStatuses = exports.RoleStatuses = exports.UserStatuses = exports.CommonStatuses = exports.MigrationStatuses = exports.Statuses = void 0;
 class Statuses {
 }
 exports.Statuses = Statuses;
@@ -39,4 +39,15 @@ exports.UserStatuses = UserStatuses;
 class RoleStatuses extends CommonStatuses {
 }
 exports.RoleStatuses = RoleStatuses;
+class OAuth2TokenStatuses {
+    static isValid(scheme) {
+        return this.SCHEME_SET.has(scheme);
+    }
+}
+exports.OAuth2TokenStatuses = OAuth2TokenStatuses;
+_b = OAuth2TokenStatuses;
+OAuth2TokenStatuses.UNKNOWN = Statuses.UNKNOWN;
+OAuth2TokenStatuses.ACTIVATED = Statuses.ACTIVATED;
+OAuth2TokenStatuses.DEACTIVATED = Statuses.DEACTIVATED;
+OAuth2TokenStatuses.SCHEME_SET = new Set([_b.ACTIVATED, _b.DEACTIVATED]);
 //# sourceMappingURL=statuses.js.map

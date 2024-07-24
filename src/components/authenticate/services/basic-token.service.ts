@@ -1,6 +1,5 @@
 import { BaseService } from '@/base/base.service';
 import { HttpErrors } from '@loopback/rest';
-// import { securityId } from '@loopback/security';
 
 export class BasicTokenService extends BaseService {
   constructor() {

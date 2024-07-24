@@ -15,7 +15,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./basic.strategy"), exports);
-__exportStar(require("./jwt.strategy"), exports);
 __exportStar(require("./basic-token.service"), exports);
+__exportStar(require("./jwt.strategy"), exports);
 __exportStar(require("./jwt-token.service"), exports);
+__exportStar(require("./oauth2.strategy"), exports);
+__exportStar(require("./oauth2.service"), exports);
 //# sourceMappingURL=index.js.map

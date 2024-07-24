@@ -1,21 +1,28 @@
-import { BaseIdEntity } from '@/base';
+import { BaseTzEntity } from '@/base';
+import { NumberIdType } from '@/common';
 import { model, property } from '@loopback/repository';
 
 @model({
   settings: {
     postgresql: {
       schema: 'open_auth',
-      table: 'Client',
+      table: 'OAuth2Client',
     },
-    hiddenProperties: ['createdAt', 'modifiedAt'],
+    hiddenProperties: ['createdAt', 'modifiedAt', 'clientSecret'],
   },
 })
-export class OAuth2Client extends BaseIdEntity {
+export class OAuth2Client extends BaseTzEntity {
   @property({
     type: 'string',
     postgresql: { columnName: 'identifier' },
   })
   identifier: string;
+
+  @property({
+    type: 'string',
+    postgresql: { columnName: 'client_id' },
+  })
+  clientId: string;
 
   @property({
     type: 'string',
@@ -31,9 +38,17 @@ export class OAuth2Client extends BaseIdEntity {
 
   @property({
     type: 'string',
-    postgresql: { columnName: 'client_id' },
+    postgresql: { columnName: 'client_secret' },
   })
-  secret: string;
+  clientSecret: string;
+
+  @property({
+    type: 'array',
+    itemType: 'string',
+    default: [],
+    postgresql: { columnName: 'grants', dataType: 'jsonb' },
+  })
+  grants: Array<string>;
 
   @property({
     type: 'object',
@@ -45,7 +60,7 @@ export class OAuth2Client extends BaseIdEntity {
         originUrls: { type: 'array', items: { type: 'string' } },
       },
     },
-    postgresql: { columnName: 'endpoints' },
+    postgresql: { columnName: 'endpoints', dataType: 'jsonb' },
   })
   endpoints: {
     rootUrl: string;
@@ -53,6 +68,12 @@ export class OAuth2Client extends BaseIdEntity {
     redirectUrls: Array<string>;
     originUrls: Array<string>;
   };
+
+  @property({
+    type: 'number',
+    postgresql: { columnName: 'user_id', dataType: 'integer' },
+  })
+  userId?: NumberIdType;
 
   constructor(data?: Partial<OAuth2Client>) {
     super(data);

@@ -27,3 +27,10 @@ export declare class UserStatuses extends CommonStatuses {
 }
 export declare class RoleStatuses extends CommonStatuses {
 }
+export declare class OAuth2TokenStatuses {
+    static readonly UNKNOWN = "000_UNKNOWN";
+    static readonly ACTIVATED = "100_ACTIVATED";
+    static readonly DEACTIVATED = "101_DEACTIVATED";
+    static readonly SCHEME_SET: Set<string>;
+    static isValid(scheme: string): boolean;
+}

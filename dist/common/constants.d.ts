@@ -16,6 +16,11 @@ export declare class Authentication {
     static readonly STRATEGY_BASIC = "basic";
     static readonly STRATEGY_JWT = "jwt";
 }
+export declare class AuthenticationTokenTypes {
+    static readonly TYPE_AUTHORIZATION_CODE = "000_AUTHORIZATION_CODE";
+    static readonly TYPE_ACCESS_TOKEN = "100_ACCESS_TOKEN";
+    static readonly TYPE_REFRESH_TOKEN = "200_REFRESH_TOKEN";
+}
 export declare class Formatters {
     static readonly DATE_TIME = "YYYY-MM-DD HH:mm:ss";
     static readonly DATE_TIME_2 = "YYYYMMDDHHmmss";

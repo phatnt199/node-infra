@@ -9,15 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SignUpRequest = exports.ChangePasswordRequest = exports.SignInRequest = exports.OAuth2Response = exports.OAuth2Request = void 0;
+exports.OAuth2Request = exports.SignUpRequest = exports.ChangePasswordRequest = exports.SignInRequest = void 0;
 const repository_1 = require("@loopback/repository");
-const oauth2_server_1 = require("@node-oauth/oauth2-server");
-class OAuth2Request extends oauth2_server_1.Request {
-}
-exports.OAuth2Request = OAuth2Request;
-class OAuth2Response extends oauth2_server_1.Response {
-}
-exports.OAuth2Response = OAuth2Response;
 // ----------------------------------------------------------------------------------------------------------------------------------------
 let SignInRequest = class SignInRequest {
 };
@@ -40,6 +33,10 @@ __decorate([
     }),
     __metadata("design:type", Object)
 ], SignInRequest.prototype, "credential", void 0);
+__decorate([
+    (0, repository_1.property)({ type: 'string' }),
+    __metadata("design:type", String)
+], SignInRequest.prototype, "clientId", void 0);
 exports.SignInRequest = SignInRequest = __decorate([
     (0, repository_1.model)({
         name: 'SignInRequest',
@@ -47,6 +44,11 @@ exports.SignInRequest = SignInRequest = __decorate([
             required: ['identifier', 'credential'],
             examples: [
                 {
+                    identifier: { scheme: 'username', value: 'test_username' },
+                    credential: { scheme: 'basic', value: 'test_password' },
+                },
+                {
+                    clientId: 'mt-hrm',
                     identifier: { scheme: 'username', value: 'test_username' },
                     credential: { scheme: 'basic', value: 'test_password' },
                 },
@@ -110,4 +112,29 @@ exports.SignUpRequest = SignUpRequest = __decorate([
         },
     })
 ], SignUpRequest);
+// -------------------------------------------------------------------
+let OAuth2Request = class OAuth2Request {
+};
+exports.OAuth2Request = OAuth2Request;
+__decorate([
+    (0, repository_1.property)({ type: 'string' }),
+    __metadata("design:type", String)
+], OAuth2Request.prototype, "clientId", void 0);
+__decorate([
+    (0, repository_1.property)({ type: 'string' }),
+    __metadata("design:type", String)
+], OAuth2Request.prototype, "clientSecret", void 0);
+__decorate([
+    (0, repository_1.property)({ type: 'string' }),
+    __metadata("design:type", String)
+], OAuth2Request.prototype, "redirectUrl", void 0);
+exports.OAuth2Request = OAuth2Request = __decorate([
+    (0, repository_1.model)({
+        name: 'OAuth2Request',
+        jsonSchema: {
+            required: ['clientId', 'clientSecret'],
+            examples: [{ clientId: 'example_id', clientSecret: 'example_secret' }],
+        },
+    })
+], OAuth2Request);
 //# sourceMappingURL=types.js.map

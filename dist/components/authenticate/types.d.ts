@@ -1,11 +1,5 @@
 import { AnyObject, ClassType, IdType } from '../../common';
 import { UserProfile } from '@loopback/security';
-import { IOAuth2AuthenticationHandler } from './oauth2-handlers/base';
-import { Request as _Request, Response as _Response } from '@node-oauth/oauth2-server';
-export declare class OAuth2Request extends _Request {
-}
-export declare class OAuth2Response extends _Response {
-}
 export interface JWTTokenPayload extends UserProfile {
     userId: IdType;
     roles: {
@@ -13,6 +7,7 @@ export interface JWTTokenPayload extends UserProfile {
         identifier: string;
         priority: number;
     }[];
+    clientId?: string;
 }
 export interface TokenPayload extends JWTTokenPayload {
 }
@@ -33,11 +28,18 @@ export interface IAuthenticateRestOptions<SI_RQ extends SignInRequest = SignInRe
 export interface IAuthenticateOAuth2RestOptions {
     restPath?: string;
     tokenPath?: string;
-    serviceKey?: string;
+    authorizePath?: string;
+    oauth2ServiceKey?: string;
+    authStrategy?: {
+        name: string;
+    };
 }
 export interface IAuthenticateOAuth2Options {
     enable: boolean;
-    handler?: IOAuth2AuthenticationHandler;
+    handler: {
+        type: 'authorization_code';
+        authServiceKey: string;
+    };
     restOptions?: IAuthenticateOAuth2RestOptions;
 }
 export declare class SignInRequest {
@@ -49,6 +51,7 @@ export declare class SignInRequest {
         scheme: string;
         value: string;
     };
+    clientId?: string;
 }
 export declare class ChangePasswordRequest {
     oldCredential: {
@@ -66,14 +69,14 @@ export declare class SignUpRequest {
     credential: string;
     [additional: string | symbol]: any;
 }
-export interface IAuthService<SI_RQ extends SignInRequest = SignInRequest, SI_RS = AnyObject, SU_RQ extends SignUpRequest = SignUpRequest, SU_RS = AnyObject, CP_RQ extends ChangePasswordRequest = ChangePasswordRequest, CP_RS = AnyObject> {
+export declare class OAuth2Request {
+    clientId: string;
+    clientSecret: string;
+    redirectUrl?: string;
+}
+export interface IAuthService<SI_RQ extends SignInRequest = SignInRequest, SI_RS = AnyObject, SU_RQ extends SignUpRequest = SignUpRequest, SU_RS = AnyObject, CP_RQ extends ChangePasswordRequest = ChangePasswordRequest, CP_RS = AnyObject, UI_RQ = AnyObject, UI_RS = AnyObject> {
     signIn(opts: SI_RQ): Promise<SI_RS>;
     signUp(opts: SU_RQ): Promise<SU_RS>;
     changePassword(opts: CP_RQ): Promise<CP_RS>;
-}
-export interface IOAuth2Service<T> {
-    generateToken(opts: {
-        request: OAuth2Request;
-        response: OAuth2Response;
-    }): T;
+    getUserInformation?(opts: UI_RQ): Promise<UI_RS>;
 }

@@ -23,7 +23,7 @@ let RequestSpyMiddleware = RequestSpyMiddleware_1 = class RequestSpyMiddleware e
     constructor() {
         super({ scope: RequestSpyMiddleware_1.name });
     }
-    spy(context) {
+    handle(context) {
         var _a;
         try {
             const { request } = context;
@@ -37,7 +37,7 @@ let RequestSpyMiddleware = RequestSpyMiddleware_1 = class RequestSpyMiddleware e
                 method,
                 path: path !== null && path !== void 0 ? path : 'N/A',
                 query: query !== null && query !== void 0 ? query : 'N/A',
-                body: body !== null && body !== void 0 ? body : 'N/A',
+                body,
             };
             (0, set_1.default)(request, 'requestedRemark', requestedRemark);
             this.logger.info('[spy][%s] Requested remark: %j', requestId, requestedRemark);
@@ -48,7 +48,7 @@ let RequestSpyMiddleware = RequestSpyMiddleware_1 = class RequestSpyMiddleware e
     }
     value() {
         return (context, next) => {
-            this.spy(context);
+            this.handle(context);
             return next();
         };
     }
@@ -57,7 +57,7 @@ exports.RequestSpyMiddleware = RequestSpyMiddleware;
 exports.RequestSpyMiddleware = RequestSpyMiddleware = RequestSpyMiddleware_1 = __decorate([
     (0, core_1.injectable)((0, rest_1.asMiddleware)({
         chain: rest_1.RestTags.REST_MIDDLEWARE_CHAIN,
-        group: rest_1.RestMiddlewareGroups.SEND_RESPONSE,
+        group: rest_1.RestMiddlewareGroups.FIND_ROUTE,
     })),
     __metadata("design:paramtypes", [])
 ], RequestSpyMiddleware);

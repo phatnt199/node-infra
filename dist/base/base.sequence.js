@@ -20,9 +20,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var BaseApplicationSequence_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseApplicationSequence = void 0;
@@ -30,7 +27,6 @@ const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
 const common_1 = require("../common");
 const helpers_1 = require("../helpers");
-const get_1 = __importDefault(require("lodash/get"));
 const __1 = require("..");
 let BaseApplicationSequence = BaseApplicationSequence_1 = class BaseApplicationSequence {
     constructor(invokeMiddleware, middlewareOptions) {
@@ -38,21 +34,7 @@ let BaseApplicationSequence = BaseApplicationSequence_1 = class BaseApplicationS
         this.middlewareOptions = middlewareOptions;
         this.logger = helpers_1.LoggerFactory.getLogger([BaseApplicationSequence_1.name]);
     }
-    /* getParser(context: RequestContext) {
-      const { request } = context;
-  
-      const contentType = request.headers['content-type'];
-      switch(contentType) {
-        case 'application/x-www-form-urlencoded' : {
-          const urlencoded = new UrlEncodedBodyParser({urlencoded: { extended: true }})
-          entries
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    } */
+    // ----------------------------------------------------------------------------------------
     handle(context) {
         return __awaiter(this, void 0, void 0, function* () {
             const t = performance.now();
@@ -61,11 +43,11 @@ let BaseApplicationSequence = BaseApplicationSequence_1 = class BaseApplicationS
                 yield this.invokeMiddleware(context, this.middlewareOptions);
             }
             catch (error) {
-                const requestId = (0, get_1.default)(request, 'requestId');
+                const requestId = (0, __1.getRequestId)({ request });
                 this.logger.error('[handle][%s] ERROR | Error: %s', requestId, error);
             }
             finally {
-                const requestedRemark = (0, get_1.default)(request, 'requestedRemark');
+                const requestedRemark = (0, __1.getRequestRemark)({ request });
                 this.logger.info('[handle][%s] DONE | Took: %d(ms) | Url: %s', requestedRemark === null || requestedRemark === void 0 ? void 0 : requestedRemark.id, (0, __1.getExecutedPerformance)({ from: t, digit: 6 }), requestedRemark === null || requestedRemark === void 0 ? void 0 : requestedRemark.url);
             }
         });

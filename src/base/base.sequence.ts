@@ -10,8 +10,7 @@ import {
 import { BindingKeys } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 
-import get from 'lodash/get';
-import { getExecutedPerformance } from '..';
+import { getExecutedPerformance, getRequestId, getRequestRemark } from '..';
 
 export class BaseApplicationSequence implements SequenceHandler {
   private logger: ApplicationLogger;
@@ -20,40 +19,24 @@ export class BaseApplicationSequence implements SequenceHandler {
     @inject(SequenceActions.INVOKE_MIDDLEWARE)
     protected invokeMiddleware: InvokeMiddleware,
 
-    // ----------------------------------------------------------------------------------------
     @inject(BindingKeys.APPLICATION_MIDDLEWARE_OPTIONS)
     protected middlewareOptions: InvokeMiddlewareOptions,
   ) {
     this.logger = LoggerFactory.getLogger([BaseApplicationSequence.name]);
   }
 
-  /* getParser(context: RequestContext) {
-    const { request } = context;
-
-    const contentType = request.headers['content-type'];
-    switch(contentType) {
-      case 'application/x-www-form-urlencoded' : {
-        const urlencoded = new UrlEncodedBodyParser({urlencoded: { extended: true }})
-        entries
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-  } */
-
-  async handle(context: RequestContext): Promise<void> {
+  // ----------------------------------------------------------------------------------------
+  async handle(context: RequestContext) {
     const t = performance.now();
     const { request } = context;
 
     try {
       await this.invokeMiddleware(context, this.middlewareOptions);
     } catch (error) {
-      const requestId = get(request, 'requestId');
+      const requestId = getRequestId({ request });
       this.logger.error('[handle][%s] ERROR | Error: %s', requestId, error);
     } finally {
-      const requestedRemark = get(request, 'requestedRemark') as { id: string; url: string } | undefined;
+      const requestedRemark = getRequestRemark({ request });
       this.logger.info(
         '[handle][%s] DONE | Took: %d(ms) | Url: %s',
         requestedRemark?.id,

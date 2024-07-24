@@ -2,6 +2,7 @@ import get from 'lodash/get';
 import round from 'lodash/round';
 import multer from 'multer';
 import { Request, Response, getModelSchemaRef } from '@loopback/rest';
+import { IRequestedRemark } from '@/common';
 
 // -------------------------------------------------------------------------
 const INTL_0_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
@@ -181,4 +182,14 @@ export const getNumberValue = (input: string, method: 'int' | 'float' = 'int') =
 // -------------------------------------------------------------------------
 export const getSchemaObject = <T extends object>(ctor?: Function & { prototype: T }) => {
   return ctor ? getModelSchemaRef(ctor).definitions[ctor.name] : {};
+};
+
+// -------------------------------------------------------------------------
+export const getRequestId = (opts: { request: Request }) => {
+  return get(opts.request, 'requestId');
+};
+
+// -------------------------------------------------------------------------
+export const getRequestRemark = (opts: { request: Request }): IRequestedRemark | undefined => {
+  return get(opts.request, 'requestedRemark');
 };

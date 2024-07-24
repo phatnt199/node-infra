@@ -8,13 +8,18 @@ import { Binding, CoreBindings, inject } from '@loopback/core';
 
 import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
-import { App, AuthenticateKeys, Authentication } from '@/common';
+import { App, AuthenticateKeys, Authentication, EnvironmentKeys } from '@/common';
 import { getError, int } from '@/utilities';
-import { defineAuthController, defineOAuth2Controller } from './controllers';
+import { DefaultOAuth2Controller, defineAuthController, defineOAuth2Controller } from './controllers';
 import { AuthenticationMiddleware } from './middleware';
-import { OAuth2PasswordHandler } from './oauth2-handlers/password.handler';
-import { OAuth2ApplicationServer } from './oauth2-server';
-import { BasicAuthenticationStrategy, BasicTokenService, JWTAuthenticationStrategy, JWTTokenService } from './services';
+import { OAuth2ClientRepository, OAuth2ScopeRepository, OAuth2TokenRepository } from './repositories';
+import {
+  BasicAuthenticationStrategy,
+  BasicTokenService,
+  JWTAuthenticationStrategy,
+  JWTTokenService,
+  OAuth2Service,
+} from './services';
 import {
   ChangePasswordRequest,
   IAuthenticateOAuth2Options,
@@ -23,6 +28,9 @@ import {
   SignInRequest,
   SignUpRequest,
 } from './types';
+import { defineOAuth2Strategy } from './services/oauth2.strategy';
+import { applicationEnvironment } from '@/helpers';
+import { IOAuth2AuthenticationHandler, OAuth2AuthorizationCodeHandler, OAuth2Handler } from './oauth2-handlers';
 
 export class AuthenticateComponent extends BaseComponent {
   bindings: Binding[] = [
@@ -42,10 +50,6 @@ export class AuthenticateComponent extends BaseComponent {
       signInRequest: SignInRequest,
       signUpRequest: SignUpRequest,
       changePasswordRequest: ChangePasswordRequest,
-    }),
-
-    Binding.bind<IAuthenticateOAuth2Options>(AuthenticateKeys.OAUTH2_OPTIONS).to({
-      enable: false,
     }),
   ];
 
@@ -83,23 +87,61 @@ export class AuthenticateComponent extends BaseComponent {
       return;
     }
 
-    const authHandler = oauth2Options?.handler ?? OAuth2PasswordHandler.newInstance();
+    let authHandler: IOAuth2AuthenticationHandler | null = null;
+    const { type: authType, authServiceKey } = oauth2Options.handler;
+    switch (authType) {
+      case 'authorization_code': {
+        authHandler = new OAuth2AuthorizationCodeHandler({
+          authServiceKey,
+          injectionGetter: <T>(key: string) => this.application.getSync<T>(key),
+        });
+        break;
+      }
+      default: {
+        break;
+      }
+    }
 
-    const oauth2Server = new OAuth2ApplicationServer({
-      serverOptions: {
-        model: authHandler,
-        allowEmptyState: false,
-        allowBearerTokensInQueryString: true,
-        accessTokenLifetime: int(
-          this.application.getSync<string>(TokenServiceBindings.TOKEN_EXPIRES_IN) || `${1 * 24 * 60 * 60}`,
-        ),
-      },
-    });
+    if (!authHandler) {
+      throw getError({ message: '[defineOAuth2] Invalid OAuth2 model handler!' });
+    }
 
-    this.application.bind(AuthenticateKeys.OAUTH2_AUTH_SERVER).to(oauth2Server);
+    this.application.bind(AuthenticateKeys.OAUTH2_HANDLER).to(
+      new OAuth2Handler({
+        serverOptions: {
+          model: authHandler,
+          allowEmptyState: true,
+          allowBearerTokensInQueryString: true,
+          accessTokenLifetime: int(
+            this.application.getSync<string>(TokenServiceBindings.TOKEN_EXPIRES_IN) || `${1 * 24 * 60 * 60}`,
+          ),
+        },
+      }),
+    );
+
+    const strategyName =
+      oauth2Options.restOptions?.authStrategy?.name ??
+      applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_NAME);
+    const remoteOAuth2Strategy = defineOAuth2Strategy({ name: strategyName });
+    registerAuthenticationStrategy(this.application, remoteOAuth2Strategy);
+    this.logger.info('[defineOAuth2] Registered auth strategy with name: %s', strategyName);
+
+    this.application.repository(OAuth2ScopeRepository);
+    this.application.repository(OAuth2TokenRepository);
+    this.application.repository(OAuth2ClientRepository);
+
+    this.application.service(OAuth2Service);
 
     const oauth2Controller = defineOAuth2Controller(oauth2Options.restOptions);
     this.application.controller(oauth2Controller);
+
+    this.application.mountExpressRouter(
+      oauth2Options.restOptions?.restPath ?? '/oauth2',
+      DefaultOAuth2Controller.getInstance({
+        authServiceKey,
+        injectionGetter: <T>(key: string) => this.application.getSync<T>(key),
+      }).getApplicationHandler(),
+    );
   }
 
   registerComponent() {

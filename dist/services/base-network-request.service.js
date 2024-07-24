@@ -57,6 +57,9 @@ class BaseNetworkRequest {
             .join('');
         return `${baseUrl !== null && baseUrl !== void 0 ? baseUrl : this.baseUrl}${joined}`;
     }
+    getNetworkService() {
+        return this.networkService;
+    }
 }
 exports.BaseNetworkRequest = BaseNetworkRequest;
 //# sourceMappingURL=base-network-request.service.js.map

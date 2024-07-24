@@ -12,4 +12,5 @@ export declare abstract class BaseNetworkRequest {
         baseUrl?: string;
         paths: Array<string>;
     }): string;
+    getNetworkService(): NetworkHelper;
 }

@@ -2,7 +2,7 @@
 var _a;
 var _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConfigurationDataType = exports.MimeTypes = exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EnforcerDefinitions = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.FixedUserRoles = exports.ApplicationRoles = exports.Formatters = exports.Authentication = exports.App = void 0;
+exports.ConfigurationDataType = exports.MimeTypes = exports.SocketIOConstants = exports.AccountTypes = exports.UserTypes = exports.EnforcerDefinitions = exports.EntityRelations = exports.ApplicationRunModes = exports.Sorts = exports.ResultCodes = exports.FixedUserRoles = exports.ApplicationRoles = exports.Formatters = exports.AuthenticationTokenTypes = exports.Authentication = exports.App = void 0;
 class App {
 }
 exports.App = App;
@@ -25,6 +25,12 @@ Authentication.TYPE_BEARER = 'Bearer';
 // Strategy
 Authentication.STRATEGY_BASIC = 'basic';
 Authentication.STRATEGY_JWT = 'jwt';
+class AuthenticationTokenTypes {
+}
+exports.AuthenticationTokenTypes = AuthenticationTokenTypes;
+AuthenticationTokenTypes.TYPE_AUTHORIZATION_CODE = '000_AUTHORIZATION_CODE';
+AuthenticationTokenTypes.TYPE_ACCESS_TOKEN = '100_ACCESS_TOKEN';
+AuthenticationTokenTypes.TYPE_REFRESH_TOKEN = '200_REFRESH_TOKEN';
 class Formatters {
 }
 exports.Formatters = Formatters;
