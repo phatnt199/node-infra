@@ -59,6 +59,9 @@ class AbstractTzRepository extends repository_1.DefaultCrudRepository {
                 .catch(reject);
         });
     }
+    executeSql(command, parameters, options) {
+        return this.execute(command, parameters, options);
+    }
     getObservers(opts) {
         const { operation } = opts;
         return (0, get_1.default)(this.modelClass, `_observers.${operation}`, []);

@@ -72,38 +72,29 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
             return;
         }
         const oauth2Options = this.application.getSync(common_1.AuthenticateKeys.OAUTH2_OPTIONS);
-        if (!oauth2Options.enable) {
+        const { enable = false, handler } = oauth2Options;
+        if (!enable) {
             return;
         }
-        let authHandler = null;
-        const { type: authType, authServiceKey } = oauth2Options.handler;
-        switch (authType) {
-            case 'authorization_code': {
-                authHandler = new oauth2_handlers_1.OAuth2AuthorizationCodeHandler({
-                    authServiceKey,
-                    injectionGetter: (key) => this.application.getSync(key),
-                });
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-        if (!authHandler) {
-            throw (0, utilities_1.getError)({ message: '[defineOAuth2] Invalid OAuth2 model handler!' });
-        }
+        const injectionGetter = (key) => this.application.getSync(key);
         this.application.bind(common_1.AuthenticateKeys.OAUTH2_HANDLER).to(new oauth2_handlers_1.OAuth2Handler({
+            handlerOptions: {
+                type: 'authorization_code',
+                authServiceKey: handler.authServiceKey,
+                injectionGetter,
+            },
             serverOptions: {
-                model: authHandler,
                 allowEmptyState: true,
                 allowBearerTokensInQueryString: true,
                 accessTokenLifetime: (0, utilities_1.int)(this.application.getSync(authentication_jwt_1.TokenServiceBindings.TOKEN_EXPIRES_IN) || `${1 * 24 * 60 * 60}`),
             },
         }));
-        /* const strategyName =
-          oauth2Options.restOptions?.authStrategy?.name ??
-          applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_NAME);
-        const remoteOAuth2Strategy = defineOAuth2Strategy({ name: strategyName });
+        /* const strategyName = '<some_name>';
+        const remoteOAuth2Strategy = defineOAuth2Strategy({
+          name: strategyName,
+          baseURL: 'https://domain.com',
+          authPath: '/auth/who-am-i',
+        });
         registerAuthenticationStrategy(this.application, remoteOAuth2Strategy);
         this.logger.info('[defineOAuth2] Registered auth strategy with name: %s', strategyName); */
         this.application.repository(repositories_1.OAuth2ScopeRepository);
@@ -113,8 +104,8 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
         const oauth2Controller = (0, controllers_1.defineOAuth2Controller)(oauth2Options.restOptions);
         this.application.controller(oauth2Controller);
         this.application.mountExpressRouter((_b = (_a = oauth2Options.restOptions) === null || _a === void 0 ? void 0 : _a.restPath) !== null && _b !== void 0 ? _b : '/oauth2', controllers_1.DefaultOAuth2ExpressServer.getInstance({
-            authServiceKey,
-            injectionGetter: (key) => this.application.getSync(key),
+            authServiceKey: handler.authServiceKey,
+            injectionGetter,
         }).getApplicationHandler());
     }
     registerComponent() {

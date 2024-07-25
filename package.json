@@ -32,9 +32,10 @@
     "url": "git+https://github.com/phatnt199/lb-infra.git"
   },
   "author": "Phat Nguyen <tanphat199@gmail.com>",
-  "license": "ISC",
+  "license": "GPL-3.0",
   "files": [
-    "README_DEV.md",
+    "README.md",
+    "LICENSE",
     "dist",
     "!*/__tests__"
   ],

@@ -1,6 +1,6 @@
 import { AnyType, EntityClassType, EntityRelation, IdType, ITzRepository } from '../common/types';
 import { ApplicationLogger } from '../helpers';
-import { AnyObject, WhereBuilder as BaseWhereBuilder, Count, DataObject, DefaultCrudRepository, DefaultKeyValueRepository, IsolationLevel, juggler, Options, Transaction, TransactionalEntityRepository, Where } from '@loopback/repository';
+import { AnyObject, WhereBuilder as BaseWhereBuilder, Command, Count, DataObject, DefaultCrudRepository, DefaultKeyValueRepository, IsolationLevel, juggler, NamedParameters, Options, PositionalParameters, Transaction, TransactionalEntityRepository, Where } from '@loopback/repository';
 import { BaseEntity, BaseKVEntity, BaseObjectSearchTzEntity, BaseSearchableTzEntity, BaseTextSearchTzEntity, BaseTzEntity } from './base.model';
 export declare class WhereBuilder<E extends object = AnyObject> extends BaseWhereBuilder {
     constructor(opts?: Where<E>);
@@ -11,6 +11,7 @@ export declare abstract class AbstractTzRepository<E extends BaseTzEntity, R ext
     protected logger: ApplicationLogger;
     constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource, scope?: string);
     beginTransaction(options?: IsolationLevel | Options): Promise<Transaction>;
+    executeSql<T>(command: Command, parameters: NamedParameters | PositionalParameters, options?: Options): Promise<T>;
     protected getObservers(opts: {
         operation: string;
     }): Array<Function>;
