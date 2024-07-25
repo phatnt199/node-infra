@@ -36,7 +36,6 @@
   "files": [
     "README_DEV.md",
     "dist",
-    "src",
     "!*/__tests__"
   ],
   "publishConfig": {
