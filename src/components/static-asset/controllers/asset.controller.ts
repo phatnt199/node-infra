@@ -167,7 +167,11 @@ export class StaticAssetController implements IController {
     return new Promise(() => {
       minioInstance.getStat({ bucket: bucketName, name: objectName }).then(fileStat => {
         const { size, metaData } = fileStat;
-        this.response.writeHead(206, { ...metaData, 'Content-Length': size });
+        this.response.writeHead(206, {
+          ...metaData,
+          'Content-Type': 'application/octet-stream',
+          'Content-Length': size,
+        });
 
         minioInstance
           .getFile({

@@ -94,7 +94,7 @@ let StaticAssetController = StaticAssetController_1 = class StaticAssetControlle
         return new Promise(() => {
             minioInstance.getStat({ bucket: bucketName, name: objectName }).then(fileStat => {
                 const { size, metaData } = fileStat;
-                this.response.writeHead(206, Object.assign(Object.assign({}, metaData), { 'Content-Length': size }));
+                this.response.writeHead(206, Object.assign(Object.assign({}, metaData), { 'Content-Type': 'application/octet-stream', 'Content-Length': size }));
                 minioInstance
                     .getFile({
                     bucket: bucketName,
