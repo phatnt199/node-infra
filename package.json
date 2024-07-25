@@ -32,6 +32,10 @@
     "url": "git+https://github.com/phatnt199/lb-infra.git"
   },
   "author": "Phat Nguyen <tanphat199@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/phatnt199/lb-infra/issues"
+  },
+  "homepage": "https://github.com/phatnt199/lb-infra/wiki",
   "license": "GPL-3.0",
   "files": [
     "README.md",
@@ -100,9 +104,5 @@
     "tsc-alias": "^1.8.7",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.5.3"
-  },
-  "bugs": {
-    "url": "https://github.com/phatnt199/lb-infra/issues"
-  },
-  "homepage": "https://github.com/phatnt199/lb-infra#readme"
+  }
 }
