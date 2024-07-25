@@ -12,11 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineOAuth2Strategy = void 0;
-const common_1 = require("../../../common");
-const helpers_1 = require("../../../helpers");
+exports.registerOAuth2Strategy = exports.defineOAuth2Strategy = void 0;
 const services_1 = require("../../../services");
 const utilities_1 = require("../../../utilities");
+const authentication_1 = require("@loopback/authentication");
 const security_1 = require("@loopback/security");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 class AuthProviderNetworkRequest extends services_1.BaseNetworkRequest {
@@ -26,13 +25,13 @@ const defineOAuth2Strategy = (opts) => {
         constructor() {
             var _a;
             this.name = opts.name;
-            const baseURL = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_REMOTE_AUTH_SERVER_URL);
+            const baseURL = opts.baseURL;
             if (!baseURL || (0, isEmpty_1.default)(baseURL)) {
                 throw (0, utilities_1.getError)({
                     message: `[RemoteAuthenticationStrategy][DANGER] INVALID baseURL | Missing env: APP_ENV_REMOTE_AUTH_SERVER_URL`,
                 });
             }
-            this.authPath = (_a = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_REMOTE_AUTH_PATH)) !== null && _a !== void 0 ? _a : '/auth/who-am-i';
+            this.authPath = (_a = opts.authPath) !== null && _a !== void 0 ? _a : '/auth/who-am-i';
             this.authProvider = new AuthProviderNetworkRequest({
                 name: AuthProviderNetworkRequest.name,
                 scope: `${Strategy.name}_${opts.name}`,
@@ -57,4 +56,14 @@ const defineOAuth2Strategy = (opts) => {
     return Strategy;
 };
 exports.defineOAuth2Strategy = defineOAuth2Strategy;
+const registerOAuth2Strategy = (context, options) => {
+    var _a;
+    const remoteOAuth2Strategy = (0, exports.defineOAuth2Strategy)({
+        name: options.strategyName,
+        baseURL: options.authenticateUrl,
+        authPath: (_a = options.authenticatePath) !== null && _a !== void 0 ? _a : '/auth/who-am-i',
+    });
+    (0, authentication_1.registerAuthenticationStrategy)(context, remoteOAuth2Strategy);
+};
+exports.registerOAuth2Strategy = registerOAuth2Strategy;
 //# sourceMappingURL=oauth2.strategy.js.map

@@ -30,9 +30,6 @@ export interface IAuthenticateOAuth2RestOptions {
     tokenPath?: string;
     authorizePath?: string;
     oauth2ServiceKey?: string;
-    authStrategy?: {
-        name: string;
-    };
 }
 export interface IAuthenticateOAuth2Options {
     enable: boolean;

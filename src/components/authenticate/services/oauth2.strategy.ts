@@ -1,15 +1,14 @@
-import { EnvironmentKeys } from '@/common';
-import { applicationEnvironment } from '@/helpers';
 import { BaseNetworkRequest } from '@/services';
 import { getError } from '@/utilities';
-import { AuthenticationStrategy } from '@loopback/authentication';
+import { AuthenticationStrategy, registerAuthenticationStrategy } from '@loopback/authentication';
+import { Context } from '@loopback/core';
 import { Request } from '@loopback/rest';
 import { securityId } from '@loopback/security';
 import isEmpty from 'lodash/isEmpty';
 
 class AuthProviderNetworkRequest extends BaseNetworkRequest {}
 
-export const defineOAuth2Strategy = (opts: { name: string }) => {
+export const defineOAuth2Strategy = (opts: { name: string; baseURL: string; authPath?: string }) => {
   class Strategy implements AuthenticationStrategy {
     name = opts.name;
 
@@ -17,14 +16,14 @@ export const defineOAuth2Strategy = (opts: { name: string }) => {
     authPath: string;
 
     constructor() {
-      const baseURL = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_REMOTE_AUTH_SERVER_URL);
+      const baseURL = opts.baseURL;
       if (!baseURL || isEmpty(baseURL)) {
         throw getError({
           message: `[RemoteAuthenticationStrategy][DANGER] INVALID baseURL | Missing env: APP_ENV_REMOTE_AUTH_SERVER_URL`,
         });
       }
 
-      this.authPath = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_REMOTE_AUTH_PATH) ?? '/auth/who-am-i';
+      this.authPath = opts.authPath ?? '/auth/who-am-i';
 
       this.authProvider = new AuthProviderNetworkRequest({
         name: AuthProviderNetworkRequest.name,
@@ -49,4 +48,20 @@ export const defineOAuth2Strategy = (opts: { name: string }) => {
   }
 
   return Strategy;
+};
+
+export const registerOAuth2Strategy = (
+  context: Context,
+  options: {
+    strategyName: string;
+    authenticateUrl: string;
+    authenticatePath?: string;
+  },
+) => {
+  const remoteOAuth2Strategy = defineOAuth2Strategy({
+    name: options.strategyName,
+    baseURL: options.authenticateUrl,
+    authPath: options.authenticatePath ?? '/auth/who-am-i',
+  });
+  registerAuthenticationStrategy(context, remoteOAuth2Strategy);
 };

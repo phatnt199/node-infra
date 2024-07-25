@@ -1,9 +1,14 @@
-import _OAuth2Server from '@node-oauth/oauth2-server';
-export declare class OAuth2Handler extends _OAuth2Server {
-    private logger;
+import { ApplicationLogger } from '../../../helpers';
+import OAuth2Server, { ServerOptions } from '@node-oauth/oauth2-server';
+export declare class OAuth2Handler extends OAuth2Server {
+    logger: ApplicationLogger;
     constructor(opts: {
         scope?: string;
-        serverOptions: _OAuth2Server.ServerOptions;
+        handlerOptions: {
+            type: 'authorization_code';
+            authServiceKey: string;
+            injectionGetter: <T>(key: string) => T;
+        };
+        serverOptions: Omit<ServerOptions, 'model'>;
     });
-    configure(): void;
 }

@@ -4,6 +4,7 @@ import { getError } from '@/utilities';
 import {
   AnyObject,
   WhereBuilder as BaseWhereBuilder,
+  Command,
   Count,
   DataObject,
   DefaultCrudRepository,
@@ -11,7 +12,9 @@ import {
   InclusionFilter,
   IsolationLevel,
   juggler,
+  NamedParameters,
   Options,
+  PositionalParameters,
   Transaction,
   TransactionalEntityRepository,
   Where,
@@ -66,6 +69,10 @@ export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends Ent
         })
         .catch(reject);
     });
+  }
+
+  executeSql<T>(command: Command, parameters: NamedParameters | PositionalParameters, options?: Options): Promise<T> {
+    return this.execute(command, parameters, options) as Promise<T>;
   }
 
   protected getObservers(opts: { operation: string }): Array<Function> {

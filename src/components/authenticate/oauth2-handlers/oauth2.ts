@@ -1,21 +1,45 @@
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
-import _OAuth2Server from '@node-oauth/oauth2-server';
+import OAuth2Server, { ServerOptions } from '@node-oauth/oauth2-server';
 
-export class OAuth2Handler extends _OAuth2Server {
-  // private identifier: string;
-  private logger: ApplicationLogger;
+import { OAuth2AuthorizationCodeHandler } from './authorization-code.handler';
+import { IOAuth2AuthenticationHandler } from './base';
+import { getError } from '@/utilities';
 
-  constructor(opts: { scope?: string; serverOptions: _OAuth2Server.ServerOptions }) {
-    const { scope, serverOptions } = opts;
-    super(serverOptions);
+export class OAuth2Handler extends OAuth2Server {
+  logger: ApplicationLogger;
 
+  constructor(opts: {
+    scope?: string;
+    handlerOptions: {
+      type: 'authorization_code';
+      authServiceKey: string;
+      injectionGetter: <T>(key: string) => T;
+    };
+    serverOptions: Omit<ServerOptions, 'model'>;
+  }) {
+    const { scope, handlerOptions, serverOptions } = opts;
+
+    let authHandler: IOAuth2AuthenticationHandler | null = null;
+    const { type: authType, authServiceKey } = handlerOptions;
+
+    switch (authType) {
+      case 'authorization_code': {
+        authHandler = new OAuth2AuthorizationCodeHandler({
+          authServiceKey,
+          injectionGetter: handlerOptions.injectionGetter,
+        });
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
+    if (!authHandler) {
+      throw getError({ message: '[defineOAuth2] Invalid OAuth2 model handler!' });
+    }
+
+    super({ ...serverOptions, model: authHandler });
     this.logger = LoggerFactory.getLogger([scope ?? OAuth2Handler.name]);
-    this.configure();
-  }
-
-  configure() {
-    this.logger.info('[configure] START | Configuring application OAuth2 server...!');
-    this.logger.info('[configure] DONE | Configured application OAuth2 server!');
   }
 }
-
