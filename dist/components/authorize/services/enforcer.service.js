@@ -73,7 +73,6 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
             return this.enforcer;
         });
     }
-    // -----------------------------------------------------------------------------------------
     getTypeEnforcer(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const enforcer = yield this.getEnforcer();

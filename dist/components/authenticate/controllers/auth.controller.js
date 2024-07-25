@@ -31,19 +31,15 @@ const defineAuthController = (opts) => {
             this.service = authService;
             this.getCurrentUser = getCurrentUser;
         }
-        // ------------------------------------------------------------------------------
         whoami() {
             return this.getCurrentUser();
         }
-        // ------------------------------------------------------------------------------
         signIn(payload) {
             return this.service.signIn(payload);
         }
-        // ------------------------------------------------------------------------------
         signUp(payload) {
             return this.service.signUp(payload);
         }
-        //-------------------------------------------------------------------------------
         changePassword(payload) {
             return new Promise((resolve, reject) => {
                 this.getCurrentUser().then(currentUser => {

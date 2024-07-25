@@ -8,7 +8,6 @@ const cron_1 = require("cron");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
-// --------------------------------------------------------
 class CronHelper {
     constructor(opts) {
         this.logger = helpers_1.LoggerFactory.getLogger([CronHelper.name]);
@@ -29,16 +28,6 @@ class CronHelper {
                 message: '[CronHelper][configure] Invalid cronTime to configure application cron!',
             });
         }
-        /* this.instance = new CronJob(
-          this.cronTime,
-          () => {
-            this.onTick?.();
-          },
-          () => {
-            this.onCompleted?.();
-          },
-          this.autoStart,
-        ); */
         this.instance = cron_1.CronJob.from({
             cronTime: this.cronTime,
             onTick: this.onTick,

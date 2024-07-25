@@ -89,14 +89,6 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
                 accessTokenLifetime: (0, utilities_1.int)(this.application.getSync(authentication_jwt_1.TokenServiceBindings.TOKEN_EXPIRES_IN) || `${1 * 24 * 60 * 60}`),
             },
         }));
-        /* const strategyName = '<some_name>';
-        const remoteOAuth2Strategy = defineOAuth2Strategy({
-          name: strategyName,
-          baseURL: 'https://domain.com',
-          authPath: '/auth/who-am-i',
-        });
-        registerAuthenticationStrategy(this.application, remoteOAuth2Strategy);
-        this.logger.info('[defineOAuth2] Registered auth strategy with name: %s', strategyName); */
         this.application.repository(repositories_1.OAuth2ScopeRepository);
         this.application.repository(repositories_1.OAuth2TokenRepository);
         this.application.repository(repositories_1.OAuth2ClientRepository);

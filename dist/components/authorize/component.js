@@ -45,19 +45,14 @@ let AuthorizeComponent = AuthorizeComponent_1 = class AuthorizeComponent extends
         super({ scope: AuthorizeComponent_1.name });
         this.application = application;
         this.bindings = [
-            // Model bindings
             core_1.Binding.bind(common_1.AuthorizerKeys.ROLE_MODEL).toClass(models_1.Role),
             core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MODEL).toClass(models_1.Permission),
             core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MAPPING_MODEL).toClass(models_1.PermissionMapping),
             core_1.Binding.bind(common_1.AuthorizerKeys.USER_ROLE_MODEL).toClass(models_1.UserRole),
-            // Repository bindings
             core_1.Binding.bind(common_1.AuthorizerKeys.ROLE_REPOSITORY).toClass(repositories_1.RoleRepository),
             core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_REPOSITORY).toClass(repositories_1.PermissionRepository),
             core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MAPPING_REPOSITORY).toClass(repositories_1.PermissionMappingRepository),
             core_1.Binding.bind(common_1.AuthorizerKeys.USER_ROLE_REPOSITORY).toClass(repositories_1.UserRoleRepository),
-            // Datasource
-            // Binding.bind(AuthorizerKeys.AUTHORIZE_DATASOURCE).to(null),
-            // Configure path
             core_1.Binding.bind(common_1.AuthorizerKeys.CONFIGURE_OPTIONS).to({ confPath: authorizeConfPath, useCache: false }),
             core_1.Binding.bind(common_1.AuthorizerKeys.NORMALIZE_PAYLOAD_FN).to(null),
         ];

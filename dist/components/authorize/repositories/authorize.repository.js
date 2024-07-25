@@ -27,7 +27,6 @@ const DS_AUTHORIZE = process.env.APP_ENV_APPLICATION_DS_AUTHORIZE;
 if (!DS_AUTHORIZE || (0, isEmpty_1.default)(DS_AUTHORIZE)) {
     throw (0, utilities_1.getError)({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
 }
-// ----------------------------------------------------------------------------
 class AbstractAuthorizeRepository extends base_repository_1.TzCrudRepository {
     constructor(entityClass, dataSource) {
         super(entityClass, dataSource);
@@ -35,7 +34,6 @@ class AbstractAuthorizeRepository extends base_repository_1.TzCrudRepository {
     }
 }
 exports.AbstractAuthorizeRepository = AbstractAuthorizeRepository;
-// ----------------------------------------------------------------------------
 let RoleRepository = class RoleRepository extends AbstractAuthorizeRepository {
     constructor(dataSource, permissionRepositoryGetter, permissionMappingRepositoryGetter) {
         super(models_1.Role, dataSource);
@@ -53,7 +51,6 @@ exports.RoleRepository = RoleRepository = __decorate([
     __param(2, repository_1.repository.getter('PermissionMappingRepository')),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource, Function, Function])
 ], RoleRepository);
-// ----------------------------------------------------------------------------
 let PermissionRepository = class PermissionRepository extends AbstractAuthorizeRepository {
     constructor(dataSource) {
         super(models_1.Permission, dataSource);
@@ -65,7 +62,6 @@ exports.PermissionRepository = PermissionRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], PermissionRepository);
-// ----------------------------------------------------------------------------
 let PermissionMappingRepository = class PermissionMappingRepository extends AbstractAuthorizeRepository {
     constructor(dataSource) {
         super(models_1.PermissionMapping, dataSource);
@@ -77,7 +73,6 @@ exports.PermissionMappingRepository = PermissionMappingRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], PermissionMappingRepository);
-// ----------------------------------------------------------------------------
 let UserRoleRepository = class UserRoleRepository extends AbstractAuthorizeRepository {
     constructor(dataSource) {
         super(models_1.UserRole, dataSource);
@@ -89,7 +84,6 @@ exports.UserRoleRepository = UserRoleRepository = __decorate([
     __param(0, (0, core_1.inject)(`datasources.${DS_AUTHORIZE}`)),
     __metadata("design:paramtypes", [base_datasource_1.BaseDataSource])
 ], UserRoleRepository);
-// ----------------------------------------------------------------------------
 let ViewAuthorizePolicyRepository = class ViewAuthorizePolicyRepository extends base_repository_1.ViewRepository {
     constructor(dataSource) {
         super(models_1.ViewAuthorizePolicy, dataSource);

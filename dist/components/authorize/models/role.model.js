@@ -14,7 +14,6 @@ const repository_1 = require("@loopback/repository");
 const _1 = require(".");
 const defs_1 = require("./defs");
 const BaseRole = (0, defs_1.defineRole)();
-// ---------------------------------------------------------------
 let Role = class Role extends BaseRole {
     constructor(data) {
         super(data);

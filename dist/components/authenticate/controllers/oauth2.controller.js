@@ -25,7 +25,6 @@ const oauth2_server_1 = require("@node-oauth/oauth2-server");
 const services_1 = require("../services");
 const types_1 = require("../types");
 const path_1 = require("path");
-// --------------------------------------------------------------------------------
 class DefaultOAuth2ExpressServer extends rest_1.ExpressServer {
     constructor(opts) {
         super(opts.config, opts.parent);
@@ -107,12 +106,9 @@ class DefaultOAuth2ExpressServer extends rest_1.ExpressServer {
     }
 }
 exports.DefaultOAuth2ExpressServer = DefaultOAuth2ExpressServer;
-// --------------------------------------------------------------------------------
 const defineOAuth2Controller = (opts) => {
     var BaseOAuth2Controller_1;
-    const { restPath = '/oauth2', tokenPath = '/token', authorizePath = '/authorize', oauth2ServiceKey = 'services.OAuth2Service',
-    // authStrategy = { name: `${applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_NAME)}_oauth2` },
-     } = opts !== null && opts !== void 0 ? opts : {};
+    const { restPath = '/oauth2', tokenPath = '/token', authorizePath = '/authorize', oauth2ServiceKey = 'services.OAuth2Service', } = opts !== null && opts !== void 0 ? opts : {};
     let BaseOAuth2Controller = BaseOAuth2Controller_1 = class BaseOAuth2Controller extends base_1.BaseController {
         constructor(authService, getCurrentUser, httpContext) {
             super({ scope: BaseOAuth2Controller_1.name });
@@ -120,21 +116,17 @@ const defineOAuth2Controller = (opts) => {
             this.getCurrentUser = getCurrentUser;
             this.httpContext = httpContext;
         }
-        // ------------------------------------------------------------------------------
         whoami() {
             return this.getCurrentUser();
         }
-        // ------------------------------------------------------------------------------
         generateToken() {
             const { request, response } = this.httpContext;
             return this.service.generateToken({ request: new oauth2_server_1.Request(request), response: new oauth2_server_1.Response(response) });
         }
-        // ------------------------------------------------------------------------------
         authorize() {
             const { request, response } = this.httpContext;
             return this.service.authorize({ request: new oauth2_server_1.Request(request), response: new oauth2_server_1.Response(response) });
         }
-        // ------------------------------------------------------------------------------
         getOAuth2RequestPath(payload) {
             return this.service.getOAuth2RequestPath(payload);
         }

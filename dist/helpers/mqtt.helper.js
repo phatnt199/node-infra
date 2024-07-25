@@ -21,7 +21,6 @@ class MQTTClientHelper {
         this.onMessage = opts.onMessage;
         this.configure();
     }
-    // -------------------------------------------------------------------------------
     configure() {
         if (this.client) {
             this.logger.info('[configure][%s] MQTT Client already established! Client: %j', this.identifier, this.client);
@@ -56,7 +55,6 @@ class MQTTClientHelper {
             (_a = this.onClose) === null || _a === void 0 ? void 0 : _a.call(this, error);
         });
     }
-    // -------------------------------------------------------------------------------
     subscribe(opts) {
         return new Promise((resolve, reject) => {
             var _a;
@@ -75,7 +73,6 @@ class MQTTClientHelper {
             });
         });
     }
-    // -------------------------------------------------------------------------------
     publish(opts) {
         return new Promise((resolve, reject) => {
             var _a;

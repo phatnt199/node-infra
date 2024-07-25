@@ -12,7 +12,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "importHelpers": false
+    "importHelpers": false,
+    "removeComments": true
+    // "declaration": false
   },
   "include": ["src", "./.eslintrc.cjs"]
 }

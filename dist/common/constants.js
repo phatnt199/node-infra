@@ -19,10 +19,8 @@ Authentication.ACCESS_TOKEN_SECRET = 'token.secret';
 Authentication.ACCESS_TOKEN_EXPIRES_IN = 86400;
 Authentication.REFRESH_TOKEN_SECRET = 'refresh.secret';
 Authentication.REFRESH_TOKEN_EXPIRES_IN = 86400;
-// Jwt
 Authentication.TYPE_BASIC = 'Basic';
 Authentication.TYPE_BEARER = 'Bearer';
-// Strategy
 Authentication.STRATEGY_BASIC = 'basic';
 Authentication.STRATEGY_JWT = 'jwt';
 class AuthenticationTokenTypes {

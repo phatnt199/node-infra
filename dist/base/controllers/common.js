@@ -4,7 +4,6 @@ exports.getIdSchema = exports.BaseController = exports.applyLimit = void 0;
 const common_1 = require("../../common");
 const helpers_1 = require("../../helpers");
 const rest_1 = require("@loopback/rest");
-// --------------------------------------------------------------------------------------------------------------
 const applyLimit = (filter) => {
     var _a;
     const rs = Object.assign({}, (filter !== null && filter !== void 0 ? filter : {}));
@@ -12,7 +11,6 @@ const applyLimit = (filter) => {
     return rs;
 };
 exports.applyLimit = applyLimit;
-// --------------------------------------------------------------------------------------------------------------
 class BaseController {
     constructor(opts) {
         var _a, _b;
@@ -22,7 +20,6 @@ class BaseController {
     }
 }
 exports.BaseController = BaseController;
-// --------------------------------------------------------------------------------------------------------------
 const getIdSchema = (entity) => {
     var _a;
     const idProp = entity.getIdProperties()[0];

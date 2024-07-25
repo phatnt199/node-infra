@@ -18,13 +18,11 @@ const helpers_1 = require("../helpers");
 const utilities_1 = require("../utilities");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const minio_1 = require("minio");
-// ---------------------------------------------------------------------
 class MinioHelper {
     constructor(options) {
         this.logger = helpers_1.LoggerFactory.getLogger([MinioHelper.name]);
         this.client = new minio_1.Client(options);
     }
-    // ---------------------------------------------------------------------
     isBucketExists(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name } = opts;
@@ -35,14 +33,12 @@ class MinioHelper {
             return isExists;
         });
     }
-    // ---------------------------------------------------------------------
     getBuckets() {
         return __awaiter(this, void 0, void 0, function* () {
             const buckets = yield this.client.listBuckets();
             return buckets;
         });
     }
-    // ---------------------------------------------------------------------
     getBucket(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const isExists = yield this.isBucketExists(opts);
@@ -54,7 +50,6 @@ class MinioHelper {
             return bucket;
         });
     }
-    // ---------------------------------------------------------------------
     createBucket(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name } = opts;
@@ -66,7 +61,6 @@ class MinioHelper {
             return bucket;
         });
     }
-    // ---------------------------------------------------------------------
     removeBucket(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name } = opts;
@@ -77,7 +71,6 @@ class MinioHelper {
             return true;
         });
     }
-    // ---------------------------------------------------------------------
     getFileType(opts) {
         var _a, _b, _c;
         const { mimeType } = opts;
@@ -92,7 +85,6 @@ class MinioHelper {
         }
         return common_1.MimeTypes.UNKNOWN;
     }
-    // ---------------------------------------------------------------------
     upload(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { bucket, files } = opts;
@@ -136,12 +128,10 @@ class MinioHelper {
             return rs;
         });
     }
-    // ---------------------------------------------------------------------
     getFile(opts) {
         const { bucket, name, options } = opts;
         return this.client.getObject(bucket, name, options);
     }
-    // ---------------------------------------------------------------------
     getStat(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { bucket, name } = opts;
@@ -149,12 +139,10 @@ class MinioHelper {
             return stat;
         });
     }
-    // ---------------------------------------------------------------------
     removeObject(opts) {
         const { bucket, name } = opts;
         this.client.removeObject(bucket, name);
     }
-    // ---------------------------------------------------------------------
     getListObjects(opts) {
         const { bucket, prefix = '', recursive = false } = opts;
         const listObjects = this.client.listObjects(bucket, prefix, recursive);

@@ -19,7 +19,6 @@ const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const zlib_1 = __importDefault(require("zlib"));
 const __1 = require("..");
 class RedisHelper {
-    // ---------------------------------------------------------------------------------
     constructor(options) {
         this.logger = helpers_1.LoggerFactory.getLogger([RedisHelper.name]);
         const { name, host, port, password, onConnected, onReady, onError } = options;
@@ -50,7 +49,6 @@ class RedisHelper {
             this.logger.error(` ${name} RECONNECTING...`);
         });
     }
-    // ---------------------------------------------------------------------------------
     set(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { key, value, options = { log: false } } = opts;
@@ -66,7 +64,6 @@ class RedisHelper {
             this.logger.info(`[set] Set key: ${key} | value: ${serialized}`);
         });
     }
-    // ---------------------------------------------------------------------------------
     mset(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.client) {
@@ -85,7 +82,6 @@ class RedisHelper {
             this.logger.info('[mset] Payload: %j', serialized);
         });
     }
-    // ---------------------------------------------------------------------------------
     hset(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.client) {
@@ -101,7 +97,6 @@ class RedisHelper {
             return rs;
         });
     }
-    // ---------------------------------------------------------------------------------
     get(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { key, transform } = opts;
@@ -116,7 +111,6 @@ class RedisHelper {
             return transform(value);
         });
     }
-    // ---------------------------------------------------------------------------------
     mget(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { keys, transform } = opts;
@@ -131,7 +125,6 @@ class RedisHelper {
             return values === null || values === void 0 ? void 0 : values.map(el => (el ? transform(el) : el));
         });
     }
-    // ---------------------------------------------------------------------------------
     hgetall(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { key, transform } = opts;
@@ -146,35 +139,30 @@ class RedisHelper {
             return transform(value);
         });
     }
-    // ---------------------------------------------------------------------------------
     getString(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const rs = yield this.get(opts);
             return rs;
         });
     }
-    // ---------------------------------------------------------------------------------
     getStrings(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const rs = yield this.mget(opts);
             return rs;
         });
     }
-    // ---------------------------------------------------------------------------------
     getObject(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const rs = yield this.get(Object.assign(Object.assign({}, opts), { transform: (cached) => JSON.parse(cached) }));
             return rs;
         });
     }
-    // ---------------------------------------------------------------------------------
     getObjects(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const rs = yield this.mget(Object.assign(Object.assign({}, opts), { transform: (cached) => JSON.parse(cached) }));
             return rs;
         });
     }
-    // ---------------------------------------------------------------------------------
     keys(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { key } = opts;
@@ -186,7 +174,6 @@ class RedisHelper {
             return existedKeys;
         });
     }
-    // ---------------------------------------------------------------------------------
     publish(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { topics, payload, compress = false } = opts;
@@ -212,7 +199,6 @@ class RedisHelper {
             }));
         });
     }
-    // ---------------------------------------------------------------------------------
     subscribe(opts) {
         const { topic } = opts;
         if (!topic || (0, isEmpty_1.default)(topic)) {

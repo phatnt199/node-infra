@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MultiQueueHelper = exports.QueueHelper = void 0;
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const omit_1 = __importDefault(require("lodash/omit"));
-// --------------------------------------------------------
 class QueueHelper {
     constructor(opts) {
         const { identifier, onDataEnqueue, onDataDequeue } = opts;
@@ -39,16 +38,11 @@ class QueueHelper {
     }
 }
 exports.QueueHelper = QueueHelper;
-// --------------------------------------------------------
 class MultiQueueHelper {
-    // private onTriggerRetry?: (identifier: string) => void;
     constructor(opts) {
-        const { onDataEnqueue, onDataDequeue,
-        // onTriggerRetry
-         } = opts;
+        const { onDataEnqueue, onDataDequeue, } = opts;
         this.onDataEnqueue = onDataEnqueue;
         this.onDataDequeue = onDataDequeue;
-        // this.onTriggerRetry = onTriggerRetry;
         this.storage = {};
     }
     enqueue(identifier, value) {

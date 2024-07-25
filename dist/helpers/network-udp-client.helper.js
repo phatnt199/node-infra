@@ -59,7 +59,6 @@ class NetworkUdpClient {
         });
         this.client.on('message', (message, remote) => {
             var _a;
-            // this.logger.info(`[<==] Address: ${remote.address} | Port: ${remote.port} | Message: ${message}`);
             (_a = this.onData) === null || _a === void 0 ? void 0 : _a.call(this, { identifier: this.identifier, message, remote });
         });
         this.client.bind(this.options.port, this.options.host);

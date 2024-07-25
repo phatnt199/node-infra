@@ -31,7 +31,6 @@ const get_1 = __importDefault(require("lodash/get"));
 const utilities_1 = require("../../utilities");
 const common_1 = require("../../common");
 const common_2 = require("./common");
-// --------------------------------------------------------------------------------------------------------------
 const defineRelationViewController = (opts) => {
     const { baseClass, relationType, relationName, defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT, endPoint = '' } = opts;
     const restPath = `/{id}/${endPoint ? endPoint : relationName}`;
@@ -59,7 +58,6 @@ const defineRelationViewController = (opts) => {
             }
             this.targetRepository = targetRepository;
         }
-        // -----------------------------------------------------------------------------------------------
         find(id, filter) {
             return __awaiter(this, void 0, void 0, function* () {
                 const ref = (0, get_1.default)(this.sourceRepository, relationName)(id);
@@ -101,7 +99,6 @@ const defineRelationViewController = (opts) => {
     return ViewController;
 };
 exports.defineRelationViewController = defineRelationViewController;
-// --------------------------------------------------------------------------------------------------------------
 const defineAssociateController = (opts) => {
     const { baseClass, relationName, defaultLimit = common_1.App.DEFAULT_QUERY_LIMIT, endPoint = '' } = opts;
     const restPath = `/{id}/${endPoint ? endPoint : relationName}`;
@@ -125,7 +122,6 @@ const defineAssociateController = (opts) => {
             }
             this.targetRepository = targetRepository;
         }
-        // -----------------------------------------------------------------------------------------------
         link(id, linkId) {
             return __awaiter(this, void 0, void 0, function* () {
                 const isSourceExist = yield this.sourceRepository.exists(id);
@@ -146,7 +142,6 @@ const defineAssociateController = (opts) => {
                 return ref.link(linkId);
             });
         }
-        // -----------------------------------------------------------------------------------------------
         unlink(id, linkId) {
             return __awaiter(this, void 0, void 0, function* () {
                 const ref = (0, get_1.default)(this.sourceRepository, relationName)(id);
@@ -187,7 +182,6 @@ const defineAssociateController = (opts) => {
     return AssociationController;
 };
 exports.defineAssociateController = defineAssociateController;
-// --------------------------------------------------------------------------------------------------------------
 const defineRelationCrudController = (controllerOptions) => {
     const { association, schema, options = { controlTarget: false, defaultLimit: common_1.App.DEFAULT_QUERY_LIMIT, endPoint: '' }, } = controllerOptions;
     const { relationName, relationType } = association;
@@ -213,12 +207,10 @@ const defineRelationCrudController = (controllerOptions) => {
         defaultLimit,
         endPoint
     });
-    // -----------------------------------------------------------------------------------------------
     const ExtendsableClass = relationType === common_1.EntityRelations.HAS_MANY_THROUGH ? AssociationController : ViewController;
     if (!controlTarget) {
         return ExtendsableClass;
     }
-    // -----------------------------------------------------------------------------------------------
     class Controller extends ExtendsableClass {
         constructor(sourceRepository, targetRepository) {
             if (!sourceRepository) {
@@ -235,21 +227,18 @@ const defineRelationCrudController = (controllerOptions) => {
             }
             super(sourceRepository, targetRepository);
         }
-        // -----------------------------------------------------------------------------------------------
         create(id, mapping) {
             return __awaiter(this, void 0, void 0, function* () {
                 const ref = (0, get_1.default)(this.sourceRepository, relationName)(id);
                 return ref.create(mapping);
             });
         }
-        // -----------------------------------------------------------------------------------------------
         patch(id, mapping, where) {
             return __awaiter(this, void 0, void 0, function* () {
                 const ref = (0, get_1.default)(this.sourceRepository, relationName)(id);
                 return ref.patch(mapping, where);
             });
         }
-        // -----------------------------------------------------------------------------------------------
         delete(id, where) {
             return __awaiter(this, void 0, void 0, function* () {
                 const ref = (0, get_1.default)(this.sourceRepository, relationName)(id);

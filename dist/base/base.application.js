@@ -36,7 +36,6 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
         this.component(rest_crud_1.CrudRestComponent);
         const applicationEnv = (_a = process.env.NODE_ENV) !== null && _a !== void 0 ? _a : 'unknown';
         this.logger.info('[Application] Starting application with ENV "%s"...', applicationEnv);
-        // Validate whole application environment args.
         this.logger.info('[Application] Validating application environments...');
         const envValidation = this.validateEnv();
         if (!envValidation.result) {
@@ -48,10 +47,8 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
         this.logger.info('[Application] Declare application models...');
         this.models = new Set([]);
         this.models = this.declareModels();
-        // Middlewares
         this.middleware(__1.RequestBodyParserMiddleware);
         this.middleware(__1.RequestSpyMiddleware);
-        // Do configure while modules for application.
         this.logger.info('[Application] Executing Pre-Configure...');
         this.preConfigure();
         this.logger.info('[Application] Executing Post-Configure...');
@@ -71,7 +68,6 @@ class BaseApplication extends (0, boot_1.BootMixin)((0, service_proxy_1.ServiceM
             }
             return true;
         });
-        // Load models
         return Promise.all(valids.map(b => this.get(b.key)));
     }
     classifyModelsByDs(opts) {

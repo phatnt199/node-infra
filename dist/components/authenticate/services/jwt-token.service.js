@@ -32,7 +32,6 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
         this.jwtSecret = jwtSecret;
         this.jwtExpiresIn = jwtExpiresIn;
     }
-    // --------------------------------------------------------------------------------------
     extractCredentials(request) {
         if (!request.headers.authorization) {
             throw (0, utilities_1.getError)({
@@ -52,7 +51,6 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
             throw new rest_1.HttpErrors.Unauthorized(`Authorization header value has too many parts. It must follow the pattern: 'Bearer xx.yy.zz' where xx.yy.zz is a valid JWT token.`);
         return { type: parts[0], token: parts[1] };
     }
-    // --------------------------------------------------------------------------------------
     encryptPayload(payload) {
         const userKey = (0, utilities_1.encrypt)('userId', this.applicationSecret);
         const rolesKey = (0, utilities_1.encrypt)('roles', this.applicationSecret);
@@ -64,7 +62,6 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
             [clientIdKey]: (0, utilities_1.encrypt)(clientId, this.applicationSecret),
         };
     }
-    // --------------------------------------------------------------------------------------
     decryptPayload(decodedToken) {
         const rs = {};
         for (const encodedAttr in decodedToken) {
@@ -95,7 +92,6 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
         }
         return rs;
     }
-    // --------------------------------------------------------------------------------------
     verify(opts) {
         const { token } = opts;
         if (!token) {
@@ -112,7 +108,6 @@ let JWTTokenService = JWTTokenService_1 = class JWTTokenService extends base_ser
         const jwtTokenPayload = this.decryptPayload(decodedToken);
         return jwtTokenPayload;
     }
-    // --------------------------------------------------------------------------------------
     generate(payload) {
         if (!payload) {
             throw new rest_1.HttpErrors.Unauthorized('Error generating token : userProfile is null');

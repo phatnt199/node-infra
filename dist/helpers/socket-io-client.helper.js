@@ -12,7 +12,6 @@ class SocketIOClientHelper {
         this.options = opts.options;
         this.configure();
     }
-    // -----------------------------------------------------------------
     configure() {
         if (this.client) {
             this.logger.info('[configure][%s] SocketIO Client already established! Client: %j', this.identifier, this.client);
@@ -20,11 +19,9 @@ class SocketIOClientHelper {
         }
         this.client = (0, socket_io_client_1.io)(this.host, this.options);
     }
-    // -----------------------------------------------------------------
     getSocketClient() {
         return this.client;
     }
-    // -----------------------------------------------------------------
     subscribe(opts) {
         const eventHandlers = opts.events;
         const eventNames = Object.keys(eventHandlers);
@@ -40,7 +37,6 @@ class SocketIOClientHelper {
             });
         }
     }
-    // -----------------------------------------------------------------
     unsubscribe(opts) {
         var _a;
         const { events: eventNames } = opts;
@@ -52,7 +48,6 @@ class SocketIOClientHelper {
             this.client.off(eventName);
         }
     }
-    // -----------------------------------------------------------------
     connect() {
         if (!this.client) {
             this.logger.info('[connect][%s] Invalid client to connect!', this.identifier);
@@ -60,7 +55,6 @@ class SocketIOClientHelper {
         }
         this.client.connect();
     }
-    // -----------------------------------------------------------------
     disconnect() {
         if (!this.client) {
             this.logger.info('[disconnect][%s] Invalid client to disconnect!', this.identifier);
@@ -68,7 +62,6 @@ class SocketIOClientHelper {
         }
         this.client.disconnect();
     }
-    // -----------------------------------------------------------------
     emit(opts) {
         var _a;
         if (!((_a = this.client) === null || _a === void 0 ? void 0 : _a.connected)) {

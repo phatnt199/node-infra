@@ -14,7 +14,6 @@ const base_model_1 = require("../../../base/base.model");
 const common_1 = require("../../../common");
 const mixins_1 = require("../../../mixins");
 const repository_1 = require("@loopback/repository");
-// -----------------------------------------------------------------------
 const defineUser = () => {
     class User extends base_model_1.BaseTzEntity {
         constructor(data) {
@@ -81,7 +80,6 @@ const defineUser = () => {
     return User;
 };
 exports.defineUser = defineUser;
-// -----------------------------------------------------------------------
 const defineRole = () => {
     class Role extends base_model_1.BaseTzEntity {
         constructor(data) {
@@ -124,7 +122,6 @@ const defineRole = () => {
     return Role;
 };
 exports.defineRole = defineRole;
-// -----------------------------------------------------------------------
 const definePermission = () => {
     class Permission extends base_model_1.BaseTzEntity {
         constructor(data) {
@@ -188,7 +185,6 @@ const definePermission = () => {
     return Permission;
 };
 exports.definePermission = definePermission;
-// -----------------------------------------------------------------------
 const definePermissionMapping = () => {
     class PermissionMapping extends base_model_1.BaseTzEntity {
         constructor(data) {
@@ -223,7 +219,6 @@ const definePermissionMapping = () => {
     return PermissionMapping;
 };
 exports.definePermissionMapping = definePermissionMapping;
-// -----------------------------------------------------------------------
 const defineUserRole = () => {
     class UserRole extends (0, mixins_1.PrincipalMixin)(base_model_1.BaseTzEntity, 'Role', 'number') {
         constructor(data) {

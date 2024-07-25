@@ -32,7 +32,6 @@ class GeneratePermissionService {
                 'deleteById',
                 'updateAll',
             ];
-            // Controller not extended from any class
             if (methodsParentsMethods.includes('__proto__')) {
                 return this.generatePermissions({
                     methods: methodsChildClass,
@@ -41,7 +40,6 @@ class GeneratePermissionService {
                     allPermissionDecoratorData,
                 });
             }
-            // Controller is extended from CrudController
             return this.generatePermissions({
                 methods: (0, union_1.default)(defaultPermissions, methodsChildClass),
                 permissionSubject: parentPermission.subject,

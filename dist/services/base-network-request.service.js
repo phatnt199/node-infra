@@ -45,12 +45,12 @@ class BaseNetworkRequest {
             });
         }
         if (baseUrl.endsWith('/')) {
-            baseUrl = baseUrl.slice(0, -1); // Remove / at the end
+            baseUrl = baseUrl.slice(0, -1);
         }
         const joined = paths
             .map((path) => {
             if (!path.startsWith('/')) {
-                path = `/${path}`; // Add / to the start of url path
+                path = `/${path}`;
             }
             return path;
         })

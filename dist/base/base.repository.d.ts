@@ -121,38 +121,6 @@ export declare abstract class SearchableTzCrudRepository<E extends BaseTextSearc
         where?: Where;
     }): Promise<string | null>;
     private convertRelationConfig;
-    /**
-     * @param opts: { relationConfig: RelationConfig }
-     * @returns InclusionFilter
-     *
-     * @example
-     * Param:
-     * {
-     *    relationName: 'user',
-     *    relationConfig: [
-     *        { relationName: 'profile' },
-     *        { relationName: 'identifiers', relationConfigs: [{ relationName: 'user' }]}
-     *    ],
-     * }
-     *
-     * Result:
-     * {
-     *    relation: 'user',
-     *    scope: {
-     *        include: [
-     *            { relation: 'profile'},
-     *            {
-     *                relation: 'identifiers',
-     *                scope: {
-     *                    include: [
-     *                        { relation: 'user' }
-     *                    ]
-     *                }
-     *            }
-     *        ]
-     *    }
-     * }
-     */
     private buildInclusionFilter;
     private handleCurrentObjectSearch;
     private handleNewObjectSearch;

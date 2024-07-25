@@ -6,12 +6,10 @@ class BindingKeys {
 exports.BindingKeys = BindingKeys;
 BindingKeys.APPLICATION_ENVIRONMENTS = '@qt/application/environments';
 BindingKeys.APPLICATION_MIDDLEWARE_OPTIONS = '@app/application/middleware_options';
-// -----------------------------------------------------------------------------
 class RouteKeys {
 }
 exports.RouteKeys = RouteKeys;
 RouteKeys.ALWAYS_ALLOW_PATHS = '@app/application/always_allow_paths';
-// -----------------------------------------------------------------------------
 class AuthenticateKeys {
 }
 exports.AuthenticateKeys = AuthenticateKeys;
@@ -20,7 +18,6 @@ AuthenticateKeys.TOKEN_OPTIONS = '@app/authenticate/token_options';
 AuthenticateKeys.REST_OPTIONS = '@app/authenticate/rest_options';
 AuthenticateKeys.OAUTH2_HANDLER = '@app/authenticate/oauth2_handler';
 AuthenticateKeys.OAUTH2_OPTIONS = '@app/authenticate/oauth2_options';
-// -----------------------------------------------------------------------------
 class AuthorizerKeys {
 }
 exports.AuthorizerKeys = AuthorizerKeys;
@@ -39,7 +36,6 @@ AuthorizerKeys.ALWAYS_ALLOW_ROLES = '@app/authorize/always_allow_roles';
 AuthorizerKeys.AUTHORIZE_DATASOURCE = '@app/authorize/enforcer/adapter/datasource';
 AuthorizerKeys.CONFIGURE_OPTIONS = '@app/authorize/configure_options';
 AuthorizerKeys.NORMALIZE_PAYLOAD_FN = '@app/authorize/normalize_payload_fn';
-// -----------------------------------------------------------------------------
 class SocketIOKeys {
 }
 exports.SocketIOKeys = SocketIOKeys;
@@ -49,14 +45,12 @@ SocketIOKeys.SERVER_OPTIONS = '@app/socket-io/server-options';
 SocketIOKeys.REDIS_CONNECTION = '@app/socket-io/redis-connection';
 SocketIOKeys.AUTHENTICATE_HANDLER = '@app/socket-io/authenticate-handler';
 SocketIOKeys.CLIENT_CONNECTED_HANDLER = '@app/socket-io/client-connected-handler';
-// -----------------------------------------------------------------------------
 class MigrationKeys {
 }
 exports.MigrationKeys = MigrationKeys;
 MigrationKeys.MIGRATION_MODEL = '@app/migration/component/models/migration';
 MigrationKeys.MIGRATION_REPOSITORY = '@app/migration/component/repositories/migration';
 MigrationKeys.MIGRATION_DATASOURCE = '@app/migration/datasource';
-// -----------------------------------------------------------------------------
 class ResourceAssetKeys {
 }
 exports.ResourceAssetKeys = ResourceAssetKeys;

@@ -33,7 +33,6 @@ let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInte
     value() {
         return this.intercept.bind(this);
     }
-    // -------------------------------------------------------------------------------------
     identifyControllerType(opts) {
         const controller = opts.target;
         if (controller === null || controller === void 0 ? void 0 : controller.repository) {
@@ -44,7 +43,6 @@ let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInte
         }
         return undefined;
     }
-    // -------------------------------------------------------------------------------------
     handleSingleEntity(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
@@ -71,7 +69,6 @@ let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInte
             this.response.set('Content-Range', `records ${start}-${end > 0 ? end - 1 : end}/${countRs.count}`);
         });
     }
-    // -------------------------------------------------------------------------------------
     handleRelationalEntity(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -109,19 +106,16 @@ let ContentRangeInterceptor = ContentRangeInterceptor_1 = class ContentRangeInte
             }
         });
     }
-    // -------------------------------------------------------------------------------------
     enrichResponseContentRange(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { context } = opts;
             const { target } = context;
             const controllerType = this.identifyControllerType({ target });
             switch (controllerType) {
-                // Normal entity controller
                 case 'single-entity': {
                     yield this.handleSingleEntity(opts);
                     break;
                 }
-                // Relational entity controller
                 case 'relation-entity': {
                     yield this.handleRelationalEntity(opts);
                     break;

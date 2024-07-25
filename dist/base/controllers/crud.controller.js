@@ -18,7 +18,6 @@ const repository_1 = require("@loopback/repository");
 const rest_1 = require("@loopback/rest");
 const common_1 = require("../../common");
 const common_2 = require("./common");
-// --------------------------------------------------------------------------------------------------------------
 const defineCrudController = (opts) => {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions, schema: schemaOptions, } = opts;

@@ -18,9 +18,7 @@ const constants_1 = require("../../common/constants");
 const utilities_1 = require("../../utilities");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const sqls = [
-    // UUID
     `CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`,
-    // View policies
     'DROP VIEW IF EXISTS "ViewAuthorizePolicy";',
     `CREATE OR REPLACE VIEW "ViewAuthorizePolicy"
   AS (

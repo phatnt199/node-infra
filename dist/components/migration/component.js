@@ -25,11 +25,7 @@ let MigrationComponent = MigrationComponent_1 = class MigrationComponent extends
         super({ scope: MigrationComponent_1.name });
         this.application = application;
         this.bindings = [
-            // Model bindings
             core_1.Binding.bind(common_1.MigrationKeys.MIGRATION_MODEL).toClass(models_1.Migration),
-            // Datasource bindings
-            // Binding.bind(MigrationKeys.MIGRATION_DATASOURCE).to(null),
-            // Repository bindings
             core_1.Binding.bind(common_1.MigrationKeys.MIGRATION_REPOSITORY).toClass(repositories_1.MigrationRepository),
         ];
         this.binding();

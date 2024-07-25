@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OAuth2Request = exports.SignUpRequest = exports.ChangePasswordRequest = exports.SignInRequest = void 0;
 const repository_1 = require("@loopback/repository");
-// ----------------------------------------------------------------------------------------------------------------------------------------
 let SignInRequest = class SignInRequest {
 };
 exports.SignInRequest = SignInRequest;
@@ -91,7 +90,6 @@ exports.ChangePasswordRequest = ChangePasswordRequest = __decorate([
         },
     })
 ], ChangePasswordRequest);
-// -------------------------------------------------------------------
 let SignUpRequest = class SignUpRequest {
 };
 exports.SignUpRequest = SignUpRequest;
@@ -112,7 +110,6 @@ exports.SignUpRequest = SignUpRequest = __decorate([
         },
     })
 ], SignUpRequest);
-// -------------------------------------------------------------------
 let OAuth2Request = class OAuth2Request {
 };
 exports.OAuth2Request = OAuth2Request;

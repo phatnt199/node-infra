@@ -44,7 +44,6 @@ let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
     value() {
         return this.authorize.bind(this);
     }
-    // -------------------------------------------------------------------------------------------------------------------
     normalizeEnforcePayload(opts) {
         var _a, _b, _c;
         const { subject, object, scope } = opts;
@@ -54,7 +53,6 @@ let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
             action: common_1.EnforcerDefinitions.ACTION_EXECUTE,
         };
     }
-    // -------------------------------------------------------------------------------------------------------------------
     authorizePermission(userId, object, scopes) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c, _d;
@@ -86,7 +84,6 @@ let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
             return scopeAuthRs && singleAuthRs;
         });
     }
-    // -------------------------------------------------------------------------------------------------------------------
     authorize(context, metadata) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
@@ -107,13 +104,11 @@ let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
                 roleIdentifiers.push(identifier);
                 roles.push({ id, identifier });
             }
-            // DENY all unknown user and unknow roles
             if (!userId || !(roles === null || roles === void 0 ? void 0 : roles.length)) {
                 return authorization_1.AuthorizationDecision.DENY;
             }
             const { resource, allowedRoles = [], scopes, voters } = metadata;
             const requestResource = resource !== null && resource !== void 0 ? resource : context.resource;
-            // Verify static roles
             if (((_a = (0, intersection_1.default)(this.alwaysAllowRoles, roleIdentifiers)) === null || _a === void 0 ? void 0 : _a.length) > 0 ||
                 ((_b = (0, intersection_1.default)(allowedRoles, roleIdentifiers)) === null || _b === void 0 ? void 0 : _b.length) > 0) {
                 return authorization_1.AuthorizationDecision.ALLOW;
@@ -137,7 +132,6 @@ let AuthorizeProvider = AuthorizeProvider_1 = class AuthorizeProvider {
                     return authorization_1.AuthorizationDecision.DENY;
                 }
             }
-            // Authorize by role and user permissions
             const authorizeDecision = yield this.authorizePermission(userId, requestResource, scopes);
             const rs = authorizeDecision ? authorization_1.AuthorizationDecision.ALLOW : authorization_1.AuthorizationDecision.DENY;
             this.logger.debug('[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j | Took: %d(ms)', requestResource, allowedRoles, scopes, new Date().getTime() - t);

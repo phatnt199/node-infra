@@ -20,13 +20,11 @@ const get_1 = __importDefault(require("lodash/get"));
 const logger_helper_1 = require("./logger.helper");
 const __1 = require("..");
 const constants_1 = require("../common/constants");
-// -----------------------------------------------------------------------------------------
 class CasbinLBAdapter {
     constructor(datasource) {
         this.logger = logger_helper_1.LoggerFactory.getLogger([CasbinLBAdapter.name]);
         this.datasource = datasource;
     }
-    // -----------------------------------------------------------------------------------------
     generateGroupLine(rule) {
         const { userId, roleId } = rule;
         const rs = [
@@ -36,7 +34,6 @@ class CasbinLBAdapter {
         ];
         return rs.join(',');
     }
-    // -----------------------------------------------------------------------------------------
     loadFilteredPolicy(model, filter) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
@@ -51,7 +48,6 @@ class CasbinLBAdapter {
                     `user_${filter.principalValue}`,
                 ]),
             ];
-            // Load role permission policies
             const userRoles = yield this.datasource.execute(`SELECT * FROM public."UserRole" WHERE user_id=$1`, [
                 filter.principalValue,
             ]);
@@ -61,7 +57,6 @@ class CasbinLBAdapter {
                 ]);
                 aclQueries.push(execution);
             }
-            // Load policy lines
             const policyRs = (0, flatten_1.default)(yield Promise.all(aclQueries));
             this.logger.debug('[loadFilteredPolicy] policyRs: %j | filter: %j', policyRs, filter);
             for (const el of policyRs) {
@@ -73,7 +68,6 @@ class CasbinLBAdapter {
                     this.logger.debug('[loadFilteredPolicy] Load policy: %s', policyLine);
                 });
             }
-            // Load group lines
             for (const userRole of userRoles) {
                 const groupLine = this.generateGroupLine({
                     userId: (0, get_1.default)(userRole, 'user_id'),
@@ -87,45 +81,37 @@ class CasbinLBAdapter {
             }
         });
     }
-    // -----------------------------------------------------------------------------------------
     isFiltered() {
         return true;
     }
-    // -----------------------------------------------------------------------------------------
     loadPolicy(_) {
         return __awaiter(this, void 0, void 0, function* () {
             return;
         });
     }
-    // -----------------------------------------------------------------------------------------
     savePolicy(model) {
         return __awaiter(this, void 0, void 0, function* () {
             this.logger.info('[savePolicy] Ignore save policy method with options: ', { model });
             return true;
         });
     }
-    // -----------------------------------------------------------------------------------------
     addPolicy(sec, ptype, rule) {
         return __awaiter(this, void 0, void 0, function* () {
             this.logger.info('[addPolicy] Ignore add policy method with options: ', { sec, ptype, rule });
         });
     }
-    // -----------------------------------------------------------------------------------------
     removePolicy(sec, ptype, rule) {
         return __awaiter(this, void 0, void 0, function* () {
             this.logger.info('[removePolicy] Ignore remove policy method with options: ', { sec, ptype, rule });
         });
     }
-    // -----------------------------------------------------------------------------------------
     removeFilteredPolicy(sec, ptype, fieldIndex, ...fieldValues) {
         return __awaiter(this, void 0, void 0, function* () {
             switch (ptype) {
                 case constants_1.EnforcerDefinitions.PREFIX_USER: {
-                    // Remove user policy
                     break;
                 }
                 case constants_1.EnforcerDefinitions.PREFIX_ROLE: {
-                    // Remove role policy
                     break;
                 }
                 default: {

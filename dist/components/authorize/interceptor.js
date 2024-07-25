@@ -50,7 +50,6 @@ let AuthorizateInterceptor = AuthorizateInterceptor_1 = class AuthorizateInterce
                 return result;
             }
             this.logger.debug('[intercept] Authorization metadata for %s', description);
-            // retrieve it from authentication module
             const user = yield invocationCtx.get(security_1.SecurityBindings.USER, {
                 optional: true,
             });

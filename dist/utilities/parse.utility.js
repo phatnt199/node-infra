@@ -8,7 +8,6 @@ const get_1 = __importDefault(require("lodash/get"));
 const round_1 = __importDefault(require("lodash/round"));
 const multer_1 = __importDefault(require("multer"));
 const rest_1 = require("@loopback/rest");
-// -------------------------------------------------------------------------
 const INTL_0_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 0,
     minimumFractionDigits: 0,
@@ -17,7 +16,6 @@ const INTL_2_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
 });
-// -------------------------------------------------------------------------
 const parseMultipartBody = (opts) => {
     const { storage: cStorage, request, response } = opts;
     const storage = cStorage !== null && cStorage !== void 0 ? cStorage : multer_1.default.memoryStorage();
@@ -33,17 +31,14 @@ const parseMultipartBody = (opts) => {
     });
 };
 exports.parseMultipartBody = parseMultipartBody;
-// -------------------------------------------------------------------------
 const getUID = () => Math.random().toString(36).slice(2).toUpperCase();
 exports.getUID = getUID;
-// -------------------------------------------------------------------------
 const toCamel = (s) => {
     return s.replace(/([-_][a-z])/gi, (sub) => {
         return sub.toUpperCase().replace('-', '').replace('_', '');
     });
 };
 exports.toCamel = toCamel;
-// -------------------------------------------------------------------------
 const keysToCamel = (object) => {
     const n = {};
     const keys = Object.keys(object);
@@ -65,10 +60,6 @@ const keysToCamel = (object) => {
                 n[(0, exports.toCamel)(key)] = (0, exports.keysToCamel)(value);
                 break;
             }
-            /* case 'array': {
-              n[toCamel(key)] = value;
-              break;
-            } */
             default: {
                 n[(0, exports.toCamel)(key)] = value;
                 break;
@@ -78,7 +69,6 @@ const keysToCamel = (object) => {
     return n;
 };
 exports.keysToCamel = keysToCamel;
-// -------------------------------------------------------------------------
 const isInt = (n) => {
     if (isNaN(n)) {
         return false;
@@ -86,7 +76,6 @@ const isInt = (n) => {
     return Number.isInteger(n) || Math.floor(Number(n)) === n || Number(n) % 1 === 0;
 };
 exports.isInt = isInt;
-// -------------------------------------------------------------------------
 const isFloat = (input) => {
     if (isNaN(input)) {
         return false;
@@ -94,7 +83,6 @@ const isFloat = (input) => {
     return Number(input) === input || Number(input) % 1 !== 0;
 };
 exports.isFloat = isFloat;
-// -------------------------------------------------------------------------
 const int = (input) => {
     var _a, _b;
     if (!input || isNaN(input)) {
@@ -104,7 +92,6 @@ const int = (input) => {
     return (_b = Number.parseInt(normalized, 10)) !== null && _b !== void 0 ? _b : 0;
 };
 exports.int = int;
-// -------------------------------------------------------------------------
 const float = (input, digit = 2) => {
     var _a;
     if (!input || isNaN(input)) {
@@ -114,7 +101,6 @@ const float = (input, digit = 2) => {
     return (0, round_1.default)(Number.parseFloat(normalized), digit);
 };
 exports.float = float;
-// -------------------------------------------------------------------------
 const toStringDecimal = (input, digit = 2, options = { localeFormat: true }) => {
     const { localeFormat } = options;
     if (isNaN(input)) {
@@ -140,7 +126,6 @@ const toStringDecimal = (input, digit = 2, options = { localeFormat: true }) => 
     return formater.format(number);
 };
 exports.toStringDecimal = toStringDecimal;
-// -------------------------------------------------------------------------
 const getNumberValue = (input, method = 'int') => {
     if (!input) {
         return 0;
@@ -166,17 +151,14 @@ const getNumberValue = (input, method = 'int') => {
     }
 };
 exports.getNumberValue = getNumberValue;
-// -------------------------------------------------------------------------
 const getSchemaObject = (ctor) => {
     return ctor ? (0, rest_1.getModelSchemaRef)(ctor).definitions[ctor.name] : {};
 };
 exports.getSchemaObject = getSchemaObject;
-// -------------------------------------------------------------------------
 const getRequestId = (opts) => {
     return (0, get_1.default)(opts.request, 'requestId');
 };
 exports.getRequestId = getRequestId;
-// -------------------------------------------------------------------------
 const getRequestRemark = (opts) => {
     return (0, get_1.default)(opts.request, 'requestedRemark');
 };

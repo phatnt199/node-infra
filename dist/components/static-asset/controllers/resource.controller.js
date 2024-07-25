@@ -46,12 +46,7 @@ let StaticResourceController = StaticResourceController_1 = class StaticResource
                 const files = ((_b = (_a = this.request) === null || _a === void 0 ? void 0 : _a.files) !== null && _b !== void 0 ? _b : []);
                 const basePath = this.application.getSync(common_1.ResourceAssetKeys.RESOURCE_BASE_PATH);
                 Promise.all(files === null || files === void 0 ? void 0 : files.map(file => {
-                    const { originalname: originalName, 
-                    // mimetype: mimeType,
-                    buffer,
-                    // size,
-                    // encoding
-                     } = file;
+                    const { originalname: originalName, buffer, } = file;
                     if (!originalName || (0, isEmpty_1.default)(originalName)) {
                         this.logger.error('[uploadObject] Invalid original name!');
                         return;

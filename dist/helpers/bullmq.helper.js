@@ -59,7 +59,6 @@ class BullMQHelper {
         this.worker.on('completed', (job, result) => {
             var _a;
             (_a = this.onWorkerDataCompleted) === null || _a === void 0 ? void 0 : _a.call(this, job, result).then(() => {
-                // Do something after processing completed job
             }).catch(error => {
                 this.logger.error('[Worker][%s][completed] queue: %s | Error while processing completed job! Error: %s', this.identifier, this.queueName, error);
             });
@@ -67,7 +66,6 @@ class BullMQHelper {
         this.worker.on('failed', (job, reason) => {
             var _a;
             (_a = this.onWorkerDataFail) === null || _a === void 0 ? void 0 : _a.call(this, job, reason).then(() => {
-                // Do something after processing failed job
             }).catch(error => {
                 this.logger.error('[Worker][%s][failed] queue: %s | Error while processing completed job! Error: %s', this.identifier, this.queueName, error);
             });

@@ -13,7 +13,6 @@ exports.UserRole = void 0;
 const repository_1 = require("@loopback/repository");
 const defs_1 = require("./defs");
 const BaseUserRole = (0, defs_1.defineUserRole)();
-// ---------------------------------------------------------------
 let UserRole = class UserRole extends BaseUserRole {
     constructor(data) {
         super(data);

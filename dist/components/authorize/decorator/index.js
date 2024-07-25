@@ -7,11 +7,9 @@ class MetadataDecoratorKeys {
 }
 exports.MetadataDecoratorKeys = MetadataDecoratorKeys;
 MetadataDecoratorKeys.PERMISSION = 'metadata-key-for-permission-decorator';
-// Read more: https://loopback.io/doc/en/lb4/Creating-decorators.html#inspect-metadata-of-a-property
 function permission(spec) {
     return metadata_1.MethodDecoratorFactory.createDecorator(MetadataDecoratorKeys.PERMISSION, spec);
 }
-// Read more: https://loopback.io/doc/en/lb4/Creating-decorators.html#to-create-a-decorator-that-can-be-used-multiple-times-on-a-single-method
 const getDecoratorData = (controllerPrototype, keyTargetDecorator) => {
     return metadata_1.MetadataInspector.getAllPropertyMetadata(keyTargetDecorator, controllerPrototype);
 };

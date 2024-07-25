@@ -46,18 +46,13 @@ class DefaultRestApplication extends base_application_1.BaseApplication {
         this.bind(common_1.BindingKeys.APPLICATION_ENVIRONMENTS).to(helpers_1.applicationEnvironment);
         this.applicationRoles = this.getApplicationRoles();
         this.logger.info('[preConfigure] ApplicationRoles: %s', this.applicationRoles);
-        // Error Handler
         this.bind(rest_1.RestBindings.ERROR_WRITER_OPTIONS).to({
             safeFields: ['statusCode', 'name', 'message', 'messageCode'],
         });
-        // Configuring datasources
         this.dataSource(datasources_1.PostgresDataSource);
         this.dataSource(datasources_1.KvMemDataSource);
-        // Migration
         this.configureMigration();
-        // Interceptors
         this.interceptor(content_range_interceptor_1.ContentRangeInterceptor, { global: true });
-        // controllers
         this.bootOptions = {
             controllers: {
                 dirs: ['controllers'],

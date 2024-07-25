@@ -14,7 +14,6 @@ const utilities_1 = require("../utilities");
 const common_1 = require("../common");
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const CLIENT_AUTHENTICATE_TIMEOUT = 10 * 1000;
-// -------------------------------------------------------------------------------------------------------------
 class SocketIOServerHelper {
     constructor(opts) {
         var _a, _b, _c;
@@ -35,7 +34,6 @@ class SocketIOServerHelper {
             });
         }
         this.server = opts.server;
-        // Establish redis connection
         if (!this.redisConnection) {
             throw (0, utilities_1.getError)({
                 statusCode: 500,
@@ -44,18 +42,15 @@ class SocketIOServerHelper {
         }
         this.configure();
     }
-    // -------------------------------------------------------------------------------------------------------------
     getIOServer() {
         return this.io;
     }
-    // -------------------------------------------------------------------------------------------------------------
     getClients(opts) {
         if (opts === null || opts === void 0 ? void 0 : opts.id) {
             return this.clients[opts.id];
         }
         return this.clients;
     }
-    // -------------------------------------------------------------------------------------------------------------
     on(opts) {
         const { topic, handler } = opts;
         if (!topic || !handler) {
@@ -66,7 +61,6 @@ class SocketIOServerHelper {
         }
         this.io.on(topic, handler);
     }
-    // -------------------------------------------------------------------------------------------------------------
     configure() {
         var _a, _b, _c, _d;
         this.logger.info('[configure][%s] Configuring IO Server', this.identifier);
@@ -77,33 +71,28 @@ class SocketIOServerHelper {
             });
         }
         this.io = new socket_io_1.Server(this.server, this.serverOptions);
-        // Config socket.io redis adapter
         const adapterPubClient = this.redisConnection.duplicate();
         const adapterSubClient = this.redisConnection.duplicate();
         this.io.adapter((0, redis_adapter_1.createAdapter)(adapterPubClient, adapterSubClient));
         this.logger.info('[configure] SocketIO Server initialized Redis Adapter!');
-        // Config socket.io redis emitter
         const emitterClient = this.redisConnection.duplicate();
         this.emitter = new redis_emitter_1.Emitter(emitterClient);
         this.emitter.redisClient.on('error', (error) => {
             this.logger.error('[configure][Emitter] On Error: %j', error);
         });
         this.logger.info('[configure] SocketIO Server initialized Redis Emitter!');
-        // Handle socket.io new connection
         this.io.on(common_1.SocketIOConstants.EVENT_CONNECT, (socket) => {
             this.onClientConnect({ socket });
         });
         this.logger.info('[configure] SocketIO Server READY | Path: %s | Address: %j', (_b = (_a = this.serverOptions) === null || _a === void 0 ? void 0 : _a.path) !== null && _b !== void 0 ? _b : '', (_c = this.server) === null || _c === void 0 ? void 0 : _c.address());
         this.logger.debug('[configure] Whether http listening: %s', (_d = this.server) === null || _d === void 0 ? void 0 : _d.listening);
     }
-    // -------------------------------------------------------------------------------------------------------------
     onClientConnect(opts) {
         const { socket } = opts;
         if (!socket) {
             this.logger.info('[onClientConnect] Invalid new socket connection!');
             return;
         }
-        // Validate user identifier
         const { id, handshake } = socket;
         const { headers } = handshake;
         if (this.clients[id]) {
@@ -128,12 +117,10 @@ class SocketIOServerHelper {
             this.authenticateFn(handshake)
                 .then(rs => {
                 this.logger.info('[onClientAuthenticate] Socket: %s | Authenticate result: %s', id, rs);
-                // Valid connection
                 if (rs) {
                     this.onClientAuthenticated({ socket });
                     return;
                 }
-                // Invalid connection
                 this.clients[id].state = 'unauthorized';
                 this.send({
                     destination: socket.id,
@@ -150,7 +137,6 @@ class SocketIOServerHelper {
                 });
             })
                 .catch(error => {
-                // Unexpected error while authenticating connection
                 this.clients[id].state = 'unauthorized';
                 this.logger.error('[onClientConnect] Connection: %s | Failed to authenticate new socket connection | Error: %s', id, error);
                 this.send({
@@ -170,7 +156,6 @@ class SocketIOServerHelper {
             });
         });
     }
-    // -------------------------------------------------------------------------------------------------------------
     onClientAuthenticated(opts) {
         var _a, _b;
         const { socket } = opts;
@@ -178,7 +163,6 @@ class SocketIOServerHelper {
             this.logger.info('[onClientAuthenticated] Invalid new socket connection!');
             return;
         }
-        // Validate user identifier
         const { id } = socket;
         if (!this.clients[id]) {
             this.logger.info('[onClientAuthenticated] Unknown client id %s to continue!', id);
@@ -187,7 +171,6 @@ class SocketIOServerHelper {
         }
         this.clients[id].state = 'authenticated';
         this.ping({ socket, ignoreAuth: true });
-        // Valid connection
         this.logger.info('[onClientAuthenticated] Connection: %s | Identifier: %s | CONNECTED | Time: %s', id, this.identifier, new Date().toISOString());
         Promise.all(this.defaultRooms.map((room) => socket.join(room)))
             .then(() => {
@@ -196,7 +179,6 @@ class SocketIOServerHelper {
             .catch(error => {
             this.logger.error('[onClientAuthenticated] Connection %s failed to join defaultRooms %s | Error: %s', id, this.defaultRooms, error);
         });
-        // Handle events
         socket.on(common_1.SocketIOConstants.EVENT_DISCONNECT, () => {
             this.disconnect({ socket });
         });
@@ -240,13 +222,11 @@ class SocketIOServerHelper {
                     time: new Date().toISOString(),
                 },
             },
-            // log: true,
         });
         (_b = (_a = this.onClientConnected) === null || _a === void 0 ? void 0 : _a.call(this, { socket })) === null || _b === void 0 ? void 0 : _b.then(() => { }).catch(error => {
             this.logger.error('[onClientConnected][Handler] Error: %s', error);
         });
     }
-    // -------------------------------------------------------------------------------------------------------------
     ping(opts) {
         const { socket, ignoreAuth } = opts;
         if (!socket) {
@@ -267,10 +247,8 @@ class SocketIOServerHelper {
                     time: new Date().toISOString(),
                 },
             },
-            // log: true,
         });
     }
-    // -------------------------------------------------------------------------------------------------------------
     disconnect(opts) {
         const { socket } = opts;
         if (!socket) {
@@ -290,7 +268,6 @@ class SocketIOServerHelper {
         this.logger.info('[disconnect] Connection: %s | DISCONNECT | Time: %s', id, new Date().toISOString());
         socket.disconnect();
     }
-    // -------------------------------------------------------------------------------------------------------------
     send(opts) {
         const { destination, payload, log, cb } = opts;
         if (!payload) {

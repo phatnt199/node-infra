@@ -34,7 +34,6 @@ let BaseApplicationSequence = BaseApplicationSequence_1 = class BaseApplicationS
         this.middlewareOptions = middlewareOptions;
         this.logger = helpers_1.LoggerFactory.getLogger([BaseApplicationSequence_1.name]);
     }
-    // ----------------------------------------------------------------------------------------
     handle(context) {
         return __awaiter(this, void 0, void 0, function* () {
             const t = performance.now();

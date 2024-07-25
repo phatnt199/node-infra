@@ -38,13 +38,11 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
         this.handler = handler;
         this.oauth2ClientRepository = oauth2ClientRepository;
     }
-    // --------------------------------------------------------------------------------
     encryptClientToken(opts) {
         const { clientId, clientSecret } = opts;
         const applicationSecret = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
         return (0, utilities_1.encrypt)([clientId, clientSecret].join('_'), applicationSecret);
     }
-    // --------------------------------------------------------------------------------
     decryptClientToken(opts) {
         const { token } = opts;
         const applicationSecret = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
@@ -56,7 +54,6 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
         }
         return { clientId, clientSecret };
     }
-    // --------------------------------------------------------------------------------
     getOAuth2RequestPath(opts) {
         const { clientId, clientSecret, redirectUrl } = opts;
         return new Promise((resolve, reject) => {
@@ -83,17 +80,14 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
                 .catch(reject);
         });
     }
-    // --------------------------------------------------------------------------------
     generateToken(opts) {
         const { request, response } = opts;
         return this.handler.token(new oauth2_server_1.Request(request), new oauth2_server_1.Response(response));
     }
-    // --------------------------------------------------------------------------------
     authorize(opts) {
         const { request, response } = opts;
         return this.handler.authorize(new oauth2_server_1.Request(request), new oauth2_server_1.Response(response));
     }
-    // --------------------------------------------------------------------------------
     doOAuth2(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -141,7 +135,6 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
             };
         });
     }
-    // --------------------------------------------------------------------------------
     doClientCallback(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;

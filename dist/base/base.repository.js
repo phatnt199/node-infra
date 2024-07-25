@@ -30,7 +30,6 @@ const repository_1 = require("@loopback/repository");
 const cloneDeep_1 = __importDefault(require("lodash/cloneDeep"));
 const get_1 = __importDefault(require("lodash/get"));
 const set_1 = __importDefault(require("lodash/set"));
-// ----------------------------------------------------------------------------------------------------------------------------------------
 class WhereBuilder extends repository_1.WhereBuilder {
     constructor(opts) {
         super(opts);
@@ -43,7 +42,6 @@ class WhereBuilder extends repository_1.WhereBuilder {
     }
 }
 exports.WhereBuilder = WhereBuilder;
-// ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractTzRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource, scope) {
         super(entityClass, dataSource);
@@ -73,21 +71,18 @@ class AbstractTzRepository extends repository_1.DefaultCrudRepository {
     }
 }
 exports.AbstractTzRepository = AbstractTzRepository;
-// ----------------------------------------------------------------------------------------------------------------------------------------
 class AbstractKVRepository extends repository_1.DefaultKeyValueRepository {
     constructor(entityClass, dataSource) {
         super(entityClass, dataSource);
     }
 }
 exports.AbstractKVRepository = AbstractKVRepository;
-// ----------------------------------------------------------------------------------------------------------------------------------------
 class KVRepository extends AbstractKVRepository {
     constructor(entityClass, dataSource) {
         super(entityClass, dataSource);
     }
 }
 exports.KVRepository = KVRepository;
-// ----------------------------------------------------------------------------------------------------------------------------------------
 class ViewRepository extends repository_1.DefaultCrudRepository {
     constructor(entityClass, dataSource) {
         super(entityClass, dataSource);
@@ -163,7 +158,6 @@ class ViewRepository extends repository_1.DefaultCrudRepository {
     }
 }
 exports.ViewRepository = ViewRepository;
-// ----------------------------------------------------------------------------------------------------------------------------------------
 class TzCrudRepository extends AbstractTzRepository {
     constructor(entityClass, dataSource, scope) {
         super(entityClass, dataSource, scope);
@@ -191,9 +185,6 @@ class TzCrudRepository extends AbstractTzRepository {
         });
         return super.createAll(enriched, options);
     }
-    /*
-     * @deprecated | Redundant | Please .create
-     */
     createWithReturn(data, options) {
         return this.create(data, options);
     }
@@ -245,10 +236,8 @@ class TzCrudRepository extends AbstractTzRepository {
             const { databaseSchema, connectorType = 'postgresql', softDeleteField = 'isDeleted', ignoreModified = false, authorId, } = options !== null && options !== void 0 ? options : {};
             const tableName = this.modelClass.definition.tableName(connectorType);
             const softDeleteColumnName = this.modelClass.definition.columnName(connectorType, softDeleteField);
-            // Mix Timestamp
             const mixTimestampColumnName = this.modelClass.definition.columnName(connectorType, 'modifiedAt');
             const schema = (0, get_1.default)(this.modelClass.definition.settings, `${connectorType}.schema`, 'public');
-            // Mix User Audit
             const mixUserAuditColumnName = this.modelClass.definition.columnName(connectorType, 'modifiedBy');
             const isSoftDeleteFieldExist = (0, get_1.default)(this.modelClass.definition.rawProperties, softDeleteField);
             if (!isSoftDeleteFieldExist) {
@@ -330,7 +319,6 @@ class SearchableTzCrudRepository extends TzCrudRepository {
             resolve(textSearch);
         });
     }
-    // ----------------------------------------------------------------------------------------------------
     convertRelationConfig(opts) {
         const { relationConfigs } = opts;
         return {
@@ -346,38 +334,6 @@ class SearchableTzCrudRepository extends TzCrudRepository {
             }),
         };
     }
-    /**
-     * @param opts: { relationConfig: RelationConfig }
-     * @returns InclusionFilter
-     *
-     * @example
-     * Param:
-     * {
-     *    relationName: 'user',
-     *    relationConfig: [
-     *        { relationName: 'profile' },
-     *        { relationName: 'identifiers', relationConfigs: [{ relationName: 'user' }]}
-     *    ],
-     * }
-     *
-     * Result:
-     * {
-     *    relation: 'user',
-     *    scope: {
-     *        include: [
-     *            { relation: 'profile'},
-     *            {
-     *                relation: 'identifiers',
-     *                scope: {
-     *                    include: [
-     *                        { relation: 'user' }
-     *                    ]
-     *                }
-     *            }
-     *        ]
-     *    }
-     * }
-     */
     buildInclusionFilter(opts) {
         const { relationConfig } = opts;
         const { relationName, relationConfigs } = relationConfig;
@@ -455,7 +411,6 @@ class SearchableTzCrudRepository extends TzCrudRepository {
                 .catch(reject);
         });
     }
-    // ----------------------------------------------------------------------------------------------------
     mixSearchFields(entity, options) {
         return new Promise((resolve, reject) => {
             const ignoreUpdate = (0, get_1.default)(options, 'ignoreUpdate');
@@ -479,7 +434,6 @@ class SearchableTzCrudRepository extends TzCrudRepository {
                 .catch(reject);
         });
     }
-    // ----------------------------------------------------------------------------------------------------
     create(data, options) {
         return new Promise((resolve, reject) => {
             this.mixSearchFields(data, options)
