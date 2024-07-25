@@ -35,8 +35,12 @@ export const defineOAuth2Strategy = (opts: { name: string }) => {
 
     async authenticate(request: Request) {
       const networkService = this.authProvider.getNetworkService();
-      const url = this.authProvider.getRequestUrl({ paths: [this.authPath] });
-      const rs = await networkService.send({ url, headers: { Authorization: request.headers['authorization'] } });
+      const rs = await networkService.send({
+        url: this.authProvider.getRequestUrl({ paths: [this.authPath] }),
+        headers: {
+          Authorization: request.headers['authorization'],
+        },
+      });
       return { ...rs?.data, [securityId]: rs?.data?.userId?.toString() };
     }
   }

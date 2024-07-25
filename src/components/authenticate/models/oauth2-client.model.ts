@@ -57,6 +57,7 @@ export class OAuth2Client extends BaseTzEntity {
         rootUrls: { type: 'string' },
         homeUrls: { type: 'string' },
         redirectUrls: { type: 'array', items: { type: 'string' } },
+        callbackUrls: { type: 'array', items: { type: 'string' } },
         originUrls: { type: 'array', items: { type: 'string' } },
       },
     },
@@ -66,6 +67,7 @@ export class OAuth2Client extends BaseTzEntity {
     rootUrl: string;
     homeUrl: string;
     redirectUrls: Array<string>;
+    callbackUrls: Array<string>;
     originUrls: Array<string>;
   };
 

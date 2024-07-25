@@ -12,22 +12,21 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineOAuth2Controller = exports.DefaultOAuth2Controller = void 0;
-const authentication_1 = require("@loopback/authentication");
-const core_1 = require("@loopback/core");
-const rest_1 = require("@loopback/rest");
+exports.defineOAuth2Controller = exports.DefaultOAuth2ExpressServer = void 0;
 const base_1 = require("../../../base");
 const common_1 = require("../../../common");
 const helpers_1 = require("../../../helpers");
-const security_1 = require("@loopback/security");
-const types_1 = require("../types");
-const oauth2_server_1 = require("@node-oauth/oauth2-server");
-const rest_2 = require("@loopback/rest");
 const utilities_1 = require("../../../utilities");
-const path_1 = require("path");
+const authentication_1 = require("@loopback/authentication");
+const core_1 = require("@loopback/core");
+const rest_1 = require("@loopback/rest");
+const security_1 = require("@loopback/security");
+const oauth2_server_1 = require("@node-oauth/oauth2-server");
 const services_1 = require("../services");
+const types_1 = require("../types");
+const path_1 = require("path");
 // --------------------------------------------------------------------------------
-class DefaultOAuth2Controller extends rest_2.ExpressServer {
+class DefaultOAuth2ExpressServer extends rest_1.ExpressServer {
     constructor(opts) {
         super(opts.config, opts.parent);
         this.authServiceKey = opts.authServiceKey;
@@ -36,51 +35,43 @@ class DefaultOAuth2Controller extends rest_2.ExpressServer {
     }
     static getInstance(opts) {
         if (!this.instance) {
-            this.instance = new DefaultOAuth2Controller(opts);
+            this.instance = new DefaultOAuth2ExpressServer(opts);
             return this.instance;
         }
         return this.instance;
+    }
+    getApplicationHandler() {
+        return this.expressApp;
     }
     binding() {
         this.expressApp.set('view engine', 'ejs');
         this.expressApp.set('views', (0, path_1.join)(__dirname, '../', 'views'));
         const authAction = `${helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_SERVER_BASE_PATH)}/oauth2/auth`;
         this.expressApp.get('/auth', (request, response) => {
+            var _a;
             const { c, r } = request.query;
-            console.log(c, c === null || c === void 0 ? void 0 : c.toString(), r);
-            const payload = {
-                title: `${helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_NAME)} OAuth`,
-                clientId: 'N/A',
-                action: authAction,
-                redirectUrl: r,
-                c,
-                r,
-            };
             if (!c) {
                 response.render('pages/auth', {
                     message: 'Invalid client credential | Please verify query params!',
-                    payload,
+                    payload: {},
                 });
                 return;
             }
-            const applicationSecret = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
-            const decrypted = (0, utilities_1.decrypt)(decodeURIComponent(c.toString()), applicationSecret);
-            const [clientId] = decrypted.split('_');
-            if (!clientId) {
-                response.render('pages/auth', {
-                    message: 'Missing clientId | Please verify query params!',
-                    payload: Object.assign(Object.assign({}, payload), { clientId }),
-                });
-                return;
-            }
+            const payload = {
+                title: `${helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_NAME)} OAuth`,
+                action: authAction,
+                c: decodeURIComponent(c.toString()),
+                r: decodeURIComponent((_a = r === null || r === void 0 ? void 0 : r.toString()) !== null && _a !== void 0 ? _a : ''),
+            };
             response.render('pages/auth', {
-                message: '',
-                payload: Object.assign(Object.assign({}, payload), { clientId }),
+                message: 'Please fill out your credential!',
+                payload,
             });
         });
         this.expressApp.post('/auth', (request, response) => {
-            const { username, password, clientId, redirectUrl } = request.body;
+            const { username, password, token, redirectUrl } = request.body;
             const oauth2Service = this.injectionGetter('services.OAuth2Service');
+            const decryptedClient = oauth2Service.decryptClientToken({ token });
             oauth2Service
                 .doOAuth2({
                 context: { request, response },
@@ -88,25 +79,23 @@ class DefaultOAuth2Controller extends rest_2.ExpressServer {
                 signInRequest: {
                     identifier: { scheme: 'username', value: username },
                     credential: { scheme: 'basic', value: password },
-                    clientId,
+                    clientId: decryptedClient.clientId,
                 },
                 redirectUrl,
             })
                 .then(rs => {
-                const { oauth2TokenRs } = rs;
-                const { accessToken, authorizationCode, accessTokenExpiresAt, user } = oauth2TokenRs;
+                const { redirectUrl, oauth2TokenRs } = rs;
+                const { accessToken, accessTokenExpiresAt, client } = oauth2TokenRs;
                 if (!accessTokenExpiresAt) {
                     response.render('pages/error', {
                         message: 'Failed to validate accessToken expiration | Please try to request again!',
                     });
                     return;
                 }
-                // TODO implement endpoint callbacks
-                response.setHeader('X-Authorization-Code', authorizationCode);
-                response.setHeader('X-Token', accessToken);
-                response.setHeader('X-Token-Expire-At', accessTokenExpiresAt.toISOString());
-                response.setHeader('X-User-Id', user.id);
-                response.status(200).send('OK');
+                oauth2Service.doClientCallback({ oauth2Token: oauth2TokenRs }).then(() => {
+                    const urlParam = new URLSearchParams({ clientId: client.clientId, accessToken });
+                    response.redirect(`${redirectUrl}?${urlParam.toString()}`);
+                });
             })
                 .catch(error => {
                 var _a;
@@ -116,15 +105,14 @@ class DefaultOAuth2Controller extends rest_2.ExpressServer {
             });
         });
     }
-    getApplicationHandler() {
-        return this.expressApp;
-    }
 }
-exports.DefaultOAuth2Controller = DefaultOAuth2Controller;
+exports.DefaultOAuth2ExpressServer = DefaultOAuth2ExpressServer;
 // --------------------------------------------------------------------------------
 const defineOAuth2Controller = (opts) => {
     var BaseOAuth2Controller_1;
-    const { restPath = '/oauth2', tokenPath = '/token', authorizePath = '/authorize', oauth2ServiceKey = 'services.OAuth2Service', authStrategy = { name: `${helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_NAME)}_oauth2` }, } = opts !== null && opts !== void 0 ? opts : {};
+    const { restPath = '/oauth2', tokenPath = '/token', authorizePath = '/authorize', oauth2ServiceKey = 'services.OAuth2Service',
+    // authStrategy = { name: `${applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_NAME)}_oauth2` },
+     } = opts !== null && opts !== void 0 ? opts : {};
     let BaseOAuth2Controller = BaseOAuth2Controller_1 = class BaseOAuth2Controller extends base_1.BaseController {
         constructor(authService, getCurrentUser, httpContext) {
             super({ scope: BaseOAuth2Controller_1.name });
@@ -148,31 +136,11 @@ const defineOAuth2Controller = (opts) => {
         }
         // ------------------------------------------------------------------------------
         getOAuth2RequestPath(payload) {
-            return new Promise((resolve, reject) => {
-                const { clientId, clientSecret, redirectUrl } = payload;
-                this.service
-                    .getClient({ clientId, clientSecret })
-                    .then((rs) => {
-                    if (!rs) {
-                        reject((0, utilities_1.getError)({ message: '[getOAuth2RequestPath] Client credential is invalid' }));
-                        return;
-                    }
-                    const basePath = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_SERVER_BASE_PATH);
-                    const applicationSecret = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
-                    const urlParam = new URLSearchParams();
-                    const requestToken = (0, utilities_1.encrypt)([clientId, clientSecret].join('_'), applicationSecret);
-                    urlParam.set('c', encodeURIComponent(requestToken));
-                    if (redirectUrl) {
-                        urlParam.set('r', encodeURIComponent(redirectUrl));
-                    }
-                    resolve({ requestPath: `${basePath}/oauth2/auth?${urlParam.toString()}` });
-                })
-                    .catch(reject);
-            });
+            return this.service.getOAuth2RequestPath(payload);
         }
     };
     __decorate([
-        (0, authentication_1.authenticate)(authStrategy.name),
+        (0, authentication_1.authenticate)(common_1.Authentication.STRATEGY_JWT),
         (0, rest_1.get)('/who-am-i'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),

@@ -10,11 +10,19 @@
 </header>
 
 <main>
-  <h1><%- payload.title %> - clientId: <%- payload.clientId %></h1>
+  <div id="container">
+    <h1>
+      <%- payload.title %>
+    </h1>
+
+    <p>
+      Token: <%- payload.c %>
+    </p>
+  </div>
 
   <%- message %>
 
-  <% if (payload.clientId) { %>
+  <% if (payload.c) { %>
     <form method="post" action=<%- payload.action %>>
       <p>
       <label for="username">Username:</label>
@@ -23,13 +31,11 @@
 
       <p>
       <label for="password">Password:</label>
-      <input type="text" name="password" />
+      <input type="password" name="password" />
       </p>
 
-      <input type="hidden" name="c" value=<%- payload.c %>>
-      <input type="hidden" name="r" value=<%- payload.r %>>
-      <input type="hidden" name="clientId" value=<%- payload.clientId %>>
-      <input type="hidden" name="redirectUrl" value=<%- payload.redirectUrl %>>
+      <input type="hidden" name="token" value=<%- payload.c %>>
+      <input type="hidden" name="redirectUrl" value=<%- payload.r %>>
 
       <p>
       <input type="submit" value="Login">

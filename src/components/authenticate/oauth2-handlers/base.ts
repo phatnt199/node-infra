@@ -37,17 +37,19 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
       clientRepository
         .findOne({
           where: { or: [{ clientId }, { clientId, clientSecret }] },
-          fields: ['id', 'identifier', 'name', 'description', 'grants', 'userId', 'endpoints'],
+          fields: ['id', 'identifier', 'clientId', 'name', 'description', 'grants', 'userId', 'endpoints'],
         })
         .then((oauth2Client: OAuth2Client) => {
           resolve({
             id: oauth2Client.id.toString(),
             identifier: oauth2Client.identifier,
+            clientId: oauth2Client.clientId,
             name: oauth2Client.name,
             description: oauth2Client.description,
             grants: oauth2Client.grants,
             userId: oauth2Client.userId,
             redirectUris: oauth2Client?.endpoints?.redirectUrls ?? [],
+            callbackUrls: oauth2Client?.endpoints?.callbackUrls ?? [],
           });
         })
         .catch(reject);

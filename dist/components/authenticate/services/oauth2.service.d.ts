@@ -1,23 +1,35 @@
 import { BaseApplication, BaseService } from '../../../base';
-import { Request, Response } from '@node-oauth/oauth2-server';
-import { OAuth2Client } from '../models';
+import { RequestContext } from '@loopback/rest';
+import { Request, Response, Token } from '@node-oauth/oauth2-server';
 import { OAuth2Handler } from '../oauth2-handlers';
 import { OAuth2ClientRepository } from '../repositories';
 import { SignInRequest } from '../types';
-import { RequestContext } from '@loopback/rest';
 export declare class OAuth2Service extends BaseService {
     private application;
     private handler;
     private oauth2ClientRepository;
     constructor(application: BaseApplication, handler: OAuth2Handler, oauth2ClientRepository: OAuth2ClientRepository);
-    getClient(opts: {
+    encryptClientToken(opts: {
         clientId: string;
         clientSecret: string;
-    }): Promise<OAuth2Client | null>;
+    }): string;
+    decryptClientToken(opts: {
+        token: string;
+    }): {
+        clientId: string;
+        clientSecret: string;
+    };
+    getOAuth2RequestPath(opts: {
+        clientId: string;
+        clientSecret: string;
+        redirectUrl?: string;
+    }): Promise<{
+        requestPath: string;
+    }>;
     generateToken(opts: {
         request: Request;
         response: Response;
-    }): Promise<import("@node-oauth/oauth2-server").Token>;
+    }): Promise<Token>;
     authorize(opts: {
         request: Request;
         response: Response;
@@ -29,6 +41,9 @@ export declare class OAuth2Service extends BaseService {
         redirectUrl?: string;
     }): Promise<{
         redirectUrl: string;
-        oauth2TokenRs: import("@node-oauth/oauth2-server").Token;
+        oauth2TokenRs: Token;
     }>;
+    doClientCallback(opts: {
+        oauth2Token: Token;
+    }): Promise<void>;
 }

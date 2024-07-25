@@ -25,11 +25,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OAuth2Service = void 0;
 const base_1 = require("../../../base");
 const common_1 = require("../../../common");
+const helpers_1 = require("../../../helpers");
+const utilities_1 = require("../../../utilities");
 const core_1 = require("@loopback/core");
 const oauth2_server_1 = require("@node-oauth/oauth2-server");
 const oauth2_handlers_1 = require("../oauth2-handlers");
 const repositories_1 = require("../repositories");
-const utilities_1 = require("../../../utilities");
 let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseService {
     constructor(application, handler, oauth2ClientRepository) {
         super({ scope: OAuth2Service_1.name });
@@ -37,17 +38,58 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
         this.handler = handler;
         this.oauth2ClientRepository = oauth2ClientRepository;
     }
-    getClient(opts) {
-        return this.oauth2ClientRepository.findOne({ where: Object.assign({}, opts) });
+    // --------------------------------------------------------------------------------
+    encryptClientToken(opts) {
+        const { clientId, clientSecret } = opts;
+        const applicationSecret = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
+        return (0, utilities_1.encrypt)([clientId, clientSecret].join('_'), applicationSecret);
     }
+    // --------------------------------------------------------------------------------
+    decryptClientToken(opts) {
+        const { token } = opts;
+        const applicationSecret = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
+        const decrypted = (0, utilities_1.decrypt)(decodeURIComponent(token.toString()), applicationSecret);
+        const [clientId, clientSecret] = decrypted.split('_');
+        if (!clientId || !clientSecret) {
+            this.logger.error('[decryptClientToken] Failed to decrypt token: %s', token);
+            throw (0, utilities_1.getError)({ message: 'Failed to decryptClientToken' });
+        }
+        return { clientId, clientSecret };
+    }
+    // --------------------------------------------------------------------------------
+    getOAuth2RequestPath(opts) {
+        const { clientId, clientSecret, redirectUrl } = opts;
+        return new Promise((resolve, reject) => {
+            this.oauth2ClientRepository
+                .findOne({ where: Object.assign({}, opts), fields: ['id'] })
+                .then(client => {
+                if (!client) {
+                    throw (0, utilities_1.getError)({ message: `[getOAuth2RequestPath] Client not found!` });
+                }
+                const basePath = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_SERVER_BASE_PATH);
+                const applicationSecret = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
+                const urlParam = new URLSearchParams();
+                const requestToken = (0, utilities_1.encrypt)([clientId, clientSecret].join('_'), applicationSecret);
+                urlParam.set('c', encodeURIComponent(requestToken));
+                if (redirectUrl) {
+                    urlParam.set('r', encodeURIComponent(redirectUrl));
+                }
+                resolve({ requestPath: `${basePath}/oauth2/auth?${urlParam.toString()}` });
+            })
+                .catch(reject);
+        });
+    }
+    // --------------------------------------------------------------------------------
     generateToken(opts) {
         const { request, response } = opts;
         return this.handler.token(new oauth2_server_1.Request(request), new oauth2_server_1.Response(response));
     }
+    // --------------------------------------------------------------------------------
     authorize(opts) {
         const { request, response } = opts;
         return this.handler.authorize(new oauth2_server_1.Request(request), new oauth2_server_1.Response(response));
     }
+    // --------------------------------------------------------------------------------
     doOAuth2(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -93,6 +135,35 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
                 redirectUrl: authorizationCodeRs.redirectUri,
                 oauth2TokenRs,
             };
+        });
+    }
+    // --------------------------------------------------------------------------------
+    doClientCallback(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            const { accessToken, authorizationCode, accessTokenExpiresAt, client, user } = opts.oauth2Token;
+            if (!client) {
+                this.logger.error('[doClientCallback] Invalid client | Client: %j', client);
+                return;
+            }
+            const callbackUrls = (_b = (_a = client === null || client === void 0 ? void 0 : client.endpoints) === null || _a === void 0 ? void 0 : _a.callbackUrls) !== null && _b !== void 0 ? _b : [];
+            if (!callbackUrls.length) {
+                this.logger.error('[doClientCallback] No client callbackUrls');
+                return;
+            }
+            const payload = {
+                accessToken,
+                authorizationCode,
+                accessTokenExpiresAt,
+                user,
+            };
+            yield Promise.all(callbackUrls.map(callbackUrl => {
+                return fetch(callbackUrl, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    headers: { ['content-type']: 'application/x-www-form-urlencoded' },
+                });
+            }));
         });
     }
 };

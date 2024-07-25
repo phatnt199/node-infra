@@ -11,6 +11,7 @@ export declare class OAuth2Client extends BaseTzEntity {
         rootUrl: string;
         homeUrl: string;
         redirectUrls: Array<string>;
+        callbackUrls: Array<string>;
         originUrls: Array<string>;
     };
     userId?: NumberIdType;

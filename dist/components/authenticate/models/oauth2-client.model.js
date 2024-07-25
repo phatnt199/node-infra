@@ -70,6 +70,7 @@ __decorate([
                 rootUrls: { type: 'string' },
                 homeUrls: { type: 'string' },
                 redirectUrls: { type: 'array', items: { type: 'string' } },
+                callbackUrls: { type: 'array', items: { type: 'string' } },
                 originUrls: { type: 'array', items: { type: 'string' } },
             },
         },

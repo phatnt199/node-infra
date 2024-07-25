@@ -10,7 +10,7 @@ import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
 import { App, AuthenticateKeys, Authentication, EnvironmentKeys } from '@/common';
 import { getError, int } from '@/utilities';
-import { DefaultOAuth2Controller, defineAuthController, defineOAuth2Controller } from './controllers';
+import { DefaultOAuth2ExpressServer, defineAuthController, defineOAuth2Controller } from './controllers';
 import { AuthenticationMiddleware } from './middleware';
 import { OAuth2ClientRepository, OAuth2ScopeRepository, OAuth2TokenRepository } from './repositories';
 import {
@@ -137,7 +137,7 @@ export class AuthenticateComponent extends BaseComponent {
 
     this.application.mountExpressRouter(
       oauth2Options.restOptions?.restPath ?? '/oauth2',
-      DefaultOAuth2Controller.getInstance({
+      DefaultOAuth2ExpressServer.getInstance({
         authServiceKey,
         injectionGetter: <T>(key: string) => this.application.getSync<T>(key),
       }).getApplicationHandler(),

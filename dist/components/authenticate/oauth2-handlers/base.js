@@ -32,18 +32,20 @@ class AbstractOAuth2AuthenticationHandler {
             clientRepository
                 .findOne({
                 where: { or: [{ clientId }, { clientId, clientSecret }] },
-                fields: ['id', 'identifier', 'name', 'description', 'grants', 'userId', 'endpoints'],
+                fields: ['id', 'identifier', 'clientId', 'name', 'description', 'grants', 'userId', 'endpoints'],
             })
                 .then((oauth2Client) => {
-                var _a, _b;
+                var _a, _b, _c, _d;
                 resolve({
                     id: oauth2Client.id.toString(),
                     identifier: oauth2Client.identifier,
+                    clientId: oauth2Client.clientId,
                     name: oauth2Client.name,
                     description: oauth2Client.description,
                     grants: oauth2Client.grants,
                     userId: oauth2Client.userId,
                     redirectUris: (_b = (_a = oauth2Client === null || oauth2Client === void 0 ? void 0 : oauth2Client.endpoints) === null || _a === void 0 ? void 0 : _a.redirectUrls) !== null && _b !== void 0 ? _b : [],
+                    callbackUrls: (_d = (_c = oauth2Client === null || oauth2Client === void 0 ? void 0 : oauth2Client.endpoints) === null || _c === void 0 ? void 0 : _c.callbackUrls) !== null && _d !== void 0 ? _d : [],
                 });
             })
                 .catch(reject);

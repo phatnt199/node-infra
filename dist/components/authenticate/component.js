@@ -112,7 +112,7 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
         this.application.service(services_1.OAuth2Service);
         const oauth2Controller = (0, controllers_1.defineOAuth2Controller)(oauth2Options.restOptions);
         this.application.controller(oauth2Controller);
-        this.application.mountExpressRouter((_e = (_d = oauth2Options.restOptions) === null || _d === void 0 ? void 0 : _d.restPath) !== null && _e !== void 0 ? _e : '/oauth2', controllers_1.DefaultOAuth2Controller.getInstance({
+        this.application.mountExpressRouter((_e = (_d = oauth2Options.restOptions) === null || _d === void 0 ? void 0 : _d.restPath) !== null && _e !== void 0 ? _e : '/oauth2', controllers_1.DefaultOAuth2ExpressServer.getInstance({
             authServiceKey,
             injectionGetter: (key) => this.application.getSync(key),
         }).getApplicationHandler());
