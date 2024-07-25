@@ -61,10 +61,14 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
         const { clientId, clientSecret, redirectUrl } = opts;
         return new Promise((resolve, reject) => {
             this.oauth2ClientRepository
-                .findOne({ where: Object.assign({}, opts), fields: ['id'] })
+                .findOne({ where: Object.assign({}, opts), fields: ['id', 'endpoints'] })
                 .then(client => {
+                var _a, _b;
                 if (!client) {
                     throw (0, utilities_1.getError)({ message: `[getOAuth2RequestPath] Client not found!` });
+                }
+                if (!((_b = (_a = client === null || client === void 0 ? void 0 : client.endpoints) === null || _a === void 0 ? void 0 : _a.redirectUrls) === null || _b === void 0 ? void 0 : _b.includes(redirectUrl))) {
+                    throw (0, utilities_1.getError)({ message: `[getOAuth2RequestPath] Invalid redirectUrl!` });
                 }
                 const basePath = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_SERVER_BASE_PATH);
                 const applicationSecret = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_SECRET);

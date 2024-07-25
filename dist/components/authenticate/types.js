@@ -132,8 +132,14 @@ exports.OAuth2Request = OAuth2Request = __decorate([
     (0, repository_1.model)({
         name: 'OAuth2Request',
         jsonSchema: {
-            required: ['clientId', 'clientSecret'],
-            examples: [{ clientId: 'example_id', clientSecret: 'example_secret' }],
+            required: ['clientId', 'clientSecret', 'redirectUrl'],
+            examples: [
+                {
+                    clientId: 'example_id',
+                    clientSecret: 'example_secret',
+                    redirectUrl: 'example_redirect_url',
+                },
+            ],
         },
     })
 ], OAuth2Request);

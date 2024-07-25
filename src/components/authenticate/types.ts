@@ -150,8 +150,14 @@ export class SignUpRequest {
 @model({
   name: 'OAuth2Request',
   jsonSchema: {
-    required: ['clientId', 'clientSecret'],
-    examples: [{ clientId: 'example_id', clientSecret: 'example_secret' }],
+    required: ['clientId', 'clientSecret', 'redirectUrl'],
+    examples: [
+      {
+        clientId: 'example_id',
+        clientSecret: 'example_secret',
+        redirectUrl: 'example_redirect_url',
+      },
+    ],
   },
 })
 export class OAuth2Request {
@@ -162,7 +168,7 @@ export class OAuth2Request {
   clientSecret: string;
 
   @property({ type: 'string' })
-  redirectUrl?: string;
+  redirectUrl: string;
 }
 
 // -------------------------------------------------------------------

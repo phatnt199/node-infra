@@ -26,8 +26,6 @@ const middleware_1 = require("./middleware");
 const repositories_1 = require("./repositories");
 const services_1 = require("./services");
 const types_1 = require("./types");
-const oauth2_strategy_1 = require("./services/oauth2.strategy");
-const helpers_1 = require("../../helpers");
 const oauth2_handlers_1 = require("./oauth2-handlers");
 let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponent extends base_component_1.BaseComponent {
     constructor(application) {
@@ -69,7 +67,7 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
         this.application.controller(authenticationController);
     }
     defineOAuth2() {
-        var _a, _b, _c, _d, _e;
+        var _a, _b;
         if (!this.application.isBound(common_1.AuthenticateKeys.OAUTH2_OPTIONS)) {
             return;
         }
@@ -102,17 +100,19 @@ let AuthenticateComponent = AuthenticateComponent_1 = class AuthenticateComponen
                 accessTokenLifetime: (0, utilities_1.int)(this.application.getSync(authentication_jwt_1.TokenServiceBindings.TOKEN_EXPIRES_IN) || `${1 * 24 * 60 * 60}`),
             },
         }));
-        const strategyName = (_c = (_b = (_a = oauth2Options.restOptions) === null || _a === void 0 ? void 0 : _a.authStrategy) === null || _b === void 0 ? void 0 : _b.name) !== null && _c !== void 0 ? _c : helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_NAME);
-        const remoteOAuth2Strategy = (0, oauth2_strategy_1.defineOAuth2Strategy)({ name: strategyName });
-        (0, authentication_1.registerAuthenticationStrategy)(this.application, remoteOAuth2Strategy);
-        this.logger.info('[defineOAuth2] Registered auth strategy with name: %s', strategyName);
+        /* const strategyName =
+          oauth2Options.restOptions?.authStrategy?.name ??
+          applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_NAME);
+        const remoteOAuth2Strategy = defineOAuth2Strategy({ name: strategyName });
+        registerAuthenticationStrategy(this.application, remoteOAuth2Strategy);
+        this.logger.info('[defineOAuth2] Registered auth strategy with name: %s', strategyName); */
         this.application.repository(repositories_1.OAuth2ScopeRepository);
         this.application.repository(repositories_1.OAuth2TokenRepository);
         this.application.repository(repositories_1.OAuth2ClientRepository);
         this.application.service(services_1.OAuth2Service);
         const oauth2Controller = (0, controllers_1.defineOAuth2Controller)(oauth2Options.restOptions);
         this.application.controller(oauth2Controller);
-        this.application.mountExpressRouter((_e = (_d = oauth2Options.restOptions) === null || _d === void 0 ? void 0 : _d.restPath) !== null && _e !== void 0 ? _e : '/oauth2', controllers_1.DefaultOAuth2ExpressServer.getInstance({
+        this.application.mountExpressRouter((_b = (_a = oauth2Options.restOptions) === null || _a === void 0 ? void 0 : _a.restPath) !== null && _b !== void 0 ? _b : '/oauth2', controllers_1.DefaultOAuth2ExpressServer.getInstance({
             authServiceKey,
             injectionGetter: (key) => this.application.getSync(key),
         }).getApplicationHandler());

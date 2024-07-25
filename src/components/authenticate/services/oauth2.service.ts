@@ -45,16 +45,20 @@ export class OAuth2Service extends BaseService {
   getOAuth2RequestPath(opts: {
     clientId: string;
     clientSecret: string;
-    redirectUrl?: string;
+    redirectUrl: string;
   }): Promise<{ requestPath: string }> {
     const { clientId, clientSecret, redirectUrl } = opts;
 
     return new Promise((resolve, reject) => {
       this.oauth2ClientRepository
-        .findOne({ where: { ...opts }, fields: ['id'] })
+        .findOne({ where: { ...opts }, fields: ['id', 'endpoints'] })
         .then(client => {
           if (!client) {
             throw getError({ message: `[getOAuth2RequestPath] Client not found!` });
+          }
+
+          if (!client?.endpoints?.redirectUrls?.includes(redirectUrl)) {
+            throw getError({ message: `[getOAuth2RequestPath] Invalid redirectUrl!` });
           }
 
           const basePath = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_SERVER_BASE_PATH);

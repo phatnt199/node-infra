@@ -37,10 +37,13 @@ export const defineOAuth2Strategy = (opts: { name: string }) => {
       const networkService = this.authProvider.getNetworkService();
       const rs = await networkService.send({
         url: this.authProvider.getRequestUrl({ paths: [this.authPath] }),
-        headers: {
-          Authorization: request.headers['authorization'],
-        },
+        headers: { Authorization: request.headers['authorization'] },
       });
+
+      if (rs?.data?.error) {
+        throw getError(rs.data.error);
+      }
+
       return { ...rs?.data, [securityId]: rs?.data?.userId?.toString() };
     }
   }

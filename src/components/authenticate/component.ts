@@ -8,7 +8,7 @@ import { Binding, CoreBindings, inject } from '@loopback/core';
 
 import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
-import { App, AuthenticateKeys, Authentication, EnvironmentKeys } from '@/common';
+import { App, AuthenticateKeys, Authentication } from '@/common';
 import { getError, int } from '@/utilities';
 import { DefaultOAuth2ExpressServer, defineAuthController, defineOAuth2Controller } from './controllers';
 import { AuthenticationMiddleware } from './middleware';
@@ -28,8 +28,6 @@ import {
   SignInRequest,
   SignUpRequest,
 } from './types';
-import { defineOAuth2Strategy } from './services/oauth2.strategy';
-import { applicationEnvironment } from '@/helpers';
 import { IOAuth2AuthenticationHandler, OAuth2AuthorizationCodeHandler, OAuth2Handler } from './oauth2-handlers';
 
 export class AuthenticateComponent extends BaseComponent {
@@ -119,12 +117,12 @@ export class AuthenticateComponent extends BaseComponent {
       }),
     );
 
-    const strategyName =
+    /* const strategyName =
       oauth2Options.restOptions?.authStrategy?.name ??
       applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_NAME);
     const remoteOAuth2Strategy = defineOAuth2Strategy({ name: strategyName });
     registerAuthenticationStrategy(this.application, remoteOAuth2Strategy);
-    this.logger.info('[defineOAuth2] Registered auth strategy with name: %s', strategyName);
+    this.logger.info('[defineOAuth2] Registered auth strategy with name: %s', strategyName); */
 
     this.application.repository(OAuth2ScopeRepository);
     this.application.repository(OAuth2TokenRepository);

@@ -41,11 +41,16 @@ const defineOAuth2Strategy = (opts) => {
         }
         authenticate(request) {
             return __awaiter(this, void 0, void 0, function* () {
-                var _a, _b;
+                var _a, _b, _c;
                 const networkService = this.authProvider.getNetworkService();
-                const url = this.authProvider.getRequestUrl({ paths: [this.authPath] });
-                const rs = yield networkService.send({ url, headers: { Authorization: request.headers['authorization'] } });
-                return Object.assign(Object.assign({}, rs === null || rs === void 0 ? void 0 : rs.data), { [security_1.securityId]: (_b = (_a = rs === null || rs === void 0 ? void 0 : rs.data) === null || _a === void 0 ? void 0 : _a.userId) === null || _b === void 0 ? void 0 : _b.toString() });
+                const rs = yield networkService.send({
+                    url: this.authProvider.getRequestUrl({ paths: [this.authPath] }),
+                    headers: { Authorization: request.headers['authorization'] },
+                });
+                if ((_a = rs === null || rs === void 0 ? void 0 : rs.data) === null || _a === void 0 ? void 0 : _a.error) {
+                    throw (0, utilities_1.getError)(rs.data.error);
+                }
+                return Object.assign(Object.assign({}, rs === null || rs === void 0 ? void 0 : rs.data), { [security_1.securityId]: (_c = (_b = rs === null || rs === void 0 ? void 0 : rs.data) === null || _b === void 0 ? void 0 : _b.userId) === null || _c === void 0 ? void 0 : _c.toString() });
             });
         }
     }

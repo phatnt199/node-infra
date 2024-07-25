@@ -22,7 +22,7 @@ export declare class OAuth2Service extends BaseService {
     getOAuth2RequestPath(opts: {
         clientId: string;
         clientSecret: string;
-        redirectUrl?: string;
+        redirectUrl: string;
     }): Promise<{
         requestPath: string;
     }>;

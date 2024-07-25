@@ -72,7 +72,7 @@ export declare class SignUpRequest {
 export declare class OAuth2Request {
     clientId: string;
     clientSecret: string;
-    redirectUrl?: string;
+    redirectUrl: string;
 }
 export interface IAuthService<SI_RQ extends SignInRequest = SignInRequest, SI_RS = AnyObject, SU_RQ extends SignUpRequest = SignUpRequest, SU_RS = AnyObject, CP_RQ extends ChangePasswordRequest = ChangePasswordRequest, CP_RS = AnyObject, UI_RQ = AnyObject, UI_RS = AnyObject> {
     signIn(opts: SI_RQ): Promise<SI_RS>;
