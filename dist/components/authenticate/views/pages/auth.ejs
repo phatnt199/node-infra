@@ -1,52 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <%- include('../fragments/head'); %>
-</head>
-<body class="container">
+  <head>
+    <%- include('../fragments/head'); %>
+  </head>
+  <body class="container">
 
-<header>
-  <%- include('../fragments/header'); %>
-</header>
+    <header>
+      <%- include('../fragments/header'); %>
+    </header>
 
-<main>
-  <div id="container">
-    <h1>
-      <%- payload.title %>
-    </h1>
+    <main>
+      <div id="container">
+        <h1>
+          <%- payload.title %>
+        </h1>
 
-    <p>
-      Token: <%- payload.c %>
-    </p>
-  </div>
+        <br />
+        <span id="message">
+          <%- message %>
+        </span>
+        <br />
+        <br />
 
-  <%- message %>
+        <% if (payload.c) { %>
+          <form method="post" action=<%- payload.action %>>
+            <p>
+            <label for="username">Username:</label>
+            <input type="text" name="username" />
+            </p>
 
-  <% if (payload.c) { %>
-    <form method="post" action=<%- payload.action %>>
-      <p>
-      <label for="username">Username:</label>
-      <input type="text" name="username" />
-      </p>
+            <p>
+            <label for="password">Password:</label>
+            <input type="password" name="password" />
+            </p>
 
-      <p>
-      <label for="password">Password:</label>
-      <input type="password" name="password" />
-      </p>
+            <input type="hidden" name="token" value=<%- payload.c %>>
+            <input type="hidden" name="redirectUrl" value=<%- payload.r %>>
 
-      <input type="hidden" name="token" value=<%- payload.c %>>
-      <input type="hidden" name="redirectUrl" value=<%- payload.r %>>
+            <p>
+            <input type="submit" value="Login">
+            </p>
+          </form>
+        <% } %>
 
-      <p>
-      <input type="submit" value="Login">
-      </p>
-    </form>
-  <% } %>
-</main>
+        <br />
+        <hr />
 
-<footer>
-  <%- include('../fragments/footer'); %>
-</footer>
+        <p id="token">
+          Token: <%- payload.c %>
+        </p>
 
-</body>
+      </div>
+    </main>
+
+    <footer>
+      <%- include('../fragments/footer'); %>
+    </footer>
+
+  </body>
 </html>
