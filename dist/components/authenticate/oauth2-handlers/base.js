@@ -106,18 +106,18 @@ class AbstractOAuth2AuthenticationHandler {
                 where: { type, token },
             });
             if (!oauth2Token) {
-                this.logger.error('[getToken] Not found OAuth2Token | type: %s | token: %s', type, token);
-                throw (0, utilities_1.getError)({ message: `[getToken] Not found any OAuth2Token with type: ${type} | token: ${token}` });
+                this.logger.error('[_getToken] Not found OAuth2Token | type: %s | token: %s', type, token);
+                throw (0, utilities_1.getError)({ message: `[_getToken] Not found any OAuth2Token with type: ${type} | token: ${token}` });
             }
             if (oauth2Token.status !== common_1.OAuth2TokenStatuses.ACTIVATED) {
-                this.logger.error('[getToken] Invalid OAuth2Token status | token: %j', oauth2Token);
-                throw (0, utilities_1.getError)({ message: `[getToken] Invalid OAuth2Token status: ${oauth2Token.status}` });
+                this.logger.error('[_getToken] Invalid OAuth2Token status | token: %j', oauth2Token);
+                throw (0, utilities_1.getError)({ message: `[_getToken] Invalid OAuth2Token status: ${oauth2Token.status}` });
             }
             const userRepository = this.injectionGetter('repositories.UserRepository');
             const user = yield userRepository.findOne({ where: { id: (0, utilities_1.int)(oauth2Token.userId) }, fields: ['id'] });
             if (!user) {
-                this.logger.error('[getToken] Not found User | type: %s | token: %s | oauth2Token: %j', type, token, oauth2Token);
-                throw (0, utilities_1.getError)({ message: `[getToken] Not found any User with type: ${type} | token: ${token}` });
+                this.logger.error('[_getToken] Not found User | type: %s | token: %s | oauth2Token: %j', type, token, oauth2Token);
+                throw (0, utilities_1.getError)({ message: `[_getToken] Not found any User with type: ${type} | token: ${token}` });
             }
             const oauth2ClientRepository = this.injectionGetter('repositories.OAuth2ClientRepository');
             const oauth2Client = yield oauth2ClientRepository.findOne({
@@ -125,8 +125,8 @@ class AbstractOAuth2AuthenticationHandler {
                 fields: ['id', 'identifier', 'name', 'description', 'userId'],
             });
             if (!oauth2Client) {
-                this.logger.error('[getToken] Not found OAuth2Client | type: %s | token: %s | oauth2Token: %j', type, token, oauth2Token);
-                throw (0, utilities_1.getError)({ message: `[getToken] Not found any OAuth2Client with type: ${type} | token: ${token}` });
+                this.logger.error('[_getToken] Not found OAuth2Client | type: %s | token: %s | oauth2Token: %j', type, token, oauth2Token);
+                throw (0, utilities_1.getError)({ message: `[_getToken] Not found any OAuth2Client with type: ${type} | token: ${token}` });
             }
             return {
                 token: oauth2Token,
@@ -140,7 +140,7 @@ class AbstractOAuth2AuthenticationHandler {
             const service = this.injectionGetter('services.JWTTokenService');
             const tokenPayload = service.verify({ type: common_1.Authentication.TYPE_BEARER, token: accessToken });
             const clientId = tokenPayload['clientId'];
-            if (!clientId) {
+            if (!clientId || clientId === 'NA') {
                 this.logger.error('[getAccessToken] Invalid clientId in tokenPayload | tokenPayload: %j', tokenPayload);
                 throw (0, utilities_1.getError)({ message: '[getAccessToken] Invalid clientId in token payload!' });
             }
@@ -150,7 +150,7 @@ class AbstractOAuth2AuthenticationHandler {
                 fields: ['id', 'identifier', 'name', 'description', 'userId'],
             });
             if (!oauth2Client) {
-                throw (0, utilities_1.getError)({ message: `[getToken] Not found any OAuth2Client with id: ${clientId}` });
+                throw (0, utilities_1.getError)({ message: `[getAccessToken] Not found any OAuth2Client with id: ${clientId}` });
             }
             return {
                 accessToken,

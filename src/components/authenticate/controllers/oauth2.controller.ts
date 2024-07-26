@@ -62,7 +62,8 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
     this.expressApp.set('view engine', 'ejs');
     this.expressApp.set('views', join(__dirname, '../', 'views'));
 
-    const authAction = `${applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_SERVER_BASE_PATH)}/oauth2/auth`;
+    const basePath = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_SERVER_BASE_PATH) ?? '';
+    const authAction = `${basePath}/oauth2/auth`;
     this.expressApp.get('/auth', (request, response) => {
       const { c, r } = request.query;
 

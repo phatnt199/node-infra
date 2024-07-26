@@ -46,8 +46,9 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
     decryptClientToken(opts) {
         const { token } = opts;
         const applicationSecret = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
-        const decrypted = (0, utilities_1.decrypt)(decodeURIComponent(token.toString()), applicationSecret);
+        const decrypted = (0, utilities_1.decrypt)(token, applicationSecret);
         const [clientId, clientSecret] = decrypted.split('_');
+        this.logger.debug('[decryptClientToken] Token: %s | ClientId: %s', clientId, token);
         if (!clientId || !clientSecret) {
             this.logger.error('[decryptClientToken] Failed to decrypt token: %s', token);
             throw (0, utilities_1.getError)({ message: 'Failed to decryptClientToken' });
@@ -60,15 +61,18 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
             this.oauth2ClientRepository
                 .findOne({ where: Object.assign({}, opts), fields: ['id', 'endpoints'] })
                 .then(client => {
-                var _a, _b;
+                var _a, _b, _c;
                 if (!client) {
                     throw (0, utilities_1.getError)({ message: `[getOAuth2RequestPath] Client not found!` });
                 }
                 if (!((_b = (_a = client === null || client === void 0 ? void 0 : client.endpoints) === null || _a === void 0 ? void 0 : _a.redirectUrls) === null || _b === void 0 ? void 0 : _b.includes(redirectUrl))) {
                     throw (0, utilities_1.getError)({ message: `[getOAuth2RequestPath] Invalid redirectUrl!` });
                 }
-                const basePath = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_SERVER_BASE_PATH);
+                const basePath = (_c = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_SERVER_BASE_PATH)) !== null && _c !== void 0 ? _c : '';
                 const applicationSecret = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
+                if (!applicationSecret) {
+                    throw (0, utilities_1.getError)({ message: `[getOAuth2RequestPath] Invalid applicationSecret!` });
+                }
                 const urlParam = new URLSearchParams();
                 const requestToken = (0, utilities_1.encrypt)([clientId, clientSecret].join('_'), applicationSecret);
                 urlParam.set('c', encodeURIComponent(requestToken));
@@ -137,13 +141,13 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
     }
     doClientCallback(opts) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
+            var _a;
             const { accessToken, authorizationCode, accessTokenExpiresAt, client, user } = opts.oauth2Token;
             if (!client) {
                 this.logger.error('[doClientCallback] Invalid client | Client: %j', client);
                 return;
             }
-            const callbackUrls = (_b = (_a = client === null || client === void 0 ? void 0 : client.endpoints) === null || _a === void 0 ? void 0 : _a.callbackUrls) !== null && _b !== void 0 ? _b : [];
+            const callbackUrls = (_a = client === null || client === void 0 ? void 0 : client.callbackUrls) !== null && _a !== void 0 ? _a : [];
             if (!callbackUrls.length) {
                 this.logger.error('[doClientCallback] No client callbackUrls');
                 return;
@@ -155,10 +159,20 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
                 user,
             };
             yield Promise.all(callbackUrls.map(callbackUrl => {
-                return fetch(callbackUrl, {
-                    method: 'POST',
-                    body: JSON.stringify(payload),
-                    headers: { ['content-type']: 'application/x-www-form-urlencoded' },
+                return new Promise((resolve, reject) => {
+                    fetch(callbackUrl, {
+                        method: 'POST',
+                        body: JSON.stringify(payload),
+                        headers: { ['content-type']: 'application/x-www-form-urlencoded' },
+                    })
+                        .then(rs => {
+                        this.logger.info('[doClientCallback] Successfull to callback | Url: %s', callbackUrl);
+                        resolve(rs);
+                    })
+                        .catch(error => {
+                        this.logger.error('[doClientCallback] Failed to callback | Url: %s | Error: %s', callbackUrl, error);
+                        reject(error);
+                    });
                 });
             }));
         });

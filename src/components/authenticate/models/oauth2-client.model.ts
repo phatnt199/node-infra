@@ -54,8 +54,8 @@ export class OAuth2Client extends BaseTzEntity {
     type: 'object',
     jsonSchema: {
       properties: {
-        rootUrls: { type: 'string' },
-        homeUrls: { type: 'string' },
+        rootUrl: { type: 'string' },
+        homeUrl: { type: 'string' },
         redirectUrls: { type: 'array', items: { type: 'string' } },
         callbackUrls: { type: 'array', items: { type: 'string' } },
         originUrls: { type: 'array', items: { type: 'string' } },

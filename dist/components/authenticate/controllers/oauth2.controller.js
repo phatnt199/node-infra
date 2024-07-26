@@ -43,9 +43,11 @@ class DefaultOAuth2ExpressServer extends rest_1.ExpressServer {
         return this.expressApp;
     }
     binding() {
+        var _a;
         this.expressApp.set('view engine', 'ejs');
         this.expressApp.set('views', (0, path_1.join)(__dirname, '../', 'views'));
-        const authAction = `${helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_SERVER_BASE_PATH)}/oauth2/auth`;
+        const basePath = (_a = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_SERVER_BASE_PATH)) !== null && _a !== void 0 ? _a : '';
+        const authAction = `${basePath}/oauth2/auth`;
         this.expressApp.get('/auth', (request, response) => {
             var _a;
             const { c, r } = request.query;
