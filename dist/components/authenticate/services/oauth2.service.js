@@ -142,7 +142,7 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
     doClientCallback(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
-            const { accessToken, authorizationCode, accessTokenExpiresAt, client, user } = opts.oauth2Token;
+            const { c, accessToken, authorizationCode, accessTokenExpiresAt, client, user } = opts.oauth2Token;
             if (!client) {
                 this.logger.error('[doClientCallback] Invalid client | Client: %j', client);
                 return;
@@ -153,6 +153,7 @@ let OAuth2Service = OAuth2Service_1 = class OAuth2Service extends base_1.BaseSer
                 return;
             }
             const payload = {
+                c,
                 accessToken,
                 authorizationCode,
                 accessTokenExpiresAt,

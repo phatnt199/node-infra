@@ -158,8 +158,8 @@ export class OAuth2Service extends BaseService {
   }
 
   // --------------------------------------------------------------------------------
-  async doClientCallback(opts: { oauth2Token: Token }) {
-    const { accessToken, authorizationCode, accessTokenExpiresAt, client, user } = opts.oauth2Token;
+  async doClientCallback(opts: { c: string; oauth2Token: Token }) {
+    const { c, accessToken, authorizationCode, accessTokenExpiresAt, client, user } = opts.oauth2Token;
 
     if (!client) {
       this.logger.error('[doClientCallback] Invalid client | Client: %j', client);
@@ -173,6 +173,7 @@ export class OAuth2Service extends BaseService {
     }
 
     const payload = {
+      c,
       accessToken,
       authorizationCode,
       accessTokenExpiresAt,

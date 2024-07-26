@@ -44,6 +44,7 @@ export declare class OAuth2Service extends BaseService {
         oauth2TokenRs: Token;
     }>;
     doClientCallback(opts: {
+        c: string;
         oauth2Token: Token;
     }): Promise<void>;
 }
