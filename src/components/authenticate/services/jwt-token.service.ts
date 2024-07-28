@@ -112,8 +112,7 @@ export class JWTTokenService extends BaseService {
       throw new HttpErrors.Unauthorized(`Error verifying token : ${error.message}`);
     }
 
-    const jwtTokenPayload = this.decryptPayload(decodedToken);
-    return jwtTokenPayload;
+    return this.decryptPayload(decodedToken);
   }
 
   // --------------------------------------------------------------------------------------

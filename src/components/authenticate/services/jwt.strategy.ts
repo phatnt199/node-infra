@@ -9,8 +9,8 @@ export class JWTAuthenticationStrategy implements AuthenticationStrategy {
 
   constructor(@inject('services.JWTTokenService') private service: JWTTokenService) {}
 
-  async authenticate(request: Request) {
+  authenticate(request: Request) {
     const token = this.service.extractCredentials(request);
-    return this.service.verify(token);
+    return Promise.resolve(this.service.verify(token));
   }
 }
