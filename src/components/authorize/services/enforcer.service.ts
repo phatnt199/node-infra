@@ -18,8 +18,7 @@ export class EnforcerService {
     @inject(AuthorizerKeys.AUTHORIZE_DATASOURCE) protected dataSource: BaseDataSource,
   ) {
     this.logger = LoggerFactory.getLogger([EnforcerService.name]);
-
-    console.log(this.options);
+    this.logger.info('[getEnforcer] Initialize enforcer with options: %j', this.options);
   }
 
   async getEnforcer(): Promise<Enforcer> {
@@ -27,7 +26,7 @@ export class EnforcerService {
       return this.enforcer;
     }
 
-    this.logger.debug('[getEnforcer] Enforcer Options: ', this.options);
+    this.logger.debug('[getEnforcer] Enforcer Options: %j', this.options);
     const { confPath, useCache } = this.options;
 
     if (!confPath || isEmpty(confPath)) {
