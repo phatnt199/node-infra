@@ -39,7 +39,7 @@ const utilities_1 = require("../../utilities");
 const flatten_1 = __importDefault(require("lodash/flatten"));
 const path_1 = __importDefault(require("path"));
 const interceptor_1 = require("./interceptor");
-const authorizeConfPath = path_1.default.resolve(__dirname, '../../../static/security/authorize_model.conf');
+const authorizeConfPath = path_1.default.resolve(__dirname, '../../static/security/authorize_model.conf');
 let AuthorizeComponent = AuthorizeComponent_1 = class AuthorizeComponent extends base_component_1.BaseComponent {
     constructor(application) {
         super({ scope: AuthorizeComponent_1.name });

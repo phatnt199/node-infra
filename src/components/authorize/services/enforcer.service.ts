@@ -18,6 +18,8 @@ export class EnforcerService {
     @inject(AuthorizerKeys.AUTHORIZE_DATASOURCE) protected dataSource: BaseDataSource,
   ) {
     this.logger = LoggerFactory.getLogger([EnforcerService.name]);
+
+    console.log(this.options);
   }
 
   async getEnforcer(): Promise<Enforcer> {

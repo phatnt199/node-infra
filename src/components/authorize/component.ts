@@ -20,7 +20,7 @@ import flatten from 'lodash/flatten';
 import path from 'path';
 import { AuthorizateInterceptor } from './interceptor';
 
-const authorizeConfPath = path.resolve(__dirname, '../../../static/security/authorize_model.conf');
+const authorizeConfPath = path.resolve(__dirname, '../../static/security/authorize_model.conf');
 
 export class AuthorizeComponent extends BaseComponent {
   bindings: Binding[] = [

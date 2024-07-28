@@ -39,6 +39,7 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
         this.options = options;
         this.dataSource = dataSource;
         this.logger = helpers_1.LoggerFactory.getLogger([EnforcerService_1.name]);
+        console.log(this.options);
     }
     getEnforcer() {
         return __awaiter(this, void 0, void 0, function* () {
