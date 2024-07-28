@@ -39,14 +39,14 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
         this.options = options;
         this.dataSource = dataSource;
         this.logger = helpers_1.LoggerFactory.getLogger([EnforcerService_1.name]);
-        console.log(this.options);
+        this.logger.info('[getEnforcer] Initialize enforcer with options: %j', this.options);
     }
     getEnforcer() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.enforcer) {
                 return this.enforcer;
             }
-            this.logger.debug('[getEnforcer] Enforcer Options: ', this.options);
+            this.logger.debug('[getEnforcer] Enforcer Options: %j', this.options);
             const { confPath, useCache } = this.options;
             if (!confPath || (0, isEmpty_1.default)(confPath)) {
                 this.logger.error('[getEnforcer] Invalid configure path | confPath: %s', confPath);
