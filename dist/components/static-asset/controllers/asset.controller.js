@@ -47,7 +47,7 @@ let StaticAssetController = StaticAssetController_1 = class StaticAssetControlle
         const minioInstance = this.application.getSync(common_1.ResourceAssetKeys.MINIO_INSTANCE);
         return minioInstance.getBuckets();
     }
-    uploadObject(request, bucketName) {
+    uploadObject(request, bucketName, folderPath) {
         const minioInstance = this.application.getSync(common_1.ResourceAssetKeys.MINIO_INSTANCE);
         return new Promise((resolve, reject) => {
             (0, multer_1.default)({ storage: this.temporaryStorage }).array('files')(request, this.response, error => {
@@ -55,8 +55,12 @@ let StaticAssetController = StaticAssetController_1 = class StaticAssetControlle
                     this.logger.error('[uploadObject] Fail to upload files! Error: %s', error);
                     reject(error);
                 }
-                const { files } = request;
-                minioInstance.upload({ bucket: bucketName, files: files }).then(rs => {
+                if (folderPath) {
+                    folderPath = folderPath.replace(/^\/|\/$/g, '');
+                }
+                const files = request.files;
+                const modifiedFiles = files.map(file => (Object.assign(Object.assign({}, file), { originalname: folderPath ? `${folderPath}/${file.originalname}` : file.originalname })));
+                minioInstance.upload({ bucket: bucketName, files: modifiedFiles }).then(rs => {
                     resolve(rs);
                 });
             });
@@ -201,8 +205,9 @@ __decorate([
         },
     })),
     __param(1, rest_1.param.path.string('bucket_name')),
+    __param(2, rest_1.param.query.string('folder_path')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", void 0)
 ], StaticAssetController.prototype, "uploadObject", null);
 __decorate([
