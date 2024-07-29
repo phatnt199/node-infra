@@ -1,6 +1,6 @@
 import { BaseController } from '@/base';
 import { Authentication, EnvironmentKeys, IdType } from '@/common';
-import { applicationEnvironment } from '@/helpers';
+import { applicationEnvironment, ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getSchemaObject } from '@/utilities';
 import { authenticate } from '@loopback/authentication';
 import { Context, Getter, inject } from '@loopback/core';
@@ -21,6 +21,7 @@ import { OAuth2Service } from '../services';
 import { IAuthenticateOAuth2RestOptions, OAuth2Request } from '../types';
 
 import { join } from 'path';
+import { isEmpty } from 'lodash';
 
 interface IOAuth2ControllerOptions {
   config?: ExpressServerConfig | undefined;
@@ -36,11 +37,15 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
   private authServiceKey: string;
   private injectionGetter: <T>(key: string) => T;
 
+  private logger: ApplicationLogger;
+
   constructor(opts: IOAuth2ControllerOptions) {
     super(opts.config, opts.parent);
 
     this.authServiceKey = opts.authServiceKey;
     this.injectionGetter = opts.injectionGetter;
+
+    this.logger = LoggerFactory.getLogger([DefaultOAuth2ExpressServer.name]);
 
     this.binding();
   }
@@ -60,10 +65,17 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
 
   binding() {
     this.expressApp.set('view engine', 'ejs');
-    this.expressApp.set('views', join(__dirname, '../', 'views'));
+
+    const oauth2ViewFolder =
+      applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_OAUTH2_VIEW_FOLDER) ?? join(__dirname, '../', 'views');
+    this.expressApp.set('views', oauth2ViewFolder);
+    this.logger.info('[binding] View folder: %s', oauth2ViewFolder);
 
     const basePath = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_SERVER_BASE_PATH) ?? '';
     const authAction = `${basePath}/oauth2/auth`;
+    this.logger.info('[binding] Auth action path: %s', authAction);
+
+    // -----------------------------------------------------------------------------------------------------------------
     this.expressApp.get('/auth', (request, response) => {
       const { c, r } = request.query;
 
@@ -88,8 +100,27 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
       });
     });
 
+    // -----------------------------------------------------------------------------------------------------------------
     this.expressApp.post('/auth', (request, response) => {
       const { username, password, token, redirectUrl } = request.body;
+
+      const requiredProps = [
+        { key: 'username', value: username },
+        { key: 'password', value: username },
+        { key: 'token', value: username },
+        { key: 'redirectUrl', value: username },
+      ];
+      for (const prop of requiredProps) {
+        if (prop?.value && !isEmpty(prop?.value)) {
+          continue;
+        }
+
+        this.logger.error('[oauth2][post] Missing prop: %s | key: %s | value: %s', prop.key, prop.key, prop.value);
+        response.render('pages/error', {
+          message: `Missing prop ${prop.key} | Please check again authentication form | Make sure username, password, token and redirectUrl parameters are all available in form!`,
+        });
+        return;
+      }
 
       const oauth2Service = this.injectionGetter<OAuth2Service>('services.OAuth2Service');
 
