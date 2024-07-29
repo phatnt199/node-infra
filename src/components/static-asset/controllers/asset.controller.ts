@@ -104,6 +104,7 @@ export class StaticAssetController implements IController {
     })
     request: Request,
     @param.path.string('bucket_name') bucketName: string,
+    @param.query.string('folder_path') folderPath?: string,
   ) {
     const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
     return new Promise((resolve, reject) => {
@@ -113,8 +114,18 @@ export class StaticAssetController implements IController {
           reject(error);
         }
 
-        const { files } = request;
-        minioInstance.upload({ bucket: bucketName, files: files as Array<IUploadFile> }).then(rs => {
+        if (folderPath) {
+          // Removes leading and trailing slashes
+          folderPath = folderPath.replace(/^\/|\/$/g, '');
+        }
+
+        const files: Express.Multer.File[] = (request as any).files;
+        const modifiedFiles: IUploadFile[] = files.map(file => ({
+          ...file,
+          originalname: folderPath ? `${folderPath}/${file.originalname}` : file.originalname,
+        }));
+
+        minioInstance.upload({ bucket: bucketName, files: modifiedFiles }).then(rs => {
           resolve(rs);
         });
       });

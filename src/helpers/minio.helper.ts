@@ -136,7 +136,7 @@ export class MinioHelper {
               resolve({
                 bucket,
                 fileName: normalizeName,
-                link: `/static-assets/${bucket}/${normalizeName}`,
+                link: `/static-assets/${bucket}/${normalizeName.replace(/\//g, '%2')}`,
               });
             })
             .catch(error => {
