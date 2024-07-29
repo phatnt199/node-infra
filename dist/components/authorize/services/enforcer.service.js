@@ -34,6 +34,7 @@ const core_1 = require("@loopback/core");
 const casbin_1 = require("casbin");
 const fs_1 = __importDefault(require("fs"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
+const casbin_postgres_adapter_helper_1 = require("../adapters/casbin-postgres-adapter.helper");
 let EnforcerService = EnforcerService_1 = class EnforcerService {
     constructor(options, dataSource) {
         this.options = options;
@@ -63,12 +64,12 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
                 });
             }
             this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', confPath, this.dataSource.name);
-            const lbAdapter = new helpers_1.CasbinLBAdapter(this.dataSource);
+            const adapter = new casbin_postgres_adapter_helper_1.CasbinPostgresAdapter(this.dataSource);
             if (useCache) {
-                this.enforcer = yield (0, casbin_1.newCachedEnforcer)(confPath, lbAdapter);
+                this.enforcer = yield (0, casbin_1.newCachedEnforcer)(confPath, adapter);
             }
             else {
-                this.enforcer = yield (0, casbin_1.newEnforcer)(confPath, lbAdapter);
+                this.enforcer = yield (0, casbin_1.newEnforcer)(confPath, adapter);
             }
             this.logger.debug('[getEnforcer] Created new enforcer | Configure path: %s', confPath);
             return this.enforcer;
