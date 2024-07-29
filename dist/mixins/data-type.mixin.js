@@ -62,6 +62,13 @@ const DataTypeMixin = (superClass) => {
         }),
         __metadata("design:type", String)
     ], Mixed.prototype, "dataType", void 0);
+    __decorate([
+        (0, repository_1.property)({
+            type: 'boolean',
+            postgresql: { columnName: 'bo_value' },
+        }),
+        __metadata("design:type", Boolean)
+    ], Mixed.prototype, "boValue", void 0);
     return Mixed;
 };
 exports.DataTypeMixin = DataTypeMixin;
