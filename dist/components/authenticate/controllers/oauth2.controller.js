@@ -25,11 +25,13 @@ const oauth2_server_1 = require("@node-oauth/oauth2-server");
 const services_1 = require("../services");
 const types_1 = require("../types");
 const path_1 = require("path");
+const lodash_1 = require("lodash");
 class DefaultOAuth2ExpressServer extends rest_1.ExpressServer {
     constructor(opts) {
         super(opts.config, opts.parent);
         this.authServiceKey = opts.authServiceKey;
         this.injectionGetter = opts.injectionGetter;
+        this.logger = helpers_1.LoggerFactory.getLogger([DefaultOAuth2ExpressServer.name]);
         this.binding();
     }
     static getInstance(opts) {
@@ -43,11 +45,14 @@ class DefaultOAuth2ExpressServer extends rest_1.ExpressServer {
         return this.expressApp;
     }
     binding() {
-        var _a;
+        var _a, _b;
         this.expressApp.set('view engine', 'ejs');
-        this.expressApp.set('views', (0, path_1.join)(__dirname, '../', 'views'));
-        const basePath = (_a = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_SERVER_BASE_PATH)) !== null && _a !== void 0 ? _a : '';
+        const oauth2ViewFolder = (_a = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_OAUTH2_VIEW_FOLDER)) !== null && _a !== void 0 ? _a : (0, path_1.join)(__dirname, '../', 'views');
+        this.expressApp.set('views', oauth2ViewFolder);
+        this.logger.info('[binding] View folder: %s', oauth2ViewFolder);
+        const basePath = (_b = helpers_1.applicationEnvironment.get(common_1.EnvironmentKeys.APP_ENV_SERVER_BASE_PATH)) !== null && _b !== void 0 ? _b : '';
         const authAction = `${basePath}/oauth2/auth`;
+        this.logger.info('[binding] Auth action path: %s', authAction);
         this.expressApp.get('/auth', (request, response) => {
             var _a;
             const { c, r } = request.query;
@@ -71,6 +76,22 @@ class DefaultOAuth2ExpressServer extends rest_1.ExpressServer {
         });
         this.expressApp.post('/auth', (request, response) => {
             const { username, password, token, redirectUrl } = request.body;
+            const requiredProps = [
+                { key: 'username', value: username },
+                { key: 'password', value: username },
+                { key: 'token', value: username },
+                { key: 'redirectUrl', value: username },
+            ];
+            for (const prop of requiredProps) {
+                if ((prop === null || prop === void 0 ? void 0 : prop.value) && !(0, lodash_1.isEmpty)(prop === null || prop === void 0 ? void 0 : prop.value)) {
+                    continue;
+                }
+                this.logger.error('[oauth2][post] Missing prop: %s | key: %s | value: %s', prop.key, prop.key, prop.value);
+                response.render('pages/error', {
+                    message: `Missing prop ${prop.key} | Please check again authentication form | Make sure username, password, token and redirectUrl parameters are all available in form!`,
+                });
+                return;
+            }
             const oauth2Service = this.injectionGetter('services.OAuth2Service');
             const decryptedClient = oauth2Service.decryptClientToken({ token });
             oauth2Service
