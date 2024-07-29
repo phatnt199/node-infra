@@ -1,11 +1,15 @@
 import { BaseDataSource } from '@/base';
 import { AuthorizerKeys, IdType } from '@/common';
-import { ApplicationLogger, CasbinLBAdapter, EnforcerFilterValue, LoggerFactory } from '@/helpers';
+import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import { BindingScope, inject, injectable } from '@loopback/core';
+
 import { Enforcer, newCachedEnforcer, newEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
+
+import { CasbinPostgresAdapter } from '../adapters/casbin-postgres-adapter.helper';
+import { EnforcerFilterValue } from '../types';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class EnforcerService {
@@ -21,7 +25,7 @@ export class EnforcerService {
     this.logger.info('[getEnforcer] Initialize enforcer with options: %j', this.options);
   }
 
-  async getEnforcer(): Promise<Enforcer> {
+  async getEnforcer() {
     if (this.enforcer) {
       return this.enforcer;
     }
@@ -51,12 +55,12 @@ export class EnforcerService {
       this.dataSource.name,
     );
 
-    const lbAdapter = new CasbinLBAdapter(this.dataSource);
+    const adapter = new CasbinPostgresAdapter(this.dataSource);
 
     if (useCache) {
-      this.enforcer = await newCachedEnforcer(confPath, lbAdapter);
+      this.enforcer = await newCachedEnforcer(confPath, adapter);
     } else {
-      this.enforcer = await newEnforcer(confPath, lbAdapter);
+      this.enforcer = await newEnforcer(confPath, adapter);
     }
 
     this.logger.debug('[getEnforcer] Created new enforcer | Configure path: %s', confPath);
@@ -64,7 +68,7 @@ export class EnforcerService {
   }
 
   // -----------------------------------------------------------------------------------------
-  async getTypeEnforcer(id: IdType): Promise<Enforcer | null> {
+  async getTypeEnforcer(id: IdType) {
     const enforcer = await this.getEnforcer();
     if (!enforcer) {
       return null;

@@ -1,25 +1,18 @@
-import { FilteredAdapter, Model, Helper } from 'casbin';
-import isEmpty from 'lodash/isEmpty';
+import { BaseDataSource } from '@/base/base.datasource';
+import { EnforcerDefinitions } from '@/common/constants';
+import { EnforcerFilterValue } from '@/components/authorize/types';
+import { getError } from '@/utilities';
+import { Helper, Model } from 'casbin';
+
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
-import { BaseDataSource } from '@/base/base.datasource';
-import { ApplicationLogger, LoggerFactory } from './logger.helper';
-import { getError } from '..';
-import { EnforcerDefinitions } from '@/common/constants';
-
-export interface EnforcerFilterValue {
-  principalType: string;
-  principalValue: string | number | object;
-}
+import isEmpty from 'lodash/isEmpty';
+import { AbstractCasbinAdapter } from './base.adapter';
 
 // -----------------------------------------------------------------------------------------
-export class CasbinLBAdapter implements FilteredAdapter {
-  private logger: ApplicationLogger;
-  private datasource: BaseDataSource;
-
+export class CasbinPostgresAdapter extends AbstractCasbinAdapter {
   constructor(datasource: BaseDataSource) {
-    this.logger = LoggerFactory.getLogger([CasbinLBAdapter.name]);
-    this.datasource = datasource;
+    super({ scope: CasbinPostgresAdapter.name, datasource });
   }
 
   // -----------------------------------------------------------------------------------------
