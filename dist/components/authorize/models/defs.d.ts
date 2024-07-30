@@ -1,3 +1,4 @@
+import { AnyObject } from '../../../common';
 export declare const defineUser: () => {
     new (data?: Partial<{
         realm?: string;
@@ -68,7 +69,7 @@ export declare const defineRole: () => {
     readonly modelName: string;
     definition: import("@loopback/repository").ModelDefinition;
 };
-export declare const definePermission: () => {
+export declare const definePermission: <T extends AnyObject = AnyObject>() => {
     new (data?: Partial<{
         code: string;
         name: string;
@@ -77,7 +78,7 @@ export declare const definePermission: () => {
         action: string;
         scope?: string;
         parentId: number;
-        details: any;
+        details: T;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;
@@ -93,7 +94,7 @@ export declare const definePermission: () => {
         action: string;
         scope?: string;
         parentId: number;
-        details: any;
+        details: T;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;

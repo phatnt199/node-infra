@@ -1,6 +1,7 @@
 import { BaseDataSource } from '../../../base';
 import { ApplicationLogger } from '../../../helpers';
 import { FilteredAdapter, Model } from 'casbin';
+import { TCasbinAdapter } from '../types';
 export declare abstract class AbstractCasbinAdapter implements FilteredAdapter {
     protected logger: ApplicationLogger;
     protected datasource: BaseDataSource;
@@ -15,4 +16,13 @@ export declare abstract class AbstractCasbinAdapter implements FilteredAdapter {
     abstract addPolicy(sec: string, ptype: string, rule: string[]): Promise<void>;
     abstract removePolicy(sec: string, ptype: string, rule: string[]): Promise<void>;
     abstract removeFilteredPolicy(sec: string, ptype: string, fieldIndex: number, ...fieldValues: string[]): Promise<void>;
+}
+export declare class CasbinAdapterBuilder {
+    private static instance;
+    private constructor();
+    static getInstance(): CasbinAdapterBuilder;
+    build(opts: {
+        type: TCasbinAdapter;
+        dataSource: BaseDataSource;
+    }): FilteredAdapter;
 }

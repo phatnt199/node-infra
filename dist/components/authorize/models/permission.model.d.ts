@@ -7,7 +7,7 @@ declare const BasePermission: {
         action: string;
         scope?: string;
         parentId: number;
-        details: any;
+        details: import("../../..").AnyObject;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;
@@ -15,7 +15,7 @@ declare const BasePermission: {
         toJSON: () => Object;
         toObject: (options?: import("@loopback/repository").Options) => Object;
         id: number;
-    }>): {
+    }> | undefined): {
         code: string;
         name: string;
         subject: string;
@@ -23,7 +23,7 @@ declare const BasePermission: {
         action: string;
         scope?: string;
         parentId: number;
-        details: any;
+        details: import("../../..").AnyObject;
         createdAt: Date;
         modifiedAt: Date;
         getId: () => any;

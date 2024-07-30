@@ -34,7 +34,8 @@ const core_1 = require("@loopback/core");
 const casbin_1 = require("casbin");
 const fs_1 = __importDefault(require("fs"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
-const casbin_postgres_adapter_helper_1 = require("../adapters/casbin-postgres-adapter.helper");
+const types_1 = require("../types");
+const base_adapter_1 = require("../adapters/base.adapter");
 let EnforcerService = EnforcerService_1 = class EnforcerService {
     constructor(options, dataSource) {
         this.options = options;
@@ -43,37 +44,32 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
         this.logger.info('[getEnforcer] Initialize enforcer with options: %j', this.options);
     }
     getEnforcer() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.enforcer) {
-                return this.enforcer;
-            }
-            this.logger.debug('[getEnforcer] Enforcer Options: %j', this.options);
-            const { confPath, useCache } = this.options;
-            if (!confPath || (0, isEmpty_1.default)(confPath)) {
-                this.logger.error('[getEnforcer] Invalid configure path | confPath: %s', confPath);
-                throw (0, utilities_1.getError)({
-                    statusCode: 500,
-                    message: `[getEnforcer] Invalid enforcer configuration path | confPath: ${confPath}`,
-                });
-            }
-            if (!fs_1.default.existsSync(confPath)) {
-                this.logger.error('[getEnforcer] Please check again configure path | confPath: %s', confPath);
-                throw (0, utilities_1.getError)({
-                    statusCode: 500,
-                    message: `[getEnforcer] Enforcer configuration path is not existed | confPath: ${confPath}`,
-                });
-            }
-            this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', confPath, this.dataSource.name);
-            const adapter = new casbin_postgres_adapter_helper_1.CasbinPostgresAdapter(this.dataSource);
-            if (useCache) {
-                this.enforcer = yield (0, casbin_1.newCachedEnforcer)(confPath, adapter);
-            }
-            else {
-                this.enforcer = yield (0, casbin_1.newEnforcer)(confPath, adapter);
-            }
-            this.logger.debug('[getEnforcer] Created new enforcer | Configure path: %s', confPath);
-            return this.enforcer;
-        });
+        if (this.enforcer) {
+            return Promise.resolve(this.enforcer);
+        }
+        this.logger.debug('[getEnforcer] Enforcer Options: %j', this.options);
+        const { confPath, adapterType = types_1.CasbinAdapterTypes.POSTGRES, adapter, useCache } = this.options;
+        if (!confPath || (0, isEmpty_1.default)(confPath)) {
+            this.logger.error('[getEnforcer] Invalid configure path | confPath: %s', confPath);
+            throw (0, utilities_1.getError)({
+                statusCode: 500,
+                message: `[getEnforcer] Invalid enforcer configuration path | confPath: ${confPath}`,
+            });
+        }
+        if (!fs_1.default.existsSync(confPath)) {
+            this.logger.error('[getEnforcer] Please check again configure path | confPath: %s', confPath);
+            throw (0, utilities_1.getError)({
+                statusCode: 500,
+                message: `[getEnforcer] Enforcer configuration path is not existed | confPath: ${confPath}`,
+            });
+        }
+        this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', confPath, this.dataSource.name);
+        const casbinAdapter = adapter !== null && adapter !== void 0 ? adapter : base_adapter_1.CasbinAdapterBuilder.getInstance().build({ type: adapterType, dataSource: this.dataSource });
+        if (useCache) {
+            return (0, casbin_1.newCachedEnforcer)(confPath, casbinAdapter);
+        }
+        this.logger.debug('[getEnforcer] Created new enforcer | Configure path: %s', confPath);
+        return (0, casbin_1.newEnforcer)(confPath, casbinAdapter);
     }
     getTypeEnforcer(id) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -1,5 +1,5 @@
 import { BaseTzEntity } from '@/base/base.model';
-import { RoleStatuses, UserStatuses, UserTypes } from '@/common';
+import { AnyObject, RoleStatuses, UserStatuses, UserTypes } from '@/common';
 import { PrincipalMixin } from '@/mixins';
 import { property } from '@loopback/repository';
 
@@ -105,7 +105,7 @@ export const defineRole = () => {
 };
 
 // -----------------------------------------------------------------------
-export const definePermission = () => {
+export const definePermission = <T extends AnyObject = AnyObject>() => {
   class Permission extends BaseTzEntity {
     @property({
       type: 'string',
@@ -151,7 +151,7 @@ export const definePermission = () => {
         dataType: 'jsonb',
       },
     })
-    details: any;
+    details: T;
 
     constructor(data?: Partial<Permission>) {
       super(data);
