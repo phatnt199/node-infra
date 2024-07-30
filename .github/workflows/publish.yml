@@ -28,13 +28,7 @@ jobs:
       - name: Install dependencies and build 🔧
         run: |
           yarn install
-          yarn rebuild:patch
-
-      - name: Commit Dist Artifact
-        run: |
-          git add dist package.json
-          git commit --allow-empty-message -m ''
-          git push
+          yarn rebuild
 
       - name: Publish package on NPM 📦
         run: npm publish
