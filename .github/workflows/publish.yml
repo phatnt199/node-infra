@@ -33,7 +33,7 @@ jobs:
       - name: Commit Dist Artifact
         run: |
           git add *
-          git commit -am.
+          git commit --allow-empty-message -m ''
           git push origin main
 
       - name: Publish package on NPM 📦
