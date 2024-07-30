@@ -9,7 +9,7 @@ import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 
 import { CasbinAdapterTypes, EnforcerFilterValue, IAuthorizeConfigureOptions } from '../types';
-import { CasbinAdapterBuilder } from '../adapters/base.adapter';
+import { CasbinAdapterBuilder } from '../adapters';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class EnforcerService {
