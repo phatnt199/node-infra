@@ -24,8 +24,8 @@ jobs:
 
       - name: Install dependencies and build 🔧
         run: |
-          npm install
-          npm run rebuild
+          yarn install
+          yarn rebuild
 
       - name: Publish package on NPM 📦
         run: echo "TEST NPM PUBLISH"
