@@ -1,4 +1,5 @@
 import { IdType } from '../../../common';
+import { ApplicationLogger } from '../../../helpers';
 import { Context, Getter } from '@loopback/core';
 import { ExpressServer, ExpressServerConfig, RequestContext } from '@loopback/rest';
 import { OAuth2Service } from '../services';
@@ -13,6 +14,7 @@ export declare class DefaultOAuth2ExpressServer extends ExpressServer {
     private static instance;
     private authServiceKey;
     private injectionGetter;
+    private logger;
     constructor(opts: IOAuth2ControllerOptions);
     static getInstance(opts: IOAuth2ControllerOptions): DefaultOAuth2ExpressServer;
     getApplicationHandler(): import("express").Application;
@@ -35,7 +37,7 @@ export declare const defineOAuth2Controller: (opts?: IAuthenticateOAuth2RestOpti
         getOAuth2RequestPath(payload: OAuth2Request): Promise<{
             requestPath: string;
         }>;
-        logger: import("../../../helpers").ApplicationLogger;
+        logger: ApplicationLogger;
         defaultLimit: number;
     };
 };
