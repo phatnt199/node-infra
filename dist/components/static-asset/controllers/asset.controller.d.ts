@@ -12,7 +12,7 @@ export declare class StaticAssetController implements IController {
     removeBucket(bucketName: string): Promise<boolean>;
     getBucket(bucketName: string): Promise<import("minio").BucketItemFromList | null | undefined>;
     getBuckets(): Promise<import("minio").BucketItemFromList[]>;
-    uploadObject(request: Request, bucketName: string): Promise<unknown>;
+    uploadObject(request: Request, bucketName: string, folderPath?: string): Promise<unknown>;
     downloadObject(bucketName: string, objectName: string): Promise<unknown>;
     getStaticObject(bucketName: string, objectName: string): Promise<unknown>;
 }

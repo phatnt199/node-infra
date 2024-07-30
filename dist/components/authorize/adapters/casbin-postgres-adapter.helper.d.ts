@@ -1,12 +1,8 @@
-import { FilteredAdapter, Model } from 'casbin';
-import { BaseDataSource } from '../base/base.datasource';
-export interface EnforcerFilterValue {
-    principalType: string;
-    principalValue: string | number | object;
-}
-export declare class CasbinLBAdapter implements FilteredAdapter {
-    private logger;
-    private datasource;
+import { BaseDataSource } from '../../../base/base.datasource';
+import { EnforcerFilterValue } from '../../../components/authorize/types';
+import { Model } from 'casbin';
+import { AbstractCasbinAdapter } from './base.adapter';
+export declare class CasbinPostgresAdapter extends AbstractCasbinAdapter {
     constructor(datasource: BaseDataSource);
     generateGroupLine(rule: {
         userId: number;

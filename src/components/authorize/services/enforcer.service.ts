@@ -8,8 +8,8 @@ import { Enforcer, newCachedEnforcer, newEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 
-import { CasbinPostgresAdapter } from '../adapters/casbin-postgres-adapter.helper';
-import { EnforcerFilterValue } from '../types';
+import { CasbinAdapterTypes, EnforcerFilterValue, IAuthorizeConfigureOptions } from '../types';
+import { CasbinAdapterBuilder } from '../adapters/base.adapter';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class EnforcerService {
@@ -18,20 +18,20 @@ export class EnforcerService {
   private enforcer: Enforcer;
 
   constructor(
-    @inject(AuthorizerKeys.CONFIGURE_OPTIONS) protected options: { confPath: string; useCache?: boolean },
+    @inject(AuthorizerKeys.CONFIGURE_OPTIONS) protected options: IAuthorizeConfigureOptions,
     @inject(AuthorizerKeys.AUTHORIZE_DATASOURCE) protected dataSource: BaseDataSource,
   ) {
     this.logger = LoggerFactory.getLogger([EnforcerService.name]);
     this.logger.info('[getEnforcer] Initialize enforcer with options: %j', this.options);
   }
 
-  async getEnforcer() {
+  getEnforcer(): Promise<Enforcer> {
     if (this.enforcer) {
-      return this.enforcer;
+      return Promise.resolve(this.enforcer);
     }
 
     this.logger.debug('[getEnforcer] Enforcer Options: %j', this.options);
-    const { confPath, useCache } = this.options;
+    const { confPath, adapterType = CasbinAdapterTypes.POSTGRES, adapter, useCache } = this.options;
 
     if (!confPath || isEmpty(confPath)) {
       this.logger.error('[getEnforcer] Invalid configure path | confPath: %s', confPath);
@@ -55,16 +55,15 @@ export class EnforcerService {
       this.dataSource.name,
     );
 
-    const adapter = new CasbinPostgresAdapter(this.dataSource);
+    const casbinAdapter =
+      adapter ?? CasbinAdapterBuilder.getInstance().build({ type: adapterType, dataSource: this.dataSource });
 
     if (useCache) {
-      this.enforcer = await newCachedEnforcer(confPath, adapter);
-    } else {
-      this.enforcer = await newEnforcer(confPath, adapter);
+      return newCachedEnforcer(confPath, casbinAdapter);
     }
 
     this.logger.debug('[getEnforcer] Created new enforcer | Configure path: %s', confPath);
-    return this.enforcer;
+    return newEnforcer(confPath, casbinAdapter);
   }
 
   // -----------------------------------------------------------------------------------------

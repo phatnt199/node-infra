@@ -19,6 +19,7 @@ import { getError } from '@/utilities';
 import flatten from 'lodash/flatten';
 import path from 'path';
 import { AuthorizateInterceptor } from './interceptor';
+import { IAuthorizeConfigureOptions } from './types';
 
 const authorizeConfPath = path.resolve(__dirname, '../../static/security/authorize_model.conf');
 
@@ -40,7 +41,10 @@ export class AuthorizeComponent extends BaseComponent {
     // Binding.bind(AuthorizerKeys.AUTHORIZE_DATASOURCE).to(null),
 
     // Configure path
-    Binding.bind(AuthorizerKeys.CONFIGURE_OPTIONS).to({ confPath: authorizeConfPath, useCache: false }),
+    Binding.bind<IAuthorizeConfigureOptions>(AuthorizerKeys.CONFIGURE_OPTIONS).to({
+      confPath: authorizeConfPath,
+      useCache: false,
+    }),
     Binding.bind(AuthorizerKeys.NORMALIZE_PAYLOAD_FN).to(null),
   ];
 
