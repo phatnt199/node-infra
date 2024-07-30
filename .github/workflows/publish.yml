@@ -22,6 +22,7 @@ jobs:
 
       - name: Install dependencies and build 🔧
         run: |
+          git config user.name "lb-infra gh-action"
           yarn install
           yarn rebuild:patch
           git push origin main
