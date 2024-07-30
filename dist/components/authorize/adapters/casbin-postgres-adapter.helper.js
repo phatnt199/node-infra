@@ -12,18 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CasbinLBAdapter = void 0;
+exports.CasbinPostgresAdapter = void 0;
+const constants_1 = require("../../../common/constants");
+const utilities_1 = require("../../../utilities");
 const casbin_1 = require("casbin");
-const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const flatten_1 = __importDefault(require("lodash/flatten"));
 const get_1 = __importDefault(require("lodash/get"));
-const logger_helper_1 = require("./logger.helper");
-const __1 = require("..");
-const constants_1 = require("../common/constants");
-class CasbinLBAdapter {
+const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
+const base_adapter_1 = require("./base.adapter");
+class CasbinPostgresAdapter extends base_adapter_1.AbstractCasbinAdapter {
     constructor(datasource) {
-        this.logger = logger_helper_1.LoggerFactory.getLogger([CasbinLBAdapter.name]);
-        this.datasource = datasource;
+        super({ scope: CasbinPostgresAdapter.name, datasource });
     }
     generateGroupLine(rule) {
         const { userId, roleId } = rule;
@@ -38,7 +37,7 @@ class CasbinLBAdapter {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
             if (((_a = filter === null || filter === void 0 ? void 0 : filter.principalType) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === 'role') {
-                throw (0, __1.getError)({
+                throw (0, utilities_1.getError)({
                     statusCode: 500,
                     message: '[loadFilteredPolicy] Only "User" is allowed for filter principal type!',
                 });
@@ -127,5 +126,5 @@ class CasbinLBAdapter {
         });
     }
 }
-exports.CasbinLBAdapter = CasbinLBAdapter;
-//# sourceMappingURL=casbin-lb-adapter.helper.js.map
+exports.CasbinPostgresAdapter = CasbinPostgresAdapter;
+//# sourceMappingURL=casbin-postgres-adapter.helper.js.map

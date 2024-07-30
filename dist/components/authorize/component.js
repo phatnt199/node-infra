@@ -53,7 +53,10 @@ let AuthorizeComponent = AuthorizeComponent_1 = class AuthorizeComponent extends
             core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_REPOSITORY).toClass(repositories_1.PermissionRepository),
             core_1.Binding.bind(common_1.AuthorizerKeys.PERMISSION_MAPPING_REPOSITORY).toClass(repositories_1.PermissionMappingRepository),
             core_1.Binding.bind(common_1.AuthorizerKeys.USER_ROLE_REPOSITORY).toClass(repositories_1.UserRoleRepository),
-            core_1.Binding.bind(common_1.AuthorizerKeys.CONFIGURE_OPTIONS).to({ confPath: authorizeConfPath, useCache: false }),
+            core_1.Binding.bind(common_1.AuthorizerKeys.CONFIGURE_OPTIONS).to({
+                confPath: authorizeConfPath,
+                useCache: false,
+            }),
             core_1.Binding.bind(common_1.AuthorizerKeys.NORMALIZE_PAYLOAD_FN).to(null),
         ];
         this.binding();
