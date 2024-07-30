@@ -29,6 +29,11 @@ jobs:
         run: |
           yarn install
           yarn rebuild:patch
+
+      - name: Commit Dist Artifact
+        run: |
+          git add *
+          git commit -am.
           git push origin main
 
       - name: Publish package on NPM 📦
