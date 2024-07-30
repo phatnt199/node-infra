@@ -27,7 +27,7 @@ export class CasbinPostgresAdapter extends AbstractCasbinAdapter {
   }
 
   // -----------------------------------------------------------------------------------------
-  async loadFilteredPolicy(model: Model, filter: EnforcerFilterValue): Promise<void> {
+  async loadFilteredPolicy(model: Model, filter: EnforcerFilterValue) {
     if (filter?.principalType?.toLowerCase() === 'role') {
       throw getError({
         statusCode: 500,
@@ -80,55 +80,5 @@ export class CasbinPostgresAdapter extends AbstractCasbinAdapter {
       Helper.loadPolicyLine(groupLine, model);
       this.logger.debug('[loadFilteredPolicy] Load groupLine: %s', groupLine);
     }
-  }
-
-  // -----------------------------------------------------------------------------------------
-  isFiltered(): boolean {
-    return true;
-  }
-
-  // -----------------------------------------------------------------------------------------
-  async loadPolicy(_: Model): Promise<void> {
-    return;
-  }
-
-  // -----------------------------------------------------------------------------------------
-  async savePolicy(model: Model): Promise<boolean> {
-    this.logger.info('[savePolicy] Ignore save policy method with options: ', { model });
-    return true;
-  }
-
-  // -----------------------------------------------------------------------------------------
-  async addPolicy(sec: string, ptype: string, rule: string[]): Promise<void> {
-    this.logger.info('[addPolicy] Ignore add policy method with options: ', { sec, ptype, rule });
-  }
-
-  // -----------------------------------------------------------------------------------------
-  async removePolicy(sec: string, ptype: string, rule: string[]): Promise<void> {
-    this.logger.info('[removePolicy] Ignore remove policy method with options: ', { sec, ptype, rule });
-  }
-
-  // -----------------------------------------------------------------------------------------
-  async removeFilteredPolicy(sec: string, ptype: string, fieldIndex: number, ...fieldValues: string[]): Promise<void> {
-    switch (ptype) {
-      case EnforcerDefinitions.PREFIX_USER: {
-        // Remove user policy
-        break;
-      }
-      case EnforcerDefinitions.PREFIX_ROLE: {
-        // Remove role policy
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-
-    this.logger.info('[removeFilteredPolicy] Ignore remove filtered policy method with options: ', {
-      sec,
-      ptype,
-      fieldIndex,
-      fieldValues,
-    });
   }
 }
