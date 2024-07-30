@@ -32,7 +32,7 @@ jobs:
 
       - name: Commit Dist Artifact
         run: |
-          git add *
+          git add dist package.json
           git commit --allow-empty-message -m ''
           git push origin main
 
