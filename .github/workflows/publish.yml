@@ -34,7 +34,7 @@ jobs:
         run: |
           git add dist package.json
           git commit --allow-empty-message -m ''
-          git push origin main
+          git push
 
       - name: Publish package on NPM 📦
         run: npm publish
