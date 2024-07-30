@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CasbinAdapterBuilder = exports.AbstractCasbinAdapter = void 0;
 const helpers_1 = require("../../../helpers");
-const types_1 = require("../types");
 const utilities_1 = require("../../../utilities");
+const types_1 = require("../types");
 const casbin_postgres_adapter_helper_1 = require("./casbin-postgres-adapter.helper");
 const casbin_redis_adapter_helper_1 = require("./casbin-redis-adapter.helper");
 class AbstractCasbinAdapter {

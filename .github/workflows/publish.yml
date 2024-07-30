@@ -20,9 +20,13 @@ jobs:
           node-version: '18.18.2'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install dependencies and build 🔧
+      - name: Setup Git
         run: |
           git config user.name "lb-infra gh-action"
+          git config user.email "lb-infra@gh-action.none"
+
+      - name: Install dependencies and build 🔧
+        run: |
           yarn install
           yarn rebuild:patch
           git push origin main
