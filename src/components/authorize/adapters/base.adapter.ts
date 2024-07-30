@@ -1,8 +1,8 @@
 import { BaseDataSource } from '@/base';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
+import { getError } from '@/utilities';
 import { FilteredAdapter, Model } from 'casbin';
 import { CasbinAdapterTypes, TCasbinAdapter } from '../types';
-import { getError } from '@/utilities';
 import { CasbinPostgresAdapter } from './casbin-postgres-adapter.helper';
 import { CasbinRedisAdapter } from './casbin-redis-adapter.helper';
 

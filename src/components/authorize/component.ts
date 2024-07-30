@@ -3,7 +3,6 @@ import { BaseComponent } from '@/base/base.component';
 import { AuthorizerKeys } from '@/common';
 import { AuthorizationBindings, AuthorizationDecision, AuthorizationTags } from '@loopback/authorization';
 import { Binding, CoreBindings, inject } from '@loopback/core';
-import { EnforcerService } from './services';
 import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from './models';
 import { AuthorizeProvider } from './provider';
 import {
@@ -13,6 +12,7 @@ import {
   UserRoleRepository,
   ViewAuthorizePolicyRepository,
 } from './repositories';
+import { EnforcerService } from './services';
 
 import { BaseDataSource } from '@/base/base.datasource';
 import { getError } from '@/utilities';

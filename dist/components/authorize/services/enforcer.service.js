@@ -34,8 +34,8 @@ const core_1 = require("@loopback/core");
 const casbin_1 = require("casbin");
 const fs_1 = __importDefault(require("fs"));
 const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
+const base_adapter_1 = require("../adapters/base.adapter");
 const types_1 = require("../types");
-const adapters_1 = require("../adapters");
 let EnforcerService = EnforcerService_1 = class EnforcerService {
     constructor(options, dataSource) {
         this.options = options;
@@ -64,7 +64,7 @@ let EnforcerService = EnforcerService_1 = class EnforcerService {
             });
         }
         this.logger.info('[getEnforcer] Creating new Enforcer with configure path: %s | dataSource: %s', confPath, this.dataSource.name);
-        const casbinAdapter = adapter !== null && adapter !== void 0 ? adapter : adapters_1.CasbinAdapterBuilder.getInstance().build({ type: adapterType, dataSource: this.dataSource });
+        const casbinAdapter = adapter !== null && adapter !== void 0 ? adapter : base_adapter_1.CasbinAdapterBuilder.getInstance().build({ type: adapterType, dataSource: this.dataSource });
         if (useCache) {
             return (0, casbin_1.newCachedEnforcer)(confPath, casbinAdapter);
         }
