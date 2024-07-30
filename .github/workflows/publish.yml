@@ -1,0 +1,33 @@
+name: NPM Release
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.18.2'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies and build 🔧
+        run: |
+          git config user.name "lb-infra gh-action"
+          yarn install
+          yarn rebuild:patch
+          git push origin main
+
+      - name: Publish package on NPM 📦
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
