@@ -10,7 +10,7 @@ on:
       - phatnt
 
 jobs:
-  build:
+  build-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,7 +23,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies and build 🔧
-        run: npm run rebuild:patch
+        run: |
+          npm install
+          npm run rebuild
 
       - name: Publish package on NPM 📦
         run: echo "TEST NPM PUBLISH"
