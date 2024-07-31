@@ -37,8 +37,9 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
   relationName: string;
   defaultLimit?: number;
   endPoint?: string;
+  schema?: SchemaObject;
 }): ControllerClass => {
-  const { baseClass, relationType, relationName, defaultLimit = App.DEFAULT_QUERY_LIMIT, endPoint = '' } = opts;
+  const { baseClass, relationType, relationName, defaultLimit = App.DEFAULT_QUERY_LIMIT, endPoint = '', schema } = opts;
 
   const restPath = `/{id}/${endPoint ? endPoint : relationName}`;
   const BaseClass = baseClass ?? BaseController;
@@ -81,7 +82,11 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
       responses: {
         '200': {
           description: `Array of target model in relation ${relationName}`,
-          content: { 'application/json': {} },
+          content: {
+            'application/json': {
+              schema,
+            },
+          },
         },
       },
     })
@@ -106,6 +111,58 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
         }
       }
     }
+
+    // -----------------------------------------------------------------------------------------------
+    @get(`${restPath}/count`, {
+      responses: {
+        '200': {
+          content: {
+            'application/json': {
+              schema: CountSchema,
+            },
+          },
+        },
+      },
+    })
+    async count(@param.path.number('id') id: IdType, @param.query.object('where') where?: Where<T>) {
+      const ref = getProp(this.sourceRepository, relationName)(id);
+
+      try {
+        switch (relationType) {
+          case EntityRelations.BELONGS_TO: {
+            return ref;
+          }
+          case EntityRelations.HAS_ONE: {
+            return ref
+              .get({ where })
+              .then(() => Promise.resolve({ count: 1 }))
+              .catch(() => Promise.resolve({ count: 0 }));
+          }
+          case EntityRelations.HAS_MANY: {
+            const targetConstraint = ref.constraint;
+            const targetRepository = await ref.getTargetRepository();
+            return targetRepository.count({ ...where, ...targetConstraint });
+          }
+          case EntityRelations.HAS_MANY_THROUGH: {
+            const throughConstraint = await ref.getThroughConstraintFromSource();
+            const throughRepository = await ref.getThroughRepository();
+            const thoughInstances = await throughRepository.find({ where: { ...throughConstraint } });
+
+            const targetConstraint = await ref.getTargetConstraintFromThroughModels(thoughInstances);
+            const targetModelName = await ref.targetResolver().name;
+            const targetRepositoryGetter = getProp(ref.getTargetRepository, targetModelName);
+            const targetRepository = await targetRepositoryGetter();
+
+            return targetRepository.count({ ...where, ...targetConstraint });
+          }
+          default: {
+            return Promise.resolve({ count: 0 });
+          }
+        }
+      } catch (e) {
+        return Promise.resolve({ count: 0 });
+      }
+    }
   }
 
   return ViewController;
@@ -121,8 +178,9 @@ export const defineAssociateController = <
   relationName: string;
   defaultLimit?: number;
   endPoint?: string;
+  schema?: SchemaObject;
 }): ControllerClass => {
-  const { baseClass, relationName, defaultLimit = App.DEFAULT_QUERY_LIMIT, endPoint = '' } = opts;
+  const { baseClass, relationName, defaultLimit = App.DEFAULT_QUERY_LIMIT, endPoint = '', schema } = opts;
   const restPath = `/{id}/${endPoint ? endPoint : relationName}`;
 
   const BaseClass = baseClass ?? BaseController;
@@ -162,7 +220,11 @@ export const defineAssociateController = <
       responses: {
         '200': {
           description: `Create association between source and target for ${relationName} relation`,
-          content: { 'application/json': {} },
+          content: {
+            'application/json': {
+              schema,
+            },
+          },
         },
       },
     })
@@ -219,6 +281,7 @@ export const defineRelationCrudController = <
     options = { controlTarget: false, defaultLimit: App.DEFAULT_QUERY_LIMIT, endPoint: '' },
   } = controllerOptions;
   const { relationName, relationType } = association;
+  const { target } = schema;
 
   if (!EntityRelations.isValid(relationType)) {
     throw getError({
@@ -236,13 +299,15 @@ export const defineRelationCrudController = <
     relationType,
     relationName,
     defaultLimit,
-    endPoint
+    endPoint,
+    schema: target,
   });
   const AssociationController = defineAssociateController<S, T, R>({
     baseClass: ViewController,
     relationName,
     defaultLimit,
-    endPoint
+    endPoint,
+    schema: target,
   });
 
   // -----------------------------------------------------------------------------------------------
@@ -278,7 +343,11 @@ export const defineRelationCrudController = <
       responses: {
         '200': {
           description: `Create target model for ${relationName} relation`,
-          content: { 'application/json': {} },
+          content: {
+            'application/json': {
+              schema,
+            },
+          },
         },
       },
     })
