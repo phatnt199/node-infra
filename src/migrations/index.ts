@@ -3,12 +3,33 @@ import { MigrationStatuses } from '@/common';
 import { Migration, MigrationProcess, MigrationRepository } from '@/components/migration';
 import { applicationLogger as logger } from '@/helpers';
 
+export const cleanUpMigration = async (application: BaseApplication, migrationProcesses: Array<MigrationProcess>) => {
+  logger.info('START | Clean up migrate database');
+
+  for (const migrationProcess of migrationProcesses) {
+    const { name, cleanFn } = migrationProcess;
+    if (!cleanFn) {
+      continue;
+    }
+
+    try {
+      logger.info('[%s] DONE | Clean up migrate process', name);
+      await cleanFn(application);
+      logger.info('[%s] DONE | Clean up migrate process', name);
+    } catch (error) {
+      logger.error('[%s] FAILED | Clean up migrate process | Error: %s', name, error);
+    }
+  }
+
+  logger.info('DONE | Clean up migrate database');
+};
+
 export const migration = async (application: BaseApplication, migrationProcesses: Array<MigrationProcess>) => {
   logger.info('START | Migrate database');
   const migrationRepository = application.getSync<MigrationRepository>('repositories.MigrationRepository');
 
-  for (const mirgation of migrationProcesses) {
-    const { name, fn, options } = mirgation;
+  for (const migrationProcess of migrationProcesses) {
+    const { name, fn, options } = migrationProcess;
     if (!name || !fn) {
       continue;
     }
