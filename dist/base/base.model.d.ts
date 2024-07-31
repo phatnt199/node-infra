@@ -44,7 +44,6 @@ declare const BaseDataTypeTzEntity_base: {
         jValue?: any;
         bValue?: Array<number>;
         dataType?: string;
-        boValue?: boolean;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;

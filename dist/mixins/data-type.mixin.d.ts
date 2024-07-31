@@ -7,7 +7,6 @@ export declare const DataTypeMixin: <E extends MixinTarget<Entity>>(superClass: 
         jValue?: any;
         bValue?: Array<number>;
         dataType?: string;
-        boValue?: boolean;
         getId: () => any;
         getIdObject: () => Object;
         toJSON: () => Object;
