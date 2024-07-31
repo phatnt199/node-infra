@@ -45,6 +45,12 @@ export const DataTypeMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
       },
     })
     dataType?: string;
+
+    @property({
+      type: 'boolean',
+      postgresql: { columnName: 'bo_value' },
+    })
+    boValue?: boolean;
   }
 
   return Mixed;
