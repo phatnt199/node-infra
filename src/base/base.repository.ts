@@ -9,6 +9,8 @@ import {
   DataObject,
   DefaultCrudRepository,
   DefaultKeyValueRepository,
+  Getter,
+  Inclusion,
   InclusionFilter,
   IsolationLevel,
   juggler,
@@ -29,6 +31,7 @@ import {
   BaseUserAuditTzEntity,
 } from './base.model';
 
+import { BindingScope, injectable } from '@loopback/core';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import set from 'lodash/set';
@@ -675,6 +678,157 @@ export abstract class SearchableTzCrudRepository<
     });
   }
 
+  replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.mixSearchFields(data, options)
+        .then(enriched => {
+          resolve(super.replaceById(id, enriched, options));
+        })
+        .catch(reject);
+    });
+  }
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+@injectable({ scope: BindingScope.SINGLETON })
+export abstract class SearchableTzCrudRepositoryV2<
+  E extends BaseTextSearchTzEntity | BaseObjectSearchTzEntity | BaseSearchableTzEntity,
+  R extends EntityRelation = AnyType,
+> extends TzCrudRepository<E, R> {
+  private readonly searchableInclusions: Inclusion[];
+  private readonly inclusionRelations: boolean;
+
+  constructor(
+    entityClass: EntityClassType<E>,
+    dataSource: juggler.DataSource,
+    opts: { inclusionRelations: boolean; searchableInclusions?: Inclusion[] },
+    scope?: string,
+  ) {
+    super(entityClass, dataSource, scope);
+    this.inclusionRelations = opts.inclusionRelations;
+    this.searchableInclusions = opts.searchableInclusions ?? [];
+  }
+
+  // ----------------------------------------------------------------------------------------------------
+  abstract renderTextSearch(entity: DataObject<E>, moreData?: string): string;
+  abstract renderObjectSearch(opts: { data: DataObject<E>; current: E & R }): object;
+
+  abstract onInclusionChanged<RM extends BaseTzEntity>(opts: {
+    relation: string;
+    context: { where: Where<RM>; data: DataObject<RM>; entities: RM[]; info: { count: number } };
+  }): Promise<void>;
+
+  // ----------------------------------------------------------------------------------------------------
+  protected async registerOnInclusionChanged<RM extends BaseTzEntity>(
+    relation: string,
+    relationRepositoryGetter: Getter<TzCrudRepository<RM>>,
+  ) {
+    const relationRepository = await relationRepositoryGetter();
+    relationRepository.modelClass.observe('after save', async context => {
+      const { isNewInstance, where, data, info } = context;
+
+      // Handle whenever relation entity change only
+      if (isNewInstance) {
+        return;
+      }
+
+      const entities = await relationRepository.find({ where });
+      await this.onInclusionChanged({ relation, context: { where, data, entities, info } });
+    });
+  }
+
+  // ----------------------------------------------------------------------------------------------------
+  _renderTextSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<string | null> {
+    return new Promise(resolve => {
+      const moreData = get(options, 'moreData', '');
+      const isTextSearchModel = get(this.modelClass.definition.properties, 'textSearch', null) !== null;
+      if (!isTextSearchModel) {
+        resolve(null);
+        return;
+      }
+
+      const textSearch = this.renderTextSearch(entity, moreData);
+      resolve(textSearch);
+    });
+  }
+
+  // ----------------------------------------------------------------------------------------------------
+  async _renderObjectSearch(data: DataObject<E>, options?: Options & { where?: Where }) {
+    const isObjectSearchModel = get(this.modelClass.definition.properties, 'objectSearch', null) !== null;
+    if (!isObjectSearchModel) {
+      return null;
+    }
+
+    let resolved = [data] as (E & R)[];
+    if (this.inclusionRelations && this.searchableInclusions.length) {
+      resolved = await this.includeRelatedModels([data as AnyType], this.searchableInclusions, options);
+    }
+
+    return this.renderObjectSearch({ data, current: resolved?.[0] });
+  }
+
+  // ----------------------------------------------------------------------------------------------------
+  async mixSearchFields(data: DataObject<E>, options?: Options & { where?: Where }): Promise<DataObject<E>> {
+    const ignoreUpdate = get(options, 'ignoreUpdate');
+
+    if (ignoreUpdate) {
+      return data;
+    }
+
+    const [ts, os] = await Promise.all([
+      this._renderTextSearch(data, options),
+      this._renderObjectSearch(data, options),
+    ]);
+
+    if (ts) {
+      set(data, 'textSearch', ts);
+    }
+
+    if (os) {
+      set(data, 'objectSearch', os);
+    }
+
+    return data;
+  }
+
+  // ----------------------------------------------------------------------------------------------------
+  create(data: DataObject<E>, options?: Options): Promise<E> {
+    return new Promise((resolve, reject) => {
+      this.mixSearchFields(data, options)
+        .then(enriched => {
+          resolve(super.create(enriched, options));
+        })
+        .catch(reject);
+    });
+  }
+
+  // ----------------------------------------------------------------------------------------------------
+  createAll(data: DataObject<E>[], options?: Options): Promise<E[]> {
+    return new Promise((resolve, reject) => {
+      Promise.all(
+        data.map(el => {
+          return this.mixSearchFields(el, options);
+        }),
+      )
+        .then(enriched => {
+          resolve(super.createAll(enriched, options));
+        })
+        .catch(reject);
+    });
+  }
+
+  // ----------------------------------------------------------------------------------------------------
+  updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.mixSearchFields(data, { ...options, where: { id } })
+        .then(enriched => {
+          resolve(super.updateById(id, enriched, options));
+        })
+        .catch(reject);
+    });
+  }
+
+  // ----------------------------------------------------------------------------------------------------
   replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
     return new Promise((resolve, reject) => {
       this.mixSearchFields(data, options)
