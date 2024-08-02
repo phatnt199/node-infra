@@ -26,6 +26,7 @@ jobs:
         run: |
           git config user.name "lb-infra gh-action"
           git config user.email "lb-infra@gh-action.none"
+          git config advice.addIgnoredFile false
 
       - name: Install dependencies and build 🔧
         run: |
