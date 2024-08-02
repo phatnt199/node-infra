@@ -58,7 +58,14 @@ jobs:
           git commit -m "Rebuild latest src"
           git push origin $GIT_TAG
 
+          git checkout develop
+          git merge $GIT_TAG
+          git push origin develop
+
+          git checkout $GIT_TAG
+
       - name: Publish package on NPM 📦
-        run: npm publish
+        # run: npm publish
+        run: echo "PUBLISH"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
