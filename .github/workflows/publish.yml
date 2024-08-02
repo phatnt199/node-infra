@@ -2,6 +2,12 @@ name: NPM Release
 
 on:
   workflow_dispatch:
+    inputs:
+      build_mode: patch
+
+  workflow_dispatch:
+    inputs:
+      build_mode: patch
 
   pull_request:
     branches:
@@ -26,18 +32,32 @@ jobs:
         run: |
           git config user.name "lb-infra gh-action"
           git config user.email "lb-infra@gh-action.none"
+          git config advice.addIgnoredFile false
+          git config advice.detachedHead false
 
       - name: Install dependencies and build 🔧
         run: |
-          date > generated.log
+          date > built_generated
           yarn install
-          yarn rebuild
-          git add dist generated.log
+          yarn rebuild:patch
+
+          VERSION=$(jq -r .version package.json)
+          GIT_TAG="v$VERSION"
+
+          if [ $(git tag --list | egrep -q $GIT_TAG) ];
+          then
+            echo "Tag $GIT_TAG existed!"
+          else
+            git tag $GIT_TAG
+          fi
+
+          git checkout $GIT_TAG
+
+          git add built_generated
           git commit -m "Rebuild latest src"
-          git push
+          git push origin $GIT_TAG
 
       - name: Publish package on NPM 📦
-        # run: npm publish
-        run: echo "PUBLISH"
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
