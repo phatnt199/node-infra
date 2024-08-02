@@ -50,15 +50,9 @@ jobs:
           VERSION=$(jq -r .version package.json)
           GIT_TAG="v$VERSION"
 
-          if [ $(git tag --list | egrep -q $GIT_TAG) ];
-          then
-            echo "Tag $GIT_TAG existed!"
-          else
-            git tag $GIT_TAG
-          fi
-
+          git tag --delete $GIT_TAG
+          git tag $GIT_TAG
           git checkout $GIT_TAG
-
 
           git add built_generated
           git commit -m "Rebuild latest src"
