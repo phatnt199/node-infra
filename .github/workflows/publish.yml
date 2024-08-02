@@ -33,7 +33,7 @@ jobs:
           date > generated.log
           yarn install
           yarn rebuild
-          git add dist generated.log
+          git add generated.log
           git commit -m "Rebuild latest src"
           git push
 
