@@ -27,6 +27,7 @@ jobs:
           git config user.name "lb-infra gh-action"
           git config user.email "lb-infra@gh-action.none"
           git config advice.addIgnoredFile false
+          git config advice.detachedHead false
 
       - name: Install dependencies and build 🔧
         run: |
@@ -48,7 +49,7 @@ jobs:
 
           git add built_generated
           git commit -m "Rebuild latest src"
-          git push
+          git push origin $GIT_TAG
 
       - name: Publish package on NPM 📦
         # run: npm publish
