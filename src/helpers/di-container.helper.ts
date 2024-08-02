@@ -1,11 +1,20 @@
 export class DIContainerHelper {
+  private static instance: DIContainerHelper;
   private container: Record<string, any> = {};
 
-  constructor() {
+  private constructor() {
     this.container = {};
   }
 
-  get<ReturnType>(key: string): ReturnType {
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new DIContainerHelper();
+    }
+
+    return this.instance;
+  }
+
+  get<ReturnType>(key: string) {
     return this.container[key] as ReturnType;
   }
 
