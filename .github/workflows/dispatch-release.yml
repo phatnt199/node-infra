@@ -1,0 +1,67 @@
+name: Dispatch NPM Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_mode:
+        type: choice
+        description: Build Mode (patch | minor | major)
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.18.2'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup Git
+        run: |
+          git config user.name "lb-infra gh-action"
+          git config user.email "lb-infra@gh-action.none"
+          git config advice.addIgnoredFile false
+          git config advice.detachedHead false
+
+      - name: Verify build_mode
+        run: |
+          echo "lb-infra build_mode: ${{ github.event.inputs.build_mode }}"
+
+      - name: Install dependencies and build 🔧
+        run: |
+          yarn install
+          yarn rebuild:${{ github.event.inputs.build_mode }}
+          date > built_generated
+
+      - name: Versioning application artifact
+        run: |
+          VERSION=$(jq -r .version package.json)
+          GIT_TAG="v$VERSION"
+
+          git tag --delete $GIT_TAG
+          git tag $GIT_TAG
+          git checkout $GIT_TAG
+
+          git add .
+          git commit -m "Version: $VERSION | Rebuild latest src"
+          git push origin $GIT_TAG
+
+          git fetch
+          git checkout develop
+          git merge --allow-unrelated-histories $GIT_TAG
+          git push origin develop
+
+          git checkout $GIT_TAG
+
+      - name: Publish package on NPM 📦
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}

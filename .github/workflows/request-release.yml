@@ -1,16 +1,6 @@
-name: NPM Release
+name: Request NPM Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      build_mode:
-        type: choice
-        description: Build Mode (patch | minor | major)
-        options:
-          - patch
-          - minor
-          - major
-
   pull_request:
     branches:
       - main
@@ -37,14 +27,10 @@ jobs:
           git config advice.addIgnoredFile false
           git config advice.detachedHead false
 
-      - name: Verify build_mode
-        run: |
-          echo "lb-infra build_mode: ${{ github.event.inputs.build_mode }}"
-
       - name: Install dependencies and build 🔧
         run: |
           yarn install
-          yarn rebuild:${{ github.event.inputs.build_mode }}
+          yarn rebuild:patch
           date > built_generated
 
       - name: Versioning application artifact
