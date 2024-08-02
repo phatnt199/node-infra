@@ -60,7 +60,10 @@ jobs:
 
           git fetch
           git checkout develop
-          git merge $GIT_TAG
+          content=$(jq ".version = \"$VERSION\"" package.json)
+          echo $content > package.json
+          git add package.json
+          git commit -m "Upgrade application version to $VERSION"
           git push origin develop
 
           git checkout $GIT_TAG
