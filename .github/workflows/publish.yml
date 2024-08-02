@@ -58,6 +58,7 @@ jobs:
           git commit -m "Rebuild latest src"
           git push origin $GIT_TAG
 
+          git fetch
           git checkout develop
           git merge $GIT_TAG
           git push origin develop
