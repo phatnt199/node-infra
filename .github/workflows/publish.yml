@@ -2,6 +2,14 @@ name: NPM Release
 
 on:
   workflow_dispatch:
+    inputs:
+      build_mode:
+        type: choice
+        description: Build Mode (patch | minor | major)
+        options:
+          - patch
+          - minor
+          - major
 
   pull_request:
     branches:
@@ -31,10 +39,6 @@ jobs:
 
       - name: Install dependencies and build 🔧
         run: |
-          date > built_generated
-          yarn install
-          yarn rebuild:patch
-
           VERSION=$(jq -r .version package.json)
           GIT_TAG="v$VERSION"
 
@@ -46,6 +50,10 @@ jobs:
           fi
 
           git checkout $GIT_TAG
+
+          date > built_generated
+          yarn install
+          yarn rebuild:${{ github.event.inputs.name }}
 
           git add built_generated
           git commit -m "Rebuild latest src"
