@@ -54,16 +54,13 @@ jobs:
           git tag $GIT_TAG
           git checkout $GIT_TAG
 
-          git add built_generated
-          git commit -m "Rebuild latest src"
+          git add *
+          git commit -m "Version: $VERSION | Rebuild latest src"
           git push origin $GIT_TAG
 
           git fetch
           git checkout develop
-          content=$(jq ".version = \"$VERSION\"" package.json)
-          echo $content > package.json
-          git add package.json
-          git commit -m "Upgrade application version to $VERSION"
+          git merge $GIT_TAG
           git push origin develop
 
           git checkout $GIT_TAG
