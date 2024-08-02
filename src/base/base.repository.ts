@@ -1,4 +1,11 @@
-import { AnyType, EntityClassType, EntityRelation, IdType, ITzRepository } from '@/common/types';
+import {
+  AnyType,
+  EntityClassType,
+  EntityRelation,
+  IdType,
+  IInclusionChangedContext,
+  ITzRepository,
+} from '@/common/types';
 import { ApplicationLogger, LoggerFactory, QueryBuilderHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import {
@@ -704,18 +711,18 @@ export abstract class SearchableTzCrudRepositoryV2<
     opts: { inclusionRelations: boolean; searchableInclusions?: Inclusion[] },
     scope?: string,
   ) {
-    super(entityClass, dataSource, scope);
+    super(entityClass, dataSource, scope ?? SearchableTzCrudRepositoryV2.name);
     this.inclusionRelations = opts.inclusionRelations;
     this.searchableInclusions = opts.searchableInclusions ?? [];
   }
 
   // ----------------------------------------------------------------------------------------------------
-  abstract renderTextSearch(entity: DataObject<E>, moreData?: string): string;
-  abstract renderObjectSearch(opts: { data: DataObject<E>; current: E & R }): object;
+  abstract renderTextSearch(opts: { data: DataObject<E>; entity: E & R }): string;
+  abstract renderObjectSearch(opts: { data: DataObject<E>; entity: E & R }): object;
 
   abstract onInclusionChanged<RM extends BaseTzEntity>(opts: {
     relation: string;
-    context: { where: Where<RM>; data: DataObject<RM>; entities: RM[]; info: { count: number } };
+    context: IInclusionChangedContext<RM>;
   }): Promise<void>;
 
   // ----------------------------------------------------------------------------------------------------
@@ -738,24 +745,13 @@ export abstract class SearchableTzCrudRepositoryV2<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  _renderTextSearch(entity: DataObject<E>, options?: Options & { where?: Where }): Promise<string | null> {
-    return new Promise(resolve => {
-      const moreData = get(options, 'moreData', '');
-      const isTextSearchModel = get(this.modelClass.definition.properties, 'textSearch', null) !== null;
-      if (!isTextSearchModel) {
-        resolve(null);
-        return;
-      }
-
-      const textSearch = this.renderTextSearch(entity, moreData);
-      resolve(textSearch);
-    });
-  }
-
-  // ----------------------------------------------------------------------------------------------------
-  async _renderObjectSearch(data: DataObject<E>, options?: Options & { where?: Where }) {
-    const isObjectSearchModel = get(this.modelClass.definition.properties, 'objectSearch', null) !== null;
-    if (!isObjectSearchModel) {
+  private async renderSearchable(
+    field: 'textSearch' | 'objectSearch',
+    data: DataObject<E>,
+    options?: Options & { where?: Where },
+  ) {
+    const isSearchable = get(this.modelClass.definition.properties, field, null) !== null;
+    if (!isSearchable) {
       return null;
     }
 
@@ -764,31 +760,45 @@ export abstract class SearchableTzCrudRepositoryV2<
       resolved = await this.includeRelatedModels([data as AnyType], this.searchableInclusions, options);
     }
 
-    return this.renderObjectSearch({ data, current: resolved?.[0] });
+    switch (field) {
+      case 'textSearch': {
+        return this.renderTextSearch({ data, entity: resolved?.[0] });
+      }
+      case 'objectSearch': {
+        return this.renderObjectSearch({ data, entity: resolved?.[0] });
+      }
+      default: {
+        return null;
+      }
+    }
   }
 
   // ----------------------------------------------------------------------------------------------------
   async mixSearchFields(data: DataObject<E>, options?: Options & { where?: Where }): Promise<DataObject<E>> {
-    const ignoreUpdate = get(options, 'ignoreUpdate');
+    return new Promise((resolve, reject) => {
+      const ignoreUpdate = get(options, 'ignoreUpdate');
 
-    if (ignoreUpdate) {
-      return data;
-    }
+      if (ignoreUpdate) {
+        return data;
+      }
 
-    const [ts, os] = await Promise.all([
-      this._renderTextSearch(data, options),
-      this._renderObjectSearch(data, options),
-    ]);
+      Promise.all([
+        this.renderSearchable('textSearch', data, options),
+        this.renderSearchable('objectSearch', data, options),
+      ])
+        .then(([ts, os]) => {
+          if (ts) {
+            set(data, 'textSearch', ts);
+          }
 
-    if (ts) {
-      set(data, 'textSearch', ts);
-    }
+          if (os) {
+            set(data, 'objectSearch', os);
+          }
 
-    if (os) {
-      set(data, 'objectSearch', os);
-    }
-
-    return data;
+          resolve(data);
+        })
+        .catch(reject);
+    });
   }
 
   // ----------------------------------------------------------------------------------------------------

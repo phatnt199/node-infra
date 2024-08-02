@@ -37,6 +37,13 @@ export type TBullQueueRole = 'queue' | 'worker';
 
 export type TPermissionEffect = 'allow' | 'deny';
 
+export interface IInclusionChangedContext<T extends BaseTzEntity> {
+  where: Where<T>;
+  data: Partial<T>;
+  entities: T[];
+  info: { count: number };
+}
+
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IEntity {
   id: IdType;
