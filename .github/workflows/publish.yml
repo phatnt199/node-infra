@@ -54,7 +54,7 @@ jobs:
           git tag $GIT_TAG
           git checkout $GIT_TAG
 
-          git add *
+          git add .
           git commit -m "Version: $VERSION | Rebuild latest src"
           git push origin $GIT_TAG
 
