@@ -47,6 +47,8 @@ jobs:
           yarn rebuild:${{ github.event.inputs.build_mode }}
           date > built_generated
 
+      - name: Versioning application artifact
+        run: |
           VERSION=$(jq -r .version package.json)
           GIT_TAG="v$VERSION"
 
@@ -66,7 +68,6 @@ jobs:
           git checkout $GIT_TAG
 
       - name: Publish package on NPM 📦
-        # run: npm publish
-        run: echo "PUBLISH"
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
