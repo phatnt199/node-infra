@@ -33,7 +33,7 @@ jobs:
         run: |
           date > built_generated
           yarn install
-          yarn rebuild
+          yarn rebuild:patch
 
           VERSION=$(jq -r .version package.json)
           GIT_TAG="v$VERSION"
@@ -52,7 +52,6 @@ jobs:
           git push origin $GIT_TAG
 
       - name: Publish package on NPM 📦
-        # run: npm publish
-        run: echo "PUBLISH"
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
