@@ -627,7 +627,7 @@ export abstract class SearchableTzCrudRepository<
       const ignoreUpdate = get(options, 'ignoreUpdate');
 
       if (ignoreUpdate) {
-        return entity;
+        return resolve(entity);
       }
 
       this._renderTextSearch(entity, options)
