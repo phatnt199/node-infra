@@ -60,7 +60,7 @@ jobs:
 
           git fetch
           git checkout develop
-          git merge $GIT_TAG
+          git merge --allow-unrelated-histories $GIT_TAG
           git push origin develop
 
           git checkout $GIT_TAG
