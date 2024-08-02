@@ -3,11 +3,13 @@ name: NPM Release
 on:
   workflow_dispatch:
     inputs:
-      build_mode: patch
-
-  workflow_dispatch:
-    inputs:
-      build_mode: patch
+      build_mode:
+        type: choice
+        description: Build Mode (patch | minor | major)
+        options:
+          - patch
+          - minor
+          - major
 
   pull_request:
     branches:
@@ -39,7 +41,7 @@ jobs:
         run: |
           date > built_generated
           yarn install
-          yarn rebuild:patch
+          yarn rebuild:${{ github.event.inputs.name }}
 
           VERSION=$(jq -r .version package.json)
           GIT_TAG="v$VERSION"
