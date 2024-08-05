@@ -16,10 +16,10 @@ import {
   BaseDataSource,
   BaseEntity,
   BindingKeys,
-  RouteKeys,
   RequestSpyMiddleware,
   RequestBodyParserMiddleware,
 } from '..';
+import { AuthenticateKeys } from '@/components/authenticate/common';
 
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
@@ -33,7 +33,7 @@ export abstract class BaseApplication
     super(serverOptions);
     this.logger = LoggerFactory.getLogger(['Application']);
 
-    this.bind(RouteKeys.ALWAYS_ALLOW_PATHS).to([]);
+    this.bind(AuthenticateKeys.ALWAYS_ALLOW_PATHS).to([]);
     this.bind(BindingKeys.APPLICATION_MIDDLEWARE_OPTIONS).to(MiddlewareSequence.defaultOptions);
     this.sequence(sequence ?? BaseApplicationSequence);
 

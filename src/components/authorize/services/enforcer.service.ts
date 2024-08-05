@@ -1,5 +1,5 @@
 import { BaseDataSource } from '@/base';
-import { AuthorizerKeys, IdType } from '@/common';
+import { IdType } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import { BindingScope, inject, injectable } from '@loopback/core';
@@ -10,6 +10,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { CasbinAdapterTypes, EnforcerFilterValue, IAuthorizeConfigureOptions } from '../types';
 import { CasbinAdapterBuilder } from '../adapters';
+import { AuthorizerKeys } from '../common';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class EnforcerService {

@@ -2,7 +2,7 @@ import { CoreBindings, inject } from '@loopback/core';
 import { api, get, param, post, Request, Response, RestBindings } from '@loopback/rest';
 
 import { BaseApplication } from '@/base';
-import { Formatters, IController, ResourceAssetKeys } from '@/common';
+import { Formatters, IController } from '@/common';
 import { ApplicationLogger, IUploadFile, LoggerFactory } from '@/helpers';
 import { dayjs, getError } from '@/utilities';
 
@@ -10,6 +10,7 @@ import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 import multer from 'multer';
 import { join } from 'path';
+import { ResourceAssetKeys } from '../common';
 
 @api({ basePath: '/static-resources' })
 export class StaticResourceController implements IController {

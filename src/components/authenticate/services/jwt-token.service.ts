@@ -1,5 +1,5 @@
 import { BaseService } from '@/base/base.service';
-import { AuthenticateKeys, Authentication } from '@/common';
+import { Authentication } from '@/common';
 import { decrypt, encrypt, getError } from '@/utilities';
 import { TokenServiceBindings } from '@loopback/authentication-jwt';
 import { BindingScope, inject, injectable } from '@loopback/core';
@@ -8,6 +8,7 @@ import { securityId } from '@loopback/security';
 import jwt from 'jsonwebtoken';
 
 import { JWTTokenPayload } from '../types';
+import { AuthenticateKeys } from '../common';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class JWTTokenService extends BaseService {

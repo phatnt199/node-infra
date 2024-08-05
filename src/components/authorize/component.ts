@@ -1,6 +1,5 @@
 import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
-import { AuthorizerKeys } from '@/common';
 import { AuthorizationBindings, AuthorizationDecision, AuthorizationTags } from '@loopback/authorization';
 import { Binding, CoreBindings, inject } from '@loopback/core';
 import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from './models';
@@ -20,6 +19,7 @@ import flatten from 'lodash/flatten';
 import path from 'path';
 import { AuthorizateInterceptor } from './interceptor';
 import { IAuthorizeConfigureOptions } from './types';
+import { AuthorizerKeys } from './common';
 
 const authorizeConfPath = path.resolve(__dirname, '../../static/security/authorize_model.conf');
 

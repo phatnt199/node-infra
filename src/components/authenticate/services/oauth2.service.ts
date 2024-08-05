@@ -1,5 +1,5 @@
 import { BaseApplication, BaseService } from '@/base';
-import { AuthenticateKeys, EnvironmentKeys } from '@/common';
+import { EnvironmentKeys } from '@/common';
 import { applicationEnvironment } from '@/helpers';
 import { decrypt, encrypt, getError } from '@/utilities';
 import { CoreBindings, inject } from '@loopback/core';
@@ -9,6 +9,7 @@ import { Request, Response, Token } from '@node-oauth/oauth2-server';
 import { OAuth2Handler } from '../oauth2-handlers';
 import { OAuth2ClientRepository } from '../repositories';
 import { IAuthService, SignInRequest } from '../types';
+import { AuthenticateKeys } from '../common';
 
 export class OAuth2Service extends BaseService {
   constructor(

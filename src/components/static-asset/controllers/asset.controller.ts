@@ -1,10 +1,11 @@
 import { BaseApplication } from '@/base';
-import { IController, ResourceAssetKeys } from '@/common';
+import { IController } from '@/common';
 import { ApplicationLogger, IUploadFile, LoggerFactory, MinioHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import { CoreBindings, inject } from '@loopback/core';
 import { api, del, get, param, post, Request, requestBody, Response, RestBindings } from '@loopback/rest';
 import multer from 'multer';
+import { ResourceAssetKeys } from '../common';
 
 @api({ basePath: '/static-assets' })
 export class StaticAssetController implements IController {

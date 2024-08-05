@@ -8,7 +8,7 @@ import { Binding, CoreBindings, inject } from '@loopback/core';
 
 import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
-import { App, AuthenticateKeys, Authentication } from '@/common';
+import { App, Authentication } from '@/common';
 import { getError, int } from '@/utilities';
 import { DefaultOAuth2ExpressServer, defineAuthController, defineOAuth2Controller } from './controllers';
 import { AuthenticationMiddleware } from './middleware';
@@ -29,6 +29,7 @@ import {
   SignUpRequest,
 } from './types';
 import { OAuth2Handler } from './oauth2-handlers';
+import { AuthenticateKeys } from './common';
 
 export class AuthenticateComponent extends BaseComponent {
   bindings: Binding[] = [
