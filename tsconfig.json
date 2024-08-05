@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "importHelpers": false,
-    "removeComments": true
+    "removeComments": false
     // "declaration": false
   },
   "include": ["src", "./.eslintrc.cjs"]
