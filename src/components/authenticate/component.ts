@@ -8,10 +8,11 @@ import { Binding, CoreBindings, inject } from '@loopback/core';
 
 import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
-import { App, Authentication } from '@/common';
+import { App } from '@/common';
 import { getError, int } from '@/utilities';
 import {
   AuthenticateKeys,
+  Authentication,
   ChangePasswordRequest,
   IAuthenticateOAuth2Options,
   IAuthenticateRestOptions,

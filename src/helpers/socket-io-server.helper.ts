@@ -7,10 +7,10 @@ import { delay } from 'rxjs/operators';
 
 import { LoggerFactory, ApplicationLogger } from '@/helpers';
 import { getError } from '@/utilities';
-import { SocketIOConstants } from '@/common';
 import { Server } from 'http';
 import isEmpty from 'lodash/isEmpty';
 import { Handshake } from 'socket.io/dist/socket';
+import { SocketIOConstants } from '@/components/socket-io/common/constants';
 
 const CLIENT_AUTHENTICATE_TIMEOUT = 10 * 1000;
 

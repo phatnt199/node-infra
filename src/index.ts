@@ -26,7 +26,6 @@ export * from './datasources';
 export * from './helpers';
 export * from './middlewares';
 export * from './migrations';
-export * from './migrations/authorize';
 export * from './mixins';
 export * from './services';
 export * from './utilities';

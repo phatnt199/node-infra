@@ -1,12 +1,11 @@
 import { BaseDataSource } from '@/base/base.datasource';
-import { EnforcerDefinitions } from '@/common/constants';
 import { getError } from '@/utilities';
 import { Helper, Model } from 'casbin';
 
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-import { EnforcerFilterValue } from '../common';
+import { EnforcerDefinitions, EnforcerFilterValue } from '../common';
 import { AbstractCasbinAdapter } from './base.adapter';
 
 // -----------------------------------------------------------------------------------------

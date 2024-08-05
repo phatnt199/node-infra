@@ -1,8 +1,8 @@
-import { Authentication } from '@/common';
 import { AuthenticationStrategy } from '@loopback/authentication';
 import { inject } from '@loopback/core';
 import { Request } from '@loopback/rest';
 import { JWTTokenService } from './jwt-token.service';
+import { Authentication } from '../common';
 
 export class JWTAuthenticationStrategy implements AuthenticationStrategy {
   name = Authentication.STRATEGY_JWT;

@@ -1,5 +1,5 @@
 import { BaseController } from '@/base';
-import { Authentication, EnvironmentKeys, IdType } from '@/common';
+import { EnvironmentKeys, IdType } from '@/common';
 import { applicationEnvironment, ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getSchemaObject } from '@/utilities';
 import { authenticate } from '@loopback/authentication';
@@ -21,7 +21,7 @@ import { OAuth2Service } from '../services';
 
 import { join } from 'path';
 import { isEmpty } from 'lodash';
-import { IAuthenticateOAuth2RestOptions, OAuth2Request } from '../common';
+import { Authentication, IAuthenticateOAuth2RestOptions, OAuth2Request } from '../common';
 
 interface IOAuth2ControllerOptions {
   config?: ExpressServerConfig | undefined;

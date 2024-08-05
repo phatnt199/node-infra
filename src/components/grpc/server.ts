@@ -5,7 +5,7 @@ export class GrpcServer extends Server {
   private identifier: string;
   private logger: ApplicationLogger;
 
-  constructor(opts: { identifier: string; options: ServerOptions }) {
+  constructor(opts: { identifier: string; options?: ServerOptions }) {
     const { identifier, options } = opts;
     super(options);
 

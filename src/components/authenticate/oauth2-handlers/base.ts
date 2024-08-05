@@ -1,5 +1,5 @@
 import { BaseTzEntity } from '@/base';
-import { AnyObject, Authentication, AuthenticationTokenTypes, ITzRepository, OAuth2TokenStatuses } from '@/common';
+import { AnyObject, ITzRepository, OAuth2TokenStatuses } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError, int } from '@/utilities';
 import { securityId } from '@loopback/security';
@@ -10,7 +10,7 @@ import { OAuth2ClientRepository, OAuth2TokenRepository } from '../repositories';
 import { JWTTokenService } from '../services';
 
 import get from 'lodash/get';
-import { IAuthService } from '../common';
+import { Authentication, AuthenticationTokenTypes, IAuthService } from '../common';
 
 export interface IOAuth2AuthenticationHandler extends BaseModel, RequestAuthenticationModel {}
 

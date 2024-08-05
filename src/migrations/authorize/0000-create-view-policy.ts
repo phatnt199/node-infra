@@ -1,7 +1,7 @@
-import { BaseDataSource } from '@/base/base.datasource';
-import { applicationLogger } from '@/helpers';
-import { EnforcerDefinitions } from '@/common/constants';
 import { BaseApplication } from '@/base/base.application';
+import { BaseDataSource } from '@/base/base.datasource';
+import { EnforcerDefinitions } from '@/components/authorize/common/constants';
+import { applicationLogger } from '@/helpers';
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
 
@@ -13,21 +13,21 @@ const sqls = [
   'DROP VIEW IF EXISTS "ViewAuthorizePolicy";',
   `CREATE OR REPLACE VIEW "ViewAuthorizePolicy"
   AS (
-  SELECT 
+  SELECT
       uuid_generate_v4() as id,
       (t.subject_type || '_' || t.subject_id) as subject,
       t.subject_type,
-      t.subject_id, 
+      t.subject_id,
       json_agg(t.policy)::JSONB as policies
   FROM (
-      SELECT 
+      SELECT
           pm.id as id,
-          (CASE 
+          (CASE
               WHEN user_id IS NOT NULL THEN '${EnforcerDefinitions.PREFIX_USER}'
               WHEN role_id IS NOT NULL THEN '${EnforcerDefinitions.PREFIX_ROLE}'
               ELSE NULL
           END) AS subject_type,
-          (CASE 
+          (CASE
               WHEN user_id IS NOT NULL THEN user_id
               WHEN role_id IS NOT NULL THEN role_id
               ELSE NULL
