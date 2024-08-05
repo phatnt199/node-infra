@@ -8,9 +8,8 @@ import { Enforcer, newCachedEnforcer, newEnforcer } from 'casbin';
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 
-import { CasbinAdapterTypes, EnforcerFilterValue, IAuthorizeConfigureOptions } from '../types';
 import { CasbinAdapterBuilder } from '../adapters';
-import { AuthorizerKeys } from '../common';
+import { AuthorizerKeys, CasbinAdapterTypes, EnforcerFilterValue, IAuthorizeConfigureOptions } from '../common';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class EnforcerService {

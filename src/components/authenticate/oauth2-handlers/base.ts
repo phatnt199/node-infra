@@ -10,7 +10,7 @@ import { OAuth2ClientRepository, OAuth2TokenRepository } from '../repositories';
 import { JWTTokenService } from '../services';
 
 import get from 'lodash/get';
-import { IAuthService } from '../types';
+import { IAuthService } from '../common';
 
 export interface IOAuth2AuthenticationHandler extends BaseModel, RequestAuthenticationModel {}
 

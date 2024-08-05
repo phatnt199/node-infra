@@ -10,8 +10,18 @@ import { BaseApplication } from '@/base/base.application';
 import { BaseComponent } from '@/base/base.component';
 import { App, Authentication } from '@/common';
 import { getError, int } from '@/utilities';
+import {
+  AuthenticateKeys,
+  ChangePasswordRequest,
+  IAuthenticateOAuth2Options,
+  IAuthenticateRestOptions,
+  IAuthenticateTokenOptions,
+  SignInRequest,
+  SignUpRequest,
+} from './common';
 import { DefaultOAuth2ExpressServer, defineAuthController, defineOAuth2Controller } from './controllers';
 import { AuthenticationMiddleware } from './middleware';
+import { OAuth2Handler } from './oauth2-handlers';
 import { OAuth2ClientRepository, OAuth2ScopeRepository, OAuth2TokenRepository } from './repositories';
 import {
   BasicAuthenticationStrategy,
@@ -20,16 +30,6 @@ import {
   JWTTokenService,
   OAuth2Service,
 } from './services';
-import {
-  ChangePasswordRequest,
-  IAuthenticateOAuth2Options,
-  IAuthenticateRestOptions,
-  IAuthenticateTokenOptions,
-  SignInRequest,
-  SignUpRequest,
-} from './types';
-import { OAuth2Handler } from './oauth2-handlers';
-import { AuthenticateKeys } from './common';
 
 export class AuthenticateComponent extends BaseComponent {
   bindings: Binding[] = [

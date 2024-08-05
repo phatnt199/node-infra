@@ -8,8 +8,7 @@ import { Request, Response, Token } from '@node-oauth/oauth2-server';
 
 import { OAuth2Handler } from '../oauth2-handlers';
 import { OAuth2ClientRepository } from '../repositories';
-import { IAuthService, SignInRequest } from '../types';
-import { AuthenticateKeys } from '../common';
+import { AuthenticateKeys, IAuthService, SignInRequest } from '../common';
 
 export class OAuth2Service extends BaseService {
   constructor(

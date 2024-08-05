@@ -1,7 +1,7 @@
 import { getError } from '@/utilities';
 import { Client, ClientCredentialsModel, Falsey, User } from '@node-oauth/oauth2-server';
-import { IAuthService } from '../types';
 import { AbstractOAuth2AuthenticationHandler } from './base';
+import { IAuthService } from '../common';
 
 export class OAuth2ClientCredentialHandler
   extends AbstractOAuth2AuthenticationHandler

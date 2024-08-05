@@ -18,10 +18,10 @@ import { SecurityBindings } from '@loopback/security';
 import { Request, Response } from '@node-oauth/oauth2-server';
 
 import { OAuth2Service } from '../services';
-import { IAuthenticateOAuth2RestOptions, OAuth2Request } from '../types';
 
 import { join } from 'path';
 import { isEmpty } from 'lodash';
+import { IAuthenticateOAuth2RestOptions, OAuth2Request } from '../common';
 
 interface IOAuth2ControllerOptions {
   config?: ExpressServerConfig | undefined;

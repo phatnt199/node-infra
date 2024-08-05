@@ -17,9 +17,8 @@ import { BaseDataSource } from '@/base/base.datasource';
 import { getError } from '@/utilities';
 import flatten from 'lodash/flatten';
 import path from 'path';
+import { AuthorizerKeys, IAuthorizeConfigureOptions } from './common';
 import { AuthorizateInterceptor } from './interceptor';
-import { IAuthorizeConfigureOptions } from './types';
-import { AuthorizerKeys } from './common';
 
 const authorizeConfPath = path.resolve(__dirname, '../../static/security/authorize_model.conf');
 

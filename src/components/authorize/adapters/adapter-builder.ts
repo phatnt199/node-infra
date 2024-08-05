@@ -1,9 +1,9 @@
 import { BaseDataSource } from '@/base';
 import { getError } from '@/utilities';
 import { FilteredAdapter } from 'casbin';
-import { CasbinAdapterTypes, TCasbinAdapter } from '../types';
 import { CasbinPostgresAdapter } from './casbin-postgres-adapter.helper';
 import { CasbinRedisAdapter } from './casbin-redis-adapter.helper';
+import { CasbinAdapterTypes, TCasbinAdapter } from '../common';
 
 export class CasbinAdapterBuilder {
   private static instance: CasbinAdapterBuilder;

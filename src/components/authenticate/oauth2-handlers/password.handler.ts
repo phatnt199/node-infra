@@ -1,6 +1,6 @@
 import { Client, Falsey, PasswordModel, User } from '@node-oauth/oauth2-server';
 import { AbstractOAuth2AuthenticationHandler } from './base';
-import { IAuthService } from '../types';
+import { IAuthService } from '../common';
 
 export class OAuth2PasswordHandler extends AbstractOAuth2AuthenticationHandler implements PasswordModel {
   constructor(opts: {
