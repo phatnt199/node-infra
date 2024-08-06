@@ -1,4 +1,4 @@
-import { BaseApplication } from '@/base/base.application';
+import { BaseApplication } from '@/base/application';
 import { BaseComponent } from '@/base/base.component';
 import { AuthorizationBindings, AuthorizationDecision, AuthorizationTags } from '@loopback/authorization';
 import { Binding, CoreBindings, inject } from '@loopback/core';

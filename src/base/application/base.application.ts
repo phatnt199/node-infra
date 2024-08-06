@@ -19,17 +19,13 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
 import { AuthenticateKeys } from '@/components/authenticate/common';
-import {
-  BaseApplicationSequence,
-  BaseDataSource,
-  BaseEntity,
-  BindingKeys,
-  EnvironmentKeys,
-  GrpcTags,
-  int,
-  RequestBodyParserMiddleware,
-  RequestSpyMiddleware,
-} from '..';
+import { BindingKeys, EnvironmentKeys } from '@/common';
+import { BaseApplicationSequence } from '../base.sequence';
+import { RequestBodyParserMiddleware, RequestSpyMiddleware } from '@/middlewares';
+import { int } from '@/utilities';
+import { BaseEntity } from '../base.model';
+import { BaseDataSource } from '../base.datasource';
+import { GrpcTags } from '@/components';
 
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))

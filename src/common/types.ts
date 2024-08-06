@@ -18,7 +18,6 @@ export interface IDataSource {
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export type ClassType<T> = Function & { prototype: T };
-export const AsyncFunction = (async () => {}).constructor;
 
 export type EntityClassType<T extends Entity> = typeof Entity & { prototype: T & { id?: IdType } };
 

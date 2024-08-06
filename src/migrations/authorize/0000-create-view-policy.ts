@@ -1,4 +1,4 @@
-import { BaseApplication } from '@/base/base.application';
+import { BaseApplication } from '@/base/application';
 import { BaseDataSource } from '@/base/base.datasource';
 import { EnforcerDefinitions } from '@/components/authorize/common/constants';
 import { applicationLogger } from '@/helpers';

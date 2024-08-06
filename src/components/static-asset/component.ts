@@ -1,4 +1,4 @@
-import { BaseApplication } from '@/base/base.application';
+import { BaseApplication } from '@/base/application';
 import { BaseComponent } from '@/base/base.component';
 import { MinioHelper } from '@/helpers';
 import { getError } from '@/utilities';

@@ -1,4 +1,4 @@
-import { BaseApplication } from '@/base/base.application';
+import { BaseApplication } from '@/base/application';
 import { MigrationStatuses } from '@/common';
 import { Migration, MigrationProcess, MigrationRepository } from '@/components/migration';
 import { applicationLogger as logger } from '@/helpers';
