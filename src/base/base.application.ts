@@ -1,25 +1,35 @@
 import { BootMixin } from '@loopback/boot';
-import { ApplicationConfig, Constructor } from '@loopback/core';
+import {
+  ApplicationConfig,
+  Binding,
+  BindingFromClassOptions,
+  BindingScope,
+  Constructor,
+  ControllerClass,
+} from '@loopback/core';
 import { Repository, RepositoryMixin, RepositoryTags } from '@loopback/repository';
 import { MiddlewareSequence, RestApplication, SequenceHandler } from '@loopback/rest';
 import { CrudRestComponent } from '@loopback/rest-crud';
 import { ServiceMixin } from '@loopback/service-proxy';
 
 import { EnvironmentValidationResult, IApplication } from '@/common/types';
-import { ApplicationLogger, LoggerFactory } from '@/helpers';
+import { applicationEnvironment, ApplicationLogger, LoggerFactory } from '@/helpers';
 
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
+import { AuthenticateKeys } from '@/components/authenticate/common';
 import {
   BaseApplicationSequence,
   BaseDataSource,
   BaseEntity,
   BindingKeys,
-  RequestSpyMiddleware,
+  EnvironmentKeys,
+  GrpcTags,
+  int,
   RequestBodyParserMiddleware,
+  RequestSpyMiddleware,
 } from '..';
-import { AuthenticateKeys } from '@/components/authenticate/common';
 
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
@@ -76,6 +86,18 @@ export abstract class BaseApplication
 
   abstract preConfigure(): void;
   abstract postConfigure(): void;
+
+  getServerHost() {
+    return applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_SERVER_HOST);
+  }
+
+  getServerPort() {
+    return int(applicationEnvironment.get<number>(EnvironmentKeys.APP_ENV_SERVER_PORT));
+  }
+
+  getServerAddress() {
+    return `${this.getServerHost()}:${this.getServerPort()}`;
+  }
 
   getMigrateModels(opts: { ignoreModels?: string[]; migrateModels?: string[] }) {
     const { ignoreModels, migrateModels } = opts;
@@ -159,5 +181,9 @@ export abstract class BaseApplication
         new Date().getTime() - t,
       );
     }
+  }
+
+  grpcController<T>(ctor: ControllerClass<T>, nameOrOptions?: string | BindingFromClassOptions): Binding<T> {
+    return this.controller(ctor, nameOrOptions).tag(GrpcTags.CONTROLLERS);
   }
 }

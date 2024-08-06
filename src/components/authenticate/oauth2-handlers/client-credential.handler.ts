@@ -1,18 +1,14 @@
+import { TInjectionGetter } from '@/common';
 import { getError } from '@/utilities';
 import { Client, ClientCredentialsModel, Falsey, User } from '@node-oauth/oauth2-server';
-import { AbstractOAuth2AuthenticationHandler } from './base';
 import { IAuthService } from '../common';
+import { AbstractOAuth2AuthenticationHandler } from './base';
 
 export class OAuth2ClientCredentialHandler
   extends AbstractOAuth2AuthenticationHandler
   implements ClientCredentialsModel
 {
-  constructor(opts: {
-    scope?: string;
-    authServiceKey: string;
-    injectionGetter: <T>(key: string) => T;
-    serviceKey: string;
-  }) {
+  constructor(opts: { scope?: string; authServiceKey: string; injectionGetter: TInjectionGetter; serviceKey: string }) {
     super({ scope: opts.scope, authServiceKey: opts.authServiceKey, injectionGetter: opts.injectionGetter });
   }
 

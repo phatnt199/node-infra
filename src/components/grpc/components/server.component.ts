@@ -1,16 +1,16 @@
 import { BaseApplication, BaseComponent } from '@/base';
-import { Binding, CoreBindings, inject } from '@loopback/core';
+import { Binding, BindingKey, CoreBindings, inject } from '@loopback/core';
 import { GrpcServerKeys, IGrpcServerOptions } from '../common';
-import { GrpcServer } from '../server';
 
-import { join } from 'path';
 import { ServerCredentials } from '@grpc/grpc-js';
+import { join } from 'path';
+import { GrpcServer } from './server';
 
 export class GrpcServerComponent extends BaseComponent {
   bindings: Binding[] = [
     Binding.bind<IGrpcServerOptions>(GrpcServerKeys.GRPC_OPTIONS).to({
       identifier: 'grpc-server',
-      protos: join(__dirname),
+      protoFolder: join(__dirname),
       address: +(process.env.APP_ENV_SERVER_PORT ?? 3000) + 1,
     }),
   ];
@@ -23,19 +23,18 @@ export class GrpcServerComponent extends BaseComponent {
 
   defineServer() {
     const grpcOptions = this.application.getSync<IGrpcServerOptions>(GrpcServerKeys.GRPC_OPTIONS);
+    this.logger.info('[defineServer] Grpc Options: %j', grpcOptions);
+
     const { identifier, serverOptions, address, credentials = ServerCredentials.createInsecure() } = grpcOptions;
-    const server = new GrpcServer({ identifier, options: serverOptions });
 
-    // init services
-
-    server.bindAsync(address.toString(), credentials, (error, port) => {
-      if (error) {
-        this.logger.error('[defineServer] Failed to init grpc server | Error: %s', error);
-        return;
-      }
-
-      this.logger.info('[defineServer] Successfully binding grpc server | Port: %s', port);
+    const server = new GrpcServer({
+      identifier,
+      address,
+      credentials,
+      options: serverOptions,
+      injectionGetter: <T>(key: string | BindingKey<T>) => this.application.getSync<T>(key),
     });
+    server.start();
 
     this.application.bind<GrpcServer>(GrpcServerKeys.SERVER_INSTANCE).to(server);
   }

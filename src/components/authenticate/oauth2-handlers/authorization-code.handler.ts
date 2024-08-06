@@ -1,3 +1,4 @@
+import { TInjectionGetter } from '@/common';
 import { AuthorizationCode, AuthorizationCodeModel, Client, Falsey, User } from '@node-oauth/oauth2-server';
 import { AuthenticationTokenTypes } from '../common';
 import { AbstractOAuth2AuthenticationHandler } from './base';
@@ -6,7 +7,7 @@ export class OAuth2AuthorizationCodeHandler
   extends AbstractOAuth2AuthenticationHandler
   implements AuthorizationCodeModel
 {
-  constructor(opts: { scope?: string; authServiceKey: string; injectionGetter: <T>(key: string) => T }) {
+  constructor(opts: { scope?: string; authServiceKey: string; injectionGetter: TInjectionGetter }) {
     super({ scope: opts.scope, authServiceKey: opts.authServiceKey, injectionGetter: opts.injectionGetter });
   }
 

@@ -1,5 +1,5 @@
 import { BaseTzEntity } from '@/base';
-import { AnyObject, ITzRepository, OAuth2TokenStatuses } from '@/common';
+import { AnyObject, ITzRepository, OAuth2TokenStatuses, TInjectionGetter } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError, int } from '@/utilities';
 import { securityId } from '@loopback/security';
@@ -17,9 +17,9 @@ export interface IOAuth2AuthenticationHandler extends BaseModel, RequestAuthenti
 export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2AuthenticationHandler {
   protected authServiceKey: string;
   protected logger: ApplicationLogger;
-  protected injectionGetter: <T>(key: string) => T;
+  protected injectionGetter: TInjectionGetter;
 
-  constructor(opts: { scope?: string; authServiceKey: string; injectionGetter: <T>(key: string) => T }) {
+  constructor(opts: { scope?: string; authServiceKey: string; injectionGetter: TInjectionGetter }) {
     this.logger = LoggerFactory.getLogger([opts?.scope ?? AbstractOAuth2AuthenticationHandler.name]);
     this.injectionGetter = opts.injectionGetter;
     this.authServiceKey = opts.authServiceKey;
