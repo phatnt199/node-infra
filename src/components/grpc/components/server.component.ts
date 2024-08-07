@@ -1,10 +1,12 @@
-import { BaseApplication, BaseComponent } from '@/base';
+import { BaseApplication } from '@/base/applications';
+import { BaseComponent } from '@/base/base.component';
 import { Binding, BindingKey, CoreBindings, inject } from '@loopback/core';
+
 import { GrpcServerKeys, IGrpcServerOptions } from '../common';
+import { GrpcServer } from './grpc-server';
 
 import { ServerCredentials } from '@grpc/grpc-js';
 import { join } from 'path';
-import { GrpcServer } from '../grpc-server';
 
 export class GrpcServerComponent extends BaseComponent {
   bindings: Binding[] = [

@@ -1,4 +1,2 @@
-export * from './server';
-
-export * from './client.component';
+export * from './grpc-server';
 export * from './server.component';

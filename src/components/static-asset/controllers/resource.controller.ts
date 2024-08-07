@@ -1,10 +1,9 @@
-import { CoreBindings, inject } from '@loopback/core';
-import { api, get, param, post, Request, Response, RestBindings } from '@loopback/rest';
-
-import { BaseApplication } from '@/base';
+import { BaseApplication } from '@/base/applications';
 import { Formatters, IController } from '@/common';
 import { ApplicationLogger, IUploadFile, LoggerFactory } from '@/helpers';
 import { dayjs, getError } from '@/utilities';
+import { CoreBindings, inject } from '@loopback/core';
+import { api, get, param, post, Request, Response, RestBindings } from '@loopback/rest';
 
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';

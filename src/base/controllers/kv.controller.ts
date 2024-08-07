@@ -1,12 +1,12 @@
+import { App } from '@/common';
+import { IController } from '@/common/types';
 import { inject } from '@loopback/core';
-import { CrudRestControllerOptions } from '@loopback/rest-crud';
 import { DataObject } from '@loopback/repository';
 import { del, get, getModelSchemaRef, param, post, requestBody } from '@loopback/rest';
+import { CrudRestControllerOptions } from '@loopback/rest-crud';
 
-import { IController } from '@/common/types';
-import { App } from '@/common';
 import { BaseKVEntity } from '../base.model';
-import { AbstractKVRepository } from '../base.repository';
+import { AbstractKVRepository } from '../repositories';
 
 // --------------------------------------------------------------------------------------------------------------
 export interface KVControllerOptions<E extends BaseKVEntity> {

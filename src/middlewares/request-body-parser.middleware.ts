@@ -8,7 +8,7 @@ import {
   UrlEncodedBodyParser,
 } from '@loopback/rest';
 
-import { BaseProvider } from '@/base';
+import { BaseProvider } from '@/base/base.provider';
 
 import set from 'lodash/set';
 

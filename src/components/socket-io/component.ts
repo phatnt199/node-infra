@@ -1,9 +1,9 @@
-import { BaseApplication } from '@/base/application';
+import { BaseApplication } from '@/base/applications';
 import { BaseComponent } from '@/base/base.component';
+import { SocketIOServerHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import { Binding, CoreBindings, inject } from '@loopback/core';
 import Redis from 'ioredis';
-import { SocketIOServerHelper } from '@/helpers';
 import { ServerOptions } from 'socket.io';
 import { SocketIOKeys } from './common';
 

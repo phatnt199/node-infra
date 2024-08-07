@@ -1,11 +1,12 @@
-import { BaseDataSource, TzCrudRepository } from '@/base';
+import { BaseDataSource } from '@/base/base.datasource';
+import { TzCrudRepository } from '@/base/repositories';
 import { Getter, inject } from '@loopback/core';
 import { OAuth2Client, OAuth2Scope, OAuth2Token } from '../models';
 
-import { getError } from '@/utilities';
-import isEmpty from 'lodash/isEmpty';
-import { BelongsToAccessor, repository } from '@loopback/repository';
 import { IdType } from '@/common';
+import { getError } from '@/utilities';
+import { BelongsToAccessor, repository } from '@loopback/repository';
+import isEmpty from 'lodash/isEmpty';
 
 const DS_OAUTH2 = process.env.APP_ENV_APPLICATION_DS_OAUTH2 || process.env.APP_ENV_APPLICATION_DS_AUTHORIZE;
 if (!DS_OAUTH2 || isEmpty(DS_OAUTH2)) {

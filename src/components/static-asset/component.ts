@@ -1,11 +1,11 @@
-import { BaseApplication } from '@/base/application';
-import { BaseComponent } from '@/base/base.component';
 import { MinioHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import { Binding, CoreBindings, inject } from '@loopback/core';
 import { ClientOptions } from 'minio';
-import { StaticAssetController, StaticResourceController } from './controllers';
 import { ResourceAssetKeys } from './common';
+import { StaticAssetController, StaticResourceController } from './controllers';
+import { BaseComponent } from '@/base/base.component';
+import { BaseApplication } from '@/base/applications';
 
 export class StaticAssetComponent extends BaseComponent {
   bindings: Binding[] = [

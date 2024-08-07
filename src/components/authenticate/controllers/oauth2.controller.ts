@@ -1,4 +1,3 @@
-import { BaseController } from '@/base';
 import { EnvironmentKeys, IdType, TInjectionGetter } from '@/common';
 import { applicationEnvironment, ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getSchemaObject } from '@/utilities';
@@ -19,6 +18,7 @@ import { Request, Response } from '@node-oauth/oauth2-server';
 
 import { OAuth2Service } from '../services';
 
+import { BaseController } from '@/base/controllers';
 import { isEmpty } from 'lodash';
 import { join } from 'path';
 import { Authentication, IAuthenticateOAuth2RestOptions, OAuth2Request } from '../common';

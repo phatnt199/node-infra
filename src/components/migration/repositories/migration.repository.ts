@@ -1,10 +1,12 @@
 import { BaseDataSource } from '@/base/base.datasource';
-import { TzCrudRepository } from '@/base/base.repository';
+import { TzCrudRepository } from '@/base/repositories';
 import { EntityClassType } from '@/common';
 import { getError } from '@/utilities';
 import { inject } from '@loopback/core';
-import isEmpty from 'lodash/isEmpty';
+
 import { Migration } from '../models';
+
+import isEmpty from 'lodash/isEmpty';
 
 const DS_MIGRATION = process.env.APP_ENV_APPLICATION_DS_MIGRATION;
 if (!DS_MIGRATION || isEmpty(DS_MIGRATION)) {

@@ -1,4 +1,4 @@
-import { BaseProvider } from '@/base';
+import { BaseProvider } from '@/base/base.provider';
 import {
   AuthenticateFn,
   AuthenticationBindings,

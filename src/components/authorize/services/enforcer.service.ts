@@ -1,4 +1,4 @@
-import { BaseDataSource } from '@/base';
+import { BaseDataSource } from '@/base/base.datasource';
 import { IdType } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';

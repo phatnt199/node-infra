@@ -6,7 +6,7 @@ import {
 } from '@loopback/authentication-jwt';
 import { Binding, BindingKey, CoreBindings, inject } from '@loopback/core';
 
-import { BaseApplication } from '@/base/application';
+import { BaseApplication } from '@/base';
 import { BaseComponent } from '@/base/base.component';
 import { App } from '@/common';
 import { getError, int } from '@/utilities';
