@@ -2,7 +2,7 @@ import { AnyObject, TInjectionGetter } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import { Binding, ControllerClass, CoreBindings, LifeCycleObserver, MetadataInspector } from '@loopback/core';
-import { GrpcServerKeys, GrpcTags, IGrpcMethodOptions, IGrpcServerOptions, METADATA_GRPC_METHOD } from '../common';
+import { GrpcServerKeys, GrpcTags, IGrpcMethodOptions, IGrpcServerOptions, METADATA_GRPC_METHOD } from './common';
 
 import * as grpc from '@grpc/grpc-js';
 import * as grpcLoader from '@grpc/proto-loader';

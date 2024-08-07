@@ -4,7 +4,7 @@ import { GrpcServerKeys, IGrpcServerOptions } from '../common';
 
 import { ServerCredentials } from '@grpc/grpc-js';
 import { join } from 'path';
-import { GrpcServer } from './server';
+import { GrpcServer } from '../grpc-server';
 
 export class GrpcServerComponent extends BaseComponent {
   bindings: Binding[] = [
