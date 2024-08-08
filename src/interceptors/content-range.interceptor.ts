@@ -11,6 +11,7 @@ import {
 } from '@loopback/core';
 import { CrudRepository, Filter } from '@loopback/repository';
 import { Response, RestBindings } from '@loopback/rest';
+import { get } from 'lodash';
 
 @injectable({ tags: { key: ContentRangeInterceptor.BINDING_KEY } })
 export class ContentRangeInterceptor implements Provider<Interceptor> {
@@ -72,7 +73,7 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
 
   // -------------------------------------------------------------------------------------
   async handleRelationalEntity(opts: { context: InvocationContext; result: Array<BaseIdEntity> }) {
-    const { context, result } = opts;
+    const { context } = opts;
     const { args, target } = context;
     const controller = target as ICRUDController;
     const relation = controller.relation;
@@ -82,7 +83,9 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
 
     const refId: BaseIdEntity = args[0];
     let filter: Filter<BaseIdEntity> = args[1];
-    if (!controller.sourceRepository || !controller.targetRepository || !refId) {
+    const ref = get(controller.sourceRepository, relation.name)?.(refId);
+
+    if (!controller.sourceRepository || !controller.targetRepository || !refId || !ref) {
       return;
     }
 
@@ -94,14 +97,32 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
       };
     }
 
-    const { skip = 0 } = filter;
+    const { limit = App.DEFAULT_QUERY_LIMIT, skip = 0, where } = filter;
 
     switch (relation.type) {
-      case EntityRelations.HAS_MANY:
       case EntityRelations.HAS_MANY_THROUGH: {
+        const throughConstraint = await ref.getThroughConstraintFromSource();
+        const throughRepository = await ref.getThroughRepository();
+        const thoughInstances = await throughRepository.find({ where: { ...throughConstraint } });
+
+        const targetConstraint = await ref.getTargetConstraintFromThroughModels(thoughInstances);
+
+        const countRs = await (controller.targetRepository as any).count({ ...where, ...targetConstraint });
+
         const start = 0 + skip;
-        const end = result?.length;
-        this.response.set('Content-Range', `records ${start}-${end}/${end}`);
+        const end = Math.min(start + limit, countRs.count);
+        this.response.set('Content-Range', `records ${start}-${end > 0 ? end - 1 : end}/${countRs.count}`);
+
+        break;
+      }
+      case EntityRelations.HAS_MANY: {
+        const targetConstraint = ref.constraint;
+
+        const countRs = await (controller.targetRepository as any).count({ ...where, ...targetConstraint });
+
+        const start = 0 + skip;
+        const end = Math.min(start + limit, countRs.count);
+        this.response.set('Content-Range', `records ${start}-${end > 0 ? end - 1 : end}/${countRs.count}`);
         break;
       }
       default: {

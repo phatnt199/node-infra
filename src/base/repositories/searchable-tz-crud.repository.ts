@@ -78,6 +78,10 @@ export abstract class SearchableTzCrudRepository<
     switch (relationType) {
       case 'belongsTo': {
         const rs = resolved as (E & R)[];
+        if (!rs?.length) {
+          break;
+        }
+
         for (const r1 of rs) {
           promises.push(
             this.updateById(
@@ -95,29 +99,18 @@ export abstract class SearchableTzCrudRepository<
       case 'hasOne': {
         break;
       }
-      case 'hasMany': {
-        const rs = resolved as (E & R)[][];
-
-        for (const r1 of rs) {
-          for (const r2 of r1) {
-            promises.push(
-              this.updateById(
-                r2.id,
-                // TODO: handle type
-                {
-                  objectSearch: this.renderObjectSearch({ entity: r2 }),
-                } as AnyType,
-                { ignoreMixSearchFields: true },
-              ),
-            );
-          }
-        }
-        break;
-      }
+      case 'hasMany':
       case 'hasManyThrough': {
         const rs = resolved as (E & R)[][];
+        if (!rs?.length) {
+          break;
+        }
 
         for (const r1 of rs) {
+          if (!r1?.length) {
+            break;
+          }
+
           for (const r2 of r1) {
             promises.push(
               this.updateById(
