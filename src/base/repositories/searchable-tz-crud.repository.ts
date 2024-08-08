@@ -78,7 +78,7 @@ export abstract class SearchableTzCrudRepository<
     switch (relationType) {
       case 'belongsTo': {
         const rs = resolved as (E & R)[];
-        if (!rs.length) {
+        if (!rs?.length) {
           break;
         }
 
@@ -102,12 +102,12 @@ export abstract class SearchableTzCrudRepository<
       case 'hasMany':
       case 'hasManyThrough': {
         const rs = resolved as (E & R)[][];
-        if (!rs.length) {
+        if (!rs?.length) {
           break;
         }
 
         for (const r1 of rs) {
-          if (!r1.length) {
+          if (!r1?.length) {
             break;
           }
 
@@ -126,7 +126,6 @@ export abstract class SearchableTzCrudRepository<
         }
         break;
       }
-
       default: {
         break;
       }
