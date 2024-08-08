@@ -1,5 +1,4 @@
-import { BaseProvider } from '@/base';
-import { RouteKeys } from '@/common';
+import { BaseProvider } from '@/base/base.provider';
 import {
   AuthenticateFn,
   AuthenticationBindings,
@@ -8,6 +7,7 @@ import {
 } from '@loopback/authentication';
 import { Getter, inject, injectable, Next, Provider, ValueOrPromise } from '@loopback/core';
 import { asMiddleware, Middleware, MiddlewareContext, Request, RestMiddlewareGroups, RestTags } from '@loopback/rest';
+import { AuthenticateKeys } from './common';
 
 @injectable(
   asMiddleware({
@@ -19,7 +19,7 @@ import { asMiddleware, Middleware, MiddlewareContext, Request, RestMiddlewareGro
 export class AuthenticationMiddleware extends BaseProvider implements Provider<Middleware> {
   constructor(
     @inject(AuthenticationBindings.AUTH_ACTION) private authenticateFn: AuthenticateFn,
-    @inject.getter(RouteKeys.ALWAYS_ALLOW_PATHS) private alwaysAllowPathGetter: Getter<string[]>,
+    @inject.getter(AuthenticateKeys.ALWAYS_ALLOW_PATHS) private alwaysAllowPathGetter: Getter<string[]>,
   ) {
     super({ scope: AuthenticationMiddleware.name });
   }

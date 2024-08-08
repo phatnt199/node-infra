@@ -1,10 +1,9 @@
+import { BaseProvider } from '@/base/base.provider';
+import { getUID } from '@/utilities/parse.utility';
 import { injectable, Next, Provider, ValueOrPromise } from '@loopback/core';
 import { asMiddleware, Middleware, MiddlewareContext, RestMiddlewareGroups, RestTags } from '@loopback/rest';
 
-import { BaseProvider } from '@/base';
-
 import set from 'lodash/set';
-import { getUID } from '..';
 
 @injectable(
   asMiddleware({

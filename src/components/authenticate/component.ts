@@ -4,14 +4,25 @@ import {
   RefreshTokenServiceBindings,
   TokenServiceBindings,
 } from '@loopback/authentication-jwt';
-import { Binding, CoreBindings, inject } from '@loopback/core';
+import { Binding, BindingKey, CoreBindings, inject } from '@loopback/core';
 
-import { BaseApplication } from '@/base/base.application';
+import { BaseApplication } from '@/base';
 import { BaseComponent } from '@/base/base.component';
-import { App, AuthenticateKeys, Authentication } from '@/common';
+import { App } from '@/common';
 import { getError, int } from '@/utilities';
+import {
+  AuthenticateKeys,
+  Authentication,
+  ChangePasswordRequest,
+  IAuthenticateOAuth2Options,
+  IAuthenticateRestOptions,
+  IAuthenticateTokenOptions,
+  SignInRequest,
+  SignUpRequest,
+} from './common';
 import { DefaultOAuth2ExpressServer, defineAuthController, defineOAuth2Controller } from './controllers';
 import { AuthenticationMiddleware } from './middleware';
+import { OAuth2Handler } from './oauth2-handlers';
 import { OAuth2ClientRepository, OAuth2ScopeRepository, OAuth2TokenRepository } from './repositories';
 import {
   BasicAuthenticationStrategy,
@@ -20,15 +31,6 @@ import {
   JWTTokenService,
   OAuth2Service,
 } from './services';
-import {
-  ChangePasswordRequest,
-  IAuthenticateOAuth2Options,
-  IAuthenticateRestOptions,
-  IAuthenticateTokenOptions,
-  SignInRequest,
-  SignUpRequest,
-} from './types';
-import { OAuth2Handler } from './oauth2-handlers';
 
 export class AuthenticateComponent extends BaseComponent {
   bindings: Binding[] = [
@@ -85,14 +87,12 @@ export class AuthenticateComponent extends BaseComponent {
     if (!enable) {
       return;
     }
-    const injectionGetter = <T>(key: string) => this.application.getSync<T>(key);
-
     this.application.bind(AuthenticateKeys.OAUTH2_HANDLER).to(
       new OAuth2Handler({
         handlerOptions: {
           type: 'authorization_code',
           authServiceKey: handler.authServiceKey,
-          injectionGetter,
+          injectionGetter: <T>(key: string | BindingKey<T>) => this.application.getSync<T>(key),
         },
         serverOptions: {
           allowEmptyState: true,
@@ -126,7 +126,7 @@ export class AuthenticateComponent extends BaseComponent {
       oauth2Options.restOptions?.restPath ?? '/oauth2',
       DefaultOAuth2ExpressServer.getInstance({
         authServiceKey: handler.authServiceKey,
-        injectionGetter,
+        injectionGetter: <T>(key: string | BindingKey<T>) => this.application.getSync<T>(key),
       }).getApplicationHandler(),
     );
   }

@@ -1,4 +1,4 @@
-import { BindingKeys, EnvironmentKeys, EnvironmentValidationResult, MigrationKeys } from '@/common';
+import { BindingKeys, EnvironmentKeys, EnvironmentValidationResult } from '@/common';
 import { MigrationComponent } from '@/components';
 import { KvMemDataSource, PostgresDataSource } from '@/datasources';
 import { applicationEnvironment } from '@/helpers';
@@ -7,6 +7,7 @@ import { ApplicationConfig, Constructor } from '@loopback/core';
 import { RestBindings, SequenceHandler } from '@loopback/rest';
 import isEmpty from 'lodash/isEmpty';
 import { BaseApplication } from './base.application';
+import { MigrationKeys } from '@/components/migration/common';
 
 export abstract class DefaultRestApplication extends BaseApplication {
   protected applicationRoles: string[] = [];

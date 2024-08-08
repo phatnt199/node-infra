@@ -1,7 +1,8 @@
-import { EnforcerDefinitions, IController } from '@/common';
+import { IController } from '@/common';
 import { applicationLogger } from '@/helpers';
 import { Constructor, MetadataMap } from '@loopback/core';
 import union from 'lodash/union';
+import { EnforcerDefinitions } from '../common';
 import { getDecoratorData, MetadataDecoratorKeys } from '../decorator';
 import { Permission } from '../models';
 import { PermissionRepository } from '../repositories';

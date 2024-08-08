@@ -3,10 +3,17 @@ import { Getter, inject } from '@loopback/core';
 import { api, get, post, requestBody } from '@loopback/rest';
 
 import { BaseController } from '@/base';
-import { Authentication, IdType } from '@/common';
+import { IdType } from '@/common';
 import { getError, getSchemaObject } from '@/utilities';
 import { SecurityBindings } from '@loopback/security';
-import { ChangePasswordRequest, IAuthenticateRestOptions, IAuthService, SignInRequest, SignUpRequest } from '../types';
+import {
+  Authentication,
+  ChangePasswordRequest,
+  IAuthenticateRestOptions,
+  IAuthService,
+  SignInRequest,
+  SignUpRequest,
+} from '../common';
 
 export const defineAuthController = <
   SI_RQ extends SignInRequest = SignInRequest,

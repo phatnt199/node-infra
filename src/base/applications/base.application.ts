@@ -1,25 +1,30 @@
+import { BindingKeys, EnvironmentKeys } from '@/common';
+import { EnvironmentValidationResult, IApplication } from '@/common/types';
+import { GrpcTags } from '@/components';
+import { AuthenticateKeys } from '@/components/authenticate/common';
+import { applicationEnvironment, ApplicationLogger, LoggerFactory } from '@/helpers';
+import { RequestBodyParserMiddleware, RequestSpyMiddleware } from '@/middlewares';
+import { int } from '@/utilities';
 import { BootMixin } from '@loopback/boot';
-import { ApplicationConfig, Constructor } from '@loopback/core';
+import {
+  ApplicationConfig,
+  Binding,
+  BindingFromClassOptions,
+  BindingScope,
+  Constructor,
+  ControllerClass,
+} from '@loopback/core';
 import { Repository, RepositoryMixin, RepositoryTags } from '@loopback/repository';
 import { MiddlewareSequence, RestApplication, SequenceHandler } from '@loopback/rest';
 import { CrudRestComponent } from '@loopback/rest-crud';
 import { ServiceMixin } from '@loopback/service-proxy';
 
-import { EnvironmentValidationResult, IApplication } from '@/common/types';
-import { ApplicationLogger, LoggerFactory } from '@/helpers';
+import { BaseDataSource } from '../base.datasource';
+import { BaseEntity } from '../base.model';
+import { BaseApplicationSequence } from '../base.sequence';
 
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-
-import {
-  BaseApplicationSequence,
-  BaseDataSource,
-  BaseEntity,
-  BindingKeys,
-  RouteKeys,
-  RequestSpyMiddleware,
-  RequestBodyParserMiddleware,
-} from '..';
 
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
@@ -33,7 +38,7 @@ export abstract class BaseApplication
     super(serverOptions);
     this.logger = LoggerFactory.getLogger(['Application']);
 
-    this.bind(RouteKeys.ALWAYS_ALLOW_PATHS).to([]);
+    this.bind(AuthenticateKeys.ALWAYS_ALLOW_PATHS).to([]);
     this.bind(BindingKeys.APPLICATION_MIDDLEWARE_OPTIONS).to(MiddlewareSequence.defaultOptions);
     this.sequence(sequence ?? BaseApplicationSequence);
 
@@ -76,6 +81,18 @@ export abstract class BaseApplication
 
   abstract preConfigure(): void;
   abstract postConfigure(): void;
+
+  getServerHost() {
+    return applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_SERVER_HOST);
+  }
+
+  getServerPort() {
+    return int(applicationEnvironment.get<number>(EnvironmentKeys.APP_ENV_SERVER_PORT));
+  }
+
+  getServerAddress() {
+    return `${this.getServerHost()}:${this.getServerPort()}`;
+  }
 
   getMigrateModels(opts: { ignoreModels?: string[]; migrateModels?: string[] }) {
     const { ignoreModels, migrateModels } = opts;
@@ -159,5 +176,9 @@ export abstract class BaseApplication
         new Date().getTime() - t,
       );
     }
+  }
+
+  grpcController<T>(ctor: ControllerClass<T>, nameOrOptions?: string | BindingFromClassOptions): Binding<T> {
+    return this.controller(ctor, nameOrOptions).tag(GrpcTags.CONTROLLERS);
   }
 }

@@ -1,5 +1,4 @@
-import { BaseController } from '@/base';
-import { Authentication, EnvironmentKeys, IdType } from '@/common';
+import { EnvironmentKeys, IdType, TInjectionGetter } from '@/common';
 import { applicationEnvironment, ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getSchemaObject } from '@/utilities';
 import { authenticate } from '@loopback/authentication';
@@ -18,16 +17,17 @@ import { SecurityBindings } from '@loopback/security';
 import { Request, Response } from '@node-oauth/oauth2-server';
 
 import { OAuth2Service } from '../services';
-import { IAuthenticateOAuth2RestOptions, OAuth2Request } from '../types';
 
-import { join } from 'path';
+import { BaseController } from '@/base/controllers';
 import { isEmpty } from 'lodash';
+import { join } from 'path';
+import { Authentication, IAuthenticateOAuth2RestOptions, OAuth2Request } from '../common';
 
 interface IOAuth2ControllerOptions {
   config?: ExpressServerConfig | undefined;
   parent?: Context;
   authServiceKey: string;
-  injectionGetter: <T>(key: string) => T;
+  injectionGetter: TInjectionGetter;
 }
 
 // --------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
   private static instance: DefaultOAuth2ExpressServer;
 
   private authServiceKey: string;
-  private injectionGetter: <T>(key: string) => T;
+  private injectionGetter: TInjectionGetter;
 
   private logger: ApplicationLogger;
 

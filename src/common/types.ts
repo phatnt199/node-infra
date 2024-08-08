@@ -1,4 +1,5 @@
 import { BaseIdEntity, BaseTzEntity } from '@/base';
+import { BindingKey } from '@loopback/core';
 import { Count, DataObject, Entity, Filter, Options, Where } from '@loopback/repository';
 
 export interface IApplication {
@@ -17,6 +18,7 @@ export interface IDataSource {
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export type ClassType<T> = Function & { prototype: T };
+
 export type EntityClassType<T extends Entity> = typeof Entity & { prototype: T & { id?: IdType } };
 
 export type EntityRelation = {};
@@ -112,3 +114,6 @@ export interface IRequestedRemark {
   method: string;
   [extra: string | symbol]: any;
 }
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export type TInjectionGetter = <T>(key: string | BindingKey<T>) => T;

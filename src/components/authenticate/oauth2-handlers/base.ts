@@ -1,5 +1,5 @@
-import { BaseTzEntity } from '@/base';
-import { AnyObject, Authentication, AuthenticationTokenTypes, ITzRepository, OAuth2TokenStatuses } from '@/common';
+import { BaseTzEntity } from '@/base/base.model';
+import { AnyObject, ITzRepository, OAuth2TokenStatuses, TInjectionGetter } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError, int } from '@/utilities';
 import { securityId } from '@loopback/security';
@@ -10,16 +10,16 @@ import { OAuth2ClientRepository, OAuth2TokenRepository } from '../repositories';
 import { JWTTokenService } from '../services';
 
 import get from 'lodash/get';
-import { IAuthService } from '../types';
+import { Authentication, AuthenticationTokenTypes, IAuthService } from '../common';
 
 export interface IOAuth2AuthenticationHandler extends BaseModel, RequestAuthenticationModel {}
 
 export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2AuthenticationHandler {
   protected authServiceKey: string;
   protected logger: ApplicationLogger;
-  protected injectionGetter: <T>(key: string) => T;
+  protected injectionGetter: TInjectionGetter;
 
-  constructor(opts: { scope?: string; authServiceKey: string; injectionGetter: <T>(key: string) => T }) {
+  constructor(opts: { scope?: string; authServiceKey: string; injectionGetter: TInjectionGetter }) {
     this.logger = LoggerFactory.getLogger([opts?.scope ?? AbstractOAuth2AuthenticationHandler.name]);
     this.injectionGetter = opts.injectionGetter;
     this.authServiceKey = opts.authServiceKey;

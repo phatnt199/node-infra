@@ -1,4 +1,4 @@
-import { AbstractCasbinAdapter } from './adapters/base.adapter';
+import { FilteredAdapter } from 'casbin';
 
 export interface EnforcerFilterValue {
   principalType: string;
@@ -16,7 +16,7 @@ export interface IAuthorizeConfigureOptions {
 
   // default: casbin-postgres
   adapterType?: TCasbinAdapter;
-  adapter?: AbstractCasbinAdapter;
+  adapter?: FilteredAdapter;
 
   useCache: boolean;
 }

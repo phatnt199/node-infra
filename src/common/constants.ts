@@ -8,45 +8,21 @@ export class App {
   static readonly DEFAULT_QUERY_LIMIT = 50;
 }
 
-export class Authentication {
-  static readonly ACCESS_TOKEN_SECRET = 'token.secret';
-  static readonly ACCESS_TOKEN_EXPIRES_IN = 86400;
-  static readonly REFRESH_TOKEN_SECRET = 'refresh.secret';
-  static readonly REFRESH_TOKEN_EXPIRES_IN = 86400;
-
-  // Jwt
-  static readonly TYPE_BASIC = 'Basic';
-  static readonly TYPE_BEARER = 'Bearer';
-
-  // Strategy
-  static readonly STRATEGY_BASIC = 'basic';
-  static readonly STRATEGY_JWT = 'jwt';
-}
-
-export class AuthenticationTokenTypes {
-  static readonly TYPE_AUTHORIZATION_CODE = '000_AUTHORIZATION_CODE';
-  static readonly TYPE_ACCESS_TOKEN = '100_ACCESS_TOKEN';
-  static readonly TYPE_REFRESH_TOKEN = '200_REFRESH_TOKEN';
-}
-
 export class Formatters {
   static readonly DATE_TIME = 'YYYY-MM-DD HH:mm:ss';
   static readonly DATE_TIME_2 = 'YYYYMMDDHHmmss';
+
   static readonly DATE_1 = 'YYYY-MM-DD';
   static readonly DATE_2 = 'YYYYMMDD';
+
   static readonly TIME_1 = 'HH:mm:ss';
   static readonly TIME_2 = 'HHmmssSSS';
+
   static readonly MONTH_1 = 'YYYYMM';
 }
 
 export class ApplicationRoles {
   static readonly API = 'api';
-}
-
-export class FixedUserRoles {
-  static readonly SUPER_ADMIN = '999-super-admin';
-  static readonly ADMIN = '998-admin';
-  static readonly FULL_AUTHORIZE_ROLES = [this.SUPER_ADMIN, this.ADMIN];
 }
 
 export class ResultCodes {
@@ -78,49 +54,6 @@ export class EntityRelations {
   }
 }
 
-export class EnforcerDefinitions {
-  static readonly ACTION_EXECUTE = 'execute';
-  static readonly ACTION_READ = 'read';
-  static readonly ACTION_WRITE = 'write';
-  static readonly PREFIX_USER = 'user';
-  static readonly PREFIX_ROLE = 'role';
-  static readonly PTYPE_POLICY = 'p';
-  static readonly PTYPE_GROUP = 'g';
-}
-
-export class UserTypes {
-  static readonly SYSTEM = 'SYSTEM';
-  static readonly LINKED = 'LINKED';
-  static readonly TYPE_SET = new Set([this.SYSTEM, this.LINKED]);
-
-  static isValid(orgType: string): boolean {
-    return this.TYPE_SET.has(orgType);
-  }
-}
-
-export class AccountTypes extends UserTypes {}
-
-export class SocketIOConstants {
-  static readonly EVENT_PING = 'ping';
-  static readonly EVENT_CONNECT = 'connection';
-  static readonly EVENT_DISCONNECT = 'disconnect';
-  static readonly EVENT_JOIN = 'join';
-  static readonly EVENT_LEAVE = 'leave';
-  static readonly EVENT_AUTHENTICATE = 'authenticate';
-  static readonly EVENT_AUTHENTICATED = 'authenticated';
-  static readonly EVENT_UNAUTHENTICATE = 'unauthenticated';
-
-  static readonly ROOM_DEFAULT = 'io-default';
-  static readonly ROOM_NOTIFICATION = 'io-notification';
-}
-
-export class MimeTypes {
-  static readonly UNKNOWN = 'unknown';
-  static readonly IMAGE = 'image';
-  static readonly VIDEO = 'video';
-  static readonly TEXT = 'text';
-}
-
 export class ConfigurationDataType {
   static readonly NUMBER = 'NUMBER';
   static readonly TEXT = 'TEXT';
@@ -133,4 +66,21 @@ export class ConfigurationDataType {
   static isValid(orgType: string): boolean {
     return this.TYPE_SET.has(orgType);
   }
+}
+
+export class UserTypes {
+  static readonly SYSTEM = 'SYSTEM';
+  static readonly LINKED = 'LINKED';
+  static readonly TYPE_SET = new Set([this.SYSTEM, this.LINKED]);
+
+  static isValid(orgType: string): boolean {
+    return this.TYPE_SET.has(orgType);
+  }
+}
+
+export class MimeTypes {
+  static readonly UNKNOWN = 'unknown';
+  static readonly IMAGE = 'image';
+  static readonly VIDEO = 'video';
+  static readonly TEXT = 'text';
 }

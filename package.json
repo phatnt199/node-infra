@@ -1,6 +1,6 @@
 {
   "name": "@tanphat199/lb-infra",
-  "version": "0.1.28",
+  "version": "0.2.0",
   "description": "Loopback 4 Infrastructure",
   "keywords": [
     "loopback",
@@ -47,6 +47,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.11.1",
     "@loopback/authentication": "^11.0.3",
     "@loopback/authentication-jwt": "^0.15.3",
     "@loopback/authentication-passport": "^7.0.3",

@@ -1,7 +1,7 @@
 import { BaseDataSource } from '@/base';
-import { EnforcerDefinitions } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { FilteredAdapter, Model } from 'casbin';
+import { EnforcerDefinitions } from '../common';
 
 // -----------------------------------------------------------------------------------------
 export abstract class AbstractCasbinAdapter implements FilteredAdapter {

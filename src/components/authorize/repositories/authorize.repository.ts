@@ -1,12 +1,14 @@
 import { BaseDataSource } from '@/base/base.datasource';
 import { BaseTzEntity } from '@/base/base.model';
-import { TzCrudRepository, ViewRepository } from '@/base/base.repository';
+import { TzCrudRepository, ViewRepository } from '@/base/repositories';
 import { EntityClassType, IdType } from '@/common';
-import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from '../models';
-import { Getter, inject } from '@loopback/core';
 import { getError } from '@/utilities';
-import isEmpty from 'lodash/isEmpty';
+import { Getter, inject } from '@loopback/core';
 import { HasManyThroughRepositoryFactory, repository } from '@loopback/repository';
+
+import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } from '../models';
+
+import isEmpty from 'lodash/isEmpty';
 
 const DS_AUTHORIZE = process.env.APP_ENV_APPLICATION_DS_AUTHORIZE;
 if (!DS_AUTHORIZE || isEmpty(DS_AUTHORIZE)) {

@@ -1,9 +1,10 @@
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import OAuth2Server, { ServerOptions } from '@node-oauth/oauth2-server';
 
+import { TInjectionGetter } from '@/common';
+import { getError } from '@/utilities';
 import { OAuth2AuthorizationCodeHandler } from './authorization-code.handler';
 import { IOAuth2AuthenticationHandler } from './base';
-import { getError } from '@/utilities';
 
 export class OAuth2Handler extends OAuth2Server {
   logger: ApplicationLogger;
@@ -13,7 +14,7 @@ export class OAuth2Handler extends OAuth2Server {
     handlerOptions: {
       type: 'authorization_code';
       authServiceKey: string;
-      injectionGetter: <T>(key: string) => T;
+      injectionGetter: TInjectionGetter;
     };
     serverOptions: Omit<ServerOptions, 'model'>;
   }) {

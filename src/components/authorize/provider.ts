@@ -1,4 +1,3 @@
-import { AuthorizerKeys, EnforcerDefinitions } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError, int } from '@/utilities';
 import {
@@ -10,6 +9,7 @@ import {
 import { inject, Provider } from '@loopback/core';
 import intersection from 'lodash/intersection';
 import isEmpty from 'lodash/isEmpty';
+import { AuthorizerKeys, EnforcerDefinitions } from './common';
 import { EnforcerService } from './services';
 
 export class AuthorizeProvider implements Provider<Authorizer> {
