@@ -28,6 +28,7 @@ interface IOAuth2ControllerOptions {
   parent?: Context;
   authServiceKey: string;
   injectionGetter: TInjectionGetter;
+  viewFolder?: string;
 }
 
 // --------------------------------------------------------------------------------
@@ -36,6 +37,7 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
 
   private authServiceKey: string;
   private injectionGetter: TInjectionGetter;
+  private viewFolder?: string;
 
   private logger: ApplicationLogger;
 
@@ -44,6 +46,7 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
 
     this.authServiceKey = opts.authServiceKey;
     this.injectionGetter = opts.injectionGetter;
+    this.viewFolder = opts.viewFolder;
 
     this.logger = LoggerFactory.getLogger([DefaultOAuth2ExpressServer.name]);
 
@@ -67,7 +70,9 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
     this.expressApp.set('view engine', 'ejs');
 
     const oauth2ViewFolder =
-      applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_OAUTH2_VIEW_FOLDER) ?? join(__dirname, '../', 'views');
+      this.viewFolder ??
+      applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_OAUTH2_VIEW_FOLDER) ??
+      join(__dirname, '../', 'views');
     this.expressApp.set('views', oauth2ViewFolder);
     this.logger.info('[binding] View folder: %s', oauth2ViewFolder);
 
