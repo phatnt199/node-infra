@@ -83,7 +83,7 @@ export class AuthenticateComponent extends BaseComponent {
     }
 
     const oauth2Options = this.application.getSync<IAuthenticateOAuth2Options>(AuthenticateKeys.OAUTH2_OPTIONS);
-    const { enable = false, handler } = oauth2Options;
+    const { enable = false, handler, viewFolder } = oauth2Options;
     if (!enable) {
       return;
     }
@@ -125,6 +125,7 @@ export class AuthenticateComponent extends BaseComponent {
     this.application.mountExpressRouter(
       oauth2Options.restOptions?.restPath ?? '/oauth2',
       DefaultOAuth2ExpressServer.getInstance({
+        viewFolder,
         authServiceKey: handler.authServiceKey,
         injectionGetter: <T>(key: string | BindingKey<T>) => this.application.getSync<T>(key),
       }).getApplicationHandler(),
