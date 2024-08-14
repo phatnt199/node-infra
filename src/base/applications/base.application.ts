@@ -179,6 +179,6 @@ export abstract class BaseApplication
   }
 
   grpcController<T>(ctor: ControllerClass<T>, nameOrOptions?: string | BindingFromClassOptions): Binding<T> {
-    return this.controller(ctor, nameOrOptions).tag(GrpcTags.CONTROLLERS);
+    return this.controller(ctor, nameOrOptions).tag(GrpcTags.CONTROLLERS).inScope(BindingScope.SINGLETON);
   }
 }
