@@ -52,6 +52,7 @@ export interface IAuthenticateOAuth2Options {
   };
 
   restOptions?: IAuthenticateOAuth2RestOptions;
+  viewFolder?: string;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
