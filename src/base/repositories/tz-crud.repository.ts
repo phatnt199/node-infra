@@ -236,4 +236,30 @@ export abstract class TzCrudRepository<
     (entity as BaseUserAuditTzEntity).modifiedBy = options.authorId;
     return entity;
   }
+
+  _deleteWithReturn(where: Where<E>, options?: Options) {
+    return new Promise((resolve, reject) => {
+      this.find({ where })
+        .then(found => {
+          this.deleteAll(where, options)
+            .then(() => resolve(found))
+            .catch(reject);
+        })
+        .catch(reject);
+    });
+  }
+
+  deleteWithReturn(where: Where<E>, options?: Options) {
+    return new Promise((resolve, reject) => {
+      this._deleteWithReturn(where, options)
+        .then(rs => {
+          resolve(rs);
+          this.notifyObservers({ operation: 'after deleteWithReturn', where, options, data: rs });
+        })
+        .catch(e => {
+          reject(e);
+          this.notifyObservers({ operation: 'after deleteWithReturn error', where, options, data: null });
+        });
+    });
+  }
 }

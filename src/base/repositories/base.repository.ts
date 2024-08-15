@@ -73,7 +73,7 @@ export abstract class AbstractTzRepository<E extends BaseTzEntity, R extends Ent
   protected notifyObservers(opts: { operation: string; [extra: symbol | string]: unknown | string }) {
     const { operation, ...rest } = opts;
     const observers = this.getObservers({ operation });
-    observers.forEach(observer => observer(this.modelClass, rest));
+    observers.forEach(observer => observer({ ...this.modelClass, ...rest }));
   }
 
   abstract mixTimestamp(
