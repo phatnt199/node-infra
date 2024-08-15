@@ -62,9 +62,17 @@ export class GrpcServer extends grpc.Server {
     const { controller, method } = opts;
 
     return (call: { request: AnyObject }, next: (error: Error | null, rs?: T) => void) => {
-      const instance = this.injectionGetter(`controllers.${controller.valueConstructor?.name}`);
-      const caller = get(instance, method);
-      Promise.resolve(caller?.(call.request))
+      const instance = this.injectionGetter<ControllerClass & { [method: string | symbol]: Function }>(
+        `controllers.${controller.valueConstructor?.name}`,
+      );
+
+      if (!instance?.[method]) {
+        throw getError({
+          message: `[setupHandler] Invalid implementation instance method | Controller: ${controller?.valueConstructor?.name} | method: ${method}`,
+        });
+      }
+
+      Promise.resolve(instance?.[method]?.(call.request))
         .then(rs => {
           next(null, rs);
         })
