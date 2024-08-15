@@ -237,19 +237,19 @@ export abstract class TzCrudRepository<
     return entity;
   }
 
-  _deleteWithReturn(where: Where<E>, options?: Options) {
+  _deleteWithReturn(where: Where<E>, options?: Options): Promise<{ count: Count; data: (E & R)[] }> {
     return new Promise((resolve, reject) => {
       this.find({ where })
         .then(found => {
           this.deleteAll(where, options)
-            .then(() => resolve(found))
+            .then(count => resolve({ count, data: found }))
             .catch(reject);
         })
         .catch(reject);
     });
   }
 
-  deleteWithReturn(where: Where<E>, options?: Options) {
+  deleteWithReturn(where: Where<E>, options?: Options): Promise<{ count: Count; data: (E & R)[] }> {
     return new Promise((resolve, reject) => {
       this._deleteWithReturn(where, options)
         .then(rs => {
