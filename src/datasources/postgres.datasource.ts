@@ -4,7 +4,7 @@ import { inject } from '@loopback/core';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
-const databaseConfigs = {
+const dsConfigs = {
   connector: 'postgresql',
   name: process.env.APP_ENV_DATASOURCE_NAME,
   host: process.env.APP_ENV_POSTGRES_HOST,
@@ -14,8 +14,8 @@ const databaseConfigs = {
   database: process.env.APP_ENV_POSTGRES_DATABASE,
 };
 
-for (const key in databaseConfigs) {
-  const value = get(databaseConfigs, key);
+for (const key in dsConfigs) {
+  const value = get(dsConfigs, key);
   switch (typeof value) {
     case 'number': {
       if (!value || value < 0) {
@@ -36,12 +36,10 @@ for (const key in databaseConfigs) {
 }
 
 export class PostgresDataSource extends BaseDataSource {
-  static dataSourceName = databaseConfigs.name;
-  static readonly defaultConfig = databaseConfigs;
+  static dataSourceName = dsConfigs.name;
+  static readonly defaultConfig = dsConfigs;
 
-  constructor(
-    @inject(`datasources.config.${databaseConfigs.name}`, { optional: true }) dsConfig: object = databaseConfigs,
-  ) {
+  constructor(@inject(`datasources.config.${dsConfigs.name}`, { optional: true }) dsConfig: object = dsConfigs) {
     super({ dsConfig, scope: PostgresDataSource.name });
     this.logger.info('[Datasource] Postgres Datasource Config: %j', dsConfig);
   }
