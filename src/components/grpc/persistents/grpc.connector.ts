@@ -2,8 +2,8 @@ import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { ChannelCredentials } from '@grpc/grpc-js';
 import { Constructor } from '@loopback/core';
 import { Connector } from '@loopback/repository';
+import { GrpcClient, initializeGrpcClient } from '../helpers';
 import { TGrpcServiceClient } from '../types';
-import { GrpcClient, initializeGrpcClient } from './grpc-client';
 
 export interface IGrpcConnectorOptions<S extends TGrpcServiceClient> {
   host: string;
