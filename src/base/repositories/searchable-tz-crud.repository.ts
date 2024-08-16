@@ -56,6 +56,12 @@ export abstract class SearchableTzCrudRepository<
 
       await this.onInclusionChanged({ relation, relationRepository, entities });
     });
+
+    relationRepository.modelClass.observe('after deleteWithReturn', async context => {
+      const { data } = context;
+
+      await this.onInclusionChanged({ relation, relationRepository, entities: data });
+    });
   }
 
   // ----------------------------------------------------------------------------------------------------
