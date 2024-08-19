@@ -146,6 +146,7 @@ export abstract class SearchableTzCrudRepository<
     data: DataObject<E>,
     options?: Options & { where?: Where },
   ) {
+    const where = get(options, 'where');
     const isSearchable = get(this.modelClass.definition.properties, field, null) !== null;
     if (!isSearchable) {
       return null;
@@ -161,7 +162,17 @@ export abstract class SearchableTzCrudRepository<
         return this.renderTextSearch({ data, entity: resolved?.[0] });
       }
       case 'objectSearch': {
-        return this.renderObjectSearch({ data, entity: resolved?.[0] });
+        let currentObjectSearch = {};
+        if (where) {
+          const found = await this.findOne({ where, include: this.searchableInclusions });
+          if (found) {
+            currentObjectSearch = this.renderObjectSearch({ data, entity: found });
+          }
+        }
+
+        const newObjectSearch = this.renderObjectSearch({ data, entity: resolved?.[0] });
+
+        return { ...currentObjectSearch, ...newObjectSearch };
       }
       default: {
         return null;
