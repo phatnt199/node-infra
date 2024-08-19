@@ -3,7 +3,7 @@ import { BaseComponent } from '@/base/base.component';
 import { Binding, BindingKey, CoreBindings, inject } from '@loopback/core';
 
 import { GrpcServerKeys, IGrpcServerOptions } from '../common';
-import { GrpcServer } from './grpc-server';
+import { GrpcServer } from '../helpers';
 
 import { ServerCredentials } from '@grpc/grpc-js';
 import { join } from 'path';

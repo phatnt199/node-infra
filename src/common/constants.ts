@@ -1,9 +1,9 @@
 export class App {
-  static readonly APPLICATION_NAME = process.env.APP_ENV_APPLICATION_NAME ?? 'PNT';
-  static readonly TIME_OFFSET = '+07:00';
+  static readonly APPLICATION_NAME = process.env.APP_ENV_APPLICATION_NAME ?? 'APP';
+  static readonly APPLICATION_SECRET = process.env.APP_ENV_APPLICATION_SECRET ?? 'application.secret';
+
   static readonly DEFAULT_LOCALE = 'en.UTF-8';
   static readonly DEFAULT_EXPLORER_PATH = '/explorer';
-  static readonly SECRET = 'application.secret';
 
   static readonly DEFAULT_QUERY_LIMIT = 50;
 }

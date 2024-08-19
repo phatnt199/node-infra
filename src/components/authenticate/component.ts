@@ -34,7 +34,7 @@ import {
 
 export class AuthenticateComponent extends BaseComponent {
   bindings: Binding[] = [
-    Binding.bind<string>(AuthenticateKeys.APPLICATION_SECRET).to(App.SECRET),
+    Binding.bind<string>(AuthenticateKeys.APPLICATION_SECRET).to(App.APPLICATION_SECRET),
 
     Binding.bind<IAuthenticateTokenOptions>(AuthenticateKeys.TOKEN_OPTIONS).to({
       tokenSecret: Authentication.ACCESS_TOKEN_SECRET,

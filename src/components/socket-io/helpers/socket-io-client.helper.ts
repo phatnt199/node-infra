@@ -1,6 +1,6 @@
+import { ApplicationLogger, LoggerFactory } from '@/helpers';
+import { getError } from '@/utilities';
 import { io, Socket, SocketOptions } from 'socket.io-client';
-import { getError } from '..';
-import { ApplicationLogger, LoggerFactory } from './logger.helper';
 
 interface IOptions extends SocketOptions {
   path: string;

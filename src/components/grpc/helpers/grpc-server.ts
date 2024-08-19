@@ -6,9 +6,9 @@ import { GrpcServerKeys, GrpcTags, IGrpcMethodOptions, IGrpcServerOptions, METAD
 
 import * as grpc from '@grpc/grpc-js';
 import * as grpcLoader from '@grpc/proto-loader';
+import { existsSync } from 'fs';
 import get from 'lodash/get';
 import { join } from 'path';
-import { existsSync } from 'fs';
 
 export class GrpcServer extends grpc.Server {
   private identifier: string;
