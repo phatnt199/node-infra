@@ -9,18 +9,23 @@ import { BelongsToAccessor, repository } from '@loopback/repository';
 import isEmpty from 'lodash/isEmpty';
 
 const DS_OAUTH2 = process.env.APP_ENV_APPLICATION_DS_OAUTH2 || process.env.APP_ENV_APPLICATION_DS_AUTHORIZE;
-if (!DS_OAUTH2 || isEmpty(DS_OAUTH2)) {
-  throw getError({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
-}
 
 export class OAuth2ClientRepository extends TzCrudRepository<OAuth2Client> {
   constructor(@inject(`datasources.${DS_OAUTH2}`) dataSource: BaseDataSource) {
+    if (!DS_OAUTH2 || isEmpty(DS_OAUTH2)) {
+      throw getError({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
+    }
+
     super(OAuth2Client, dataSource);
   }
 }
 
 export class OAuth2ScopeRepository extends TzCrudRepository<OAuth2Scope> {
   constructor(@inject(`datasources.${DS_OAUTH2}`) dataSource: BaseDataSource) {
+    if (!DS_OAUTH2 || isEmpty(DS_OAUTH2)) {
+      throw getError({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
+    }
+
     super(OAuth2Scope, dataSource);
   }
 }
@@ -33,6 +38,10 @@ export class OAuth2TokenRepository extends TzCrudRepository<OAuth2Token> {
     @repository.getter('OAuth2ScopeRepository')
     protected oauth2ClientRepository: Getter<OAuth2ClientRepository>,
   ) {
+    if (!DS_OAUTH2 || isEmpty(DS_OAUTH2)) {
+      throw getError({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
+    }
+
     super(OAuth2Token, dataSource);
 
     this.client = this.createBelongsToAccessorFor('client', oauth2ClientRepository);
