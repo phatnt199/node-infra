@@ -11,15 +11,15 @@ import { Permission, PermissionMapping, Role, UserRole, ViewAuthorizePolicy } fr
 import isEmpty from 'lodash/isEmpty';
 
 const DS_AUTHORIZE = process.env.APP_ENV_APPLICATION_DS_AUTHORIZE;
-if (!DS_AUTHORIZE || isEmpty(DS_AUTHORIZE)) {
-  throw getError({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
-}
 
 // ----------------------------------------------------------------------------
 export abstract class AbstractAuthorizeRepository<T extends BaseTzEntity> extends TzCrudRepository<T> {
   constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource) {
-    super(entityClass, dataSource);
+    if (!DS_AUTHORIZE || isEmpty(DS_AUTHORIZE)) {
+      throw getError({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
+    }
 
+    super(entityClass, dataSource);
     this.bindingRelations();
   }
 
