@@ -1,29 +1,31 @@
-export class DIContainerHelper {
+import { AnyObject } from '@/common';
+
+export class DIContainerHelper<T extends object = AnyObject> {
   private static instance: DIContainerHelper;
-  private container: Record<string, any> = {};
+  private container: T;
 
   private constructor() {
-    this.container = {};
+    this.container = Object.assign({});
   }
 
-  static getInstance() {
+  static getInstance<T extends object = AnyObject>() {
     if (!this.instance) {
-      this.instance = new DIContainerHelper();
+      this.instance = new DIContainerHelper<T>();
     }
 
     return this.instance;
   }
 
-  static newInstance() {
-    return new DIContainerHelper();
+  static newInstance<T extends object = AnyObject>() {
+    return new DIContainerHelper<T>();
   }
 
-  get<ReturnType>(key: string) {
-    return this.container[key] as ReturnType;
+  get<R>(key: keyof T) {
+    return this.container[key] as R;
   }
 
-  set<ValueType>(key: string, value: ValueType) {
-    this.container[key] = value;
+  set<R>(key: string, value: R) {
+    this.container = Object.assign(this.container, { [key]: value });
   }
 
   keys() {
