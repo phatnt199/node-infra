@@ -14,6 +14,10 @@ export class DIContainerHelper {
     return this.instance;
   }
 
+  static newInstance() {
+    return new DIContainerHelper();
+  }
+
   get<ReturnType>(key: string) {
     return this.container[key] as ReturnType;
   }
