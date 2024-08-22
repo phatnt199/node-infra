@@ -89,6 +89,10 @@ export abstract class SearchableTzCrudRepository<
         }
 
         for (const r1 of rs) {
+          if (!r1) {
+            continue;
+          }
+
           promises.push(
             this.updateById(
               r1.id,
@@ -118,6 +122,10 @@ export abstract class SearchableTzCrudRepository<
           }
 
           for (const r2 of r1) {
+            if (!rs) {
+              continue;
+            }
+
             promises.push(
               this.updateById(
                 r2.id,
