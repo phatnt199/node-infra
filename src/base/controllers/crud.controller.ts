@@ -117,7 +117,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControlle
     })
     findOne(
       @param.query.object('filter', getFilterSchemaFor(entityOptions))
-      filter?: FilterExcludingWhere<E>,
+      filter?: Filter<E>,
     ): Promise<(E & EntityRelation) | null> {
       return this.repository.findOne(filter);
     }
