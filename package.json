@@ -1,6 +1,6 @@
 {
   "name": "@tanphat199/lb-infra",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Loopback 4 Infrastructure",
   "keywords": [
     "loopback",
@@ -64,7 +64,7 @@
     "@node-oauth/oauth2-server": "^5.1.0",
     "@socket.io/redis-adapter": "^8.3.0",
     "@socket.io/redis-emitter": "^5.1.0",
-    "axios": "^1.7.2",
+    "axios": "^1.7.4",
     "bullmq": "^5.10.4",
     "casbin": "^5.30.0",
     "cron": "^3.1.7",
