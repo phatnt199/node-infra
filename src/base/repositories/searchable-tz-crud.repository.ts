@@ -44,14 +44,14 @@ export abstract class SearchableTzCrudRepository<
   ) {
     const relationRepository = await relationRepositoryGetter();
     relationRepository.modelClass.observe('after save', async context => {
-      const { isNewInstance, where, instance } = context;
+      const { isNewInstance, where, instance, options } = context;
 
       let entities: RM[] = [];
 
       if (isNewInstance) {
         entities.push(instance);
       } else {
-        entities = await relationRepository.find({ where });
+        entities = await relationRepository.find({ where }, options);
       }
 
       await this.onInclusionChanged({ relation, relationRepository, entities });
