@@ -1,4 +1,4 @@
-import { BaseNetworkRequest } from '@/services';
+import { BaseNetworkRequest } from '@/helpers';
 import { getError } from '@/utilities';
 import { AuthenticationStrategy, registerAuthenticationStrategy } from '@loopback/authentication';
 import { Context } from '@loopback/core';

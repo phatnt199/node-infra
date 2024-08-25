@@ -1,8 +1,8 @@
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
+import { getError } from '@/utilities';
 import Redis from 'ioredis';
 import isEmpty from 'lodash/isEmpty';
 import zlib from 'zlib';
-import { getError } from '..';
 
 export class RedisHelper {
   client: Redis;

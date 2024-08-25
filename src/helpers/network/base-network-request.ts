@@ -1,8 +1,8 @@
-import { NetworkHelper } from '@/helpers/network.helper';
 import { getError } from '@/utilities';
 import { AxiosRequestConfig } from 'axios';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
+import { NetworkHelper } from './network.helper';
 
 export abstract class BaseNetworkRequest {
   protected baseUrl: string;

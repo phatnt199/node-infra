@@ -31,5 +31,4 @@ export * from './helpers';
 export * from './middlewares';
 export * from './migrations';
 export * from './mixins';
-export * from './services';
 export * from './utilities';
