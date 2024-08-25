@@ -1,15 +1,18 @@
 import { IApplicationEnvironment } from '@/common';
 
 export class ApplicationEnvironment implements IApplicationEnvironment {
+  private prefix: string;
   private arguments: Record<string, any> = {};
 
-  constructor(props: Record<string, any>) {
-    for (const key in props) {
-      if (!key.startsWith('APP_ENV_')) {
+  constructor(opts: { prefix: string; envs: Record<string, string | number | undefined> }) {
+    this.prefix = opts.prefix;
+
+    for (const key in opts.envs) {
+      if (!key.startsWith(this.prefix)) {
         continue;
       }
 
-      this.arguments[key] = props[key];
+      this.arguments[key] = opts.envs[key];
     }
   }
 
@@ -26,4 +29,7 @@ export class ApplicationEnvironment implements IApplicationEnvironment {
   }
 }
 
-export const applicationEnvironment = new ApplicationEnvironment(process.env);
+export const applicationEnvironment = new ApplicationEnvironment({
+  prefix: process.env.APPLICATION_ENV_PREFIX ?? 'APP_ENV',
+  envs: process.env,
+});
