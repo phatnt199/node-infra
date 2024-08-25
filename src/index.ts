@@ -14,15 +14,10 @@ const {
 } = process.env;
 
 applicationLogger.info('------------------------------------------------------------------------');
-applicationLogger.info('Application configures:');
-applicationLogger.info(
-  '- Env: %s | AllowEmptyEnv: %s | Prefix: %s | Run mode: %s',
-  NODE_ENV,
-  ALLOW_EMPTY_ENV_VALUE,
-  APPLICATION_ENV_PREFIX,
-  RUN_MODE,
-);
+applicationLogger.info('Application configures | Env: %s', NODE_ENV);
+applicationLogger.info('- AllowEmptyEnv: %s | Prefix: %s', ALLOW_EMPTY_ENV_VALUE, APPLICATION_ENV_PREFIX);
 applicationLogger.info('- Name: %s', APP_ENV_APPLICATION_NAME);
+applicationLogger.info('- Run mode: %s', RUN_MODE);
 applicationLogger.info('- Timezone: %s', APP_ENV_APPLICATION_TIMEZONE);
 applicationLogger.info('- LogPath: %s', APP_ENV_LOGGER_FOLDER_PATH);
 applicationLogger.info('- MigrationDS: %s | AuthorizeDS: %s', APP_ENV_DS_MIGRATION, APP_ENV_DS_AUTHORIZE);
