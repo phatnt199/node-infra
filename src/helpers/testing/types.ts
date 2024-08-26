@@ -44,7 +44,7 @@ export interface ITestPlanOptions<R extends object> {
   testCaseResolver?: (opts: { context: ITestContext<R> }) => Array<ITestCase<R>>;
 }
 
-export interface ITestPlan<R extends object = AnyObject> extends ITestContext<R> {
+export interface ITestPlan<R extends object = {}> extends ITestContext<R> {
   getTestCases: () => Array<ITestCase<R>>;
   getContext: () => ITestContext<R>;
 
