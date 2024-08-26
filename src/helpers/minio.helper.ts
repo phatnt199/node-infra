@@ -2,7 +2,6 @@ import { MimeTypes } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
-
 import { Client, ClientOptions } from 'minio';
 import { GetObjectOpts } from 'minio/dist/main/internal/type';
 import { Readable } from 'stream';

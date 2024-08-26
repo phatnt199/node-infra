@@ -1,7 +1,7 @@
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
 import mqtt from 'mqtt';
-import { ApplicationLogger, LoggerFactory } from './logger.helper';
+import { ApplicationLogger, LoggerFactory } from '../logger';
 
 export interface IMQTTClientOptions {
   identifier: string;

@@ -1,5 +1,5 @@
+import { getError } from '@/utilities';
 import knex from 'knex';
-import { getError } from '..';
 
 type TQueryBuilerClientType = 'pg' | 'mysql';
 

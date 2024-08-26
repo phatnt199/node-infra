@@ -121,6 +121,14 @@ export const float = (input: any, digit = 2) => {
 };
 
 // -------------------------------------------------------------------------
+export const toBoolean = (input: any) => {
+  return (
+    (input !== 'false' && input !== '0' && input !== false && input !== 0 && input !== null && input !== undefined) ??
+    Boolean(input)
+  );
+};
+
+// -------------------------------------------------------------------------
 export const toStringDecimal = (input: any, digit = 2, options = { localeFormat: true }) => {
   const { localeFormat } = options;
   if (isNaN(input)) {

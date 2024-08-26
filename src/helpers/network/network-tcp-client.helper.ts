@@ -1,6 +1,6 @@
-import { LoggerFactory, ApplicationLogger } from '@/helpers';
 import isEmpty from 'lodash/isEmpty';
 import { Socket as SocketClient } from 'net';
+import { ApplicationLogger, LoggerFactory } from '../logger';
 
 const DEFAULT_MAX_RETRY = 5;
 

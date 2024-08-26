@@ -1,6 +1,6 @@
-import { LoggerFactory, ApplicationLogger } from '@/helpers';
 import isEmpty from 'lodash/isEmpty';
 import dgram from 'dgram';
+import { ApplicationLogger, LoggerFactory } from '../logger';
 
 interface NetworkUdpClientProps {
   identifier: string;

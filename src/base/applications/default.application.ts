@@ -1,13 +1,14 @@
 import { BindingKeys, EnvironmentKeys, EnvironmentValidationResult } from '@/common';
 import { MigrationComponent } from '@/components';
+import { MigrationKeys } from '@/components/migration/common';
 import { KvMemDataSource, PostgresDataSource } from '@/datasources';
 import { applicationEnvironment } from '@/helpers';
 import { ContentRangeInterceptor } from '@/interceptors/content-range.interceptor';
+import { toBoolean } from '@/utilities';
 import { ApplicationConfig, Constructor } from '@loopback/core';
 import { RestBindings, SequenceHandler } from '@loopback/rest';
 import isEmpty from 'lodash/isEmpty';
 import { BaseApplication } from './base.application';
-import { MigrationKeys } from '@/components/migration/common';
 
 export abstract class DefaultRestApplication extends BaseApplication {
   protected applicationRoles: string[] = [];
@@ -28,7 +29,7 @@ export abstract class DefaultRestApplication extends BaseApplication {
     for (const argKey of envKeys) {
       const argValue = applicationEnvironment.get<string | number>(argKey);
 
-      if (!isEmpty(argValue)) {
+      if (toBoolean(process.env.ALLOW_EMPTY_ENV_VALUE) || !isEmpty(argValue)) {
         continue;
       }
 
