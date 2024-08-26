@@ -1,7 +1,7 @@
 import { getError } from '@/utilities';
-import { describe } from 'mocha';
 import { ApplicationLogger, LoggerFactory } from '../logger';
 import { ITestPlan } from './types';
+import { describe, before, beforeEach, after, afterEach } from 'node:test';
 
 export class TestDescribe<R extends object> {
   testPlan: ITestPlan<R>;

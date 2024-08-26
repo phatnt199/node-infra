@@ -36,7 +36,7 @@ export abstract class TestCaseHandler<R extends object = {}, I extends ITestCase
     super(opts);
   }
 
-  validate(...args: any[]) {
-    return Promise.resolve(this.validator?.(args) ?? TestCaseDecisions.UNKNOWN);
+  validate(...args: any[]): Promisable<TTestCaseDecision> {
+    return this.validator?.(args) ?? TestCaseDecisions.UNKNOWN;
   }
 }
