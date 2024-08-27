@@ -1,5 +1,5 @@
-import { AnyObject, AnyType, Promisable } from '@/common';
-import { DIContainerHelper } from '../di-container.helper';
+import { AnyType, Promisable } from '@/common';
+import { DIContainerHelper } from '../storage';
 
 export interface ITestContext<R extends object> {
   scope: string;
