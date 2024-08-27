@@ -1,7 +1,7 @@
-import { ITestCase, ITestHooks, ITestPlan, ITestPlanOptions } from '../types';
-import { DIContainerHelper } from './../../di-container.helper';
-import { ApplicationLogger, LoggerFactory } from './../../logger';
 import { it } from 'node:test';
+import { ITestCase, ITestHooks, ITestPlan, ITestPlanOptions } from '../types';
+import { ApplicationLogger, LoggerFactory } from './../../logger';
+import { DIContainerHelper } from './../../storage';
 
 export abstract class BaseTestPlan<R extends object> implements ITestPlan<R> {
   private logger: ApplicationLogger;
