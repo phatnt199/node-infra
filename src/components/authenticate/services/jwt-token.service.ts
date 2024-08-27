@@ -46,13 +46,15 @@ export class JWTTokenService extends BaseService {
   // --------------------------------------------------------------------------------------
   encryptPayload(payload: JWTTokenPayload) {
     const userKey = encrypt('userId', this.applicationSecret);
+    console.log('userKey: %s', userKey);
+
     const rolesKey = encrypt('roles', this.applicationSecret);
     const clientIdKey = encrypt('clientId', this.applicationSecret);
 
     const { userId, roles, clientId = 'NA' } = payload;
 
     return {
-      [userKey]: encrypt(userId, this.applicationSecret),
+      [userKey]: encrypt(userId.toString(), this.applicationSecret),
       [rolesKey]: encrypt(
         JSON.stringify(roles.map(el => `${el.id}|${el.identifier}|${el.priority}`)),
         this.applicationSecret,
@@ -66,8 +68,8 @@ export class JWTTokenService extends BaseService {
     const rs: any = {};
 
     for (const encodedAttr in decodedToken) {
-      const attr = decrypt(encodedAttr, this.applicationSecret);
-      const decryptedValue = decrypt(decodedToken[encodedAttr], this.applicationSecret);
+      const attr = decrypt(encodedAttr, this.applicationSecret, { throws: false });
+      const decryptedValue = decrypt(decodedToken[encodedAttr], this.applicationSecret, { throws: false });
 
       switch (attr) {
         case 'userId': {
