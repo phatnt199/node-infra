@@ -8,7 +8,7 @@ export interface ITestCaseHandlerOptions<R extends object, I extends ITestCaseIn
   args?: I | null;
   argResolver?: (...args: any[]) => I | null;
 
-  validator?: (...args: any[]) => Promisable<TTestCaseDecision>;
+  validator?: (opts: any) => Promisable<TTestCaseDecision>;
 }
 
 export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITestCaseInput = {}>
@@ -24,7 +24,7 @@ export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITest
     this.validator = opts.validator;
   }
 
-  abstract validate(...args: any[]): Promisable<TTestCaseDecision>;
+  abstract validate(opts: any): Promisable<TTestCaseDecision>;
   abstract execute(): Promisable<void>;
 }
 
@@ -36,7 +36,7 @@ export abstract class TestCaseHandler<R extends object = {}, I extends ITestCase
     super(opts);
   }
 
-  validate(...args: any[]): Promisable<TTestCaseDecision> {
-    return this.validator?.(args) ?? TestCaseDecisions.UNKNOWN;
+  validate(opts: any): Promisable<TTestCaseDecision> {
+    return this.validator?.(opts) ?? TestCaseDecisions.UNKNOWN;
   }
 }

@@ -1,4 +1,3 @@
-import { it } from 'node:test';
 import { ITestCase, ITestHooks, ITestPlan, ITestPlanOptions } from '../types';
 import { ApplicationLogger, LoggerFactory } from './../../logger';
 import { DIContainerHelper } from './../../storage';
@@ -77,7 +76,7 @@ export abstract class BaseTestPlan<R extends object> implements ITestPlan<R> {
 
     for (const testCase of this.testCases) {
       try {
-        it(`RUN Test Case | name: ${testCase.name} - Description: ${testCase.description}`, () => {
+        it(`RUN Test Case | Description: ${testCase.name ? `${testCase.name} - ` : ''}${testCase.description}`, () => {
           return testCase.run();
         });
       } catch (error) {
