@@ -17,7 +17,8 @@ export class StaticResourceController implements IController {
   private temporaryStorage: multer.StorageEngine;
 
   constructor(
-    @inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication,
+    @inject(CoreBindings.APPLICATION_INSTANCE)
+    protected application: BaseApplication,
     @inject(RestBindings.Http.REQUEST) private request: Request,
     @inject(RestBindings.Http.RESPONSE) private response: Response,
   ) {
@@ -72,7 +73,9 @@ export class StaticResourceController implements IController {
 
                 this.logger.info('[upload] Uploaded: %s | Took: %s (ms)', originalName, new Date().getTime() - t);
                 innerResolve({ fileName: savedName });
-              } catch innerReject
+              } catch (e) {
+                innerReject(e);
+              }
             });
           }),
         ).then(rs => {
@@ -103,8 +106,8 @@ export class StaticResourceController implements IController {
         const rs = fs.createReadStream(savedPath);
         rs.pipe(this.response);
 
-        rs.on('error', error => {
-          this.logger.error('[downloadObject] Error: %s', error);
+        rs.on('error', e => {
+          this.logger.error('[downloadObject] Error: %s', e);
           throw getError({
             message: `[downloadObject] Cannot download ${objectName}! Error while streaming data to client!`,
             statusCode: 500,

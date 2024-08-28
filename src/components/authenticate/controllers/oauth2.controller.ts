@@ -142,8 +142,7 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
           redirectUrl,
         })
         .then(rs => {
-          const { redirectUrl, oauth2TokenRs } = rs;
-          const { accessToken, accessTokenExpiresAt, client } = oauth2TokenRs;
+          const { accessToken, accessTokenExpiresAt, client } = rs.oauth2TokenRs;
 
           if (!accessTokenExpiresAt) {
             response.render('pages/error', {
@@ -152,8 +151,8 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
             return;
           }
 
-          oauth2Service.doClientCallback({ c: token, oauth2Token: oauth2TokenRs }).then(() => {
-            const url = new URL(redirectUrl);
+          oauth2Service.doClientCallback({ c: token, oauth2Token: rs.oauth2TokenRs }).then(() => {
+            const url = new URL(rs.redirectUrl);
             url.searchParams.append('c', encodeURIComponent(token));
             url.searchParams.append('clientId', client.clientId);
             url.searchParams.append('accessToken', accessToken);
@@ -204,14 +203,20 @@ export const defineOAuth2Controller = (opts?: IAuthenticateOAuth2RestOptions) =>
     @post(tokenPath)
     generateToken() {
       const { request, response } = this.httpContext;
-      return this.service.generateToken({ request: new Request(request), response: new Response(response) });
+      return this.service.generateToken({
+        request: new Request(request),
+        response: new Response(response),
+      });
     }
 
     // ------------------------------------------------------------------------------
     @post(authorizePath)
     authorize() {
       const { request, response } = this.httpContext;
-      return this.service.authorize({ request: new Request(request), response: new Response(response) });
+      return this.service.authorize({
+        request: new Request(request),
+        response: new Response(response),
+      });
     }
 
     // ------------------------------------------------------------------------------

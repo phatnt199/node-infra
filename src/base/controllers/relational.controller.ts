@@ -127,40 +127,38 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
     async count(@param.path.number('id') id: IdType, @param.query.object('where') where?: Where<T>) {
       const ref = getProp(this.sourceRepository, relationName)(id);
 
-      try {
-        switch (relationType) {
-          case EntityRelations.BELONGS_TO: {
-            return ref;
-          }
-          case EntityRelations.HAS_ONE: {
-            return ref
-              .get({ where })
-              .then(() => Promise.resolve({ count: 1 }))
-              .catch(() => Promise.resolve({ count: 0 }));
-          }
-          case EntityRelations.HAS_MANY: {
-            const targetConstraint = ref.constraint;
-            const targetRepository = await ref.getTargetRepository();
-            return targetRepository.count({ ...where, ...targetConstraint });
-          }
-          case EntityRelations.HAS_MANY_THROUGH: {
-            const throughConstraint = await ref.getThroughConstraintFromSource();
-            const throughRepository = await ref.getThroughRepository();
-            const thoughInstances = await throughRepository.find({ where: { ...throughConstraint } });
-
-            const targetConstraint = await ref.getTargetConstraintFromThroughModels(thoughInstances);
-            const targetModelName = await ref.targetResolver().name;
-            const targetRepositoryGetter = getProp(ref.getTargetRepository, targetModelName);
-            const targetRepository = await targetRepositoryGetter();
-
-            return targetRepository.count({ ...where, ...targetConstraint });
-          }
-          default: {
-            return Promise.resolve({ count: 0 });
-          }
+      switch (relationType) {
+        case EntityRelations.BELONGS_TO: {
+          return ref;
         }
-      } catch (e) {
-        return Promise.resolve({ count: 0 });
+        case EntityRelations.HAS_ONE: {
+          return ref
+            .get({ where })
+            .then(() => Promise.resolve({ count: 1 }))
+            .catch(() => Promise.resolve({ count: 0 }));
+        }
+        case EntityRelations.HAS_MANY: {
+          const targetConstraint = ref.constraint;
+          const targetRepository = await ref.getTargetRepository();
+          return targetRepository.count({ ...where, ...targetConstraint });
+        }
+        case EntityRelations.HAS_MANY_THROUGH: {
+          const throughConstraint = await ref.getThroughConstraintFromSource();
+          const throughRepository = await ref.getThroughRepository();
+          const thoughInstances = await throughRepository.find({
+            where: { ...throughConstraint },
+          });
+
+          const targetConstraint = await ref.getTargetConstraintFromThroughModels(thoughInstances);
+          const targetModelName = await ref.targetResolver().name;
+          const targetRepositoryGetter = getProp(ref.getTargetRepository, targetModelName);
+          const targetRepository = await targetRepositoryGetter();
+
+          return targetRepository.count({ ...where, ...targetConstraint });
+        }
+        default: {
+          return { count: 0 };
+        }
       }
     }
   }
@@ -278,7 +276,11 @@ export const defineRelationCrudController = <
   const {
     association,
     schema,
-    options = { controlTarget: false, defaultLimit: App.DEFAULT_QUERY_LIMIT, endPoint: '' },
+    options = {
+      controlTarget: false,
+      defaultLimit: App.DEFAULT_QUERY_LIMIT,
+      endPoint: '',
+    },
   } = controllerOptions;
   const { relationName, relationType } = association;
   const { target } = schema;

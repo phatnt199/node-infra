@@ -9,7 +9,11 @@ export class OAuth2ClientCredentialHandler
   implements ClientCredentialsModel
 {
   constructor(opts: { scope?: string; authServiceKey: string; injectionGetter: TInjectionGetter; serviceKey: string }) {
-    super({ scope: opts.scope, authServiceKey: opts.authServiceKey, injectionGetter: opts.injectionGetter });
+    super({
+      scope: opts.scope,
+      authServiceKey: opts.authServiceKey,
+      injectionGetter: opts.injectionGetter,
+    });
   }
 
   getUserFromClient(client: Client): Promise<User | Falsey> {
@@ -17,7 +21,9 @@ export class OAuth2ClientCredentialHandler
     const service = this.injectionGetter<IAuthService>(this.authServiceKey);
 
     if (!service?.getUserInformation) {
-      throw getError({ message: `${this.authServiceKey} has no 'getUserInformation' method!` });
+      throw getError({
+        message: `${this.authServiceKey} has no 'getUserInformation' method!`,
+      });
     }
 
     const userInformation = service?.getUserInformation?.(client);

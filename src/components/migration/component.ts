@@ -17,7 +17,10 @@ export class MigrationComponent extends BaseComponent {
     Binding.bind(MigrationKeys.MIGRATION_REPOSITORY).toClass(MigrationRepository),
   ];
 
-  constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
+  constructor(
+    @inject(CoreBindings.APPLICATION_INSTANCE)
+    protected application: BaseApplication,
+  ) {
     super({ scope: MigrationComponent.name });
 
     this.binding();

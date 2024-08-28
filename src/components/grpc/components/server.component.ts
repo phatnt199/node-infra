@@ -17,7 +17,10 @@ export class GrpcServerComponent extends BaseComponent {
     }),
   ];
 
-  constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
+  constructor(
+    @inject(CoreBindings.APPLICATION_INSTANCE)
+    protected application: BaseApplication,
+  ) {
     super({ scope: GrpcServerComponent.name });
 
     this.binding();

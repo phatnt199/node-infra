@@ -11,7 +11,8 @@ import { AuthenticateKeys, Authentication, JWTTokenPayload } from '../common';
 @injectable({ scope: BindingScope.SINGLETON })
 export class JWTTokenService extends BaseService {
   constructor(
-    @inject(AuthenticateKeys.APPLICATION_SECRET) private applicationSecret: string,
+    @inject(AuthenticateKeys.APPLICATION_SECRET)
+    private applicationSecret: string,
     @inject(TokenServiceBindings.TOKEN_SECRET) private jwtSecret: string,
     @inject(TokenServiceBindings.TOKEN_EXPIRES_IN) private jwtExpiresIn: string,
   ) {

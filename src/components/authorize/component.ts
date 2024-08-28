@@ -48,7 +48,10 @@ export class AuthorizeComponent extends BaseComponent {
     Binding.bind(AuthorizerKeys.NORMALIZE_PAYLOAD_FN).to(null),
   ];
 
-  constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
+  constructor(
+    @inject(CoreBindings.APPLICATION_INSTANCE)
+    protected application: BaseApplication,
+  ) {
     super({ scope: AuthorizeComponent.name });
 
     this.binding();

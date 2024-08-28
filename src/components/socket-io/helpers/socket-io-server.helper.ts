@@ -166,7 +166,10 @@ export class SocketIOServerHelper {
     const { id, handshake } = socket;
     const { headers } = handshake;
     if (this.clients[id]) {
-      this.logger.info('[onClientConnect] Socket client already existed: %j', { id, headers });
+      this.logger.info('[onClientConnect] Socket client already existed: %j', {
+        id,
+        headers,
+      });
       return;
     }
 

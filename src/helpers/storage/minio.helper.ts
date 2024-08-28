@@ -59,7 +59,9 @@ export class MinioHelper {
   async createBucket(opts: { name: string }) {
     const { name } = opts;
     if (!name || isEmpty(name)) {
-      throw getError({ message: '[createBucket] Invalid name to create bucket!' });
+      throw getError({
+        message: '[createBucket] Invalid name to create bucket!',
+      });
     }
 
     await this.client.makeBucket(name);
@@ -71,7 +73,9 @@ export class MinioHelper {
   async removeBucket(opts: { name: string }) {
     const { name } = opts;
     if (!name || isEmpty(name)) {
-      throw getError({ message: '[removeBucket] Invalid name to remove bucket!' });
+      throw getError({
+        message: '[removeBucket] Invalid name to remove bucket!',
+      });
     }
 
     await this.client.removeBucket(name);

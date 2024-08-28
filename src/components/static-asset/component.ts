@@ -17,7 +17,10 @@ export class StaticAssetComponent extends BaseComponent {
     Binding.bind(ResourceAssetKeys.CONNECTION_OPTIONS).to(null),
   ];
 
-  constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
+  constructor(
+    @inject(CoreBindings.APPLICATION_INSTANCE)
+    protected application: BaseApplication,
+  ) {
     super({ scope: StaticAssetComponent.name });
     this.binding();
   }

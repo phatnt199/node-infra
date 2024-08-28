@@ -10,7 +10,11 @@ const DEFAULT_PAD_END = (0x00).toString();
 
 export const hash = (
   text: string,
-  options: { algorithm: 'SHA256' | 'MD5'; secret: string; outputType: C.BinaryToTextEncoding },
+  options: {
+    algorithm: 'SHA256' | 'MD5';
+    secret: string;
+    outputType: C.BinaryToTextEncoding;
+  },
 ): string => {
   const { algorithm, secret, outputType } = options;
 
@@ -67,7 +71,10 @@ export const encrypt = (
   } = opts ?? {};
 
   try {
-    const secretKey = normalizeSecretKey({ secret, length: getAlgorithmKeySize({ algorithm }) });
+    const secretKey = normalizeSecretKey({
+      secret,
+      length: getAlgorithmKeySize({ algorithm }),
+    });
     const cipher = C.createCipheriv(algorithm, Buffer.from(secretKey), iv);
 
     const parts = [iv];
@@ -130,7 +137,10 @@ export const decrypt = (
       opts?.iv ?? Buffer.from(message, inputEncoding).subarray(0, DEFAULT_LENGTH) ?? Buffer.alloc(DEFAULT_LENGTH, 0);
     let messageIndex = iv.length;
 
-    const secretKey = normalizeSecretKey({ secret, length: getAlgorithmKeySize({ algorithm }) });
+    const secretKey = normalizeSecretKey({
+      secret,
+      length: getAlgorithmKeySize({ algorithm }),
+    });
     const decipher = C.createDecipheriv(algorithm, Buffer.from(secretKey), iv);
 
     switch (algorithm) {

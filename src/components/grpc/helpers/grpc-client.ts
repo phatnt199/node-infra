@@ -43,7 +43,9 @@ export class GrpcClient<S extends TGrpcServiceClient> {
 
     const ServiceClass = this.serviceClass;
     if (!ServiceClass) {
-      throw getError({ message: '[bindingClient] Invalid serviceClass to init grpc client' });
+      throw getError({
+        message: '[bindingClient] Invalid serviceClass to init grpc client',
+      });
     }
 
     this.client = new ServiceClass(this.address, this.credentials);

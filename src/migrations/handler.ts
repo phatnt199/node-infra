@@ -55,7 +55,9 @@ const m = async (application: BaseApplication, migrationProcesses: Array<Migrati
       logger.error('[migration] FAILED | Migrate process: %s | Error: %s', name, error);
     } finally {
       if (migrated) {
-        await migrationRepository.updateById(migrated.id as number, { status: migrateStatus });
+        await migrationRepository.updateById(migrated.id as number, {
+          status: migrateStatus,
+        });
       } else {
         await migrationRepository.create({ name, status: migrateStatus });
       }

@@ -28,16 +28,28 @@ export abstract class TzCrudRepository<
   }
 
   create(data: DataObject<E>, options?: Options & { authorId?: IdType; ignoreModified?: boolean }): Promise<E> {
-    let enriched = this.mixTimestamp(data, { newInstance: true, ignoreModified: options?.ignoreModified ?? false });
-    enriched = this.mixUserAudit(enriched, { newInstance: true, authorId: options?.authorId });
+    let enriched = this.mixTimestamp(data, {
+      newInstance: true,
+      ignoreModified: options?.ignoreModified ?? false,
+    });
+    enriched = this.mixUserAudit(enriched, {
+      newInstance: true,
+      authorId: options?.authorId,
+    });
 
     return super.create(enriched, options);
   }
 
   createAll(datum: DataObject<E>[], options?: Options & { authorId?: IdType; ignoreModified?: boolean }): Promise<E[]> {
     const enriched = datum.map(data => {
-      const tmp = this.mixTimestamp(data, { newInstance: true, ignoreModified: options?.ignoreModified ?? false });
-      return this.mixUserAudit(tmp, { newInstance: true, authorId: options?.authorId });
+      const tmp = this.mixTimestamp(data, {
+        newInstance: true,
+        ignoreModified: options?.ignoreModified ?? false,
+      });
+      return this.mixUserAudit(tmp, {
+        newInstance: true,
+        authorId: options?.authorId,
+      });
     });
 
     return super.createAll(enriched, options);
@@ -58,8 +70,14 @@ export abstract class TzCrudRepository<
     data: DataObject<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<void> {
-    let enriched = this.mixTimestamp(data, { newInstance: false, ignoreModified: options?.ignoreModified ?? false });
-    enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options?.authorId });
+    let enriched = this.mixTimestamp(data, {
+      newInstance: false,
+      ignoreModified: options?.ignoreModified ?? false,
+    });
+    enriched = this.mixUserAudit(enriched, {
+      newInstance: false,
+      authorId: options?.authorId,
+    });
 
     return super.updateById(id, enriched, options);
   }
@@ -87,8 +105,14 @@ export abstract class TzCrudRepository<
     where?: Where<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<Count> {
-    let enriched = this.mixTimestamp(data, { newInstance: false, ignoreModified: options?.ignoreModified ?? false });
-    enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options?.authorId });
+    let enriched = this.mixTimestamp(data, {
+      newInstance: false,
+      ignoreModified: options?.ignoreModified ?? false,
+    });
+    enriched = this.mixUserAudit(enriched, {
+      newInstance: false,
+      authorId: options?.authorId,
+    });
 
     return super.updateAll(enriched, where, options);
   }
@@ -114,8 +138,14 @@ export abstract class TzCrudRepository<
     data: DataObject<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<void> {
-    let enriched = this.mixTimestamp(data, { newInstance: false, ignoreModified: options?.ignoreModified ?? false });
-    enriched = this.mixUserAudit(enriched, { newInstance: false, authorId: options?.authorId });
+    let enriched = this.mixTimestamp(data, {
+      newInstance: false,
+      ignoreModified: options?.ignoreModified ?? false,
+    });
+    enriched = this.mixUserAudit(enriched, {
+      newInstance: false,
+      authorId: options?.authorId,
+    });
 
     return super.replaceById(id, enriched, options);
   }
@@ -151,7 +181,9 @@ export abstract class TzCrudRepository<
 
       const isSoftDeleteFieldExist = get(this.modelClass.definition.rawProperties, softDeleteField);
       if (!isSoftDeleteFieldExist) {
-        throw getError({ message: `[softDelete] Model: ${this.modelClass.name} | Soft delete is not supported!` });
+        throw getError({
+          message: `[softDelete] Model: ${this.modelClass.name} | Soft delete is not supported!`,
+        });
       }
 
       const now = new Date();
@@ -194,11 +226,21 @@ export abstract class TzCrudRepository<
       this._softDelete(where, options)
         .then(rs => {
           resolve(rs);
-          this.notifyObservers({ operation: 'after softDelete', where, options, data: rs });
+          this.notifyObservers({
+            operation: 'after softDelete',
+            where,
+            options,
+            data: rs,
+          });
         })
         .catch(error => {
           reject(error);
-          this.notifyObservers({ operation: 'after softDelete error', where, options, data: null });
+          this.notifyObservers({
+            operation: 'after softDelete error',
+            where,
+            options,
+            data: null,
+          });
         });
     });
   }
@@ -254,11 +296,21 @@ export abstract class TzCrudRepository<
       this._deleteWithReturn(where, options)
         .then(rs => {
           resolve(rs);
-          this.notifyObservers({ operation: 'after deleteWithReturn', where, options, data: rs });
+          this.notifyObservers({
+            operation: 'after deleteWithReturn',
+            where,
+            options,
+            data: rs,
+          });
         })
         .catch(e => {
           reject(e);
-          this.notifyObservers({ operation: 'after deleteWithReturn error', where, options, data: null });
+          this.notifyObservers({
+            operation: 'after deleteWithReturn error',
+            where,
+            options,
+            data: null,
+          });
         });
     });
   }

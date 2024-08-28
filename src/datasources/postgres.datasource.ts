@@ -18,19 +18,26 @@ export class PostgresDataSource extends BaseDataSource {
   static dataSourceName = dsConfigs.name;
   static readonly defaultConfig = dsConfigs;
 
-  constructor(@inject(`datasources.config.${dsConfigs.name}`, { optional: true }) dsConfig: object = dsConfigs) {
+  constructor(
+    @inject(`datasources.config.${dsConfigs.name}`, { optional: true })
+    dsConfig: object = dsConfigs,
+  ) {
     for (const key in dsConfigs) {
       const value = get(dsConfigs, key);
       switch (typeof value) {
         case 'number': {
           if (!value || value < 0) {
-            throw getError({ message: `[DANGER] INVALID DATABASE CONFIGURE | Key: ${key} | Value: ${value}` });
+            throw getError({
+              message: `[DANGER] INVALID DATABASE CONFIGURE | Key: ${key} | Value: ${value}`,
+            });
           }
           break;
         }
         case 'string': {
           if (!value || isEmpty(value)) {
-            throw getError({ message: `[DANGER] INVALID DATABASE CONFIGURE | Key: ${key} | Value: ${value}` });
+            throw getError({
+              message: `[DANGER] INVALID DATABASE CONFIGURE | Key: ${key} | Value: ${value}`,
+            });
           }
           break;
         }

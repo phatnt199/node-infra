@@ -16,5 +16,5 @@
     "removeComments": false
     // "declaration": false
   },
-  "include": ["src", "./.eslintrc.cjs"]
+  "include": ["src", "./*.config.*", ".prettierrc.mjs"]
 }

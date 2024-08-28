@@ -53,7 +53,10 @@ export class AuthenticateComponent extends BaseComponent {
     }),
   ];
 
-  constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
+  constructor(
+    @inject(CoreBindings.APPLICATION_INSTANCE)
+    protected application: BaseApplication,
+  ) {
     super({ scope: AuthenticateComponent.name });
     this.binding();
   }

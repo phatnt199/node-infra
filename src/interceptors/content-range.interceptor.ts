@@ -103,11 +103,16 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
       case EntityRelations.HAS_MANY_THROUGH: {
         const throughConstraint = await ref.getThroughConstraintFromSource();
         const throughRepository = await ref.getThroughRepository();
-        const thoughInstances = await throughRepository.find({ where: { ...throughConstraint } });
+        const thoughInstances = await throughRepository.find({
+          where: { ...throughConstraint },
+        });
 
         const targetConstraint = await ref.getTargetConstraintFromThroughModels(thoughInstances);
 
-        const countRs = await (controller.targetRepository as any).count({ ...where, ...targetConstraint });
+        const countRs = await (controller.targetRepository as any).count({
+          ...where,
+          ...targetConstraint,
+        });
 
         const start = 0 + skip;
         const end = Math.min(start + limit, countRs.count);
@@ -118,7 +123,10 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
       case EntityRelations.HAS_MANY: {
         const targetConstraint = ref.constraint;
 
-        const countRs = await (controller.targetRepository as any).count({ ...where, ...targetConstraint });
+        const countRs = await (controller.targetRepository as any).count({
+          ...where,
+          ...targetConstraint,
+        });
 
         const start = 0 + skip;
         const end = Math.min(start + limit, countRs.count);

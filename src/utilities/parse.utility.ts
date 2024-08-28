@@ -133,7 +133,10 @@ export const toStringDecimal = (input: any, digit = 2, options = { localeFormat:
     return INTL_2_DIGITS_FORMATER.format(number);
   }
 
-  const formater = new Intl.NumberFormat('en-US', { maximumFractionDigits: digit, minimumFractionDigits: digit });
+  const formater = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: digit,
+    minimumFractionDigits: digit,
+  });
   return formater.format(number);
 };
 
