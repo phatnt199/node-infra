@@ -21,7 +21,9 @@ const configs = [
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
     },
-    files: ['src/**/*.{js,ts}'],
+    files: ['**/*.js', '**/*.ts'],
+  },
+  {
     ignores: ['**/node_modules', '**/dist', '**/*.config.*', '**/.prettierrc.*'],
   },
 ];
