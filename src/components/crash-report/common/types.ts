@@ -1,4 +1,4 @@
-import { AnyObject, IdType } from '@/common';
+import { AnyObject, AnyType, IdType } from '@/common';
 import { model, property } from '@loopback/repository';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ export interface ICrashReportRestOptions {
   apiKey?: string;
   secretKey?: string;
   environment?: string;
-  createEventRequest?: any;
+  createEventRequest?: AnyType;
   requireAuthenticatedCreateEvent?: boolean;
   generateBodyFn?: () => void;
 }
