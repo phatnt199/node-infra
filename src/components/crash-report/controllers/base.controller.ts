@@ -1,6 +1,6 @@
 import { api, getModelSchemaRef, post, requestBody } from '@loopback/rest';
 import { BaseController } from '@/base';
-import { CreateEventRequest, ICrashReportRestOptions } from '../common';
+import { BASE_ENDPOINT_CRASH_REPORT, CreateEventRequest, ICrashReportRestOptions } from '../common';
 import { BaseNetworkRequest } from '@/helpers';
 import { encrypt } from '@/utilities';
 import { authenticate } from '@loopback/authentication';
@@ -11,7 +11,7 @@ class CrashReportProviderNetworkRequest extends BaseNetworkRequest {}
 export const defineCrashReportController = (opts: ICrashReportRestOptions) => {
   const {
     restPath = '/crash-reports',
-    endPoint = 'https://mt-crash-report-be.minimaltek.com/v1/api/events',
+    endPoint = BASE_ENDPOINT_CRASH_REPORT,
     apiKey = '',
     secretKey = '',
     projectId,

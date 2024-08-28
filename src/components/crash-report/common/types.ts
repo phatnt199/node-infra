@@ -100,5 +100,5 @@ export interface ICrashReportRestOptions {
   environment?: string;
   createEventRequest?: AnyType;
   requireAuthenticatedCreateEvent?: boolean;
-  generateBodyFn?: () => void;
+  generateBodyFn?: () => AnyObject;
 }
