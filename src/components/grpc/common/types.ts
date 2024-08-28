@@ -1,4 +1,5 @@
-import { ServerOptions, ServerCredentials } from '@grpc/grpc-js';
+import { Client, ServerOptions, ServerCredentials, ChannelCredentials } from '@grpc/grpc-js';
+import { Constructor, ValueOrPromise } from '@loopback/core';
 
 export interface IGrpcServerOptions {
   identifier: string;
@@ -20,4 +21,15 @@ export interface IGrpcMethodOptions {
   method?: string;
   isRequestStream?: boolean;
   isResponseStream?: boolean;
+}
+
+export type TGrpcServiceClient = Client;
+
+export interface IGrpcClientOptions<S extends Client> {
+  identifier: string;
+  serviceClass: Constructor<S>;
+  address: string | number;
+  credentials: ChannelCredentials;
+  autoConnect?: boolean;
+  onClientReady?: (opts: { client: S }) => ValueOrPromise<void>;
 }

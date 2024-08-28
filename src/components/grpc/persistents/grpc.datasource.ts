@@ -2,7 +2,7 @@ import { GrpcConnector, IGrpcConnectorOptions } from './grpc.connector';
 import { Connector, juggler, Options } from '@loopback/repository';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { ValueOrPromise } from '@loopback/core';
-import { TGrpcServiceClient } from '../types';
+import { TGrpcServiceClient } from '../common';
 
 // ------------------------------------------------------------------------------------
 export abstract class BaseGrpcDataSource<S extends TGrpcServiceClient> extends juggler.DataSource {

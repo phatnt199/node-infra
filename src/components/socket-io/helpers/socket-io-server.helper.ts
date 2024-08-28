@@ -1,16 +1,16 @@
-import { Server as IOServer, ServerOptions, Socket as IOSocket } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { Emitter } from '@socket.io/redis-emitter';
 import Redis from 'ioredis';
 import { of } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { Server as IOServer, Socket as IOSocket, ServerOptions } from 'socket.io';
 
-import { LoggerFactory, ApplicationLogger } from '@/helpers';
+import { SocketIOConstants } from '@/components/socket-io/common/constants';
+import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import { Server } from 'http';
 import isEmpty from 'lodash/isEmpty';
-import { Handshake } from 'socket.io/dist/socket';
-import { SocketIOConstants } from '@/components/socket-io/common/constants';
+import { Handshake } from './types';
 
 const CLIENT_AUTHENTICATE_TIMEOUT = 10 * 1000;
 
@@ -87,7 +87,7 @@ export class SocketIOServerHelper {
   }
 
   // -------------------------------------------------------------------------------------------------------------
-  getIOServer() {
+  getIOServer(): IOServer {
     return this.io;
   }
 
