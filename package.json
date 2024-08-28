@@ -3,6 +3,17 @@
   "version": "0.2.19",
   "description": "Loopback 4 Infrastructure",
   "keywords": [
+    "web",
+    "restful",
+    "rest",
+    "api",
+    "express",
+    "auth",
+    "security",
+    "postgres",
+    "postgresql",
+    "StrongLoop",
+    "framework",
     "loopback",
     "loopback-application",
     "infrastructure"
@@ -36,7 +47,7 @@
     "url": "https://github.com/phatnt199/lb-infra/issues"
   },
   "homepage": "https://github.com/phatnt199/lb-infra/wiki",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "files": [
     "README.md",
     "LICENSE",
