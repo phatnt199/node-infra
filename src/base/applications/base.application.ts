@@ -102,7 +102,7 @@ export abstract class BaseApplication
       const key = b.key;
       const modelName = key.slice(key.indexOf('.') + 1, key.indexOf('Repository'));
 
-      if (ignoreModels && ignoreModels.includes(modelName)) {
+      if (ignoreModels?.includes(modelName)) {
         return false;
       }
 

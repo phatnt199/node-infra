@@ -33,7 +33,7 @@ export class WhereBuilder<E extends object = AnyObject> extends BaseWhereBuilder
     return new WhereBuilder(opts);
   }
 
-  clone() {
+  clone(): WhereBuilder {
     return new WhereBuilder(cloneDeep(this.build()));
   }
 }

@@ -61,7 +61,7 @@ export class StaticResourceController implements IController {
 
             const normalizeName = originalName.toLowerCase().replace(/ /g, '_');
 
-            return new Promise((resolve, reject) => {
+            return new Promise((innerResolve, innerReject) => {
               const t = new Date().getTime();
 
               try {
@@ -71,10 +71,8 @@ export class StaticResourceController implements IController {
                 fs.writeFileSync(path, buffer);
 
                 this.logger.info('[upload] Uploaded: %s | Took: %s (ms)', originalName, new Date().getTime() - t);
-                resolve({ fileName: savedName });
-              } catch (error) {
-                reject(error);
-              }
+                innerResolve({ fileName: savedName });
+              } catch innerReject
             });
           }),
         ).then(rs => {

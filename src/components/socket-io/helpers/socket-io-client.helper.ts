@@ -42,7 +42,7 @@ export class SocketIOClientHelper {
   }
 
   // -----------------------------------------------------------------
-  getSocketClient() {
+  getSocketClient(): Socket {
     return this.client;
   }
 
