@@ -46,7 +46,6 @@ export class JWTTokenService extends BaseService {
   // --------------------------------------------------------------------------------------
   encryptPayload(payload: JWTTokenPayload) {
     const userKey = encrypt('userId', this.applicationSecret);
-    console.log('userKey: %s', userKey);
 
     const rolesKey = encrypt('roles', this.applicationSecret);
     const clientIdKey = encrypt('clientId', this.applicationSecret);
@@ -67,9 +66,16 @@ export class JWTTokenService extends BaseService {
   decryptPayload(decodedToken: any): JWTTokenPayload {
     const rs: any = {};
 
+    const jwtFields = new Set<string>(['iat', 'exp']);
+
     for (const encodedAttr in decodedToken) {
-      const attr = decrypt(encodedAttr, this.applicationSecret, { throws: false });
-      const decryptedValue = decrypt(decodedToken[encodedAttr], this.applicationSecret, { throws: false });
+      if (jwtFields.has(encodedAttr)) {
+        rs[encodedAttr] = decodedToken[encodedAttr];
+        continue;
+      }
+
+      const attr = decrypt(encodedAttr, this.applicationSecret);
+      const decryptedValue = decrypt(decodedToken[encodedAttr], this.applicationSecret);
 
       switch (attr) {
         case 'userId': {
@@ -113,7 +119,15 @@ export class JWTTokenService extends BaseService {
       throw new HttpErrors.Unauthorized(`Error verifying token : ${error.message}`);
     }
 
-    return this.decryptPayload(decodedToken);
+    try {
+      return this.decryptPayload(decodedToken);
+    } catch (error) {
+      this.logger.error('[verify] Failed to decode token | Error: %s', error);
+      throw getError({
+        statusCode: 401,
+        message: 'Invalid token signature | Failed to decode token!',
+      });
+    }
   }
 
   // --------------------------------------------------------------------------------------
