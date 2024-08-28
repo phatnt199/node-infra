@@ -3,6 +3,8 @@ import { BaseController } from '@/base';
 import { CreateEventRequest, ICrashReportRestOptions } from '../common';
 import { BaseNetworkRequest } from '@/helpers';
 import { encrypt } from '@/utilities';
+import { authenticate } from '@loopback/authentication';
+import { Authentication } from '@/components/authenticate';
 
 class CrashReportProviderNetworkRequest extends BaseNetworkRequest {}
 
@@ -15,6 +17,7 @@ export const defineCrashReportController = (opts: ICrashReportRestOptions) => {
     projectId,
     environment = process.env.NODE_ENV ?? '',
     createEventRequest = CreateEventRequest,
+    requireAuthenticatedCreateEvent,
     generateBodyFn,
   } = opts;
 
@@ -32,6 +35,7 @@ export const defineCrashReportController = (opts: ICrashReportRestOptions) => {
     }
 
     // ------------------------------------------------------------------------------
+    @(requireAuthenticatedCreateEvent ? authenticate(Authentication.STRATEGY_JWT) : authenticate.skip())
     @post('/')
     createEventCrashReport(
       @requestBody({

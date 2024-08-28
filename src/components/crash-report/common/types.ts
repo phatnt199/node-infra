@@ -99,5 +99,6 @@ export interface ICrashReportRestOptions {
   secretKey?: string;
   environment?: string;
   createEventRequest?: any;
+  requireAuthenticatedCreateEvent?: boolean;
   generateBodyFn?: () => void;
 }
