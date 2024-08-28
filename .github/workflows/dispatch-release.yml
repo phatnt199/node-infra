@@ -37,6 +37,7 @@ jobs:
 
       - name: Install dependencies and build 🔧
         run: |
+          npm install -g pnpm
           pnpm install
           pnpm run rebuild:${{ github.event.inputs.build_mode }}
           date > built_generated
