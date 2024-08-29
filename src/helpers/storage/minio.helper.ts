@@ -1,4 +1,4 @@
-import { AnyObject, MimeTypes } from '@/common';
+import { MimeTypes } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
@@ -152,7 +152,16 @@ export class MinioHelper {
   }
 
   // ---------------------------------------------------------------------
-  getFile(opts: { bucket: string; name: string; options?: AnyObject }): Promise<Readable> {
+  getFile(opts: {
+    bucket: string;
+    name: string;
+    options?: {
+      versionId?: string;
+      SSECustomerAlgorithm?: string;
+      SSECustomerKey?: string;
+      SSECustomerKeyMD5?: string;
+    };
+  }): Promise<Readable> {
     const { bucket, name, options } = opts;
     return this.client.getObject(bucket, name, options);
   }
