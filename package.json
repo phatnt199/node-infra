@@ -36,7 +36,9 @@
     "rebuild": "sh ./scripts/rebuild.sh --no-version",
     "rebuild:major": "sh ./scripts/rebuild.sh --major",
     "rebuild:minor": "sh ./scripts/rebuild.sh --minor",
-    "rebuild:patch": "sh ./scripts/rebuild.sh --patch"
+    "rebuild:patch": "sh ./scripts/rebuild.sh --patch",
+    "pretest:dev": "pnpm run rebuild",
+    "test:dev": "NODE_ENV=development mocha -r dotenv-flow/config -r source-map-support/register --timeout 60000 --exit dist/__tests__/index.js"
   },
   "repository": {
     "type": "git",
@@ -52,7 +54,9 @@
     "README.md",
     "LICENSE",
     "dist",
-    "!*/__tests__"
+    "!/**/tests",
+    "!/**/dist/tests",
+    "!/**/__tests__"
   ],
   "publishConfig": {
     "access": "public"

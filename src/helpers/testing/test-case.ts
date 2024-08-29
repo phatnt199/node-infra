@@ -29,6 +29,6 @@ export class TestCase<R extends object = {}, I extends object = {}> implements I
   }
 
   run() {
-    return Promise.resolve(this.handler.execute());
+    return Promise.resolve(this.handler._execute());
   }
 }
