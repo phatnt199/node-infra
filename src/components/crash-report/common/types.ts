@@ -1,7 +1,7 @@
 import { AnyObject, IdType } from '@/common';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export class CreateEventRequest {
+export interface ICreateEventRequest {
   appVersion?: string;
   appType?: string;
   type?: string;
@@ -37,6 +37,6 @@ export interface ICrashReportRestOptions {
   apiKey?: string;
   secretKey?: string;
   environment?: string;
-  createEventRequest?: CreateEventRequest | AnyObject;
+  createEventRequest?: ICreateEventRequest | AnyObject;
   generateBodyFn?: () => AnyObject;
 }

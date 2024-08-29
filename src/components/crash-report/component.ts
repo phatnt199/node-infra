@@ -2,7 +2,7 @@ import { CoreBindings, inject } from '@loopback/core';
 import { BaseApplication } from '@/base';
 import { BaseComponent } from '@/base/base.component';
 import { encrypt, getError } from '@/utilities';
-import { BASE_ENDPOINT_CRASH_REPORT, CrashReportKeys, CreateEventRequest, ICrashReportRestOptions } from './common';
+import { BASE_ENDPOINT_CRASH_REPORT, CrashReportKeys, ICrashReportRestOptions } from './common';
 import { BaseNetworkRequest } from '@/helpers';
 
 class CrashReportProviderNetworkRequest extends BaseNetworkRequest {}
@@ -27,7 +27,7 @@ export class CrashReportComponent extends BaseComponent {
       endPoint = BASE_ENDPOINT_CRASH_REPORT,
       projectId,
       environment = process.env.NODE_ENV,
-      createEventRequest = CreateEventRequest,
+      createEventRequest,
       generateBodyFn,
     } = crashReportRestOptions;
 
