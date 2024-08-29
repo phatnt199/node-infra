@@ -1,8 +1,8 @@
 import { IRepository } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
-import { TGrpcServiceClient } from '../types';
 import { BaseGrpcDataSource, GrpcDataSource } from './grpc.datasource';
+import { TGrpcServiceClient } from '../common';
 
 export class GrpcRepository<S extends TGrpcServiceClient> implements IRepository {
   protected logger: ApplicationLogger;

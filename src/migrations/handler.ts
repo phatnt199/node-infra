@@ -22,7 +22,7 @@ export const cleanUpMigration = async (application: BaseApplication, migrationPr
   }
 };
 
-export const _migration = async (application: BaseApplication, migrationProcesses: Array<MigrationProcess>) => {
+const m = async (application: BaseApplication, migrationProcesses: Array<MigrationProcess>) => {
   logger.info('[migration] START Migrating database');
   const migrationRepository = application.getSync<MigrationRepository>('repositories.MigrationRepository');
 
@@ -55,7 +55,9 @@ export const _migration = async (application: BaseApplication, migrationProcesse
       logger.error('[migration] FAILED | Migrate process: %s | Error: %s', name, error);
     } finally {
       if (migrated) {
-        await migrationRepository.updateById(migrated.id as number, { status: migrateStatus });
+        await migrationRepository.updateById(migrated.id as number, {
+          status: migrateStatus,
+        });
       } else {
         await migrationRepository.create({ name, status: migrateStatus });
       }
@@ -65,7 +67,7 @@ export const _migration = async (application: BaseApplication, migrationProcesse
   logger.info('[migration] DONE Migrating database');
 };
 
-export const migration = _migration;
+export const migration = m;
 
 export const migrate = async (opts: {
   scope: 'up' | 'down';
@@ -74,6 +76,6 @@ export const migrate = async (opts: {
 }) => {
   const { scope, application, processes } = opts;
   logger.info('[%s] START | Migrating database', scope.toUpperCase());
-  await _migration(application, processes);
+  await m(application, processes);
   logger.info('[%s] DONE | Migrating database', scope.toUpperCase());
 };

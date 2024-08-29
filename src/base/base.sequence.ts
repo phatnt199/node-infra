@@ -9,8 +9,7 @@ import {
 
 import { BindingKeys } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
-
-import { getExecutedPerformance, getRequestId, getRequestRemark } from '..';
+import { getExecutedPerformance, getRequestId, getRequestRemark } from '@/utilities';
 
 export class BaseApplicationSequence implements SequenceHandler {
   private logger: ApplicationLogger;

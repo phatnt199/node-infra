@@ -1,8 +1,5 @@
 import get from 'lodash/get';
 import round from 'lodash/round';
-import multer from 'multer';
-import { Request, Response, getModelSchemaRef } from '@loopback/rest';
-import { IRequestedRemark } from '@/common';
 
 // -------------------------------------------------------------------------
 const INTL_0_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
@@ -14,24 +11,6 @@ const INTL_2_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2,
   minimumFractionDigits: 2,
 });
-
-// -------------------------------------------------------------------------
-export const parseMultipartBody = (opts: { storage?: multer.StorageEngine; request: Request; response: Response }) => {
-  const { storage: cStorage, request, response } = opts;
-  const storage = cStorage ?? multer.memoryStorage();
-  const upload = multer({ storage });
-
-  return new Promise<any>((resolve, reject) => {
-    upload.any()(request, response, (err: any) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      resolve(request.files);
-    });
-  });
-};
 
 // -------------------------------------------------------------------------
 export const getUID = () => Math.random().toString(36).slice(2).toUpperCase();
@@ -154,7 +133,10 @@ export const toStringDecimal = (input: any, digit = 2, options = { localeFormat:
     return INTL_2_DIGITS_FORMATER.format(number);
   }
 
-  const formater = new Intl.NumberFormat('en-US', { maximumFractionDigits: digit, minimumFractionDigits: digit });
+  const formater = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: digit,
+    minimumFractionDigits: digit,
+  });
   return formater.format(number);
 };
 
@@ -185,19 +167,4 @@ export const getNumberValue = (input: string, method: 'int' | 'float' = 'int') =
       return float(raw);
     }
   }
-};
-
-// -------------------------------------------------------------------------
-export const getSchemaObject = <T extends object>(ctor?: Function & { prototype: T }) => {
-  return ctor ? getModelSchemaRef(ctor).definitions[ctor.name] : {};
-};
-
-// -------------------------------------------------------------------------
-export const getRequestId = (opts: { request: Request }) => {
-  return get(opts.request, 'requestId');
-};
-
-// -------------------------------------------------------------------------
-export const getRequestRemark = (opts: { request: Request }): IRequestedRemark | undefined => {
-  return get(opts.request, 'requestedRemark');
 };

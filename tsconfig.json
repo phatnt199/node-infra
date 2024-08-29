@@ -9,12 +9,14 @@
     "paths": {
       "@/*": ["./*"]
     },
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "importHelpers": false,
     "removeComments": false
-    // "declaration": false
   },
-  "include": ["src", "./.eslintrc.cjs"]
+  "include": ["src", "./*.config.*", ".prettierrc.*"],
+  "exclude": ["node_modules", "dist"]
 }

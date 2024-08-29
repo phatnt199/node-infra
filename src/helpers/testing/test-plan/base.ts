@@ -1,7 +1,6 @@
 import { ITestCase, ITestHooks, ITestPlan, ITestPlanOptions } from '../types';
-import { DIContainerHelper } from './../../di-container.helper';
 import { ApplicationLogger, LoggerFactory } from './../../logger';
-import { it } from 'node:test';
+import { DIContainerHelper } from './../../storage';
 
 export abstract class BaseTestPlan<R extends object> implements ITestPlan<R> {
   private logger: ApplicationLogger;
@@ -68,20 +67,20 @@ export abstract class BaseTestPlan<R extends object> implements ITestPlan<R> {
   }
 
   execute() {
-    this.logger.info('[run][%s] START RUNNING TEST CASE | Total test cases: %s', this.scope, this.testCases.length);
+    this.logger.info('[run] START RUNNING TEST CASE | Total test cases: %s', this.testCases.length);
 
     if (!this.testCases.length) {
-      this.logger.info('[run][%s] Not found test case(s)', this.scope);
+      this.logger.info('[run] Not found test case(s)');
       return;
     }
 
     for (const testCase of this.testCases) {
       try {
-        it(`RUN Test Case | name: ${testCase.name} - Description: ${testCase.description}`, () => {
+        it(`RUN Test Case | Description: ${testCase.name ? `${testCase.name} - ` : ''}${testCase.description}`, () => {
           return testCase.run();
         });
       } catch (error) {
-        this.logger.error('[%s][%s] Failed to finish test case | error: %s', this.scope, testCase.name, error);
+        this.logger.error('[%s] Failed to finish test case | error: %s', testCase.name, error);
       }
     }
   }

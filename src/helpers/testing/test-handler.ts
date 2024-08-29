@@ -1,4 +1,6 @@
-import { Promisable } from '@/common';
+import { AnyObject, Promisable } from '@/common';
+import { getError } from '@/utilities';
+import assert from 'assert';
 import { TestCaseDecisions } from './common';
 import { ITestCaseHandler, ITestCaseInput, ITestContext, TTestCaseDecision } from './types';
 
@@ -8,7 +10,7 @@ export interface ITestCaseHandlerOptions<R extends object, I extends ITestCaseIn
   args?: I | null;
   argResolver?: (...args: any[]) => I | null;
 
-  validator?: (...args: any[]) => Promisable<TTestCaseDecision>;
+  validator?: (opts: AnyObject) => Promisable<TTestCaseDecision>;
 }
 
 export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITestCaseInput = {}>
@@ -16,16 +18,23 @@ export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITest
 {
   context: ITestContext<R>;
   args: I | null;
-  validator?: (...args: any[]) => Promisable<TTestCaseDecision>;
+
+  validator?: (opts: AnyObject) => Promisable<TTestCaseDecision>;
 
   constructor(opts: ITestCaseHandlerOptions<R, I>) {
     this.context = opts.context;
     this.args = opts.args ?? opts.argResolver?.() ?? null;
-    this.validator = opts.validator;
+    this.validator = opts?.validator;
   }
 
-  abstract validate(...args: any[]): Promisable<TTestCaseDecision>;
-  abstract execute(): Promisable<void>;
+  getArguments() {
+    return this.args;
+  }
+
+  abstract execute(): Promisable<any>;
+
+  abstract getValidator(): (opts: Awaited<ReturnType<typeof this.execute>>) => Promisable<TTestCaseDecision>;
+  abstract validate(opts: any): Promisable<TTestCaseDecision>;
 }
 
 export abstract class TestCaseHandler<R extends object = {}, I extends ITestCaseInput = {}> extends BaseTestCaseHandler<
@@ -36,7 +45,21 @@ export abstract class TestCaseHandler<R extends object = {}, I extends ITestCase
     super(opts);
   }
 
-  validate(...args: any[]): Promisable<TTestCaseDecision> {
-    return this.validator?.(args) ?? TestCaseDecisions.UNKNOWN;
+  async _execute() {
+    const executeRs = await this.execute();
+    const validateRs = await this.validate(executeRs);
+    assert.equal(validateRs, TestCaseDecisions.SUCCESS);
+  }
+
+  validate(opts: any): Promisable<TTestCaseDecision> {
+    const validator = this.validator ?? this.getValidator();
+
+    if (!validator) {
+      throw getError({
+        message: '[validate] Invalid test case validator!',
+      });
+    }
+
+    return validator(opts) ?? TestCaseDecisions.UNKNOWN;
   }
 }

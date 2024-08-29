@@ -26,12 +26,16 @@ export class QueryBuilderHelper {
     const { clientType } = opts;
 
     if (!this.clients.has(clientType)) {
-      throw getError({ message: `[getQueryBuilder] Please init ${clientType} query builder before using!` });
+      throw getError({
+        message: `[getQueryBuilder] Please init ${clientType} query builder before using!`,
+      });
     }
 
     const queryClient = this.clients.get(clientType);
     if (!queryClient) {
-      throw getError({ message: '[getQueryBuilder] Failed to get query builder instance!' });
+      throw getError({
+        message: '[getQueryBuilder] Failed to get query builder instance!',
+      });
     }
 
     return queryClient.queryBuilder();
@@ -41,12 +45,16 @@ export class QueryBuilderHelper {
     const { clientType, tableName, schema } = opts;
 
     if (!this.clients.has(clientType)) {
-      throw getError({ message: `[getQueryBuilder] Please init ${clientType} query builder before using!` });
+      throw getError({
+        message: `[getQueryBuilder] Please init ${clientType} query builder before using!`,
+      });
     }
 
     const queryClient = this.clients.get(clientType);
     if (!queryClient) {
-      throw getError({ message: '[getQueryBuilder] Failed to get query builder instance!' });
+      throw getError({
+        message: '[getQueryBuilder] Failed to get query builder instance!',
+      });
     }
 
     return queryClient(tableName).withSchema(schema);

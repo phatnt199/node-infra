@@ -18,8 +18,10 @@ import { AuthenticateKeys } from './common';
 )
 export class AuthenticationMiddleware extends BaseProvider implements Provider<Middleware> {
   constructor(
-    @inject(AuthenticationBindings.AUTH_ACTION) private authenticateFn: AuthenticateFn,
-    @inject.getter(AuthenticateKeys.ALWAYS_ALLOW_PATHS) private alwaysAllowPathGetter: Getter<string[]>,
+    @inject(AuthenticationBindings.AUTH_ACTION)
+    private authenticateFn: AuthenticateFn,
+    @inject.getter(AuthenticateKeys.ALWAYS_ALLOW_PATHS)
+    private alwaysAllowPathGetter: Getter<string[]>,
   ) {
     super({ scope: AuthenticationMiddleware.name });
   }

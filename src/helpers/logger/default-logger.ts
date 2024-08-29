@@ -28,7 +28,7 @@ const errorLogTransport = new transports.DailyRotateFile({
   level: 'error',
 });
 
-export const applicationLogFormatter = format.combine(
+export const applicationLogFormatter: ReturnType<typeof format.combine> = format.combine(
   format.label({ label: LOGGER_PREFIX }),
   format.splat(),
   format.align(),

@@ -16,9 +16,9 @@ import {
 } from '../common';
 
 export const defineAuthController = <
-  SI_RQ extends SignInRequest = SignInRequest,
-  SU_RQ extends SignUpRequest = SignUpRequest,
-  CP_RQ extends ChangePasswordRequest = ChangePasswordRequest,
+  SI extends SignInRequest = SignInRequest,
+  SU extends SignUpRequest = SignUpRequest,
+  CP extends ChangePasswordRequest = ChangePasswordRequest,
 >(
   opts: IAuthenticateRestOptions,
 ) => {
@@ -53,7 +53,7 @@ export const defineAuthController = <
           },
         },
       })
-      payload: SI_RQ,
+      payload: SI,
     ) {
       return this.service.signIn(payload);
     }
@@ -69,7 +69,7 @@ export const defineAuthController = <
           },
         },
       })
-      payload: SU_RQ,
+      payload: SU,
     ) {
       return this.service.signUp(payload);
     }
@@ -86,7 +86,7 @@ export const defineAuthController = <
           },
         },
       })
-      payload: CP_RQ,
+      payload: CP,
     ) {
       return new Promise((resolve, reject) => {
         this.getCurrentUser().then(currentUser => {

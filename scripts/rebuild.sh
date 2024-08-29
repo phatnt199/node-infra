@@ -13,9 +13,9 @@ case "$provision_opt" in
 esac
 
 echo "\nCleaning up resources ..."
-yarn clean
+pnpm clean
 
 echo "\nBuilding latest release..."
-yarn build
+pnpm build
 
 echo "\nPLEASE PUSH LATEST BUILT FOR ANY CHANGE(S)"

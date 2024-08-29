@@ -3,7 +3,6 @@ import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
 import { Client, ClientOptions } from 'minio';
-import { GetObjectOpts } from 'minio/dist/main/internal/type';
 import { Readable } from 'stream';
 
 // ---------------------------------------------------------------------
@@ -59,7 +58,9 @@ export class MinioHelper {
   async createBucket(opts: { name: string }) {
     const { name } = opts;
     if (!name || isEmpty(name)) {
-      throw getError({ message: '[createBucket] Invalid name to create bucket!' });
+      throw getError({
+        message: '[createBucket] Invalid name to create bucket!',
+      });
     }
 
     await this.client.makeBucket(name);
@@ -71,7 +72,9 @@ export class MinioHelper {
   async removeBucket(opts: { name: string }) {
     const { name } = opts;
     if (!name || isEmpty(name)) {
-      throw getError({ message: '[removeBucket] Invalid name to remove bucket!' });
+      throw getError({
+        message: '[removeBucket] Invalid name to remove bucket!',
+      });
     }
 
     await this.client.removeBucket(name);
@@ -149,7 +152,16 @@ export class MinioHelper {
   }
 
   // ---------------------------------------------------------------------
-  getFile(opts: { bucket: string; name: string; options?: GetObjectOpts }): Promise<Readable> {
+  getFile(opts: {
+    bucket: string;
+    name: string;
+    options?: {
+      versionId?: string;
+      SSECustomerAlgorithm?: string;
+      SSECustomerKey?: string;
+      SSECustomerKeyMD5?: string;
+    };
+  }): Promise<Readable> {
     const { bucket, name, options } = opts;
     return this.client.getObject(bucket, name, options);
   }

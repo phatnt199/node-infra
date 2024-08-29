@@ -18,8 +18,10 @@ export class EnforcerService {
   private enforcer: Enforcer;
 
   constructor(
-    @inject(AuthorizerKeys.CONFIGURE_OPTIONS) protected options: IAuthorizeConfigureOptions,
-    @inject(AuthorizerKeys.AUTHORIZE_DATASOURCE) protected dataSource: BaseDataSource,
+    @inject(AuthorizerKeys.CONFIGURE_OPTIONS)
+    protected options: IAuthorizeConfigureOptions,
+    @inject(AuthorizerKeys.AUTHORIZE_DATASOURCE)
+    protected dataSource: BaseDataSource,
   ) {
     this.logger = LoggerFactory.getLogger([EnforcerService.name]);
     this.logger.info('[getEnforcer] Initialize enforcer with options: %j', this.options);
@@ -56,7 +58,11 @@ export class EnforcerService {
     );
 
     const casbinAdapter =
-      adapter ?? CasbinAdapterBuilder.getInstance().build({ type: adapterType, dataSource: this.dataSource });
+      adapter ??
+      CasbinAdapterBuilder.getInstance().build({
+        type: adapterType,
+        dataSource: this.dataSource,
+      });
 
     if (useCache) {
       return newCachedEnforcer(confPath, casbinAdapter);
