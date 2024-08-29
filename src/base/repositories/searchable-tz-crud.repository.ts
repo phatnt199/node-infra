@@ -35,6 +35,7 @@ export abstract class SearchableTzCrudRepository<
     relation: string;
     relationRepository: TzCrudRepository<RM>;
     entities: RM[];
+    options?: Options;
   }): Promise<void>;
 
   // ----------------------------------------------------------------------------------------------------
@@ -54,7 +55,7 @@ export abstract class SearchableTzCrudRepository<
         entities = await relationRepository.find({ where }, options);
       }
 
-      await this.onInclusionChanged({ relation, relationRepository, entities });
+      await this.onInclusionChanged({ relation, relationRepository, entities, options });
     });
 
     relationRepository.modelClass.observe('after deleteWithReturn', async context => {
@@ -74,8 +75,9 @@ export abstract class SearchableTzCrudRepository<
     relationType: TRelationType;
     entities: RM[];
     relationRepository: TzCrudRepository<RM>;
+    options?: Options;
   }) {
-    const { relationName, relationType, entities, relationRepository } = opts;
+    const { relationName, relationType, entities, relationRepository, options } = opts;
 
     const resolved = await relationRepository.inclusionResolvers.get(relationName)?.(entities, {
       relation: relationName,
@@ -104,7 +106,7 @@ export abstract class SearchableTzCrudRepository<
               {
                 objectSearch: this.renderObjectSearch({ entity: r1 }),
               } as AnyType,
-              { ignoreMixSearchFields: true },
+              { ignoreMixSearchFields: true, options },
             ),
           );
         }
@@ -137,7 +139,7 @@ export abstract class SearchableTzCrudRepository<
                 {
                   objectSearch: this.renderObjectSearch({ entity: r2 }),
                 } as AnyType,
-                { ignoreMixSearchFields: true },
+                { ignoreMixSearchFields: true, options },
               ),
             );
           }
