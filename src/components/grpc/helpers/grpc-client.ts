@@ -2,7 +2,7 @@ import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { dayjs, getError } from '@/utilities';
 import * as grpc from '@grpc/grpc-js';
 import { Constructor, ValueOrPromise } from '@loopback/core';
-import { IGrpcClientOptions, TGrpcServiceClient } from '../types';
+import { IGrpcClientOptions, TGrpcServiceClient } from '../common';
 
 export class GrpcClient<S extends TGrpcServiceClient> {
   client: S;
@@ -43,7 +43,9 @@ export class GrpcClient<S extends TGrpcServiceClient> {
 
     const ServiceClass = this.serviceClass;
     if (!ServiceClass) {
-      throw getError({ message: '[bindingClient] Invalid serviceClass to init grpc client' });
+      throw getError({
+        message: '[bindingClient] Invalid serviceClass to init grpc client',
+      });
     }
 
     this.client = new ServiceClass(this.address, this.credentials);

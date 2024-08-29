@@ -13,9 +13,11 @@ import { OAuth2ClientRepository } from '../repositories';
 
 export class OAuth2Service extends BaseService {
   constructor(
-    @inject(CoreBindings.APPLICATION_INSTANCE) private application: BaseApplication,
+    @inject(CoreBindings.APPLICATION_INSTANCE)
+    private application: BaseApplication,
     @inject(AuthenticateKeys.OAUTH2_HANDLER) private handler: OAuth2Handler,
-    @inject('repositories.OAuth2ClientRepository') private oauth2ClientRepository: OAuth2ClientRepository,
+    @inject('repositories.OAuth2ClientRepository')
+    private oauth2ClientRepository: OAuth2ClientRepository,
   ) {
     super({ scope: OAuth2Service.name });
   }
@@ -32,7 +34,7 @@ export class OAuth2Service extends BaseService {
     const { token } = opts;
     const applicationSecret = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
 
-    const decrypted = decrypt(token, applicationSecret);
+    const decrypted = decrypt(token, applicationSecret, { throws: false });
     const [clientId, clientSecret] = decrypted.split('_');
     this.logger.debug('[decryptClientToken] Token: %s | ClientId: %s', clientId, token);
 
@@ -57,18 +59,24 @@ export class OAuth2Service extends BaseService {
         .findOne({ where: { ...opts }, fields: ['id', 'endpoints'] })
         .then(client => {
           if (!client) {
-            throw getError({ message: `[getOAuth2RequestPath] Client not found!` });
+            throw getError({
+              message: `[getOAuth2RequestPath] Client not found!`,
+            });
           }
 
           if (!client?.endpoints?.redirectUrls?.includes(redirectUrl)) {
-            throw getError({ message: `[getOAuth2RequestPath] Invalid redirectUrl!` });
+            throw getError({
+              message: `[getOAuth2RequestPath] Invalid redirectUrl!`,
+            });
           }
 
           const basePath = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_SERVER_BASE_PATH) ?? '';
           const applicationSecret = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
 
           if (!applicationSecret) {
-            throw getError({ message: `[getOAuth2RequestPath] Invalid applicationSecret!` });
+            throw getError({
+              message: `[getOAuth2RequestPath] Invalid applicationSecret!`,
+            });
           }
 
           const urlParam = new URLSearchParams();
@@ -80,7 +88,9 @@ export class OAuth2Service extends BaseService {
             urlParam.set('r', encodeURIComponent(redirectUrl));
           }
 
-          resolve({ requestPath: `${basePath}/oauth2/auth?${urlParam.toString()}` });
+          resolve({
+            requestPath: `${basePath}/oauth2/auth?${urlParam.toString()}`,
+          });
         })
         .catch(reject);
     });
@@ -117,12 +127,12 @@ export class OAuth2Service extends BaseService {
 
     const authorizationCodeRequest = new Request(context.request);
     authorizationCodeRequest.body = {
-      client_id: signInRequest.clientId,
-      response_type: 'code',
-      grant_type: 'authorization_code',
+      client_id: signInRequest.clientId, // eslint-disable-line @typescript-eslint/naming-convention
+      response_type: 'code', // eslint-disable-line @typescript-eslint/naming-convention
+      grant_type: 'authorization_code', // eslint-disable-line @typescript-eslint/naming-convention
       scope: 'profile',
-      access_token: tokenValue,
-      redirect_uri: redirectUrl,
+      access_token: tokenValue, // eslint-disable-line @typescript-eslint/naming-convention
+      redirect_uri: redirectUrl, // eslint-disable-line @typescript-eslint/naming-convention
     };
 
     const authorizationCodeRs = await this.authorize({
@@ -137,10 +147,10 @@ export class OAuth2Service extends BaseService {
 
     const oauth2TokenRequest = new Request(context.request);
     oauth2TokenRequest.body = {
-      client_id: client.clientId,
-      client_secret: client.clientSecret,
+      client_id: client.clientId, // eslint-disable-line @typescript-eslint/naming-convention
+      client_secret: client.clientSecret, // eslint-disable-line @typescript-eslint/naming-convention
       code: authorizationCodeRs.authorizationCode,
-      grant_type: 'authorization_code',
+      grant_type: 'authorization_code', // eslint-disable-line @typescript-eslint/naming-convention
     };
 
     if (redirectUrl) {

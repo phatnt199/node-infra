@@ -19,7 +19,9 @@ export interface IDataSource {
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export type ClassType<T> = Function & { prototype: T };
 
-export type EntityClassType<T extends Entity> = typeof Entity & { prototype: T & { id?: IdType } };
+export type EntityClassType<T extends Entity> = typeof Entity & {
+  prototype: T & { id?: IdType };
+};
 
 export type EntityRelation = {};
 

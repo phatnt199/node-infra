@@ -37,8 +37,9 @@ jobs:
 
       - name: Install dependencies and build 🔧
         run: |
-          yarn install
-          yarn rebuild:${{ github.event.inputs.build_mode }}
+          npm install -g pnpm
+          pnpm install
+          pnpm run rebuild:${{ github.event.inputs.build_mode }}
           date > built_generated
 
       - name: Versioning application artifact

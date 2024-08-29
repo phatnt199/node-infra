@@ -11,7 +11,8 @@ import { AuthenticateKeys, Authentication, JWTTokenPayload } from '../common';
 @injectable({ scope: BindingScope.SINGLETON })
 export class JWTTokenService extends BaseService {
   constructor(
-    @inject(AuthenticateKeys.APPLICATION_SECRET) private applicationSecret: string,
+    @inject(AuthenticateKeys.APPLICATION_SECRET)
+    private applicationSecret: string,
     @inject(TokenServiceBindings.TOKEN_SECRET) private jwtSecret: string,
     @inject(TokenServiceBindings.TOKEN_EXPIRES_IN) private jwtExpiresIn: string,
   ) {
@@ -46,13 +47,14 @@ export class JWTTokenService extends BaseService {
   // --------------------------------------------------------------------------------------
   encryptPayload(payload: JWTTokenPayload) {
     const userKey = encrypt('userId', this.applicationSecret);
+
     const rolesKey = encrypt('roles', this.applicationSecret);
     const clientIdKey = encrypt('clientId', this.applicationSecret);
 
     const { userId, roles, clientId = 'NA' } = payload;
 
     return {
-      [userKey]: encrypt(userId, this.applicationSecret),
+      [userKey]: encrypt(userId.toString(), this.applicationSecret),
       [rolesKey]: encrypt(
         JSON.stringify(roles.map(el => `${el.id}|${el.identifier}|${el.priority}`)),
         this.applicationSecret,
@@ -65,7 +67,14 @@ export class JWTTokenService extends BaseService {
   decryptPayload(decodedToken: any): JWTTokenPayload {
     const rs: any = {};
 
+    const jwtFields = new Set<string>(['iat', 'exp']);
+
     for (const encodedAttr in decodedToken) {
+      if (jwtFields.has(encodedAttr)) {
+        rs[encodedAttr] = decodedToken[encodedAttr];
+        continue;
+      }
+
       const attr = decrypt(encodedAttr, this.applicationSecret);
       const decryptedValue = decrypt(decodedToken[encodedAttr], this.applicationSecret);
 
@@ -111,7 +120,15 @@ export class JWTTokenService extends BaseService {
       throw new HttpErrors.Unauthorized(`Error verifying token : ${error.message}`);
     }
 
-    return this.decryptPayload(decodedToken);
+    try {
+      return this.decryptPayload(decodedToken);
+    } catch (error) {
+      this.logger.error('[verify] Failed to decode token | Error: %s', error);
+      throw getError({
+        statusCode: 401,
+        message: 'Invalid token signature | Failed to decode token!',
+      });
+    }
   }
 
   // --------------------------------------------------------------------------------------

@@ -8,12 +8,19 @@ export class OAuth2AuthorizationCodeHandler
   implements AuthorizationCodeModel
 {
   constructor(opts: { scope?: string; authServiceKey: string; injectionGetter: TInjectionGetter }) {
-    super({ scope: opts.scope, authServiceKey: opts.authServiceKey, injectionGetter: opts.injectionGetter });
+    super({
+      scope: opts.scope,
+      authServiceKey: opts.authServiceKey,
+      injectionGetter: opts.injectionGetter,
+    });
   }
 
   getAuthorizationCode(authorizationCode: string): Promise<AuthorizationCode | Falsey> {
     return new Promise((resolve, reject) => {
-      this._getToken({ type: AuthenticationTokenTypes.TYPE_AUTHORIZATION_CODE, token: authorizationCode })
+      this._getToken({
+        type: AuthenticationTokenTypes.TYPE_AUTHORIZATION_CODE,
+        token: authorizationCode,
+      })
         .then(rs => {
           const { token: oauth2Token, client, user } = rs;
           resolve({

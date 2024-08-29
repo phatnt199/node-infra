@@ -62,7 +62,9 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
     const userId = get(user, 'id');
 
     if (!userId) {
-      throw getError({ message: '[generateAccessToken] Invalid userId | Please verify getUserInformation response!' });
+      throw getError({
+        message: '[generateAccessToken] Invalid userId | Please verify getUserInformation response!',
+      });
     }
 
     const authService = this.injectionGetter<IAuthService>(this.authServiceKey);
@@ -124,16 +126,23 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
     });
     if (!oauth2Token) {
       this.logger.error('[_getToken] Not found OAuth2Token | type: %s | token: %s', type, token);
-      throw getError({ message: `[_getToken] Not found any OAuth2Token with type: ${type} | token: ${token}` });
+      throw getError({
+        message: `[_getToken] Not found any OAuth2Token with type: ${type} | token: ${token}`,
+      });
     }
 
     if (oauth2Token.status !== OAuth2TokenStatuses.ACTIVATED) {
       this.logger.error('[_getToken] Invalid OAuth2Token status | token: %j', oauth2Token);
-      throw getError({ message: `[_getToken] Invalid OAuth2Token status: ${oauth2Token.status}` });
+      throw getError({
+        message: `[_getToken] Invalid OAuth2Token status: ${oauth2Token.status}`,
+      });
     }
 
     const userRepository = this.injectionGetter<ITzRepository<BaseTzEntity>>('repositories.UserRepository');
-    const user = await userRepository.findOne({ where: { id: int(oauth2Token.userId) }, fields: ['id'] });
+    const user = await userRepository.findOne({
+      where: { id: int(oauth2Token.userId) },
+      fields: ['id'],
+    });
     if (!user) {
       this.logger.error(
         '[_getToken] Not found User | type: %s | token: %s | oauth2Token: %j',
@@ -141,7 +150,9 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
         token,
         oauth2Token,
       );
-      throw getError({ message: `[_getToken] Not found any User with type: ${type} | token: ${token}` });
+      throw getError({
+        message: `[_getToken] Not found any User with type: ${type} | token: ${token}`,
+      });
     }
 
     const oauth2ClientRepository = this.injectionGetter<OAuth2ClientRepository>('repositories.OAuth2ClientRepository');
@@ -156,7 +167,9 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
         token,
         oauth2Token,
       );
-      throw getError({ message: `[_getToken] Not found any OAuth2Client with type: ${type} | token: ${token}` });
+      throw getError({
+        message: `[_getToken] Not found any OAuth2Client with type: ${type} | token: ${token}`,
+      });
     }
 
     return {
@@ -168,12 +181,17 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
 
   async getAccessToken(accessToken: string): Promise<Token | Falsey> {
     const service = this.injectionGetter<JWTTokenService>('services.JWTTokenService');
-    const tokenPayload = service.verify({ type: Authentication.TYPE_BEARER, token: accessToken });
+    const tokenPayload = service.verify({
+      type: Authentication.TYPE_BEARER,
+      token: accessToken,
+    });
     const clientId = tokenPayload['clientId'];
 
     if (!clientId || clientId === 'NA') {
       this.logger.error('[getAccessToken] Invalid clientId in tokenPayload | tokenPayload: %j', tokenPayload);
-      throw getError({ message: '[getAccessToken] Invalid clientId in token payload!' });
+      throw getError({
+        message: '[getAccessToken] Invalid clientId in token payload!',
+      });
     }
 
     const oauth2ClientRepository = this.injectionGetter<OAuth2ClientRepository>('repositories.OAuth2ClientRepository');
@@ -182,7 +200,9 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
       fields: ['id', 'identifier', 'name', 'description', 'userId'],
     });
     if (!oauth2Client) {
-      throw getError({ message: `[getAccessToken] Not found any OAuth2Client with id: ${clientId}` });
+      throw getError({
+        message: `[getAccessToken] Not found any OAuth2Client with id: ${clientId}`,
+      });
     }
 
     return {

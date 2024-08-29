@@ -4,7 +4,7 @@ export class DIContainerHelper<T extends object = AnyObject> {
   private static instance: DIContainerHelper;
   private container: T;
 
-  private constructor() {
+  constructor() {
     this.container = Object.assign({});
   }
 

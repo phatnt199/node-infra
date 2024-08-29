@@ -102,7 +102,7 @@ export abstract class BaseApplication
       const key = b.key;
       const modelName = key.slice(key.indexOf('.') + 1, key.indexOf('Repository'));
 
-      if (ignoreModels && ignoreModels.includes(modelName)) {
+      if (ignoreModels?.includes(modelName)) {
         return false;
       }
 
@@ -147,7 +147,10 @@ export abstract class BaseApplication
     const { existingSchema, ignoreModels = [], migrateModels } = opts;
 
     this.logger.info('[migrateModels] Loading legacy migratable models...!');
-    const reps = (await this.getMigrateModels({ ignoreModels, migrateModels })) as Array<Repository<BaseEntity>>;
+    const reps = (await this.getMigrateModels({
+      ignoreModels,
+      migrateModels,
+    })) as Array<Repository<BaseEntity>>;
     const classified = this.classifyModelsByDs({ reps });
 
     const operation = existingSchema === 'drop' ? 'automigrate' : 'autoupdate';

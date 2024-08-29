@@ -17,7 +17,8 @@ export class AuthorizeProvider implements Provider<Authorizer> {
 
   constructor(
     @inject(AuthorizerKeys.ENFORCER) private enforcerService: EnforcerService,
-    @inject(AuthorizerKeys.ALWAYS_ALLOW_ROLES) private alwaysAllowRoles: string[],
+    @inject(AuthorizerKeys.ALWAYS_ALLOW_ROLES)
+    private alwaysAllowRoles: string[],
     @inject(AuthorizerKeys.NORMALIZE_PAYLOAD_FN)
     private normalizePayloadFn: (opts: { subject: string; object: string; scope?: string }) => {
       subject: string;
@@ -129,7 +130,9 @@ export class AuthorizeProvider implements Provider<Authorizer> {
               return el?.(context, metadata);
             }
             default: {
-              throw getError({ message: '[authorize][voter] voter implementation must be function type!' });
+              throw getError({
+                message: '[authorize][voter] voter implementation must be function type!',
+              });
             }
           }
         }),

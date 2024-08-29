@@ -29,13 +29,19 @@ export abstract class AbstractCasbinAdapter implements FilteredAdapter {
 
   // -----------------------------------------------------------------------------------------
   savePolicy(model: Model): Promise<boolean> {
-    this.logger.info('[savePolicy] Ignore save policy method with options: ', { model });
+    this.logger.info('[savePolicy] Ignore save policy method with options: ', {
+      model,
+    });
     return Promise.resolve(true);
   }
 
   // -----------------------------------------------------------------------------------------
   addPolicy(sec: string, ptype: string, rule: string[]): Promise<void> {
-    this.logger.info('[addPolicy] Ignore add policy method with options: ', { sec, ptype, rule });
+    this.logger.info('[addPolicy] Ignore add policy method with options: ', {
+      sec,
+      ptype,
+      rule,
+    });
     return Promise.resolve();
   }
 

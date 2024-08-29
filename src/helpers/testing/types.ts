@@ -1,5 +1,5 @@
 import { AnyObject, AnyType, Promisable } from '@/common';
-import { DIContainerHelper } from '../di-container.helper';
+import { DIContainerHelper } from '../storage';
 
 export interface ITestContext<R extends object> {
   scope: string;
@@ -17,7 +17,7 @@ export interface ITestCaseInput {}
 export interface ITestCaseHandler<R extends object = {}, I extends object = {}> {
   context: ITestContext<R>;
   args: I | null;
-  validator?: (...args: any[]) => Promisable<TTestCaseDecision>;
+  validator?: (args: AnyObject) => Promisable<TTestCaseDecision>;
 }
 
 export interface ITestCase<R extends object = {}, I extends object = {}> {
@@ -44,7 +44,7 @@ export interface ITestPlanOptions<R extends object> {
   testCaseResolver?: (opts: { context: ITestContext<R> }) => Array<ITestCase<R>>;
 }
 
-export interface ITestPlan<R extends object = AnyObject> extends ITestContext<R> {
+export interface ITestPlan<R extends object = {}> extends ITestContext<R> {
   getTestCases: () => Array<ITestCase<R>>;
   getContext: () => ITestContext<R>;
 

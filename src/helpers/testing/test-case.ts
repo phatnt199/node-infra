@@ -1,3 +1,4 @@
+import { AnyObject } from '@loopback/repository';
 import { TestCaseHandler } from './test-handler';
 import { ITestCase } from './types';
 
@@ -19,16 +20,15 @@ export class TestCase<R extends object = {}, I extends object = {}> implements I
     this.handler = opts.handler;
   }
 
-  static withOptions(opts: {
+  static withOptions<R extends object = AnyObject, I extends object = {}>(opts: {
     name?: string;
     description: string;
-
-    handler: TestCaseHandler;
+    handler: TestCaseHandler<R, I>;
   }) {
     return new TestCase(opts);
   }
 
   run() {
-    return Promise.resolve(this.handler.execute());
+    return Promise.resolve(this.handler._execute());
   }
 }

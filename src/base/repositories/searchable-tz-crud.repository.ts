@@ -60,7 +60,11 @@ export abstract class SearchableTzCrudRepository<
     relationRepository.modelClass.observe('after deleteWithReturn', async context => {
       const { data } = context;
 
-      await this.onInclusionChanged({ relation, relationRepository, entities: data });
+      await this.onInclusionChanged({
+        relation,
+        relationRepository,
+        entities: data,
+      });
     });
   }
 
@@ -172,13 +176,22 @@ export abstract class SearchableTzCrudRepository<
       case 'objectSearch': {
         let currentObjectSearch = {};
         if (where) {
-          const found = await this.findOne({ where, include: this.searchableInclusions });
+          const found = await this.findOne({
+            where,
+            include: this.searchableInclusions,
+          });
           if (found) {
-            currentObjectSearch = this.renderObjectSearch({ data, entity: found });
+            currentObjectSearch = this.renderObjectSearch({
+              data,
+              entity: found,
+            });
           }
         }
 
-        const newObjectSearch = this.renderObjectSearch({ data, entity: resolved?.[0] });
+        const newObjectSearch = this.renderObjectSearch({
+          data,
+          entity: resolved?.[0],
+        });
 
         return { ...currentObjectSearch, ...newObjectSearch };
       }

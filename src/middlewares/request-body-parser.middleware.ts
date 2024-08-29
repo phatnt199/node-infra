@@ -30,7 +30,9 @@ export class RequestBodyParserMiddleware extends BaseProvider implements Provide
       const contentType = request.headers['content-type']?.toLowerCase();
       switch (contentType) {
         case 'application/x-www-form-urlencoded': {
-          const urlencoded = new UrlEncodedBodyParser({ urlencoded: { extended: true } });
+          const urlencoded = new UrlEncodedBodyParser({
+            urlencoded: { extended: true },
+          });
           urlencoded
             .parse(request)
             .then(rs => {

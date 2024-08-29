@@ -1,5 +1,4 @@
 import { getError } from '@/utilities';
-import { describe } from 'mocha';
 import { ApplicationLogger, LoggerFactory } from '../logger';
 import { ITestPlan } from './types';
 
