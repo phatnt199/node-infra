@@ -79,12 +79,16 @@ export abstract class SearchableTzCrudRepository<
   }) {
     const { relationName, relationType, entities, relationRepository, options } = opts;
 
-    const resolved = await relationRepository.inclusionResolvers.get(relationName)?.(entities, {
-      relation: relationName,
-      scope: {
-        include: this.searchableInclusions,
+    const resolved = await relationRepository.inclusionResolvers.get(relationName)?.(
+      entities,
+      {
+        relation: relationName,
+        scope: {
+          include: this.searchableInclusions,
+        },
       },
-    });
+      options,
+    );
 
     const promises = [];
     switch (relationType) {
