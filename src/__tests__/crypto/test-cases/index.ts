@@ -2,26 +2,55 @@ import { Promisable } from '@/common';
 import { TestCaseDecisions, TestCaseHandler, TTestCaseDecision } from '@/helpers';
 import { decrypt, encrypt, getError } from '@/utilities';
 
-export class Test001Handler extends TestCaseHandler<any, { secret: string; message: string }> {
-  execute() {
-    if (!this.args) {
-      throw getError({ message: '[Test001Handler][execute] Invalid args!' });
-    }
+interface IArg {
+  secretKey: string;
+  message: string;
+}
 
-    const { message, secret } = this.args;
-    const encrypted = encrypt(message, secret);
-    const decrypted = decrypt(encrypted, secret);
+export const test001Validator = (opts: any) => {
+  console.log('[test001Validator] RUN HERE');
+  const { message, encrypted, decrypted } = opts;
 
-    return { message, encrypted, decrypted };
+  if (!encrypted) {
+    return TestCaseDecisions.FAIL;
   }
 
-  getValidator(): (opts: Awaited<ReturnType<typeof this.execute>>) => Promisable<TTestCaseDecision> {
+  if (message !== decrypted) {
+    return TestCaseDecisions.FAIL;
+  }
+
+  return TestCaseDecisions.SUCCESS;
+};
+
+export class Test001Handler extends TestCaseHandler<{}, IArg> {
+  execute() {
+    if (!this.args) {
+      throw getError({
+        message: '[Test001Handler][execute] Invalid input args!',
+      });
+    }
+
+    const { secretKey, message } = this.args;
+
+    const encrypted = encrypt(message, secretKey);
+    console.log('[execute] encrypted message: %s', encrypted);
+
+    const decrypted = decrypt(encrypted, secretKey);
+    console.log('[execute] decrypted message: %s', decrypted);
+
+    return { encrypted, decrypted, message };
+  }
+
+  getValidator(): ((opts: Awaited<ReturnType<typeof this.execute>>) => Promisable<TTestCaseDecision>) | null {
     return opts => {
-      if (!opts.encrypted) {
+      console.log('[getValidator] RUN HERE');
+      const { message, encrypted, decrypted } = opts;
+
+      if (!encrypted) {
         return TestCaseDecisions.FAIL;
       }
 
-      if (opts.decrypted !== opts.message) {
+      if (message !== decrypted) {
         return TestCaseDecisions.FAIL;
       }
 

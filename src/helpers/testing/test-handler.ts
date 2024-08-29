@@ -1,4 +1,4 @@
-import { AnyObject, Promisable } from '@/common';
+import { Promisable } from '@/common';
 import { getError } from '@/utilities';
 import assert from 'assert';
 import { TestCaseDecisions } from './common';
@@ -10,7 +10,7 @@ export interface ITestCaseHandlerOptions<R extends object, I extends ITestCaseIn
   args?: I | null;
   argResolver?: (...args: any[]) => I | null;
 
-  validator?: (opts: AnyObject) => Promisable<TTestCaseDecision>;
+  validator?: (opts: any) => Promisable<TTestCaseDecision>;
 }
 
 export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITestCaseInput = {}>
@@ -19,7 +19,7 @@ export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITest
   context: ITestContext<R>;
   args: I | null;
 
-  validator?: (opts: AnyObject) => Promisable<TTestCaseDecision>;
+  validator?: (opts: any) => Promisable<TTestCaseDecision>;
 
   constructor(opts: ITestCaseHandlerOptions<R, I>) {
     this.context = opts.context;
@@ -33,7 +33,7 @@ export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITest
 
   abstract execute(): Promisable<any>;
 
-  abstract getValidator(): (opts: Awaited<ReturnType<typeof this.execute>>) => Promisable<TTestCaseDecision>;
+  abstract getValidator(): ((opts: Awaited<ReturnType<typeof this.execute>>) => Promisable<TTestCaseDecision>) | null;
   abstract validate(opts: any): Promisable<TTestCaseDecision>;
 }
 
