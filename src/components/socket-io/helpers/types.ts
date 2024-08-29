@@ -1,7 +1,7 @@
 import { IncomingHttpHeaders } from 'http';
 import { ParsedUrlQuery } from 'querystring';
 
-export interface Handshake {
+export interface IHandshake {
   headers: IncomingHttpHeaders;
   time: string;
   address: string;

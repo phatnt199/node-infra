@@ -97,7 +97,7 @@ export interface IApplicationEnvironment {
   set<ValueType>(key: string, value: ValueType): any;
 }
 
-export interface EnvironmentValidationResult {
+export interface IEnvironmentValidationResult {
   result: boolean;
   message?: string;
 }

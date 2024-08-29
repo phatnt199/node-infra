@@ -9,7 +9,7 @@ import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 
 import { CasbinAdapterBuilder } from '../adapters';
-import { AuthorizerKeys, CasbinAdapterTypes, EnforcerFilterValue, IAuthorizeConfigureOptions } from '../common';
+import { AuthorizerKeys, CasbinAdapterTypes, IEnforcerFilterValue, IAuthorizeConfigureOptions } from '../common';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class EnforcerService {
@@ -79,7 +79,7 @@ export class EnforcerService {
       return null;
     }
 
-    const filterValue: EnforcerFilterValue = {
+    const filterValue: IEnforcerFilterValue = {
       principalType: 'User',
       principalValue: id,
     };

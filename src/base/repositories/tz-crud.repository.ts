@@ -157,7 +157,7 @@ export abstract class TzCrudRepository<
       connectorType?: string;
       softDeleteField?: string;
       authorId?: IdType;
-      ignoreModified?: boolean;
+      useIgnoreModified?: boolean;
     },
   ) {
     return new Promise((resolve, reject) => {
@@ -165,7 +165,7 @@ export abstract class TzCrudRepository<
         databaseSchema,
         connectorType = 'postgresql',
         softDeleteField = 'isDeleted',
-        ignoreModified = false,
+        useIgnoreModified = false,
         authorId,
       } = options ?? {};
 
@@ -198,7 +198,7 @@ export abstract class TzCrudRepository<
               rs.map(el => el.id),
             );
 
-          if (mixTimestampColumnName && !ignoreModified) {
+          if (mixTimestampColumnName && !useIgnoreModified) {
             sqlBuilder.update(mixTimestampColumnName, now);
           }
 

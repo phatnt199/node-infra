@@ -5,7 +5,7 @@ import { Helper, Model } from 'casbin';
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-import { EnforcerDefinitions, EnforcerFilterValue } from '../common';
+import { EnforcerDefinitions, IEnforcerFilterValue } from '../common';
 import { AbstractCasbinAdapter } from './base.adapter';
 
 // -----------------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ export class CasbinPostgresAdapter extends AbstractCasbinAdapter {
   }
 
   // -----------------------------------------------------------------------------------------
-  async loadFilteredPolicy(model: Model, filter: EnforcerFilterValue) {
+  async loadFilteredPolicy(model: Model, filter: IEnforcerFilterValue) {
     if (filter?.principalType?.toLowerCase() === 'role') {
       throw getError({
         statusCode: 500,

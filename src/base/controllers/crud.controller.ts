@@ -21,7 +21,7 @@ import { App } from '@/common';
 import { applyLimit, getIdSchema } from './common';
 
 // --------------------------------------------------------------------------------------------------------------
-export interface CrudControllerOptions<E extends BaseIdEntity> {
+export interface ICrudControllerOptions<E extends BaseIdEntity> {
   entity: typeof BaseIdEntity & { prototype: E };
   repository: { name: string };
   controller: CrudRestControllerOptions & { defaultLimit?: number };
@@ -41,7 +41,7 @@ export interface CrudControllerOptions<E extends BaseIdEntity> {
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export const defineCrudController = <E extends BaseTzEntity>(opts: CrudControllerOptions<E>) => {
+export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControllerOptions<E>) => {
   const {
     entity: entityOptions,
     repository: repositoryOptions,

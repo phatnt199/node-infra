@@ -1,9 +1,9 @@
 import { BaseApplication } from '@/base';
 import { MigrationStatuses } from '@/common';
-import { Migration, MigrationProcess, MigrationRepository } from '@/components/migration';
+import { Migration, TMigrationProcess, MigrationRepository } from '@/components/migration';
 import { applicationLogger as logger } from '@/helpers';
 
-export const cleanUpMigration = async (application: BaseApplication, migrationProcesses: Array<MigrationProcess>) => {
+export const cleanUpMigration = async (application: BaseApplication, migrationProcesses: Array<TMigrationProcess>) => {
   logger.info('START | Clean up migrate database');
 
   for (const migrationProcess of migrationProcesses) {
@@ -22,7 +22,7 @@ export const cleanUpMigration = async (application: BaseApplication, migrationPr
   }
 };
 
-const m = async (application: BaseApplication, migrationProcesses: Array<MigrationProcess>) => {
+const m = async (application: BaseApplication, migrationProcesses: Array<TMigrationProcess>) => {
   logger.info('[migration] START Migrating database');
   const migrationRepository = application.getSync<MigrationRepository>('repositories.MigrationRepository');
 
@@ -72,7 +72,7 @@ export const migration = m;
 export const migrate = async (opts: {
   scope: 'up' | 'down';
   application: BaseApplication;
-  processes: Array<MigrationProcess>;
+  processes: Array<TMigrationProcess>;
 }) => {
   const { scope, application, processes } = opts;
   logger.info('[%s] START | Migrating database', scope.toUpperCase());

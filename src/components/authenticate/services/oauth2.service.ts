@@ -34,7 +34,7 @@ export class OAuth2Service extends BaseService {
     const { token } = opts;
     const applicationSecret = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
 
-    const decrypted = decrypt(token, applicationSecret, { throws: false });
+    const decrypted = decrypt(token, applicationSecret, { doThrow: false });
     const [clientId, clientSecret] = decrypted.split('_');
     this.logger.debug('[decryptClientToken] Token: %s | ClientId: %s', clientId, token);
 
