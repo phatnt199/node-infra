@@ -1,7 +1,7 @@
 {
-  "name": "@tanphat199/lb-infra",
+  "name": "@minimaltech/lb-infra",
   "version": "0.2.23",
-  "description": "Loopback 4 Infrastructure",
+  "description": "NodeJS Infrastructure - Loopback 4 Framework",
   "keywords": [
     "web",
     "restful",
