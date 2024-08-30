@@ -19,7 +19,7 @@ import { Request, Response } from '@node-oauth/oauth2-server';
 import { OAuth2Service } from '../services';
 
 import { BaseController } from '@/base/controllers';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { join } from 'path';
 import { Authentication, IAuthenticateOAuth2RestOptions, OAuth2Request } from '../common';
 

@@ -1,31 +1,58 @@
-import { FlatCompat } from '@eslint/eslintrc';
-import eslintJs from '@eslint/js';
-import prettierPlugin from 'eslint-plugin-prettier/recommended';
-
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const compat = new FlatCompat({
-  baseDirectory: dirname(fileURLToPath(import.meta.url)),
-  recommendedConfig: eslintJs.configs.recommended,
-});
+import minimaltechLinter from '@minimaltech/eslint-node';
 
 const configs = [
-  ...compat.extends('@loopback/eslint-config'),
-  prettierPlugin,
+  ...minimaltechLinter,
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unsafe-function-type': 'off',
-      '@typescript-eslint/no-invalid-this': 'off',
-      '@typescript-eslint/no-this-alias': 'off',
-      '@typescript-eslint/no-floating-promises': 'off',
-      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/naming-convention': 'warn',
+      '@typescript-eslint/naming-convention': [
+        'warn',
+        {
+          selector: 'interface',
+          format: ['PascalCase'],
+          prefix: ['I'],
+        },
+        {
+          selector: 'typeAlias',
+          format: ['PascalCase'],
+          prefix: ['T', 'Type'],
+        },
+        {
+          selector: 'default',
+          format: ['camelCase', 'PascalCase'],
+          leadingUnderscore: 'allow',
+          trailingUnderscore: 'allow',
+        },
+        {
+          selector: 'memberLike',
+          format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+          leadingUnderscore: 'allow',
+        },
+        {
+          selector: 'variableLike',
+          format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+          leadingUnderscore: 'allow',
+          trailingUnderscore: 'allow',
+        },
+        {
+          selector: 'variable',
+          types: ['boolean'],
+          format: ['PascalCase'],
+          prefix: ['is', 'should', 'has', 'use', 'can', 'did', 'will', 'do', 'b'],
+        },
+        {
+          selector: 'property',
+          format: ['PascalCase'],
+          filter: { regex: '[-]', match: true },
+        },
+        {
+          selector: ['objectLiteralProperty', 'objectLiteralMethod'],
+          format: null,
+          modifiers: ['requiresQuotes'],
+        },
+      ],
     },
-    files: ['**/*.js', '**/*.ts'],
-  },
-  {
-    ignores: ['**/node_modules', '**/dist', '**/*.config.*', '**/.prettierrc.*'],
   },
 ];
 

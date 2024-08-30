@@ -2,7 +2,7 @@ import isEmpty from 'lodash/isEmpty';
 import dgram from 'dgram';
 import { ApplicationLogger, LoggerFactory } from '../logger';
 
-interface NetworkUdpClientProps {
+interface INetworkUdpClientProps {
   identifier: string;
   options: { host: string; port: number };
   onConnected?: (opts: { identifier: string }) => void;
@@ -23,7 +23,7 @@ export class NetworkUdpClient {
 
   private client?: dgram.Socket | null;
 
-  constructor(opts: NetworkUdpClientProps) {
+  constructor(opts: INetworkUdpClientProps) {
     this.logger = LoggerFactory.getLogger([NetworkUdpClient.name]);
 
     this.identifier = opts.identifier;
@@ -34,7 +34,7 @@ export class NetworkUdpClient {
     this.onError = opts?.onError ?? this.handleError;
   }
 
-  static newInstance(opts: NetworkUdpClientProps) {
+  static newInstance(opts: INetworkUdpClientProps) {
     return new NetworkUdpClient(opts);
   }
 

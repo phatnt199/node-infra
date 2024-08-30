@@ -3,15 +3,15 @@ import { Count, CountSchema, DataObject, Filter, Where } from '@loopback/reposit
 import { del, get, param, patch, post, requestBody, SchemaObject } from '@loopback/rest';
 import getProp from 'lodash/get';
 
-import { BaseTzEntity, AbstractTzRepository } from './..';
+import { App, EntityRelations } from '@/common';
 import { EntityRelation, IController, IdType, NullableType, TRelationType } from '@/common/types';
 import { getError } from '@/utilities';
-import { App, EntityRelations } from '@/common';
 import { Class } from '@loopback/service-proxy';
+import { AbstractTzRepository, BaseTzEntity } from './..';
 import { applyLimit, BaseController } from './common';
 
 // --------------------------------------------------------------------------------------------------------------
-export interface RelationCrudControllerOptions {
+export interface IRelationCrudControllerOptions {
   association: {
     source: string;
     relationName: string;
@@ -24,7 +24,7 @@ export interface RelationCrudControllerOptions {
     target: SchemaObject;
   };
   options?: {
-    controlTarget: boolean;
+    useControlTarget: boolean;
     defaultLimit?: number;
     endPoint?: string;
   };
@@ -271,13 +271,13 @@ export const defineRelationCrudController = <
   T extends BaseTzEntity,
   R extends BaseTzEntity | NullableType,
 >(
-  controllerOptions: RelationCrudControllerOptions,
+  controllerOptions: IRelationCrudControllerOptions,
 ): ControllerClass => {
   const {
     association,
     schema,
     options = {
-      controlTarget: false,
+      useControlTarget: false,
       defaultLimit: App.DEFAULT_QUERY_LIMIT,
       endPoint: '',
     },
@@ -293,7 +293,7 @@ export const defineRelationCrudController = <
   }
 
   const { target: targetSchema } = schema;
-  const { controlTarget = true, defaultLimit = App.DEFAULT_QUERY_LIMIT, endPoint = '' } = options;
+  const { useControlTarget = true, defaultLimit = App.DEFAULT_QUERY_LIMIT, endPoint = '' } = options;
 
   const restPath = `{id}/${endPoint ? endPoint : relationName}`;
   const ViewController = defineRelationViewController<S, T>({
@@ -316,7 +316,7 @@ export const defineRelationCrudController = <
 
   const ExtendsableClass = relationType === EntityRelations.HAS_MANY_THROUGH ? AssociationController : ViewController;
 
-  if (!controlTarget) {
+  if (!useControlTarget) {
     return ExtendsableClass;
   }
 

@@ -59,7 +59,7 @@ export const encrypt = (
     algorithm?: 'aes-256-cbc' | 'aes-256-gcm';
     inputEncoding?: C.Encoding;
     outputEncoding?: C.Encoding;
-    throws?: boolean;
+    doThrow?: boolean;
   },
 ) => {
   const {
@@ -67,7 +67,7 @@ export const encrypt = (
     algorithm = DEFAULT_CRYPT_ALGORITHM,
     inputEncoding = 'utf-8',
     outputEncoding = 'base64',
-    throws = true,
+    doThrow = true,
   } = opts ?? {};
 
   try {
@@ -95,7 +95,7 @@ export const encrypt = (
 
     return Buffer.concat(parts).toString(outputEncoding);
   } catch (error) {
-    if (throws) {
+    if (doThrow) {
       throw error;
     }
 
@@ -122,14 +122,14 @@ export const decrypt = (
     algorithm?: 'aes-256-cbc' | 'aes-256-gcm';
     inputEncoding?: C.Encoding;
     outputEncoding?: C.Encoding;
-    throws?: boolean;
+    doThrow?: boolean;
   },
 ) => {
   const {
     algorithm = DEFAULT_CRYPT_ALGORITHM,
     inputEncoding = 'base64',
     outputEncoding = 'utf-8',
-    throws = true,
+    doThrow = true,
   } = opts ?? {};
 
   try {
@@ -158,7 +158,7 @@ export const decrypt = (
     const cipherText = Buffer.from(message, inputEncoding).subarray(messageIndex);
     return Buffer.concat([decipher.update(cipherText), decipher.final()]).toString(outputEncoding);
   } catch (error) {
-    if (throws) {
+    if (doThrow) {
       throw error;
     }
 

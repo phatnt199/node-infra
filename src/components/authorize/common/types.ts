@@ -1,6 +1,6 @@
 import { FilteredAdapter } from 'casbin';
 
-export interface EnforcerFilterValue {
+export interface IEnforcerFilterValue {
   principalType: string;
   principalValue: string | number | object;
 }
