@@ -1,6 +1,6 @@
 {
   "name": "@minimaltech/lb-infra",
-  "version": "0.2.26",
+  "version": "0.2.27",
   "description": "NodeJS Infrastructure - Loopback 4 Framework",
   "keywords": [
     "web",
