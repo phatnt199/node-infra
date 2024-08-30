@@ -44,7 +44,9 @@ export class GrpcServer extends grpc.Server {
   // ---------------------------------------------------------------------
   start() {
     if (!this.address) {
-      throw getError({ message: '[GrpcServer][start] Invalid start up server address!' });
+      throw getError({
+        message: '[GrpcServer][start] Invalid start up server address!',
+      });
     }
 
     this.bindAsync(`${this.address}`, this.credentials, (error, port) => {
@@ -126,8 +128,13 @@ export class GrpcServer extends grpc.Server {
       return;
     }
 
-    const services: Record<string, { serviceDef: grpc.ServiceDefinition; methods: grpc.UntypedServiceImplementation }> =
-      {};
+    const services: Record<
+      string,
+      {
+        serviceDef: grpc.ServiceDefinition;
+        methods: grpc.UntypedServiceImplementation;
+      }
+    > = {};
 
     for (const methodName in methodDescriptors) {
       const methodDescriptor = get(methodDescriptors, methodName);
@@ -157,7 +164,10 @@ export class GrpcServer extends grpc.Server {
         services[service] = { serviceDef, methods: {} };
       }
 
-      services[service].methods[method] = this.setupHandler({ controller, method });
+      services[service].methods[method] = this.setupHandler({
+        controller,
+        method,
+      });
     }
 
     for (const name in services) {

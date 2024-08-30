@@ -4,7 +4,7 @@ import { ApplicationLogger, LoggerFactory } from '../logger';
 
 const DEFAULT_MAX_RETRY = 5;
 
-interface NetworkTcpClientProps {
+interface INetworkTcpClientProps {
   // props
   identifier: string;
   options: { host: string; port: number; localAddress: string };
@@ -38,7 +38,7 @@ export class NetworkTcpClient {
   private onClosed?: () => void;
   private onError?: (error: any) => void;
 
-  constructor(opts: NetworkTcpClientProps) {
+  constructor(opts: INetworkTcpClientProps) {
     this.logger = LoggerFactory.getLogger([NetworkTcpClient.name]);
 
     this.identifier = opts.identifier;
@@ -57,7 +57,7 @@ export class NetworkTcpClient {
     this.encoding = opts?.encoding;
   }
 
-  static newInstance(opts: NetworkTcpClientProps) {
+  static newInstance(opts: INetworkTcpClientProps) {
     return new NetworkTcpClient(opts);
   }
 

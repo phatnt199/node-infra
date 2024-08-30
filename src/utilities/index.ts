@@ -4,5 +4,4 @@ export * from './error.utility';
 export * from './parse.utility';
 export * from './performance.utility';
 export * from './request.utility';
-export * from './text-search.utility';
 export * from './url.utility';

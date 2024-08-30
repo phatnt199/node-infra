@@ -13,7 +13,8 @@ export class StaticAssetController implements IController {
   private temporaryStorage: multer.StorageEngine;
 
   constructor(
-    @inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication,
+    @inject(CoreBindings.APPLICATION_INSTANCE)
+    protected application: BaseApplication,
     // @inject(RestBindings.Http.REQUEST) private request: Request,
     @inject(RestBindings.Http.RESPONSE) private response: Response,
   ) {
@@ -126,9 +127,12 @@ export class StaticAssetController implements IController {
           originalname: folderPath ? `${folderPath}/${file.originalname}` : file.originalname,
         }));
 
-        minioInstance.upload({ bucket: bucketName, files: modifiedFiles }).then(rs => {
-          resolve(rs);
-        });
+        minioInstance
+          .upload({ bucket: bucketName, files: modifiedFiles })
+          .then(rs => {
+            resolve(rs);
+          })
+          .catch(reject);
       });
     });
   }

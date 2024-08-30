@@ -6,12 +6,13 @@ import { HttpErrors } from '@loopback/rest';
 import { securityId } from '@loopback/security';
 import jwt from 'jsonwebtoken';
 
-import { AuthenticateKeys, Authentication, JWTTokenPayload } from '../common';
+import { AuthenticateKeys, Authentication, IJWTTokenPayload } from '../common';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class JWTTokenService extends BaseService {
   constructor(
-    @inject(AuthenticateKeys.APPLICATION_SECRET) private applicationSecret: string,
+    @inject(AuthenticateKeys.APPLICATION_SECRET)
+    private applicationSecret: string,
     @inject(TokenServiceBindings.TOKEN_SECRET) private jwtSecret: string,
     @inject(TokenServiceBindings.TOKEN_EXPIRES_IN) private jwtExpiresIn: string,
   ) {
@@ -36,15 +37,17 @@ export class JWTTokenService extends BaseService {
     }
 
     const parts = authHeaderValue.split(' ');
-    if (parts.length !== 2)
+    if (parts.length !== 2) {
       throw new HttpErrors.Unauthorized(
         `Authorization header value has too many parts. It must follow the pattern: 'Bearer xx.yy.zz' where xx.yy.zz is a valid JWT token.`,
       );
+    }
+
     return { type: parts[0], token: parts[1] };
   }
 
   // --------------------------------------------------------------------------------------
-  encryptPayload(payload: JWTTokenPayload) {
+  encryptPayload(payload: IJWTTokenPayload) {
     const userKey = encrypt('userId', this.applicationSecret);
 
     const rolesKey = encrypt('roles', this.applicationSecret);
@@ -63,7 +66,7 @@ export class JWTTokenService extends BaseService {
   }
 
   // --------------------------------------------------------------------------------------
-  decryptPayload(decodedToken: any): JWTTokenPayload {
+  decryptPayload(decodedToken: any): IJWTTokenPayload {
     const rs: any = {};
 
     const jwtFields = new Set<string>(['iat', 'exp']);
@@ -105,7 +108,7 @@ export class JWTTokenService extends BaseService {
   }
 
   // --------------------------------------------------------------------------------------
-  verify(opts: { type: string; token: string }): JWTTokenPayload {
+  verify(opts: { type: string; token: string }): IJWTTokenPayload {
     const { token } = opts;
     if (!token) {
       this.logger.error('[verify] Missing token for validating request!');
@@ -131,7 +134,7 @@ export class JWTTokenService extends BaseService {
   }
 
   // --------------------------------------------------------------------------------------
-  generate(payload: JWTTokenPayload): string {
+  generate(payload: IJWTTokenPayload): string {
     if (!payload) {
       throw new HttpErrors.Unauthorized('Error generating token : userProfile is null');
     }

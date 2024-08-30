@@ -1,16 +1,16 @@
-import { Server as IOServer, ServerOptions, Socket as IOSocket } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { Emitter } from '@socket.io/redis-emitter';
 import Redis from 'ioredis';
 import { of } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { Server as IOServer, Socket as IOSocket, ServerOptions } from 'socket.io';
 
-import { LoggerFactory, ApplicationLogger } from '@/helpers';
+import { SocketIOConstants } from '@/components/socket-io/common/constants';
+import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import { Server } from 'http';
 import isEmpty from 'lodash/isEmpty';
-import { Handshake } from 'socket.io/dist/socket';
-import { SocketIOConstants } from '@/components/socket-io/common/constants';
+import { IHandshake } from './types';
 
 const CLIENT_AUTHENTICATE_TIMEOUT = 10 * 1000;
 
@@ -19,7 +19,7 @@ export interface ISocketIOServerOptions {
   server: Server;
   serverOptions: Partial<ServerOptions>;
   redisConnection: Redis;
-  authenticateFn: (args: Handshake) => Promise<boolean>;
+  authenticateFn: (args: IHandshake) => Promise<boolean>;
   clientConnectedFn: (opts: { socket: IOSocket }) => Promise<void>;
   authenticateTimeout?: number;
   defaultRooms?: string[];
@@ -34,7 +34,7 @@ export class SocketIOServerHelper {
   private serverOptions: Partial<ServerOptions> = {};
   private redisConnection: Redis;
 
-  private authenticateFn: (args: Handshake) => Promise<boolean>;
+  private authenticateFn: (args: IHandshake) => Promise<boolean>;
   private onClientConnected: (opts: { socket: IOSocket }) => Promise<void>;
 
   private authenticateTimeout: number;
@@ -87,7 +87,7 @@ export class SocketIOServerHelper {
   }
 
   // -------------------------------------------------------------------------------------------------------------
-  getIOServer() {
+  getIOServer(): IOServer {
     return this.io;
   }
 
@@ -166,7 +166,10 @@ export class SocketIOServerHelper {
     const { id, handshake } = socket;
     const { headers } = handshake;
     if (this.clients[id]) {
-      this.logger.info('[onClientConnect] Socket client already existed: %j', { id, headers });
+      this.logger.info('[onClientConnect] Socket client already existed: %j', {
+        id,
+        headers,
+      });
       return;
     }
 
@@ -230,7 +233,7 @@ export class SocketIOServerHelper {
                 time: new Date().toISOString(),
               },
             },
-            log: true,
+            doLog: true,
             cb: () => {
               this.disconnect({ socket });
             },
@@ -255,7 +258,7 @@ export class SocketIOServerHelper {
       return;
     }
     this.clients[id].state = 'authenticated';
-    this.ping({ socket, ignoreAuth: true });
+    this.ping({ socket, doIgnoreAuth: true });
 
     // Valid connection
     this.logger.info(
@@ -330,7 +333,7 @@ export class SocketIOServerHelper {
     });
 
     this.clients[id].interval = setInterval(() => {
-      this.ping({ socket, ignoreAuth: true });
+      this.ping({ socket, doIgnoreAuth: true });
     }, 30000);
 
     this.send({
@@ -353,8 +356,8 @@ export class SocketIOServerHelper {
   }
 
   // -------------------------------------------------------------------------------------------------------------
-  ping(opts: { socket: IOSocket; ignoreAuth: boolean }) {
-    const { socket, ignoreAuth } = opts;
+  ping(opts: { socket: IOSocket; doIgnoreAuth: boolean }) {
+    const { socket, doIgnoreAuth } = opts;
 
     if (!socket) {
       this.logger.info('[ping] Socket is undefined to PING!');
@@ -362,7 +365,7 @@ export class SocketIOServerHelper {
     }
 
     const client = this.clients[socket.id];
-    if (!ignoreAuth && client.state !== 'authenticated') {
+    if (!doIgnoreAuth && client.state !== 'authenticated') {
       this.logger.info('[ping] Socket client is not authenticated | Authenticated: %s', client.state);
       this.disconnect({ socket });
       return;
@@ -407,8 +410,8 @@ export class SocketIOServerHelper {
   }
 
   // -------------------------------------------------------------------------------------------------------------
-  send(opts: { destination: string; payload: { topic: string; data: any }; log?: boolean; cb?: () => void }) {
-    const { destination, payload, log, cb } = opts;
+  send(opts: { destination: string; payload: { topic: string; data: any }; doLog?: boolean; cb?: () => void }) {
+    const { destination, payload, doLog, cb } = opts;
     if (!payload) {
       return;
     }
@@ -432,7 +435,7 @@ export class SocketIOServerHelper {
         cb?.();
       });
 
-    if (!log) {
+    if (!doLog) {
       return;
     }
 

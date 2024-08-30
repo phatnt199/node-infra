@@ -1,17 +1,17 @@
 import { BaseIdEntity } from '@/base';
 import { App, EntityRelations, IController, ICRUDController } from '@/common';
 import {
+  inject,
+  injectable,
   Interceptor,
   InvocationContext,
   InvocationResult,
   Provider,
   ValueOrPromise,
-  inject,
-  injectable,
 } from '@loopback/core';
 import { CrudRepository, Filter } from '@loopback/repository';
 import { Response, RestBindings } from '@loopback/rest';
-import { get } from 'lodash';
+import get from 'lodash/get';
 
 @injectable({ tags: { key: ContentRangeInterceptor.BINDING_KEY } })
 export class ContentRangeInterceptor implements Provider<Interceptor> {
@@ -103,11 +103,16 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
       case EntityRelations.HAS_MANY_THROUGH: {
         const throughConstraint = await ref.getThroughConstraintFromSource();
         const throughRepository = await ref.getThroughRepository();
-        const thoughInstances = await throughRepository.find({ where: { ...throughConstraint } });
+        const thoughInstances = await throughRepository.find({
+          where: { ...throughConstraint },
+        });
 
         const targetConstraint = await ref.getTargetConstraintFromThroughModels(thoughInstances);
 
-        const countRs = await (controller.targetRepository as any).count({ ...where, ...targetConstraint });
+        const countRs = await (controller.targetRepository as any).count({
+          ...where,
+          ...targetConstraint,
+        });
 
         const start = 0 + skip;
         const end = Math.min(start + limit, countRs.count);
@@ -118,7 +123,10 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
       case EntityRelations.HAS_MANY: {
         const targetConstraint = ref.constraint;
 
-        const countRs = await (controller.targetRepository as any).count({ ...where, ...targetConstraint });
+        const countRs = await (controller.targetRepository as any).count({
+          ...where,
+          ...targetConstraint,
+        });
 
         const start = 0 + skip;
         const end = Math.min(start + limit, countRs.count);

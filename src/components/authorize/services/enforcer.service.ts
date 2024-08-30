@@ -9,7 +9,7 @@ import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 
 import { CasbinAdapterBuilder } from '../adapters';
-import { AuthorizerKeys, CasbinAdapterTypes, EnforcerFilterValue, IAuthorizeConfigureOptions } from '../common';
+import { AuthorizerKeys, CasbinAdapterTypes, IEnforcerFilterValue, IAuthorizeConfigureOptions } from '../common';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class EnforcerService {
@@ -18,8 +18,10 @@ export class EnforcerService {
   private enforcer: Enforcer;
 
   constructor(
-    @inject(AuthorizerKeys.CONFIGURE_OPTIONS) protected options: IAuthorizeConfigureOptions,
-    @inject(AuthorizerKeys.AUTHORIZE_DATASOURCE) protected dataSource: BaseDataSource,
+    @inject(AuthorizerKeys.CONFIGURE_OPTIONS)
+    protected options: IAuthorizeConfigureOptions,
+    @inject(AuthorizerKeys.AUTHORIZE_DATASOURCE)
+    protected dataSource: BaseDataSource,
   ) {
     this.logger = LoggerFactory.getLogger([EnforcerService.name]);
     this.logger.info('[getEnforcer] Initialize enforcer with options: %j', this.options);
@@ -56,7 +58,11 @@ export class EnforcerService {
     );
 
     const casbinAdapter =
-      adapter ?? CasbinAdapterBuilder.getInstance().build({ type: adapterType, dataSource: this.dataSource });
+      adapter ??
+      CasbinAdapterBuilder.getInstance().build({
+        type: adapterType,
+        dataSource: this.dataSource,
+      });
 
     if (useCache) {
       return newCachedEnforcer(confPath, casbinAdapter);
@@ -73,7 +79,7 @@ export class EnforcerService {
       return null;
     }
 
-    const filterValue: EnforcerFilterValue = {
+    const filterValue: IEnforcerFilterValue = {
       principalType: 'User',
       principalValue: id,
     };

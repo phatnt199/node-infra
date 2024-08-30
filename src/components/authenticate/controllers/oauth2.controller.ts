@@ -19,7 +19,7 @@ import { Request, Response } from '@node-oauth/oauth2-server';
 import { OAuth2Service } from '../services';
 
 import { BaseController } from '@/base/controllers';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { join } from 'path';
 import { Authentication, IAuthenticateOAuth2RestOptions, OAuth2Request } from '../common';
 
@@ -142,8 +142,7 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
           redirectUrl,
         })
         .then(rs => {
-          const { redirectUrl, oauth2TokenRs } = rs;
-          const { accessToken, accessTokenExpiresAt, client } = oauth2TokenRs;
+          const { accessToken, accessTokenExpiresAt, client } = rs.oauth2TokenRs;
 
           if (!accessTokenExpiresAt) {
             response.render('pages/error', {
@@ -152,13 +151,18 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
             return;
           }
 
-          oauth2Service.doClientCallback({ c: token, oauth2Token: oauth2TokenRs }).then(() => {
-            const url = new URL(redirectUrl);
-            url.searchParams.append('c', encodeURIComponent(token));
-            url.searchParams.append('clientId', client.clientId);
-            url.searchParams.append('accessToken', accessToken);
-            response.redirect(url.toString());
-          });
+          oauth2Service
+            .doClientCallback({ c: token, oauth2Token: rs.oauth2TokenRs })
+            .then(() => {
+              const url = new URL(rs.redirectUrl);
+              url.searchParams.append('c', encodeURIComponent(token));
+              url.searchParams.append('clientId', client.clientId);
+              url.searchParams.append('accessToken', accessToken);
+              response.redirect(url.toString());
+            })
+            .catch(error => {
+              throw error;
+            });
         })
         .catch(error => {
           response.render('pages/error', {
@@ -204,14 +208,20 @@ export const defineOAuth2Controller = (opts?: IAuthenticateOAuth2RestOptions) =>
     @post(tokenPath)
     generateToken() {
       const { request, response } = this.httpContext;
-      return this.service.generateToken({ request: new Request(request), response: new Response(response) });
+      return this.service.generateToken({
+        request: new Request(request),
+        response: new Response(response),
+      });
     }
 
     // ------------------------------------------------------------------------------
     @post(authorizePath)
     authorize() {
       const { request, response } = this.httpContext;
-      return this.service.authorize({ request: new Request(request), response: new Response(response) });
+      return this.service.authorize({
+        request: new Request(request),
+        response: new Response(response),
+      });
     }
 
     // ------------------------------------------------------------------------------

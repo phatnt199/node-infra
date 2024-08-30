@@ -17,7 +17,8 @@ export class AuthorizeProvider implements Provider<Authorizer> {
 
   constructor(
     @inject(AuthorizerKeys.ENFORCER) private enforcerService: EnforcerService,
-    @inject(AuthorizerKeys.ALWAYS_ALLOW_ROLES) private alwaysAllowRoles: string[],
+    @inject(AuthorizerKeys.ALWAYS_ALLOW_ROLES)
+    private alwaysAllowRoles: string[],
     @inject(AuthorizerKeys.NORMALIZE_PAYLOAD_FN)
     private normalizePayloadFn: (opts: { subject: string; object: string; scope?: string }) => {
       subject: string;
@@ -45,8 +46,8 @@ export class AuthorizeProvider implements Provider<Authorizer> {
 
   // -------------------------------------------------------------------------------------------------------------------
   async authorizePermission(userId: number, object: string, scopes?: string[]): Promise<boolean> {
-    let singleAuthRs = false;
-    let scopeAuthRs = true;
+    let isSingleAuthRs = false;
+    let isScopeAuthRs = true;
 
     const enforcer = await this.enforcerService.getTypeEnforcer(userId);
     if (!enforcer) {
@@ -59,26 +60,26 @@ export class AuthorizeProvider implements Provider<Authorizer> {
       const enforcePayload =
         this.normalizePayloadFn?.({ subject, object, scope }) ??
         this.normalizeEnforcePayload({ subject, object, scope });
-      scopeAuthRs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
-      this.logger.debug('[authorizePermission] Payload: %j | scopeAuthRs: %s', enforcePayload, scopeAuthRs);
+      isScopeAuthRs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
+      this.logger.debug('[authorizePermission] Payload: %j | scopeAuthRs: %s', enforcePayload, isScopeAuthRs);
 
-      if (!scopeAuthRs) {
+      if (!isScopeAuthRs) {
         this.logger.debug('[authorizePermission] Permission denied | Payload: %j', enforcePayload);
         break;
       }
     }
 
-    if (!scopeAuthRs) {
-      return scopeAuthRs;
+    if (!isScopeAuthRs) {
+      return isScopeAuthRs;
     }
 
     if (object) {
       const enforcePayload =
         this.normalizePayloadFn?.({ subject, object }) ?? this.normalizeEnforcePayload({ subject, object });
-      singleAuthRs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
-      this.logger.debug('[authorizePermission] Payload: %j | singleAuthRs: %s', enforcePayload, singleAuthRs);
+      isSingleAuthRs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
+      this.logger.debug('[authorizePermission] Payload: %j | singleAuthRs: %s', enforcePayload, isSingleAuthRs);
     }
-    return scopeAuthRs && singleAuthRs;
+    return isScopeAuthRs && isSingleAuthRs;
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -129,7 +130,9 @@ export class AuthorizeProvider implements Provider<Authorizer> {
               return el?.(context, metadata);
             }
             default: {
-              throw getError({ message: '[authorize][voter] voter implementation must be function type!' });
+              throw getError({
+                message: '[authorize][voter] voter implementation must be function type!',
+              });
             }
           }
         }),
@@ -146,9 +149,8 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     }
 
     // Authorize by role and user permissions
-    const authorizeDecision = await this.authorizePermission(userId, requestResource, scopes);
-
-    const rs = authorizeDecision ? AuthorizationDecision.ALLOW : AuthorizationDecision.DENY;
+    const isAuthorized = await this.authorizePermission(userId, requestResource, scopes);
+    const rs = isAuthorized ? AuthorizationDecision.ALLOW : AuthorizationDecision.DENY;
 
     this.logger.debug(
       '[authorize] Authorizing... | Resource: %s | allowedRoles: %j | scopes: %j | Took: %d(ms)',

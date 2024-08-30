@@ -49,7 +49,10 @@ export const createViewPolicy = (opts: { datasourceKey: string }) => ({
   name: __filename.slice(__dirname.length + 1),
   fn: async (application: BaseApplication) => {
     if (!opts.datasourceKey || isEmpty(opts.datasourceKey)) {
-      throw getError({ statusCode: 500, message: '[createViewPolicy] Invalid datasourceKey to execute migration!' });
+      throw getError({
+        statusCode: 500,
+        message: '[createViewPolicy] Invalid datasourceKey to execute migration!',
+      });
     }
 
     const { datasourceKey } = opts;

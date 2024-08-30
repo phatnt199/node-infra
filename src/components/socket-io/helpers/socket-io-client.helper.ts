@@ -42,7 +42,7 @@ export class SocketIOClientHelper {
   }
 
   // -----------------------------------------------------------------
-  getSocketClient() {
+  getSocketClient(): Socket {
     return this.client;
   }
 
@@ -99,7 +99,7 @@ export class SocketIOClientHelper {
   }
 
   // -----------------------------------------------------------------
-  emit(opts: { topic: string; message: string; log?: boolean }) {
+  emit(opts: { topic: string; message: string; doLog?: boolean }) {
     if (!this.client?.connected) {
       throw getError({
         statusCode: 400,
@@ -107,10 +107,10 @@ export class SocketIOClientHelper {
       });
     }
 
-    const { topic, message, log = false } = opts;
+    const { topic, message, doLog = false } = opts;
     this.client.emit(topic, message);
 
-    if (!log) {
+    if (!doLog) {
       return;
     }
 

@@ -108,8 +108,8 @@ export const toBoolean = (input: any) => {
 };
 
 // -------------------------------------------------------------------------
-export const toStringDecimal = (input: any, digit = 2, options = { localeFormat: true }) => {
-  const { localeFormat } = options;
+export const toStringDecimal = (input: any, digit = 2, options = { useLocaleFormat: true }) => {
+  const { useLocaleFormat } = options;
   if (isNaN(input)) {
     return 0;
   }
@@ -121,7 +121,7 @@ export const toStringDecimal = (input: any, digit = 2, options = { localeFormat:
     number = float(input, digit);
   }
 
-  if (!localeFormat) {
+  if (!useLocaleFormat) {
     return number.toFixed(digit);
   }
 
@@ -133,7 +133,10 @@ export const toStringDecimal = (input: any, digit = 2, options = { localeFormat:
     return INTL_2_DIGITS_FORMATER.format(number);
   }
 
-  const formater = new Intl.NumberFormat('en-US', { maximumFractionDigits: digit, minimumFractionDigits: digit });
+  const formater = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: digit,
+    minimumFractionDigits: digit,
+  });
   return formater.format(number);
 };
 

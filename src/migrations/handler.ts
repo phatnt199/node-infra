@@ -1,9 +1,9 @@
 import { BaseApplication } from '@/base';
 import { MigrationStatuses } from '@/common';
-import { Migration, MigrationProcess, MigrationRepository } from '@/components/migration';
+import { Migration, TMigrationProcess, MigrationRepository } from '@/components/migration';
 import { applicationLogger as logger } from '@/helpers';
 
-export const cleanUpMigration = async (application: BaseApplication, migrationProcesses: Array<MigrationProcess>) => {
+export const cleanUpMigration = async (application: BaseApplication, migrationProcesses: Array<TMigrationProcess>) => {
   logger.info('START | Clean up migrate database');
 
   for (const migrationProcess of migrationProcesses) {
@@ -22,7 +22,7 @@ export const cleanUpMigration = async (application: BaseApplication, migrationPr
   }
 };
 
-export const _migration = async (application: BaseApplication, migrationProcesses: Array<MigrationProcess>) => {
+const m = async (application: BaseApplication, migrationProcesses: Array<TMigrationProcess>) => {
   logger.info('[migration] START Migrating database');
   const migrationRepository = application.getSync<MigrationRepository>('repositories.MigrationRepository');
 
@@ -55,7 +55,9 @@ export const _migration = async (application: BaseApplication, migrationProcesse
       logger.error('[migration] FAILED | Migrate process: %s | Error: %s', name, error);
     } finally {
       if (migrated) {
-        await migrationRepository.updateById(migrated.id as number, { status: migrateStatus });
+        await migrationRepository.updateById(migrated.id as number, {
+          status: migrateStatus,
+        });
       } else {
         await migrationRepository.create({ name, status: migrateStatus });
       }
@@ -65,15 +67,15 @@ export const _migration = async (application: BaseApplication, migrationProcesse
   logger.info('[migration] DONE Migrating database');
 };
 
-export const migration = _migration;
+export const migration = m;
 
 export const migrate = async (opts: {
   scope: 'up' | 'down';
   application: BaseApplication;
-  processes: Array<MigrationProcess>;
+  processes: Array<TMigrationProcess>;
 }) => {
   const { scope, application, processes } = opts;
   logger.info('[%s] START | Migrating database', scope.toUpperCase());
-  await _migration(application, processes);
+  await m(application, processes);
   logger.info('[%s] DONE | Migrating database', scope.toUpperCase());
 };

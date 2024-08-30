@@ -3,13 +3,13 @@ import { model, property } from '@loopback/repository';
 import { UserProfile } from '@loopback/security';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface JWTTokenPayload extends UserProfile {
+export interface IJWTTokenPayload extends UserProfile {
   userId: IdType;
   roles: { id: IdType; identifier: string; priority: number }[];
   clientId?: string;
 }
 
-export interface TokenPayload extends JWTTokenPayload {}
+export interface ITokenPayload extends IJWTTokenPayload {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IAuthenticateTokenOptions {
@@ -21,16 +21,16 @@ export interface IAuthenticateTokenOptions {
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IAuthenticateRestOptions<
-  SI_RQ extends SignInRequest = SignInRequest,
-  SU_RQ extends SignUpRequest = SignUpRequest,
-  CP_RQ extends ChangePasswordRequest = ChangePasswordRequest,
+  SIRQ extends SignInRequest = SignInRequest,
+  SURQ extends SignUpRequest = SignUpRequest,
+  CPRQ extends ChangePasswordRequest = ChangePasswordRequest,
 > {
   restPath?: string;
   serviceKey?: string;
   requireAuthenticatedSignUp?: boolean;
-  signInRequest?: ClassType<SI_RQ>;
-  signUpRequest?: ClassType<SU_RQ>;
-  changePasswordRequest?: ClassType<CP_RQ>;
+  signInRequest?: ClassType<SIRQ>;
+  signUpRequest?: ClassType<SURQ>;
+  changePasswordRequest?: ClassType<CPRQ>;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -172,20 +172,20 @@ export class OAuth2Request {
 // -------------------------------------------------------------------
 export interface IAuthService<
   // SignIn types
-  SI_RQ extends SignInRequest = SignInRequest,
-  SI_RS = AnyObject,
+  SIRQ extends SignInRequest = SignInRequest,
+  SIRS = AnyObject,
   // SignUp types
-  SU_RQ extends SignUpRequest = SignUpRequest,
-  SU_RS = AnyObject,
+  SURQ extends SignUpRequest = SignUpRequest,
+  SURS = AnyObject,
   // ChangePassword types
-  CP_RQ extends ChangePasswordRequest = ChangePasswordRequest,
-  CP_RS = AnyObject,
+  CPRQ extends ChangePasswordRequest = ChangePasswordRequest,
+  CPRS = AnyObject,
   // UserInformation types
-  UI_RQ = AnyObject,
-  UI_RS = AnyObject,
+  UIRQ = AnyObject,
+  UIRS = AnyObject,
 > {
-  signIn(opts: SI_RQ): Promise<SI_RS>;
-  signUp(opts: SU_RQ): Promise<SU_RS>;
-  changePassword(opts: CP_RQ): Promise<CP_RS>;
-  getUserInformation?(opts: UI_RQ): Promise<UI_RS>;
+  signIn(opts: SIRQ): Promise<SIRS>;
+  signUp(opts: SURQ): Promise<SURS>;
+  changePassword(opts: CPRQ): Promise<CPRS>;
+  getUserInformation?(opts: UIRQ): Promise<UIRS>;
 }

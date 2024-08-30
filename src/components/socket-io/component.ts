@@ -14,7 +14,10 @@ export class SocketIOComponent extends BaseComponent {
     Binding.bind(SocketIOKeys.REDIS_CONNECTION).to(null),
   ];
 
-  constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
+  constructor(
+    @inject(CoreBindings.APPLICATION_INSTANCE)
+    protected application: BaseApplication,
+  ) {
     super({ scope: SocketIOComponent.name });
     this.binding();
   }

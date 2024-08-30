@@ -19,9 +19,11 @@ export interface IDataSource {
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export type ClassType<T> = Function & { prototype: T };
 
-export type EntityClassType<T extends Entity> = typeof Entity & { prototype: T & { id?: IdType } };
+export type EntityClassType<T extends Entity> = typeof Entity & {
+  prototype: T & { id?: IdType };
+};
 
-export type EntityRelation = {};
+export type EntityRelationType = {};
 
 export type NumberIdType = number;
 export type StringIdType = string;
@@ -29,7 +31,7 @@ export type IdType = string | number;
 
 export type AnyType = any;
 export type AnyObject = Record<string | symbol | number, any>;
-export type Promisable<T> = T | Promise<T>;
+export type ValueOrPromise<T> = T | Promise<T>;
 
 export type NullableType = undefined | null | void;
 
@@ -95,7 +97,7 @@ export interface IApplicationEnvironment {
   set<ValueType>(key: string, value: ValueType): any;
 }
 
-export interface EnvironmentValidationResult {
+export interface IEnvironmentValidationResult {
   result: boolean;
   message?: string;
 }

@@ -16,7 +16,9 @@ const DS_AUTHORIZE = process.env.APP_ENV_APPLICATION_DS_AUTHORIZE;
 export abstract class AbstractAuthorizeRepository<T extends BaseTzEntity> extends TzCrudRepository<T> {
   constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource) {
     if (!DS_AUTHORIZE || isEmpty(DS_AUTHORIZE)) {
-      throw getError({ message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE` });
+      throw getError({
+        message: `[AUTHORIZE][DANGER] INVALID DATABASE CONFIGURE | Missing env: DS_AUTHORIZE`,
+      });
     }
 
     super(entityClass, dataSource);

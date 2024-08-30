@@ -24,11 +24,9 @@ export class NetworkHelper {
     const { name, requestConfigs } = opts;
     this.name = name;
     opts?.logger?.info('Creating new network request worker instance! Name: %s', this.name);
+
     // const defaultConfigs = require('axios/lib/defaults/index');
-    this.worker = axios.create({
-      // ...defaultConfigs,
-      ...requestConfigs,
-    });
+    this.worker = axios.create({ ...requestConfigs });
   }
 
   getProtocol(url: string) {
@@ -85,6 +83,8 @@ export class NetworkHelper {
   }
 
   // -------------------------------------------------------------
+  // PUT REQUEST
+  // -------------------------------------------------------------
   async put(opts: IRequestOptions, logger?: any) {
     const { url, body, configs, ...rest } = opts;
     const response = await this.send({ ...rest, url, method: 'put', body, configs, ...rest }, logger);
@@ -92,12 +92,16 @@ export class NetworkHelper {
   }
 
   // -------------------------------------------------------------
+  // PATCH REQUEST
+  // -------------------------------------------------------------
   async patch(opts: IRequestOptions, logger?: any) {
     const { url, body, configs, ...rest } = opts;
     const response = await this.send({ ...rest, url, method: 'patch', body, configs }, logger);
     return response;
   }
 
+  // -------------------------------------------------------------
+  // DELETE REQUEST
   // -------------------------------------------------------------
   async delete(opts: IRequestOptions, logger?: any) {
     const { url, configs, ...rest } = opts;
