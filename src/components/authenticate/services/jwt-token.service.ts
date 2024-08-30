@@ -1,15 +1,17 @@
 import { BaseService } from '@/base/base.service';
-import { decrypt, encrypt, getError } from '@/utilities';
+import { AES } from '@/helpers';
+import { getError } from '@/utilities';
 import { TokenServiceBindings } from '@loopback/authentication-jwt';
 import { BindingScope, inject, injectable } from '@loopback/core';
 import { HttpErrors } from '@loopback/rest';
 import { securityId } from '@loopback/security';
 import jwt from 'jsonwebtoken';
-
 import { AuthenticateKeys, Authentication, IJWTTokenPayload } from '../common';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class JWTTokenService extends BaseService {
+  private aes = AES.withAlgorithm('aes-256-cbc');
+
   constructor(
     @inject(AuthenticateKeys.APPLICATION_SECRET)
     private applicationSecret: string,
@@ -48,20 +50,20 @@ export class JWTTokenService extends BaseService {
 
   // --------------------------------------------------------------------------------------
   encryptPayload(payload: IJWTTokenPayload) {
-    const userKey = encrypt('userId', this.applicationSecret);
+    const userKey = this.aes.encrypt('userId', this.applicationSecret);
 
-    const rolesKey = encrypt('roles', this.applicationSecret);
-    const clientIdKey = encrypt('clientId', this.applicationSecret);
+    const rolesKey = this.aes.encrypt('roles', this.applicationSecret);
+    const clientIdKey = this.aes.encrypt('clientId', this.applicationSecret);
 
     const { userId, roles, clientId = 'NA' } = payload;
 
     return {
-      [userKey]: encrypt(userId.toString(), this.applicationSecret),
-      [rolesKey]: encrypt(
+      [userKey]: this.aes.encrypt(userId.toString(), this.applicationSecret),
+      [rolesKey]: this.aes.encrypt(
         JSON.stringify(roles.map(el => `${el.id}|${el.identifier}|${el.priority}`)),
         this.applicationSecret,
       ),
-      [clientIdKey]: encrypt(clientId, this.applicationSecret),
+      [clientIdKey]: this.aes.encrypt(clientId, this.applicationSecret),
     };
   }
 
@@ -77,8 +79,8 @@ export class JWTTokenService extends BaseService {
         continue;
       }
 
-      const attr = decrypt(encodedAttr, this.applicationSecret);
-      const decryptedValue = decrypt(decodedToken[encodedAttr], this.applicationSecret);
+      const attr = this.aes.decrypt(encodedAttr, this.applicationSecret);
+      const decryptedValue = this.aes.decrypt(decodedToken[encodedAttr], this.applicationSecret);
 
       switch (attr) {
         case 'userId': {
