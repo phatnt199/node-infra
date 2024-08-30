@@ -2,9 +2,9 @@
 
 provision_opt=$1
 case "$provision_opt" in
-  "--major") yarn version $provision_opt ;;
-  "--minor") yarn version $provision_opt ;;
-  "--patch") yarn version $provision_opt ;;
+  "--major") pnpm version major ;;
+  "--minor") pnpm version minor ;;
+  "--patch") pnpm version patch ;;
   "--no-version") echo "No versioning for current build!" ;;
   *)
     echo "Invalid versioning opts | Valid: [major | minor | patch | no-version]"
