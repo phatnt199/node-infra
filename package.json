@@ -1,5 +1,5 @@
 {
-  "name": "@tanphat199/lb-infra",
+  "name": "@minimaltech/lb-infra",
   "version": "0.2.24",
   "description": "NodeJS Infrastructure - Loopback 4 Framework",
   "keywords": [
@@ -44,7 +44,7 @@
     "type": "git",
     "url": "git+https://github.com/phatnt199/lb-infra.git"
   },
-  "author": "Phat Nguyen <tanphat199@gmail.com>",
+  "author": "Minimal Technology <developer@miminaltek.com>",
   "bugs": {
     "url": "https://github.com/phatnt199/lb-infra/issues"
   },
@@ -107,7 +107,7 @@
     "@loopback/build": "^11.0.3",
     "@loopback/eslint-config": "^15.0.3",
     "@loopback/testlab": "^7.0.3",
-    "@minimaltech/eslint-node": "^0.0.8",
+    "@minimaltech/eslint-node": "^0.0.10",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/lodash": "^4.17.7",
