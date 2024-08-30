@@ -1,4 +1,4 @@
-import { AnyType, EntityClassType, EntityRelation, IdType, TRelationType } from '@/common/types';
+import { AnyType, EntityClassType, EntityRelationType, IdType, TRelationType } from '@/common/types';
 import { BindingScope, injectable } from '@loopback/core';
 import { DataObject, Getter, Inclusion, juggler, Options, Where } from '@loopback/repository';
 
@@ -11,7 +11,7 @@ import set from 'lodash/set';
 @injectable({ scope: BindingScope.SINGLETON })
 export abstract class SearchableTzCrudRepository<
   E extends BaseTextSearchTzEntity | BaseObjectSearchTzEntity | BaseSearchableTzEntity,
-  R extends EntityRelation = AnyType,
+  R extends EntityRelationType = AnyType,
 > extends TzCrudRepository<E, R> {
   protected readonly searchableInclusions: Inclusion[];
   protected readonly isInclusionRelations: boolean;

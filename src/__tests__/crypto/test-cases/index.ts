@@ -1,4 +1,4 @@
-import { Promisable } from '@/common';
+import { ValueOrPromise } from '@/common';
 import { TestCaseDecisions, TestCaseHandler, TTestCaseDecision } from '@/helpers';
 import { decrypt, encrypt, getError } from '@/utilities';
 
@@ -41,7 +41,7 @@ export class Test001Handler extends TestCaseHandler<{}, IArg> {
     return { encrypted, decrypted, message };
   }
 
-  getValidator(): ((opts: Awaited<ReturnType<typeof this.execute>>) => Promisable<TTestCaseDecision>) | null {
+  getValidator(): ((opts: Awaited<ReturnType<typeof this.execute>>) => ValueOrPromise<TTestCaseDecision>) | null {
     return opts => {
       console.log('[getValidator] RUN HERE');
       const { message, encrypted, decrypted } = opts;

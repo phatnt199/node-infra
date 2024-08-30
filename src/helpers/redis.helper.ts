@@ -204,8 +204,8 @@ export class RedisHelper {
   }
 
   // ---------------------------------------------------------------------------------
-  async publish(opts: { topics: Array<string>; payload: any; compress?: boolean }) {
-    const { topics, payload, compress = false } = opts;
+  async publish(opts: { topics: Array<string>; payload: any; useCompress?: boolean }) {
+    const { topics, payload, useCompress = false } = opts;
 
     const validTopics = topics?.filter(topic => !isEmpty(topic));
     if (!validTopics?.length) {
@@ -226,7 +226,7 @@ export class RedisHelper {
     await Promise.all(
       validTopics.map(topic => {
         let packet = Buffer.from(JSON.stringify(payload));
-        if (compress) {
+        if (useCompress) {
           packet = zlib.deflateSync(Buffer.from(packet));
         }
 

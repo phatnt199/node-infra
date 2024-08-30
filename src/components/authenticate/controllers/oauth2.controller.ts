@@ -151,13 +151,18 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
             return;
           }
 
-          oauth2Service.doClientCallback({ c: token, oauth2Token: rs.oauth2TokenRs }).then(() => {
-            const url = new URL(rs.redirectUrl);
-            url.searchParams.append('c', encodeURIComponent(token));
-            url.searchParams.append('clientId', client.clientId);
-            url.searchParams.append('accessToken', accessToken);
-            response.redirect(url.toString());
-          });
+          oauth2Service
+            .doClientCallback({ c: token, oauth2Token: rs.oauth2TokenRs })
+            .then(() => {
+              const url = new URL(rs.redirectUrl);
+              url.searchParams.append('c', encodeURIComponent(token));
+              url.searchParams.append('clientId', client.clientId);
+              url.searchParams.append('accessToken', accessToken);
+              response.redirect(url.toString());
+            })
+            .catch(error => {
+              throw error;
+            });
         })
         .catch(error => {
           response.render('pages/error', {

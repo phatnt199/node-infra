@@ -1,4 +1,4 @@
-import { Promisable } from '@/common';
+import { ValueOrPromise } from '@/common';
 import { getError } from '@/utilities';
 import assert from 'assert';
 import { TestCaseDecisions } from './common';
@@ -10,7 +10,7 @@ export interface ITestCaseHandlerOptions<R extends object, I extends ITestCaseIn
   args?: I | null;
   argResolver?: (...args: any[]) => I | null;
 
-  validator?: (opts: any) => Promisable<TTestCaseDecision>;
+  validator?: (opts: any) => ValueOrPromise<TTestCaseDecision>;
 }
 
 export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITestCaseInput = {}>
@@ -19,7 +19,7 @@ export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITest
   context: ITestContext<R>;
   args: I | null;
 
-  validator?: (opts: any) => Promisable<TTestCaseDecision>;
+  validator?: (opts: any) => ValueOrPromise<TTestCaseDecision>;
 
   constructor(opts: ITestCaseHandlerOptions<R, I>) {
     this.context = opts.context;
@@ -31,10 +31,12 @@ export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITest
     return this.args;
   }
 
-  abstract execute(): Promisable<any>;
+  abstract execute(): ValueOrPromise<any>;
 
-  abstract getValidator(): ((opts: Awaited<ReturnType<typeof this.execute>>) => Promisable<TTestCaseDecision>) | null;
-  abstract validate(opts: any): Promisable<TTestCaseDecision>;
+  abstract getValidator():
+    | ((opts: Awaited<ReturnType<typeof this.execute>>) => ValueOrPromise<TTestCaseDecision>)
+    | null;
+  abstract validate(opts: any): ValueOrPromise<TTestCaseDecision>;
 }
 
 export abstract class TestCaseHandler<R extends object = {}, I extends ITestCaseInput = {}> extends BaseTestCaseHandler<
@@ -51,7 +53,7 @@ export abstract class TestCaseHandler<R extends object = {}, I extends ITestCase
     assert.equal(validateRs, TestCaseDecisions.SUCCESS);
   }
 
-  validate(opts: any): Promisable<TTestCaseDecision> {
+  validate(opts: any): ValueOrPromise<TTestCaseDecision> {
     const validator = this.validator ?? this.getValidator();
 
     if (!validator) {
