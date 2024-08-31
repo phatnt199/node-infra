@@ -42,13 +42,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/phatnt199/lb-infra.git"
+    "url": "git+https://github.com/phatnt199/node-infra.git"
   },
   "author": "Minimal Technology <developer@miminaltek.com>",
   "bugs": {
-    "url": "https://github.com/phatnt199/lb-infra/issues"
+    "url": "https://github.com/phatnt199/node-infra/issues"
   },
-  "homepage": "https://github.com/phatnt199/lb-infra/wiki",
+  "homepage": "https://github.com/phatnt199/node-infra/wiki",
   "license": "MIT",
   "files": [
     "README.md",
