@@ -142,8 +142,8 @@ importers:
         specifier: ^7.0.3
         version: 7.0.5
       '@minimaltech/eslint-node':
-        specifier: ^0.0.11
-        version: 0.0.11(eslint@8.57.0)(typescript@5.5.4)
+        specifier: ^0.0.22
+        version: 0.0.22(eslint@8.57.0)(typescript@5.5.4)
       '@types/express':
         specifier: ^4.17.21
         version: 4.17.21
@@ -520,8 +520,8 @@ packages:
     resolution: {integrity: sha512-YF8sKq/BwRptmj0TLwOATP6VELXlhs+dzE8EsK8xKgVCGAFf2VOz1VnwC4cjOPW0uMmRApJQIKF1cyM3zFMpVQ==}
     engines: {node: 18 || 20 || 22}
 
-  '@minimaltech/eslint-node@0.0.11':
-    resolution: {integrity: sha512-hH3KVvFEI93qEq4cQiT3eOKpqRVmqJktVtlcmhRVMFgxZLfmbil+Bk4w3jGAZ855vbT4QZ/H6JHLHElOfsLs4g==}
+  '@minimaltech/eslint-node@0.0.22':
+    resolution: {integrity: sha512-gDCVn5wDi14PZhs5u/kcqpsKnpRuujbDTWXw1xdQ/ENpdFavyFSypnRbv7P7Na7O7W9/HP9jy3A8oyQz7GYjaw==}
     peerDependencies:
       eslint: '>=8.57.0'
 
@@ -4073,7 +4073,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@minimaltech/eslint-node@0.0.11(eslint@8.57.0)(typescript@5.5.4)':
+  '@minimaltech/eslint-node@0.0.22(eslint@8.57.0)(typescript@5.5.4)':
     dependencies:
       '@eslint/eslintrc': 3.1.0
       '@eslint/js': 9.9.1
