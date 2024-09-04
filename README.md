@@ -4,5 +4,5 @@
 
 Please checkout these references for more guiding:
 
-- [Project WIKI](https://github.com/phatnt199/lb-infra/wiki)
+- [Project WIKI](https://github.com/phatnt199/node-infra/wiki)
 - [Loopback 4 Official Documentation](https://loopback.io/doc/en/lb4/)

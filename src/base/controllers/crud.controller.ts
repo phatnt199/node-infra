@@ -16,7 +16,7 @@ import {
 } from '@loopback/rest';
 
 import { BaseIdEntity, BaseTzEntity, AbstractTzRepository } from './../';
-import { EntityRelation, IController, IdType } from '@/common/types';
+import { EntityRelationType, IController, IdType } from '@/common/types';
 import { App } from '@/common';
 import { applyLimit, getIdSchema } from './common';
 
@@ -56,10 +56,10 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
   };
 
   class ReadController implements IController {
-    repository: AbstractTzRepository<E, EntityRelation>;
+    repository: AbstractTzRepository<E, EntityRelationType>;
     defaultLimit: number;
 
-    constructor(repository: AbstractTzRepository<E, EntityRelation>) {
+    constructor(repository: AbstractTzRepository<E, EntityRelationType>) {
       this.repository = repository;
       this.defaultLimit = controllerOptions?.defaultLimit ?? App.DEFAULT_QUERY_LIMIT;
     }
@@ -79,7 +79,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
         },
       },
     })
-    find(@param.filter(entityOptions) filter?: Filter<E>): Promise<(E & EntityRelation)[]> {
+    find(@param.filter(entityOptions) filter?: Filter<E>): Promise<(E & EntityRelationType)[]> {
       return this.repository.find(applyLimit(filter));
     }
 
@@ -99,7 +99,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       @param(idPathParam) id: IdType,
       @param.query.object('filter', getFilterSchemaFor(entityOptions, { exclude: 'where' }))
       filter?: FilterExcludingWhere<E>,
-    ): Promise<E & EntityRelation> {
+    ): Promise<E & EntityRelationType> {
       return this.repository.findById(id, applyLimit(filter));
     }
 
@@ -118,7 +118,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
     findOne(
       @param.query.object('filter', getFilterSchemaFor(entityOptions))
       filter?: Filter<E>,
-    ): Promise<(E & EntityRelation) | null> {
+    ): Promise<(E & EntityRelationType) | null> {
       return this.repository.findOne(filter);
     }
 
@@ -148,7 +148,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
   }
 
   class CRUDController extends ReadController {
-    constructor(repository: AbstractTzRepository<E, EntityRelation>) {
+    constructor(repository: AbstractTzRepository<E, EntityRelationType>) {
       super(repository);
     }
 

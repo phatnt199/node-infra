@@ -1,8 +1,8 @@
 import { BaseApplication } from '@/base/applications';
 import { BaseService } from '@/base/base.service';
 import { EnvironmentKeys } from '@/common';
-import { applicationEnvironment } from '@/helpers';
-import { decrypt, encrypt, getError } from '@/utilities';
+import { AES, applicationEnvironment } from '@/helpers';
+import { getError } from '@/utilities';
 import { CoreBindings, inject } from '@loopback/core';
 import { RequestContext } from '@loopback/rest';
 import { Request, Response, Token } from '@node-oauth/oauth2-server';
@@ -12,6 +12,8 @@ import { OAuth2Handler } from '../oauth2-handlers';
 import { OAuth2ClientRepository } from '../repositories';
 
 export class OAuth2Service extends BaseService {
+  private aes = AES.withAlgorithm('aes-256-cbc');
+
   constructor(
     @inject(CoreBindings.APPLICATION_INSTANCE)
     private application: BaseApplication,
@@ -26,7 +28,7 @@ export class OAuth2Service extends BaseService {
   encryptClientToken(opts: { clientId: string; clientSecret: string }) {
     const { clientId, clientSecret } = opts;
     const applicationSecret = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
-    return encrypt([clientId, clientSecret].join('_'), applicationSecret);
+    return this.aes.encrypt([clientId, clientSecret].join('_'), applicationSecret);
   }
 
   // --------------------------------------------------------------------------------
@@ -34,7 +36,7 @@ export class OAuth2Service extends BaseService {
     const { token } = opts;
     const applicationSecret = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
 
-    const decrypted = decrypt(token, applicationSecret, { doThrow: false });
+    const decrypted = this.aes.decrypt(token, applicationSecret, { doThrow: false });
     const [clientId, clientSecret] = decrypted.split('_');
     this.logger.debug('[decryptClientToken] Token: %s | ClientId: %s', clientId, token);
 
@@ -81,7 +83,7 @@ export class OAuth2Service extends BaseService {
 
           const urlParam = new URLSearchParams();
 
-          const requestToken = encrypt([clientId, clientSecret].join('_'), applicationSecret);
+          const requestToken = this.aes.encrypt([clientId, clientSecret].join('_'), applicationSecret);
           urlParam.set('c', encodeURIComponent(requestToken));
 
           if (redirectUrl) {

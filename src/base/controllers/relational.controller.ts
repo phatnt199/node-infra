@@ -4,7 +4,7 @@ import { del, get, param, patch, post, requestBody, SchemaObject } from '@loopba
 import getProp from 'lodash/get';
 
 import { App, EntityRelations } from '@/common';
-import { EntityRelation, IController, IdType, NullableType, TRelationType } from '@/common/types';
+import { EntityRelationType, IController, IdType, NullableType, TRelationType } from '@/common/types';
 import { getError } from '@/utilities';
 import { Class } from '@loopback/service-proxy';
 import { AbstractTzRepository, BaseTzEntity } from './..';
@@ -49,13 +49,13 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
       name: relationName,
       type: relationType,
     };
-    sourceRepository: AbstractTzRepository<S, EntityRelation>;
-    targetRepository: AbstractTzRepository<T, EntityRelation>;
+    sourceRepository: AbstractTzRepository<S, EntityRelationType>;
+    targetRepository: AbstractTzRepository<T, EntityRelationType>;
     defaultLimit: number;
 
     constructor(
-      sourceRepository: AbstractTzRepository<S, EntityRelation>,
-      targetRepository: AbstractTzRepository<T, EntityRelation>,
+      sourceRepository: AbstractTzRepository<S, EntityRelationType>,
+      targetRepository: AbstractTzRepository<T, EntityRelationType>,
     ) {
       super({ scope: `ViewController.${relationName}` });
       this.defaultLimit = defaultLimit;
@@ -184,13 +184,13 @@ export const defineAssociateController = <
   const BaseClass = baseClass ?? BaseController;
 
   class AssociationController extends BaseClass implements IController {
-    sourceRepository: AbstractTzRepository<S, EntityRelation>;
-    targetRepository: AbstractTzRepository<T, EntityRelation>;
+    sourceRepository: AbstractTzRepository<S, EntityRelationType>;
+    targetRepository: AbstractTzRepository<T, EntityRelationType>;
     defaultLimit: number;
 
     constructor(
-      sourceRepository: AbstractTzRepository<S, EntityRelation>,
-      targetRepository: AbstractTzRepository<T, EntityRelation>,
+      sourceRepository: AbstractTzRepository<S, EntityRelationType>,
+      targetRepository: AbstractTzRepository<T, EntityRelationType>,
     ) {
       super(sourceRepository, targetRepository);
       this.defaultLimit = defaultLimit;

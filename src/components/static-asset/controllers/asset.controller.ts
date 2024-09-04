@@ -127,9 +127,12 @@ export class StaticAssetController implements IController {
           originalname: folderPath ? `${folderPath}/${file.originalname}` : file.originalname,
         }));
 
-        minioInstance.upload({ bucket: bucketName, files: modifiedFiles }).then(rs => {
-          resolve(rs);
-        });
+        minioInstance
+          .upload({ bucket: bucketName, files: modifiedFiles })
+          .then(rs => {
+            resolve(rs);
+          })
+          .catch(reject);
       });
     });
   }

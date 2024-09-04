@@ -8,18 +8,19 @@ TestDescribe.withTestPlan({
     testCaseResolver: ({ context }) => {
       return [
         TestCase.withOptions({
-          description: 'Check message successfully encrypt and decrypt.1',
-          handler: new TestCases.Test001Handler({
+          description: 'Check AES message successfully encrypt and decrypt',
+          handler: new TestCases.TestAES001Handler({
             context,
             args: { secretKey: 'abc123qwe', message: 'hello world' },
           }),
         }),
         TestCase.withOptions({
-          description: 'Check message successfully encrypt and decrypt.2',
-          handler: new TestCases.Test001Handler({
+          description: 'Check RSA message successfully encrypt and decrypt',
+          handler: new TestCases.TestRSA001Handler({
             context,
-            args: { secretKey: 'abc123qwe', message: 'hello world' },
-            validator: TestCases.test001Validator,
+            args: {
+              message: 'hello world | minimal technology',
+            },
           }),
         }),
       ];

@@ -174,15 +174,15 @@ export class MinioHelper {
   }
 
   // ---------------------------------------------------------------------
-  removeObject(opts: { bucket: string; name: string }) {
+  async removeObject(opts: { bucket: string; name: string }) {
     const { bucket, name } = opts;
-    this.client.removeObject(bucket, name);
+    await this.client.removeObject(bucket, name);
   }
 
   // ---------------------------------------------------------------------
-  getListObjects(opts: { bucket: string; prefix?: string; recursive?: boolean }) {
-    const { bucket, prefix = '', recursive = false } = opts;
-    const listObjects = this.client.listObjects(bucket, prefix, recursive);
+  getListObjects(opts: { bucket: string; prefix?: string; useRecursive?: boolean }) {
+    const { bucket, prefix = '', useRecursive = false } = opts;
+    const listObjects = this.client.listObjects(bucket, prefix, useRecursive);
     return listObjects;
   }
 }
