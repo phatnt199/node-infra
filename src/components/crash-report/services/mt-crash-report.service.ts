@@ -6,7 +6,7 @@ class CrashReportNetworkRequest extends BaseNetworkRequest {}
 
 export class MTCrashReportService extends BaseCrashReportProvider {
   crashReportNetworkRequest: CrashReportNetworkRequest;
-  cryptoRSA: RSA;
+  private rsa = RSA.withAlgorithm();
 
   constructor() {
     super();
@@ -15,7 +15,6 @@ export class MTCrashReportService extends BaseCrashReportProvider {
       scope: MTCrashReportService.name,
       networkOptions: {},
     });
-    this.cryptoRSA = RSA.withAlgorithm();
   }
 
   async sendReport(opts: ISendReport) {
@@ -46,7 +45,7 @@ export class MTCrashReportService extends BaseCrashReportProvider {
     }
 
     const bodyStringify = JSON.stringify({ projectId, environment }); 
-    const signature = this.cryptoRSA.encrypt(bodyStringify, publicKey);
+    const signature = this.rsa.encrypt(bodyStringify, publicKey);
 
     networkService.send({
       url: endPoint,
