@@ -34,9 +34,19 @@ export interface ICreateEventRequest {
 export interface ICrashReportRestOptions {
   endPoint?: string;
   projectId?: IdType;
-  apiKey?: string;
-  secretKey?: string;
+  publicKey?: string;
   environment?: string;
   createEventRequest?: ICreateEventRequest | AnyObject;
   generateBodyFn?: () => AnyObject;
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export interface ISendReport {
+  options: ICrashReportRestOptions;
+  error: Error;
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export interface ICrashReportProvider {
+  sendReport: (opts: ISendReport) => Promise<void>;
 }

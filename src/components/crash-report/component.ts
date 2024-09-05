@@ -1,75 +1,83 @@
-import { CoreBindings, inject } from '@loopback/core';
+import { CoreBindings, Getter, inject, LifeCycleObserver } from '@loopback/core';
 import { BaseApplication } from '@/base';
 import { BaseComponent } from '@/base/base.component';
-import { encrypt, getError } from '@/utilities';
-import { BASE_ENDPOINT_CRASH_REPORT, CrashReportKeys, ICrashReportRestOptions } from './common';
-import { BaseNetworkRequest } from '@/helpers';
+import { getError } from '@/utilities';
+import { CrashReportKeys, CrashReportProviderKeys, ICrashReportProvider, ICrashReportRestOptions } from './common';
+import { CrashReportProvider, GetCrashReportProviderFn } from './providers';
+import { MTCrashReportService } from './services';
 
-class CrashReportProviderNetworkRequest extends BaseNetworkRequest {}
-
-export class CrashReportComponent extends BaseComponent {
-  crashReportProvider: CrashReportProviderNetworkRequest;
-
-  constructor(@inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication) {
+export class CrashReportComponent extends BaseComponent implements LifeCycleObserver {
+  constructor(
+    @inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication,
+    @inject.getter(CrashReportProviderKeys.THIRD_PARTY_PROVIDERS)
+    protected crashReportProviderGetter: Getter<GetCrashReportProviderFn>,
+  ) {
     super({ scope: CrashReportComponent.name });
-    this.binding();
-    this.crashReportProvider = new CrashReportProviderNetworkRequest({
-      name: CrashReportProviderNetworkRequest.name,
-      scope: CrashReportComponent.name,
-      networkOptions: {},
-    });
   }
 
-  handleError(crashReportRestOptions: ICrashReportRestOptions) {
-    const {
-      apiKey = '',
-      secretKey = '',
-      endPoint = BASE_ENDPOINT_CRASH_REPORT,
-      projectId,
-      environment = process.env.NODE_ENV,
-      createEventRequest,
-      generateBodyFn,
-    } = crashReportRestOptions;
+  async handleError(opts: { providerKey: string; options: ICrashReportRestOptions }) {
+    const { providerKey, options } = opts;
+    const crashReportService: ICrashReportProvider | null = (await this.crashReportProviderGetter())({
+      identifier: providerKey,
+    });
 
     process.on('uncaughtException', error => {
-      const { name: typeName, stack, message } = error;
-      const networkService = this.crashReportProvider.getNetworkService();
-      const signature = encrypt(apiKey, secretKey);
-
-      let body: typeof createEventRequest = {
-        appVersion: process.env.npm_package_version,
-        appType: 'uncaughtError',
-        type: typeName,
-        details: { name: typeName, stack, message },
-        projectId,
-        environment,
-        signature,
-      };
-
-      if (generateBodyFn) {
-        body = generateBodyFn();
-      }
-
-      networkService.send({
-        url: endPoint,
-        method: 'post',
-        body,
-      });
+      crashReportService?.sendReport({ options, error });
     });
   }
 
-  binding() {
+  defineServices() {
+    this.application.service(MTCrashReportService);
+  }
+
+  async binding() {
+    // Minimal Tech Options
+    const crashReportMTRestOptions = this.application.isBound(CrashReportKeys.MT_REST_OPTIONS)
+      ? this.application.getSync<ICrashReportRestOptions>(CrashReportKeys.MT_REST_OPTIONS)
+      : {};
+
+    const crashReportProviderKeys = this.application.isBound(CrashReportProviderKeys.PROVIDERS)
+      ? this.application.getSync<Array<string>>(CrashReportProviderKeys.PROVIDERS)
+      : '';
+
+    for (const providerKey of crashReportProviderKeys) {
+      if (!CrashReportProviderKeys.isValid(providerKey)) {
+        throw getError({
+          message: `[start] In valid key ${providerKey} | Valid: ${[...CrashReportProviderKeys.TYPE_SET]}`,
+        });
+      }
+
+      switch (providerKey) {
+        case CrashReportProviderKeys.MT_PROVIDER: {
+          await this.handleError({ providerKey, options: crashReportMTRestOptions });
+          break;
+        }
+
+        default: {
+          break;
+        }
+      }
+    }
+  }
+
+  init() {
+    this.logger.info('[init] Binding crash report third party provider...');
+    this.application.bind(CrashReportProviderKeys.THIRD_PARTY_PROVIDERS).toProvider(CrashReportProvider);
+  }
+
+  start() {
     if (!this.application) {
       throw getError({
         statusCode: 500,
-        message: '[binding] Invalid application to bind CrashReportComponent',
+        message: '[start] Invalid application to bind CrashReportComponent',
       });
     }
-    const crashReportRestOptions = this.application.isBound(CrashReportKeys.REST_OPTIONS)
-      ? this.application.getSync<ICrashReportRestOptions>(CrashReportKeys.REST_OPTIONS)
-      : {};
+    this.logger.info('[start] Binding crash report component for application...');
 
-    this.handleError(crashReportRestOptions);
-    this.logger.info('[binding] Binding crash report component for application...');
+    // Binding services
+    this.defineServices();
+
+    // Binding options
+    this.binding();
   }
 }
