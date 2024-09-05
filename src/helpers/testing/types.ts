@@ -21,8 +21,10 @@ export interface ITestCaseHandler<R extends object = {}, I extends object = {}> 
 }
 
 export interface ITestCase<R extends object = {}, I extends object = {}> {
+  code: string;
   name?: string;
   description: string;
+  expectation?: string;
   handler: ITestCaseHandler<R, I>;
 
   run: () => ValueOrPromise<void>;
