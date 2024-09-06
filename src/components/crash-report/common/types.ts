@@ -3,7 +3,7 @@ import { AnyObject, IdType, ValueOrPromise } from '@/common';
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface ICreateEventRequest {
   appVersion?: string;
-  eventName?: string; 
+  appType?: string; 
   eventType?: string; 
 
   device?: Record<string | symbol, string | number>;
@@ -30,7 +30,6 @@ export interface ICrashReportOptions {
   eventName: string;
   publicKey?: string;
   environment?: string;
-  createEventRequest?: ICreateEventRequest | AnyObject;
   generateBodyFn?: () => AnyObject;
 }
 

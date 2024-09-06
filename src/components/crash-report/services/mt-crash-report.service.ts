@@ -22,14 +22,7 @@ export class MTCrashReportService extends BaseCrashReportProvider {
 
   sendReport(opts: ISendReport) {
     const {
-      options: {
-        projectId,
-        eventName,
-        publicKey,
-        environment = process.env.NODE_ENV,
-        createEventRequest,
-        generateBodyFn,
-      },
+      options: { projectId, eventName, publicKey, environment = process.env.NODE_ENV, generateBodyFn },
       error,
     } = opts;
 
@@ -38,39 +31,45 @@ export class MTCrashReportService extends BaseCrashReportProvider {
       return;
     }
 
-    const { name: eventType } = error;
-
-    let body: typeof createEventRequest = {
+    const body = generateBodyFn?.() ?? {
       appVersion: process.env.npm_package_version,
       appType: eventName,
-      eventType,
+      eventType: error.name,
       trace: error,
       projectId,
       environment,
     };
 
-    if (generateBodyFn) {
-      body = generateBodyFn();
-    }
+    const stringified = JSON.stringify({ projectId, environment });
 
-    const bodyStringify = JSON.stringify({ projectId, environment });
-    const signature = this.rsa.encrypt(bodyStringify, publicKey);
-
-    this.crashReportNetworkRequest
-      .getNetworkService()
-      .send({
-        url: this.crashReportNetworkRequest.getRequestUrl({
-          paths: [MTEndpoints.EVENTS],
-        }),
-        method: 'post',
-        body: { ...body, signature },
-      })
-      .then(() => {
-        this.logger.info('[sendReport] Provider: %s | Successfully sent crash report to endpoint', 'MT_CRASH_REPORT');
+    Promise.resolve(this.rsa.encrypt(stringified, publicKey))
+      .then(signature => {
+        this.crashReportNetworkRequest
+          .getNetworkService()
+          .send({
+            url: this.crashReportNetworkRequest.getRequestUrl({
+              paths: [MTEndpoints.EVENTS],
+            }),
+            method: 'post',
+            body: { ...body, signature },
+          })
+          .then(() => {
+            this.logger.info(
+              '[sendReport] Provider: %s | Successfully sent crash report to endpoint',
+              'MT_CRASH_REPORT',
+            );
+          })
+          .catch(err => {
+            this.logger.error(
+              '[sendReport] Provider: %s | Failed to send crash report to endpoint | Error: %s',
+              'MT_CRASH_REPORT',
+              err,
+            );
+          });
       })
       .catch(err => {
         this.logger.error(
-          '[sendReport] Provider: %s | Failed to send crash report to endpoint | Error: %s',
+          '[sendReport] Provider: %s | Failed to encrypt crash report | Error: %s',
           'MT_CRASH_REPORT',
           err,
         );
