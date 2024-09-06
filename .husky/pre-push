@@ -1,2 +1,5 @@
+#!/bin/sh
+
+echo
 echo "[hooks][pre-commit] Linting application"
 yarn lint
