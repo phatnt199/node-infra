@@ -1,7 +1,6 @@
 import { TCrashReportProviders } from './types';
 
 export class CrashReportKeys {
-  // static readonly REPORT_OPTIONS = '@app/crash-report/report-options';
   static readonly REPORT_PROVIDERS = '@app/crash-report/report-providers';
 
   static readonly THIRD_PARTY_PROVIDER = '@app/crash-report/third-party-provider';
