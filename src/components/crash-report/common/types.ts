@@ -1,39 +1,33 @@
-import { AnyObject, IdType } from '@/common';
+import { AnyObject, IdType, ValueOrPromise } from '@/common';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface ICreateEventRequest {
   appVersion?: string;
-  appType?: string;
-  type?: string;
-  device?: {
-    language?: string;
-    userAgent?: string;
-    title?: string;
-    referrer?: string;
-    url?: string;
-  };
+  eventName?: string; 
+  eventType?: string; 
+
+  device?: Record<string | symbol, string | number>;
+
   sdk?: {
     platform?: string;
     version?: string;
   };
+
   actions?: Array<AnyObject>;
-  details?: {
-    name?: string;
-    message?: string;
-    filename?: string;
-    lineno?: string;
-    colno?: string;
-    stack?: string;
-    location?: string;
-  };
-  metadata?: AnyObject;
-  extra?: AnyObject;
+
+  trace?: Record<string | symbol, string | number>; // eventTrace
+
+  // For further
+  [extra: string | symbol]: any;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface ICrashReportRestOptions {
-  endPoint?: string;
+export type TCrashReportProviders = '@app/crash-report/mt-provider' | '@app/crash-report/sentry-provider';
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export interface ICrashReportOptions {
   projectId?: IdType;
+  eventName: string;
   publicKey?: string;
   environment?: string;
   createEventRequest?: ICreateEventRequest | AnyObject;
@@ -42,11 +36,11 @@ export interface ICrashReportRestOptions {
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface ISendReport {
-  options: ICrashReportRestOptions;
+  options: ICrashReportOptions;
   error: Error;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface ICrashReportProvider {
-  sendReport: (opts: ISendReport) => Promise<void>;
+  sendReport: (opts: ISendReport) => ValueOrPromise<void>;
 }

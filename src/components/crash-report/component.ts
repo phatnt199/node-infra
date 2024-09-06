@@ -2,28 +2,27 @@ import { CoreBindings, Getter, inject, LifeCycleObserver } from '@loopback/core'
 import { BaseApplication } from '@/base';
 import { BaseComponent } from '@/base/base.component';
 import { getError } from '@/utilities';
-import { CrashReportKeys, CrashReportProviderKeys, ICrashReportProvider, ICrashReportRestOptions } from './common';
-import { CrashReportProvider, GetCrashReportProviderFn } from './providers';
+import {
+  CrashReportKeys,
+  CrashReportProviderKeys,
+  ICrashReportProvider,
+  ICrashReportOptions,
+  TCrashReportProviders,
+} from './common';
+import { CrashReportProvider, TGetCrashReportProviderFn } from './providers';
 import { MTCrashReportService } from './services';
 
 export class CrashReportComponent extends BaseComponent implements LifeCycleObserver {
   constructor(
     @inject(CoreBindings.APPLICATION_INSTANCE) protected application: BaseApplication,
-    @inject.getter(CrashReportProviderKeys.THIRD_PARTY_PROVIDERS)
-    protected crashReportProviderGetter: Getter<GetCrashReportProviderFn>,
+    @inject.getter(CrashReportKeys.THIRD_PARTY_PROVIDER)
+    protected crashReportProviderGetter: Getter<TGetCrashReportProviderFn>,
   ) {
     super({ scope: CrashReportComponent.name });
   }
 
-  async handleError(opts: { providerKey: string; options: ICrashReportRestOptions }) {
-    const { providerKey, options } = opts;
-    const crashReportService: ICrashReportProvider | null = (await this.crashReportProviderGetter())({
-      identifier: providerKey,
-    });
-
-    process.on('uncaughtException', error => {
-      crashReportService?.sendReport({ options, error });
-    });
+  defineProviders() {
+    this.application.bind(CrashReportKeys.THIRD_PARTY_PROVIDER).toProvider(CrashReportProvider);
   }
 
   defineServices() {
@@ -31,38 +30,46 @@ export class CrashReportComponent extends BaseComponent implements LifeCycleObse
   }
 
   async binding() {
-    // Minimal Tech Options
-    const crashReportMTRestOptions = this.application.isBound(CrashReportKeys.MT_REST_OPTIONS)
-      ? this.application.getSync<ICrashReportRestOptions>(CrashReportKeys.MT_REST_OPTIONS)
-      : {};
-
-    const crashReportProviderKeys = this.application.isBound(CrashReportProviderKeys.PROVIDERS)
-      ? this.application.getSync<Array<string>>(CrashReportProviderKeys.PROVIDERS)
-      : '';
-
-    for (const providerKey of crashReportProviderKeys) {
-      if (!CrashReportProviderKeys.isValid(providerKey)) {
-        throw getError({
-          message: `[start] In valid key ${providerKey} | Valid: ${[...CrashReportProviderKeys.TYPE_SET]}`,
-        });
-      }
-
-      switch (providerKey) {
-        case CrashReportProviderKeys.MT_PROVIDER: {
-          await this.handleError({ providerKey, options: crashReportMTRestOptions });
-          break;
-        }
-
-        default: {
-          break;
-        }
-      }
+    if (!this.application.isBound(CrashReportKeys.REPORT_PROVIDERS)) {
+      throw getError({
+        message: '[binding] Invalid crash report provider | REPORT_PROVIDER is not bounded to application context',
+      });
     }
-  }
+    const reportProviders = this.application.getSync<
+      Array<{ identifier: TCrashReportProviders; options: ICrashReportOptions }>
+    >(CrashReportKeys.REPORT_PROVIDERS) ?? [];
 
-  init() {
-    this.logger.info('[init] Binding crash report third party provider...');
-    this.application.bind(CrashReportProviderKeys.THIRD_PARTY_PROVIDERS).toProvider(CrashReportProvider);
+    const providerServices: Array<{ service: ICrashReportProvider; options: ICrashReportOptions }> = [];
+    for (const reportProvider of reportProviders) {
+      const { identifier, options } = reportProvider;
+      if (!CrashReportProviderKeys.isValid({ identifier })) {
+        this.logger.error('[binding] Invalid provider identifier: %s | Valid: %j', identifier, [
+          ...CrashReportProviderKeys.TYPE_SET,
+        ]);
+        continue;
+      }
+
+      const service = (await this.crashReportProviderGetter())({ identifier });
+      if (!service) {
+        this.logger.error('[binding] Identifier: %s | Failed to create report service', identifier);
+        continue;
+      }
+
+      providerServices.push({ service, options });
+    }
+
+    if (!providerServices.length) {
+      this.logger.error('[binding] No providerServices to init report!');
+      return;
+    }
+
+    process.on('uncaughtException', error => {
+      Promise.all(
+        providerServices.map(({ service, options }) => {
+          return service.sendReport({ options, error });
+        }),
+      );
+    });
   }
 
   start() {
@@ -73,6 +80,9 @@ export class CrashReportComponent extends BaseComponent implements LifeCycleObse
       });
     }
     this.logger.info('[start] Binding crash report component for application...');
+
+    // Binding providers
+    this.defineProviders();
 
     // Binding services
     this.defineServices();
