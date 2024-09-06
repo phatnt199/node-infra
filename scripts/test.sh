@@ -7,7 +7,6 @@ case $current_branch in
     echo "[hooks][pre-commit] SKIP Linting application"
     ;;
   *)
-    echo
     echo "[hooks][pre-commit] Linting application"
     yarn lint
     ;;
