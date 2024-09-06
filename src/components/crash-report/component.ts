@@ -35,9 +35,10 @@ export class CrashReportComponent extends BaseComponent implements LifeCycleObse
         message: '[binding] Invalid crash report provider | REPORT_PROVIDER is not bounded to application context',
       });
     }
-    const reportProviders = this.application.getSync<
-      Array<{ identifier: TCrashReportProviders; options: ICrashReportOptions }>
-    >(CrashReportKeys.REPORT_PROVIDERS) ?? [];
+    const reportProviders =
+      this.application.getSync<Array<{ identifier: TCrashReportProviders; options: ICrashReportOptions }>>(
+        CrashReportKeys.REPORT_PROVIDERS,
+      ) ?? [];
 
     const providerServices: Array<{ service: ICrashReportProvider; options: ICrashReportOptions }> = [];
     for (const reportProvider of reportProviders) {

@@ -3,8 +3,8 @@ import { AnyObject, IdType, ValueOrPromise } from '@/common';
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface ICreateEventRequest {
   appVersion?: string;
-  appType?: string; 
-  eventType?: string; 
+  appType?: string;
+  eventType?: string;
 
   device?: Record<string | symbol, string | number>;
 
