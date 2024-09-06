@@ -76,7 +76,7 @@ export abstract class BaseTestPlan<R extends object> implements ITestPlan<R> {
 
     for (const testCase of this.testCases) {
       try {
-        it(`RUN Test Case | Description: ${testCase.name ? `${testCase.name} - ` : ''}${testCase.description}`, () => {
+        it(`RUN Test Case | Code: ${testCase.code} | Description: ${testCase.name ? `${testCase.name} - ` : ''}${testCase.description} | Expect: ${testCase.expectation}`, () => {
           return testCase.run();
         });
       } catch (error) {

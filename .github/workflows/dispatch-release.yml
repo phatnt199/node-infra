@@ -42,6 +42,10 @@ jobs:
           pnpm run rebuild:${{ github.event.inputs.build_mode }}
           date > built_generated
 
+      - name: Linting application source
+        run: |
+          pnpm lint
+
       - name: Versioning application artifact
         run: |
           VERSION=$(jq -r .version package.json)
