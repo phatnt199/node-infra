@@ -35,10 +35,17 @@ jobs:
         run: |
           echo "lb-infra build_mode: ${{ github.event.inputs.build_mode }}"
 
-      - name: Install dependencies and build 🔧
+      - name: Install dependencies
         run: |
           npm install -g pnpm
           pnpm install
+
+      - name: Linting application source
+        run: |
+          pnpm lint
+
+      - name: Build application 🔧
+        run: |
           pnpm run rebuild:${{ github.event.inputs.build_mode }}
           date > built_generated
 

@@ -3,8 +3,10 @@ import { getError } from '@/utilities';
 import assert from 'assert';
 import { TestCaseDecisions } from './common';
 import { ITestCaseHandler, ITestCaseInput, ITestContext, TTestCaseDecision } from './types';
+import { ApplicationLogger, LoggerFactory } from '../logger';
 
 export interface ITestCaseHandlerOptions<R extends object, I extends ITestCaseInput = {}> {
+  scope?: string;
   context: ITestContext<R>;
 
   args?: I | null;
@@ -16,12 +18,16 @@ export interface ITestCaseHandlerOptions<R extends object, I extends ITestCaseIn
 export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITestCaseInput = {}>
   implements ITestCaseHandler<R, I>
 {
+  protected logger: ApplicationLogger;
+
   context: ITestContext<R>;
   args: I | null;
 
   validator?: (opts: any) => ValueOrPromise<TTestCaseDecision>;
 
   constructor(opts: ITestCaseHandlerOptions<R, I>) {
+    this.logger = LoggerFactory.getLogger([opts?.scope ?? BaseTestCaseHandler.name]);
+
     this.context = opts.context;
     this.args = opts.args ?? opts.argResolver?.() ?? null;
     this.validator = opts?.validator;
@@ -44,12 +50,22 @@ export abstract class TestCaseHandler<R extends object = {}, I extends ITestCase
   I
 > {
   constructor(opts: ITestCaseHandlerOptions<R, I>) {
-    super(opts);
+    super({
+      ...opts,
+      scope: opts.scope ?? TestCaseHandler.name,
+    });
   }
 
   async _execute() {
-    const executeRs = await this.execute();
-    const validateRs = await this.validate(executeRs);
+    let validateRs = TestCaseDecisions.UNKNOWN;
+
+    try {
+      const executeRs = await this.execute();
+      validateRs = await this.validate(executeRs);
+    } catch (error) {
+      this.logger.error('[_execute] Failed to execute test handler | Error: %s', error);
+    }
+
     assert.equal(validateRs, TestCaseDecisions.SUCCESS);
   }
 
