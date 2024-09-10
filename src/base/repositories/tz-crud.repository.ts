@@ -159,8 +159,8 @@ export abstract class TzCrudRepository<
       authorId?: IdType;
       useIgnoreModified?: boolean;
     },
-  ) {
-    return new Promise((resolve, reject) => {
+  ): Promise<Count> {
+    return new Promise<Count>((resolve, reject) => {
       const {
         databaseSchema,
         connectorType = 'postgresql',
@@ -206,7 +206,11 @@ export abstract class TzCrudRepository<
             sqlBuilder.update(mixUserAuditColumnName, authorId);
           }
 
-          this.execute(sqlBuilder.toQuery(), null, options).then(resolve).catch(reject);
+          this.execute(sqlBuilder.toQuery(), null, options)
+            .then(res => {
+              resolve({ count: res.count });
+            })
+            .catch(reject);
         })
         .catch(reject);
     });
@@ -221,8 +225,8 @@ export abstract class TzCrudRepository<
       authorId?: IdType;
       ignoreModified?: boolean;
     },
-  ) {
-    return new Promise((resolve, reject) => {
+  ): Promise<Count> {
+    return new Promise<Count>((resolve, reject) => {
       this._softDelete(where, options)
         .then(rs => {
           resolve(rs);
