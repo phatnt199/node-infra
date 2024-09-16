@@ -35,7 +35,10 @@ export class MTCrashReportService extends BaseCrashReportProvider {
       appVersion: process.env.npm_package_version,
       appType: eventName,
       eventType: error.name,
-      trace: error,
+      trace: {
+        name: error.name,
+        ...JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error))),
+      },
       projectId,
       environment,
     };
