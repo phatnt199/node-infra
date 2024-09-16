@@ -1,5 +1,6 @@
 import {
   DataTypeMixin,
+  DuplicatableMixin,
   ObjectSearchMixin,
   SoftDeleteModelMixin,
   TextSearchMixin,
@@ -55,3 +56,6 @@ export class BaseSearchableTzEntity extends ObjectSearchMixin(TextSearchMixin(Ba
 
 // ---------------------------------------------------------------------
 export class BaseSoftDeleteTzEntity extends SoftDeleteModelMixin(BaseTzEntity) {}
+
+// ---------------------------------------------------------------------
+export class BaseDuplicatableTzEntity extends DuplicatableMixin(BaseTzEntity) {}
