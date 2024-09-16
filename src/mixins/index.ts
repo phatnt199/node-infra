@@ -6,3 +6,4 @@ export * from './soft-persistent.mixin';
 export * from './text-search.mixin';
 export * from './tz.mixin';
 export * from './user-audit.mixin';
+export * from './duplicatable.mixin';
