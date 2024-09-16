@@ -1,14 +1,17 @@
+import { getIdType } from '@/base/controllers/common';
+import { BaseIdEntity } from '@/base/base.model';
 import { IdType } from '@/common';
 import { MixinTarget } from '@loopback/core';
-import { Entity, property } from '@loopback/repository';
+import { property } from '@loopback/repository';
 
-export const DuplicatableMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
+export const DuplicatableMixin = <E extends MixinTarget<BaseIdEntity>>(superClass: E) => {
+  const sourceIdType = getIdType(BaseIdEntity);
   class Mixed extends superClass {
     @property({
-      type: 'number',
+      type: sourceIdType,
       postgresql: {
         columnName: 'source_id',
-        dataType: 'number',
+        dataType: sourceIdType === 'number' ? 'integer' : 'text',
       },
     })
     sourceId?: IdType;
