@@ -1,19 +1,19 @@
 import { getError } from '@/utilities';
 import knex from 'knex';
 
-type TQueryBuilerClientType = 'pg' | 'mysql';
+type TQueryBuilderClientType = 'pg' | 'mysql';
 
 export class QueryBuilderHelper {
   private static instance: QueryBuilderHelper;
 
-  clients: Map<TQueryBuilerClientType, knex.Knex> = new Map();
+  clients: Map<TQueryBuilderClientType, knex.Knex> = new Map();
 
-  constructor(opts: { clientType: TQueryBuilerClientType }) {
+  constructor(opts: { clientType: TQueryBuilderClientType }) {
     const { clientType } = opts;
     this.clients.set(clientType, knex({ client: clientType }));
   }
 
-  static getInstance(opts: { clientType: TQueryBuilerClientType }) {
+  static getInstance(opts: { clientType: TQueryBuilderClientType }) {
     if (!this.instance) {
       this.instance = new QueryBuilderHelper(opts);
     }
@@ -22,7 +22,7 @@ export class QueryBuilderHelper {
   }
 
   // ----------------------------------------------------------------------------------------------------
-  getQueryBuilder(opts: { clientType: TQueryBuilerClientType }) {
+  getQueryBuilder(opts: { clientType: TQueryBuilderClientType }) {
     const { clientType } = opts;
 
     if (!this.clients.has(clientType)) {
@@ -41,7 +41,7 @@ export class QueryBuilderHelper {
     return queryClient.queryBuilder();
   }
 
-  getUpdateBuilder(opts: { clientType: TQueryBuilerClientType; tableName: string; schema: string }) {
+  getUpdateBuilder(opts: { clientType: TQueryBuilderClientType; tableName: string; schema: string }) {
     const { clientType, tableName, schema } = opts;
 
     if (!this.clients.has(clientType)) {
@@ -67,6 +67,7 @@ export class QueryBuilderHelper {
     return ins.getQueryBuilder({ clientType });
   }
 
+  // ----------------------------------------------------------------------------------------------------
   static getPostgresUpdateBuilder(opts: { tableName: string; schema?: string }) {
     const { tableName, schema = 'public' } = opts;
     const clientType = 'pg';

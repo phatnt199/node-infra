@@ -3871,7 +3871,7 @@ snapshots:
 
   '@loopback/eslint-config@15.0.4(eslint@8.57.0)(typescript@5.2.2)':
     dependencies:
-      '@typescript-eslint/eslint-plugin': 7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.2.2)
+      '@typescript-eslint/eslint-plugin': 7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.0)(typescript@5.2.2))(eslint@8.57.0)(typescript@5.2.2)
       '@typescript-eslint/parser': 7.18.0(eslint@8.57.0)(typescript@5.2.2)
       eslint: 8.57.0
       eslint-config-prettier: 9.1.0(eslint@8.57.0)
@@ -4326,10 +4326,10 @@ snapshots:
     dependencies:
       '@types/node': 20.16.2
 
-  '@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.2.2)':
+  '@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.0)(typescript@5.2.2))(eslint@8.57.0)(typescript@5.2.2)':
     dependencies:
       '@eslint-community/regexpp': 4.11.0
-      '@typescript-eslint/parser': 7.18.0(eslint@8.57.0)(typescript@5.5.4)
+      '@typescript-eslint/parser': 7.18.0(eslint@8.57.0)(typescript@5.2.2)
       '@typescript-eslint/scope-manager': 7.18.0
       '@typescript-eslint/type-utils': 7.18.0(eslint@8.57.0)(typescript@5.2.2)
       '@typescript-eslint/utils': 7.18.0(eslint@8.57.0)(typescript@5.2.2)
