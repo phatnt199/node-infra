@@ -7,7 +7,6 @@ import {
   TzMixin,
   UserAuditMixin,
 } from '@/mixins';
-import { MixinTarget } from '@loopback/core';
 import { Entity, property } from '@loopback/repository';
 
 // ---------------------------------------------------------------------

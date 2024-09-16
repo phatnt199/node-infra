@@ -1,4 +1,4 @@
-import { App, IController, IdType } from '@/common';
+import { App, IController } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { Filter } from '@loopback/repository';
 import { getJsonSchema, jsonToSchemaObject, SchemaObject } from '@loopback/rest';
@@ -33,9 +33,7 @@ export const getIdSchema = <E extends BaseIdEntity>(entity: typeof BaseIdEntity 
   return modelSchema.properties?.[idProp] as SchemaObject;
 };
 
-export const getIdType = <E extends BaseEntity>(
-  entity: typeof BaseEntity & { prototype: E},
-): 'string' | 'number' => {
+export const getIdType = <E extends BaseEntity>(entity: typeof BaseEntity & { prototype: E }): 'string' | 'number' => {
   let idType: 'string' | 'number' = 'number';
   try {
     const idMetadata = MetadataInspector.getPropertyMetadata<{ type: 'string' | 'number' }>(
@@ -46,7 +44,7 @@ export const getIdType = <E extends BaseEntity>(
     idType = idMetadata?.type ?? 'number';
   } catch (e) {
     console.error(e);
-  } finally {
-    return idType;
+    idType = 'number';
   }
+  return idType;
 };
