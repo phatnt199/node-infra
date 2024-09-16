@@ -9,14 +9,14 @@ import { BaseKVEntity } from '../base.model';
 import { AbstractKVRepository } from '../repositories';
 
 // --------------------------------------------------------------------------------------------------------------
-export interface KVControllerOptions<E extends BaseKVEntity> {
+export interface IKVControllerOptions<E extends BaseKVEntity> {
   entity: typeof BaseKVEntity & { prototype: E };
   repository: { name: string };
   controller: CrudRestControllerOptions;
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export const defineKVController = <E extends BaseKVEntity>(opts: KVControllerOptions<E>) => {
+export const defineKVController = <E extends BaseKVEntity>(opts: IKVControllerOptions<E>) => {
   const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = opts;
 
   class ReadController implements IController {

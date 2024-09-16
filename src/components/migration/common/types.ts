@@ -1,4 +1,4 @@
-export type MigrationProcess = {
+export type TMigrationProcess = {
   name: string;
   cleanFn?: Function;
   fn: Function;

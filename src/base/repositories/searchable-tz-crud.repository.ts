@@ -1,4 +1,4 @@
-import { AnyType, EntityClassType, EntityRelation, IdType, TRelationType } from '@/common/types';
+import { AnyType, EntityClassType, EntityRelationType, IdType, TRelationType } from '@/common/types';
 import { BindingScope, injectable } from '@loopback/core';
 import { DataObject, Getter, Inclusion, juggler, Options, Where } from '@loopback/repository';
 
@@ -11,7 +11,7 @@ import set from 'lodash/set';
 @injectable({ scope: BindingScope.SINGLETON })
 export abstract class SearchableTzCrudRepository<
   E extends BaseTextSearchTzEntity | BaseObjectSearchTzEntity | BaseSearchableTzEntity,
-  R extends EntityRelation = AnyType,
+  R extends EntityRelationType = AnyType,
 > extends TzCrudRepository<E, R> {
   protected readonly searchableInclusions: Inclusion[];
   protected readonly isInclusionRelations: boolean;
@@ -35,6 +35,7 @@ export abstract class SearchableTzCrudRepository<
     relation: string;
     relationRepository: TzCrudRepository<RM>;
     entities: RM[];
+    options?: Options;
   }): Promise<void>;
 
   // ----------------------------------------------------------------------------------------------------
@@ -54,7 +55,7 @@ export abstract class SearchableTzCrudRepository<
         entities = await relationRepository.find({ where }, options);
       }
 
-      await this.onInclusionChanged({ relation, relationRepository, entities });
+      await this.onInclusionChanged({ relation, relationRepository, entities, options });
     });
 
     relationRepository.modelClass.observe('after deleteWithReturn', async context => {
@@ -74,15 +75,20 @@ export abstract class SearchableTzCrudRepository<
     relationType: TRelationType;
     entities: RM[];
     relationRepository: TzCrudRepository<RM>;
+    options?: Options;
   }) {
-    const { relationName, relationType, entities, relationRepository } = opts;
+    const { relationName, relationType, entities, relationRepository, options } = opts;
 
-    const resolved = await relationRepository.inclusionResolvers.get(relationName)?.(entities, {
-      relation: relationName,
-      scope: {
-        include: this.searchableInclusions,
+    const resolved = await relationRepository.inclusionResolvers.get(relationName)?.(
+      entities,
+      {
+        relation: relationName,
+        scope: {
+          include: this.searchableInclusions,
+        },
       },
-    });
+      options,
+    );
 
     const promises = [];
     switch (relationType) {
@@ -104,7 +110,7 @@ export abstract class SearchableTzCrudRepository<
               {
                 objectSearch: this.renderObjectSearch({ entity: r1 }),
               } as AnyType,
-              { ignoreMixSearchFields: true },
+              { ignoreMixSearchFields: true, options },
             ),
           );
         }
@@ -137,7 +143,7 @@ export abstract class SearchableTzCrudRepository<
                 {
                   objectSearch: this.renderObjectSearch({ entity: r2 }),
                 } as AnyType,
-                { ignoreMixSearchFields: true },
+                { ignoreMixSearchFields: true, options },
               ),
             );
           }

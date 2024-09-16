@@ -1,4 +1,4 @@
-import { AnyObject, AnyType, Promisable } from '@/common';
+import { AnyObject, AnyType, ValueOrPromise } from '@/common';
 import { DIContainerHelper } from '../storage';
 
 export interface ITestContext<R extends object> {
@@ -17,18 +17,20 @@ export interface ITestCaseInput {}
 export interface ITestCaseHandler<R extends object = {}, I extends object = {}> {
   context: ITestContext<R>;
   args: I | null;
-  validator?: (args: AnyObject) => Promisable<TTestCaseDecision>;
+  validator?: (args: AnyObject) => ValueOrPromise<TTestCaseDecision>;
 }
 
 export interface ITestCase<R extends object = {}, I extends object = {}> {
+  code: string;
   name?: string;
   description: string;
+  expectation?: string;
   handler: ITestCaseHandler<R, I>;
 
-  run: () => Promisable<void>;
+  run: () => ValueOrPromise<void>;
 }
 
-export type TTestHook<R extends object> = (testPlan: ITestPlan<R>) => Promisable<void>;
+export type TTestHook<R extends object> = (testPlan: ITestPlan<R>) => ValueOrPromise<void>;
 
 export interface ITestHooks<R extends object> {
   before?: TTestHook<R>;
@@ -51,5 +53,5 @@ export interface ITestPlan<R extends object = {}> extends ITestContext<R> {
   getHooks: () => ITestHooks<R>;
   getHook: (opts: { key: keyof ITestHooks<R> }) => TTestHook<R> | null;
 
-  execute: () => Promisable<void>;
+  execute: () => ValueOrPromise<void>;
 }

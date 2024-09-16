@@ -1,4 +1,4 @@
-import { AnyType, EntityClassType, EntityRelation, IdType } from '@/common/types';
+import { AnyType, EntityClassType, EntityRelationType, IdType } from '@/common/types';
 import { QueryBuilderHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import { Count, DataObject, juggler, Options, Where } from '@loopback/repository';
@@ -11,7 +11,7 @@ import get from 'lodash/get';
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export abstract class TzCrudRepository<
   E extends BaseTzEntity,
-  R extends EntityRelation = AnyType,
+  R extends EntityRelationType = AnyType,
 > extends AbstractTzRepository<E, R> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource, scope?: string) {
     super(entityClass, dataSource, scope);
@@ -157,15 +157,15 @@ export abstract class TzCrudRepository<
       connectorType?: string;
       softDeleteField?: string;
       authorId?: IdType;
-      ignoreModified?: boolean;
+      useIgnoreModified?: boolean;
     },
-  ) {
-    return new Promise((resolve, reject) => {
+  ): Promise<Count> {
+    return new Promise<Count>((resolve, reject) => {
       const {
         databaseSchema,
         connectorType = 'postgresql',
         softDeleteField = 'isDeleted',
-        ignoreModified = false,
+        useIgnoreModified = false,
         authorId,
       } = options ?? {};
 
@@ -198,7 +198,7 @@ export abstract class TzCrudRepository<
               rs.map(el => el.id),
             );
 
-          if (mixTimestampColumnName && !ignoreModified) {
+          if (mixTimestampColumnName && !useIgnoreModified) {
             sqlBuilder.update(mixTimestampColumnName, now);
           }
 
@@ -206,7 +206,11 @@ export abstract class TzCrudRepository<
             sqlBuilder.update(mixUserAuditColumnName, authorId);
           }
 
-          this.execute(sqlBuilder.toQuery(), null, options).then(resolve).catch(reject);
+          this.execute(sqlBuilder.toQuery(), null, options)
+            .then(res => {
+              resolve({ count: res.count });
+            })
+            .catch(reject);
         })
         .catch(reject);
     });
@@ -221,8 +225,8 @@ export abstract class TzCrudRepository<
       authorId?: IdType;
       ignoreModified?: boolean;
     },
-  ) {
-    return new Promise((resolve, reject) => {
+  ): Promise<Count> {
+    return new Promise<Count>((resolve, reject) => {
       this._softDelete(where, options)
         .then(rs => {
           resolve(rs);

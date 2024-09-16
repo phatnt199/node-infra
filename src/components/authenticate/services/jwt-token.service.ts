@@ -1,15 +1,17 @@
 import { BaseService } from '@/base/base.service';
-import { decrypt, encrypt, getError } from '@/utilities';
+import { AES } from '@/helpers';
+import { getError } from '@/utilities';
 import { TokenServiceBindings } from '@loopback/authentication-jwt';
 import { BindingScope, inject, injectable } from '@loopback/core';
 import { HttpErrors } from '@loopback/rest';
 import { securityId } from '@loopback/security';
 import jwt from 'jsonwebtoken';
-
-import { AuthenticateKeys, Authentication, JWTTokenPayload } from '../common';
+import { AuthenticateKeys, Authentication, IJWTTokenPayload } from '../common';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export class JWTTokenService extends BaseService {
+  private aes = AES.withAlgorithm('aes-256-cbc');
+
   constructor(
     @inject(AuthenticateKeys.APPLICATION_SECRET)
     private applicationSecret: string,
@@ -37,34 +39,36 @@ export class JWTTokenService extends BaseService {
     }
 
     const parts = authHeaderValue.split(' ');
-    if (parts.length !== 2)
+    if (parts.length !== 2) {
       throw new HttpErrors.Unauthorized(
         `Authorization header value has too many parts. It must follow the pattern: 'Bearer xx.yy.zz' where xx.yy.zz is a valid JWT token.`,
       );
+    }
+
     return { type: parts[0], token: parts[1] };
   }
 
   // --------------------------------------------------------------------------------------
-  encryptPayload(payload: JWTTokenPayload) {
-    const userKey = encrypt('userId', this.applicationSecret);
+  encryptPayload(payload: IJWTTokenPayload) {
+    const userKey = this.aes.encrypt('userId', this.applicationSecret);
 
-    const rolesKey = encrypt('roles', this.applicationSecret);
-    const clientIdKey = encrypt('clientId', this.applicationSecret);
+    const rolesKey = this.aes.encrypt('roles', this.applicationSecret);
+    const clientIdKey = this.aes.encrypt('clientId', this.applicationSecret);
 
     const { userId, roles, clientId = 'NA' } = payload;
 
     return {
-      [userKey]: encrypt(userId.toString(), this.applicationSecret),
-      [rolesKey]: encrypt(
+      [userKey]: this.aes.encrypt(userId.toString(), this.applicationSecret),
+      [rolesKey]: this.aes.encrypt(
         JSON.stringify(roles.map(el => `${el.id}|${el.identifier}|${el.priority}`)),
         this.applicationSecret,
       ),
-      [clientIdKey]: encrypt(clientId, this.applicationSecret),
+      [clientIdKey]: this.aes.encrypt(clientId, this.applicationSecret),
     };
   }
 
   // --------------------------------------------------------------------------------------
-  decryptPayload(decodedToken: any): JWTTokenPayload {
+  decryptPayload(decodedToken: any): IJWTTokenPayload {
     const rs: any = {};
 
     const jwtFields = new Set<string>(['iat', 'exp']);
@@ -75,8 +79,8 @@ export class JWTTokenService extends BaseService {
         continue;
       }
 
-      const attr = decrypt(encodedAttr, this.applicationSecret);
-      const decryptedValue = decrypt(decodedToken[encodedAttr], this.applicationSecret);
+      const attr = this.aes.decrypt(encodedAttr, this.applicationSecret);
+      const decryptedValue = this.aes.decrypt(decodedToken[encodedAttr], this.applicationSecret);
 
       switch (attr) {
         case 'userId': {
@@ -106,7 +110,7 @@ export class JWTTokenService extends BaseService {
   }
 
   // --------------------------------------------------------------------------------------
-  verify(opts: { type: string; token: string }): JWTTokenPayload {
+  verify(opts: { type: string; token: string }): IJWTTokenPayload {
     const { token } = opts;
     if (!token) {
       this.logger.error('[verify] Missing token for validating request!');
@@ -132,7 +136,7 @@ export class JWTTokenService extends BaseService {
   }
 
   // --------------------------------------------------------------------------------------
-  generate(payload: JWTTokenPayload): string {
+  generate(payload: IJWTTokenPayload): string {
     if (!payload) {
       throw new HttpErrors.Unauthorized('Error generating token : userProfile is null');
     }

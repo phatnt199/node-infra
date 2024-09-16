@@ -1,5 +1,5 @@
 import { BindingKeys, EnvironmentKeys } from '@/common';
-import { EnvironmentValidationResult, IApplication } from '@/common/types';
+import { IEnvironmentValidationResult, IApplication } from '@/common/types';
 import { GrpcTags } from '@/components';
 import { AuthenticateKeys } from '@/components/authenticate/common';
 import { applicationEnvironment, ApplicationLogger, LoggerFactory } from '@/helpers';
@@ -76,7 +76,7 @@ export abstract class BaseApplication
 
   abstract staticConfigure(): void;
   abstract getProjectRoot(): string;
-  abstract validateEnv(): EnvironmentValidationResult;
+  abstract validateEnv(): IEnvironmentValidationResult;
   abstract declareModels(): Set<string>;
 
   abstract preConfigure(): void;

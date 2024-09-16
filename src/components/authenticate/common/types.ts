@@ -3,13 +3,13 @@ import { model, property } from '@loopback/repository';
 import { UserProfile } from '@loopback/security';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface JWTTokenPayload extends UserProfile {
+export interface IJWTTokenPayload extends UserProfile {
   userId: IdType;
   roles: { id: IdType; identifier: string; priority: number }[];
   clientId?: string;
 }
 
-export interface TokenPayload extends JWTTokenPayload {}
+export interface ITokenPayload extends IJWTTokenPayload {}
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IAuthenticateTokenOptions {

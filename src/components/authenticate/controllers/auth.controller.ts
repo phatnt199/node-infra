@@ -89,22 +89,24 @@ export const defineAuthController = <
       payload: CP,
     ) {
       return new Promise((resolve, reject) => {
-        this.getCurrentUser().then(currentUser => {
-          if (!currentUser) {
-            reject(
-              getError({
-                statusCode: 404,
-                message: '[changePassword] Failed to change password | Invalid user!',
-              }),
-            );
-            return;
-          }
+        this.getCurrentUser()
+          .then(currentUser => {
+            if (!currentUser) {
+              reject(
+                getError({
+                  statusCode: 404,
+                  message: '[changePassword] Failed to change password | Invalid user!',
+                }),
+              );
+              return;
+            }
 
-          this.service
-            .changePassword({ ...payload, userId: currentUser.userId })
-            .then(resolve)
-            .catch(reject);
-        });
+            this.service
+              .changePassword({ ...payload, userId: currentUser.userId })
+              .then(resolve)
+              .catch(reject);
+          })
+          .catch(reject);
       });
     }
   }

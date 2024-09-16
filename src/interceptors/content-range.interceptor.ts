@@ -1,17 +1,17 @@
 import { BaseIdEntity } from '@/base';
 import { App, EntityRelations, IController, ICRUDController } from '@/common';
 import {
+  inject,
+  injectable,
   Interceptor,
   InvocationContext,
   InvocationResult,
   Provider,
   ValueOrPromise,
-  inject,
-  injectable,
 } from '@loopback/core';
 import { CrudRepository, Filter } from '@loopback/repository';
 import { Response, RestBindings } from '@loopback/rest';
-import { get } from 'lodash';
+import get from 'lodash/get';
 
 @injectable({ tags: { key: ContentRangeInterceptor.BINDING_KEY } })
 export class ContentRangeInterceptor implements Provider<Interceptor> {

@@ -1,4 +1,4 @@
-import { BindingKeys, EnvironmentKeys, EnvironmentValidationResult } from '@/common';
+import { BindingKeys, EnvironmentKeys, IEnvironmentValidationResult } from '@/common';
 import { MigrationComponent } from '@/components';
 import { MigrationKeys } from '@/components/migration/common';
 import { KvMemDataSource, PostgresDataSource } from '@/datasources';
@@ -22,7 +22,7 @@ export abstract class DefaultRestApplication extends BaseApplication {
     return roleConf?.split(',')?.map((el: string) => el.trim());
   }
 
-  validateEnv(): EnvironmentValidationResult {
+  validateEnv(): IEnvironmentValidationResult {
     const rs = { result: true, message: '' };
     const envKeys = applicationEnvironment.keys();
 

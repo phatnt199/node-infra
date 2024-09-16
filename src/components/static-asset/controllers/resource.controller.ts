@@ -78,9 +78,11 @@ export class StaticResourceController implements IController {
               }
             });
           }),
-        ).then(rs => {
-          resolve(rs);
-        });
+        )
+          .then(rs => {
+            resolve(rs);
+          })
+          .catch(reject);
       });
     });
   }

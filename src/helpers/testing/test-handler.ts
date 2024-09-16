@@ -1,27 +1,33 @@
-import { Promisable } from '@/common';
+import { ValueOrPromise } from '@/common';
 import { getError } from '@/utilities';
 import assert from 'assert';
 import { TestCaseDecisions } from './common';
 import { ITestCaseHandler, ITestCaseInput, ITestContext, TTestCaseDecision } from './types';
+import { ApplicationLogger, LoggerFactory } from '../logger';
 
 export interface ITestCaseHandlerOptions<R extends object, I extends ITestCaseInput = {}> {
+  scope?: string;
   context: ITestContext<R>;
 
   args?: I | null;
   argResolver?: (...args: any[]) => I | null;
 
-  validator?: (opts: any) => Promisable<TTestCaseDecision>;
+  validator?: (opts: any) => ValueOrPromise<TTestCaseDecision>;
 }
 
 export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITestCaseInput = {}>
   implements ITestCaseHandler<R, I>
 {
+  protected logger: ApplicationLogger;
+
   context: ITestContext<R>;
   args: I | null;
 
-  validator?: (opts: any) => Promisable<TTestCaseDecision>;
+  validator?: (opts: any) => ValueOrPromise<TTestCaseDecision>;
 
   constructor(opts: ITestCaseHandlerOptions<R, I>) {
+    this.logger = LoggerFactory.getLogger([opts?.scope ?? BaseTestCaseHandler.name]);
+
     this.context = opts.context;
     this.args = opts.args ?? opts.argResolver?.() ?? null;
     this.validator = opts?.validator;
@@ -31,10 +37,12 @@ export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITest
     return this.args;
   }
 
-  abstract execute(): Promisable<any>;
+  abstract execute(): ValueOrPromise<any>;
 
-  abstract getValidator(): ((opts: Awaited<ReturnType<typeof this.execute>>) => Promisable<TTestCaseDecision>) | null;
-  abstract validate(opts: any): Promisable<TTestCaseDecision>;
+  abstract getValidator():
+    | ((opts: Awaited<ReturnType<typeof this.execute>>) => ValueOrPromise<TTestCaseDecision>)
+    | null;
+  abstract validate(opts: any): ValueOrPromise<TTestCaseDecision>;
 }
 
 export abstract class TestCaseHandler<R extends object = {}, I extends ITestCaseInput = {}> extends BaseTestCaseHandler<
@@ -42,16 +50,26 @@ export abstract class TestCaseHandler<R extends object = {}, I extends ITestCase
   I
 > {
   constructor(opts: ITestCaseHandlerOptions<R, I>) {
-    super(opts);
+    super({
+      ...opts,
+      scope: opts.scope ?? TestCaseHandler.name,
+    });
   }
 
   async _execute() {
-    const executeRs = await this.execute();
-    const validateRs = await this.validate(executeRs);
+    let validateRs = TestCaseDecisions.UNKNOWN;
+
+    try {
+      const executeRs = await this.execute();
+      validateRs = await this.validate(executeRs);
+    } catch (error) {
+      this.logger.error('[_execute] Failed to execute test handler | Error: %s', error);
+    }
+
     assert.equal(validateRs, TestCaseDecisions.SUCCESS);
   }
 
-  validate(opts: any): Promisable<TTestCaseDecision> {
+  validate(opts: any): ValueOrPromise<TTestCaseDecision> {
     const validator = this.validator ?? this.getValidator();
 
     if (!validator) {
