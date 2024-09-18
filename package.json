@@ -26,6 +26,9 @@
   ],
   "exports": {
     ".": "./dist/index.js",
+    "./@lb/auth": "./dist/base/loopback/@lb/auth/index.js",
+    "./@lb/core": "./dist/base/loopback/@lb/core/index.js",
+    "./@lb/rest": "./dist/base/loopback/@lb/rest/index.js",
     "./@loopback/authentication": "./dist/base/loopback/authentication/index.js",
     "./@loopback/authorization": "./dist/base/loopback/authorization/index.js",
     "./@loopback/boot": "./dist/base/loopback/boot/index.js",
