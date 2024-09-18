@@ -511,8 +511,8 @@ packages:
     resolution: {integrity: sha512-pRYqTKB7HpDRJrM1pHapMSnBDWWzD9cs2BFSXcYcq061xFGYjqyZuMi7BWT1vz4iVGQ0zKt+qyqmCVWONmqalw==}
     engines: {node: 18 || 20 || 22}
 
-  '@minimaltech/eslint-common@0.0.18':
-    resolution: {integrity: sha512-wFIZRjr3cELGvTpgYeUgwWpMFKj7/fAZ05vEgaQB3EvSKzvifAnYdi5wHdV21sGvYsm2Jtdsn68jgWNw5VgxTQ==}
+  '@minimaltech/eslint-common@0.0.19':
+    resolution: {integrity: sha512-jSNN4v0+59Iv6bmh/hDc9GkZlaZg5OWtXgV2mhLzg7JkTXulKLR2y7SnR7wYd5UxAqduzoCaV9vg+fNzS23gxQ==}
 
   '@minimaltech/eslint-node@0.1.15':
     resolution: {integrity: sha512-v8Khu/0Ub5C+icFUypNDd9vafGlCsD78ZV+2SxeI+s1WK0bZ23pc7glO11acgLFR2mLyW98t45FPVZWcW5vZHA==}
@@ -4144,7 +4144,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@minimaltech/eslint-common@0.0.18':
+  '@minimaltech/eslint-common@0.0.19':
     dependencies:
       '@eslint/js': 9.10.0
       eslint: 8.57.1
@@ -4162,7 +4162,7 @@ snapshots:
       '@eslint/eslintrc': 3.1.0
       '@eslint/js': 9.10.0
       '@loopback/eslint-config': 15.0.4(eslint@8.57.1)(typescript@5.6.2)
-      '@minimaltech/eslint-common': 0.0.18
+      '@minimaltech/eslint-common': 0.0.19
     transitivePeerDependencies:
       - '@types/eslint'
       - eslint
