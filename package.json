@@ -66,14 +66,18 @@
   ],
   "export": {
     "lb-core": "node_modules/@loopback/core/dist/index.js",
-    "lb-repository": "node_modules/@loopback/repository/dist/index.js",
+    "lb-repository": "node_modules/@loopback/repository/dist/index.js"
   },
   "typeVersions": {
     "*": {
-      "lb-core": ["node_modules/@loopback/core/dist/index.d.ts"],
-      "lb-repository": ["node_modules/@loopback/repository/dist/index.d.ts"],
+      "lb-core": [
+        "node_modules/@loopback/core/dist/index.d.ts"
+      ],
+      "lb-repository": [
+        "node_modules/@loopback/repository/dist/index.d.ts"
+      ]
     }
-  }
+  },
   "publishConfig": {
     "access": "public"
   },
