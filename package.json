@@ -24,8 +24,13 @@
     "nodejs",
     "nodejs framework"
   ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./lb-core": "./dist/loopback/core/index.js",
+    "./lb-repository": "./dist/loopback/repository/index.js",
+    "./lb-rest": "./dist/loopback/rest/index.js",
+    "./package.json": "./package.json"
+  },
   "engines": {
     "node": ">=18"
   },
@@ -64,12 +69,6 @@
     "!/**/dist/tests",
     "!/**/__tests__"
   ],
-  "export": {
-    ".": "./dist/index.js",
-    "./loopback/core": "./dist/loopback/core/index.js",
-    "./loopback/repository": "./dist/loopback/repository/index.js",
-    "./loopback/rest": "./dist/loopback/rest/index.js"
-  },
   "publishConfig": {
     "access": "public"
   },
