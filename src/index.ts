@@ -32,4 +32,9 @@ export * from './middlewares';
 export * from './migrations';
 export * from './mixins';
 export * from './utilities';
-export * as loopback from './loopback';
+
+export * as lbCore from '@loopback/core';
+export type * as lbCoreType from '@loopback/core';
+
+export * as lbRepository from '@loopback/repository';
+export type * as lbRepositoryType from '@loopback/repository';
