@@ -26,9 +26,20 @@
   ],
   "exports": {
     ".": "./dist/index.js",
-    "./lb-core": "./dist/loopback/core/index.js",
-    "./lb-repository": "./dist/loopback/repository/index.js",
-    "./lb-rest": "./dist/loopback/rest/index.js",
+    "./@lb/authentication": "./dist/baseloopback/authentication/index.js",
+    "./@lb/authentication-jwt": "./dist/base/loopback/authentication-jwt/index.js",
+    "./@lb/authentication-passport": "./dist/base/loopback/authentication-passport/index.js",
+    "./@lb/authorization": "./dist/base/loopback/authorization/index.js",
+    "./@lb/boot": "./dist/base/loopback/boot/index.js",
+    "./@lb/core": "./dist/base/loopback/core/index.js",
+    "./@lb/http-server": "./dist/base/loopback/http-server/index.js",
+    "./@lb/metadata": "./dist/base/loopback/metadata/index.js",
+    "./@lb/repository": "./dist/base/loopback/repository/index.js",
+    "./@lb/rest": "./dist/base/loopback/rest/index.js",
+    "./@lb/rest-crud": "./dist/base/loopback/rest-crud/index.js",
+    "./@lb/rest-explorer": "./dist/base/loopback/rest-explorer/index.js",
+    "./@lb/security": "./dist/base/loopback/security/index.js",
+    "./@lb/service-proxy": "./dist/base/loopback/service-proxy/index.js",
     "./package.json": "./package.json"
   },
   "engines": {
