@@ -65,10 +65,10 @@
     "!/**/__tests__"
   ],
   "export": {
-    ".": "./dist/index.js";
-    "./loopback/core": "./dist/loopback/core/index.js";
-    "./loopback/repository": "./dist/loopback/repository/index.js";
-    "./loopback/rest": "./dist/loopback/rest/index.js";
+    ".": "./dist/index.js",
+    "./loopback/core": "./dist/loopback/core/index.js",
+    "./loopback/repository": "./dist/loopback/repository/index.js",
+    "./loopback/rest": "./dist/loopback/rest/index.js"
   },
   "publishConfig": {
     "access": "public"
