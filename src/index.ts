@@ -32,3 +32,4 @@ export * from './middlewares';
 export * from './migrations';
 export * from './mixins';
 export * from './utilities';
+export * as loopback from './loopback';
