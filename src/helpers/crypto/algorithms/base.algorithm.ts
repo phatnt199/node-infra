@@ -1,8 +1,11 @@
-import { ApplicationLogger, LoggerFactory } from '@/helpers/logger';
+import { BaseHelper } from '@/base/base.helper';
 import { getError, int } from '@/utilities';
 import { DEFAULT_CIPHER_BITS, DEFAULT_PAD_END, ICryptoAlgorithm } from '../common';
 
-export abstract class AbstractCryptoAlgorithm<AL extends string, IO> implements ICryptoAlgorithm<AL, IO> {
+export abstract class AbstractCryptoAlgorithm<AL extends string, IO>
+  extends BaseHelper
+  implements ICryptoAlgorithm<AL, IO>
+{
   algorithm: AL;
 
   abstract encrypt(message: string, secret: string, opts?: IO | undefined): string;
@@ -10,14 +13,11 @@ export abstract class AbstractCryptoAlgorithm<AL extends string, IO> implements 
 }
 
 export abstract class BaseCryptoAlgorithm<AL extends string, IO> extends AbstractCryptoAlgorithm<AL, IO> {
-  protected logger: ApplicationLogger;
-
   constructor(opts: { scope: string; algorithm: AL }) {
-    super();
+    super({ scope: opts.scope ?? opts.algorithm ?? BaseCryptoAlgorithm.name, identifier: opts.algorithm });
     this.validateAlgorithmName({ algorithm: opts.algorithm });
 
     this.algorithm = opts.algorithm;
-    this.logger = LoggerFactory.getLogger([opts.scope ?? opts.algorithm ?? BaseCryptoAlgorithm.name]);
   }
 
   validateAlgorithmName(opts: { algorithm: AL }) {

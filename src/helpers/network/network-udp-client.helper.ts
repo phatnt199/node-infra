@@ -1,37 +1,54 @@
-import isEmpty from 'lodash/isEmpty';
+import { BaseHelper } from '@/base/base.helper';
+import { ValueOrPromise } from '@/common';
 import dgram from 'dgram';
-import { ApplicationLogger, LoggerFactory } from '../logger';
 
 interface INetworkUdpClientProps {
   identifier: string;
-  options: { host: string; port: number };
+
+  host?: string;
+  port: number;
+
+  multicastAddress?: {
+    groups?: Array<string>;
+    interface?: string;
+  };
+
   onConnected?: (opts: { identifier: string }) => void;
-  onData?: (opts: { identifier: string; message: Buffer; remote: dgram.RemoteInfo }) => void;
+  onData?: (opts: { identifier: string; message: string | Buffer; remoteInfo: dgram.RemoteInfo }) => void;
   onClosed?: (opts: { identifier: string }) => void;
   onError?: (opts: { identifier: string; error: Error }) => void;
+  onBind?: (opts: { identifier: string; socket: dgram.Socket }) => ValueOrPromise<void>;
 }
 
-export class NetworkUdpClient {
-  private logger: ApplicationLogger;
+export class NetworkUdpClient extends BaseHelper {
+  private host?: string;
+  private port: number;
 
-  private identifier: string;
-  private options: { host: string; port: number };
+  private multicastAddress?: {
+    groups?: Array<string>;
+    interface?: string;
+  };
+
   private onConnected: (opts: { identifier: string }) => void;
-  private onData: (opts: { identifier: string; message: any; remote: dgram.RemoteInfo }) => void;
+  private onData: (opts: { identifier: string; message: string | Buffer; remoteInfo: dgram.RemoteInfo }) => void;
   private onClosed?: (opts: { identifier: string }) => void;
   private onError?: (opts: { identifier: string; error: Error }) => void;
+  private onBind?: (opts: { identifier: string; socket: dgram.Socket }) => ValueOrPromise<void>;
 
   private client?: dgram.Socket | null;
 
   constructor(opts: INetworkUdpClientProps) {
-    this.logger = LoggerFactory.getLogger([NetworkUdpClient.name]);
+    super({ scope: NetworkUdpClient.name, identifier: opts.identifier });
 
-    this.identifier = opts.identifier;
-    this.options = opts.options;
+    this.host = opts.host;
+    this.port = opts.port;
+    this.multicastAddress = opts.multicastAddress;
+
     this.onConnected = opts?.onConnected ?? this.handleConnected;
     this.onData = opts?.onData ?? this.handleData;
     this.onClosed = opts?.onClosed ?? this.handleClosed;
     this.onError = opts?.onError ?? this.handleError;
+    this.onBind = opts?.onBind;
   }
 
   static newInstance(opts: INetworkUdpClientProps) {
@@ -39,24 +56,37 @@ export class NetworkUdpClient {
   }
 
   handleConnected() {
-    this.logger.info('[handleConnected][%s] Connected to TCP Server | Options: %j', this.identifier, this.options);
+    this.logger.info('[handleConnected][%s] Successfully bind connection | Options: %j', this.identifier, {
+      host: this.host,
+      port: this.port,
+      multicastAddress: this.multicastAddress,
+    });
   }
 
-  handleData(raw: any) {
-    const { host, port } = this.options;
-    this.logger.info('[handleData][%s][%s:%d][<==] Raw: %s', this.identifier, host, port, raw);
+  handleData(opts: { identifier: string; message: string | Buffer; remoteInfo: dgram.RemoteInfo }) {
+    this.logger.info('[handleData][%s][%s:%d][<==] Raw: %s', this.identifier, this.host, this.port, {
+      message: opts.message,
+      remoteInfo: opts.remoteInfo,
+    });
   }
 
   handleClosed() {
-    this.logger.info('[handleClosed][%s] Closed connection TCP Server | Options: %j', this.identifier, this.options);
+    this.logger.info('[handleClosed][%s] Closed connection TCP Server | Options: %j', this.identifier, {
+      host: this.host,
+      port: this.port,
+      multicastAddress: this.multicastAddress,
+    });
   }
 
-  handleError(error: any) {
+  handleError(opts: { identifier: string; error: Error }) {
     this.logger.error(
       '[handleError][%s] Connection error | Options: %j | Error: %s',
       this.identifier,
-      this.options,
-      error,
+      {
+        host: this.host,
+        port: this.port,
+      },
+      opts.error,
     );
   }
 
@@ -66,14 +96,18 @@ export class NetworkUdpClient {
       return;
     }
 
-    if (isEmpty(this.options)) {
+    if (!this.port) {
       this.logger.info('[connect][%s] Cannot init UDP Client with null options', this.identifier);
       return;
     }
 
-    this.logger.info('[connect][%s] New network udp client | Options: %s', this.identifier, this.options);
+    this.logger.info('[connect][%s] New network udp client | Options: %s', this.identifier, {
+      host: this.host,
+      port: this.port,
+      multicastAddress: this.multicastAddress,
+    });
 
-    this.client = dgram.createSocket('udp4');
+    this.client = dgram.createSocket({ type: 'udp4', reuseAddr: true });
     this.client.on('close', () => {
       this.onClosed?.({ identifier: this.identifier });
     });
@@ -86,12 +120,13 @@ export class NetworkUdpClient {
       this.onConnected?.({ identifier: this.identifier });
     });
 
-    this.client.on('message', (message, remote) => {
-      // this.logger.info(`[<==] Address: ${remote.address} | Port: ${remote.port} | Message: ${message}`);
-      this.onData?.({ identifier: this.identifier, message, remote });
+    this.client.on('message', (message: string | Buffer, remoteInfo: dgram.RemoteInfo) => {
+      this.onData?.({ identifier: this.identifier, message, remoteInfo });
     });
 
-    this.client.bind(this.options.port, this.options.host);
+    this.client.bind({ port: this.port, address: this.host }, () => {
+      this.onBind?.({ identifier: this.identifier, socket: this.client! });
+    });
   }
 
   disconnect() {

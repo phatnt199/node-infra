@@ -1,14 +1,17 @@
+import { BaseHelper } from '@/base/base.helper';
 import { getError } from '@/utilities';
 import knex from 'knex';
 
 type TQueryBuilderClientType = 'pg' | 'mysql';
 
-export class QueryBuilderHelper {
+export class QueryBuilderHelper extends BaseHelper {
   private static instance: QueryBuilderHelper;
 
   clients: Map<TQueryBuilderClientType, knex.Knex> = new Map();
 
   constructor(opts: { clientType: TQueryBuilderClientType }) {
+    super({ scope: QueryBuilderHelper.name, identifier: QueryBuilderHelper.name });
+
     const { clientType } = opts;
     this.clients.set(clientType, knex({ client: clientType }));
   }

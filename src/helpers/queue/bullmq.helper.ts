@@ -1,7 +1,7 @@
-import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { Job, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
 import { TBullQueueRole } from '@/common/types';
+import { BaseHelper } from '@/base/base.helper';
 
 interface IBullMQOptions {
   queueName: string;
@@ -14,26 +14,23 @@ interface IBullMQOptions {
   onWorkerDataFail?: (job: Job | undefined, error: Error) => Promise<void>;
 }
 
-export class BullMQHelper {
+export class BullMQHelper extends BaseHelper {
   private queueName: string;
-  private identifier: string;
   private role: 'queue' | 'worker';
   private connection: Redis;
 
   queue: Queue;
   worker: Worker;
+
   private numberOfWorker = 1;
   private onWorkerData?: (job: Job) => Promise<any>;
   private onWorkerDataCompleted?: (job: Job, result: any) => Promise<void>;
   private onWorkerDataFail?: (job: Job | undefined, error: Error) => Promise<void>;
 
-  private logger: ApplicationLogger;
-
   constructor(options: IBullMQOptions) {
-    this.logger = LoggerFactory.getLogger([BullMQHelper.name]);
+    super({ scope: BullMQHelper.name, identifier: options.identifier });
     const {
       queueName,
-      identifier,
       connection,
       role,
       numberOfWorker = 1,
@@ -43,7 +40,6 @@ export class BullMQHelper {
     } = options;
 
     this.queueName = queueName;
-    this.identifier = identifier;
     this.role = role;
     this.connection = connection;
     this.numberOfWorker = numberOfWorker;

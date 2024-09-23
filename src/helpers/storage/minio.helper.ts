@@ -1,5 +1,5 @@
+import { BaseHelper } from '@/base/base.helper';
 import { MimeTypes } from '@/common';
-import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
 import { Client, ClientOptions } from 'minio';
@@ -16,12 +16,11 @@ export interface IUploadFile {
 }
 
 // ---------------------------------------------------------------------
-export class MinioHelper {
+export class MinioHelper extends BaseHelper {
   client: Client;
-  private logger: ApplicationLogger;
 
   constructor(options: ClientOptions) {
-    this.logger = LoggerFactory.getLogger([MinioHelper.name]);
+    super({ scope: MinioHelper.name, identifier: MinioHelper.name });
     this.client = new Client(options);
   }
 

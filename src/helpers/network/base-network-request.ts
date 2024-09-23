@@ -3,12 +3,15 @@ import { AxiosRequestConfig } from 'axios';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import { NetworkHelper } from './network.helper';
+import { BaseHelper } from '@/base/base.helper';
 
-export abstract class BaseNetworkRequest {
+export abstract class BaseNetworkRequest extends BaseHelper {
   protected baseUrl: string;
   protected networkService: NetworkHelper;
 
   constructor(opts: { name: string; scope: string; networkOptions: AxiosRequestConfig }) {
+    super({ scope: opts.name, identifier: opts.name });
+
     const { name, networkOptions } = opts;
     const { headers = {}, ...rest } = networkOptions;
 
