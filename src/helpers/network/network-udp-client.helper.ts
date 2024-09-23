@@ -7,6 +7,7 @@ interface INetworkUdpClientProps {
 
   host?: string;
   port: number;
+  reuseAddr?: boolean;
 
   multicastAddress?: {
     groups?: Array<string>;
@@ -23,6 +24,7 @@ interface INetworkUdpClientProps {
 export class NetworkUdpClient extends BaseHelper {
   private host?: string;
   private port: number;
+  private reuseAddr?: boolean;
 
   private multicastAddress?: {
     groups?: Array<string>;
@@ -42,6 +44,7 @@ export class NetworkUdpClient extends BaseHelper {
 
     this.host = opts.host;
     this.port = opts.port;
+    this.reuseAddr = opts.reuseAddr;
     this.multicastAddress = opts.multicastAddress;
 
     this.onConnected = opts?.onConnected ?? this.handleConnected;
@@ -107,7 +110,7 @@ export class NetworkUdpClient extends BaseHelper {
       multicastAddress: this.multicastAddress,
     });
 
-    this.client = dgram.createSocket({ type: 'udp4', reuseAddr: true });
+    this.client = dgram.createSocket({ type: 'udp4', reuseAddr: this.reuseAddr });
     this.client.on('close', () => {
       this.onClosed?.({ identifier: this.identifier });
     });
