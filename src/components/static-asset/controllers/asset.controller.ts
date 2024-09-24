@@ -1,4 +1,4 @@
-import { BaseApplication } from '@/base';
+import { BaseApplication } from '@/base/applications';
 import { IController } from '@/common';
 import { ApplicationLogger, IUploadFile, LoggerFactory, MinioHelper } from '@/helpers';
 import { getError } from '@/utilities';

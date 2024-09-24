@@ -1,12 +1,12 @@
-import { CoreBindings, Getter, inject, LifeCycleObserver } from '@loopback/core';
-import { BaseApplication } from '@/base';
+import { BaseApplication } from '@/base/applications';
 import { BaseComponent } from '@/base/base.component';
 import { getError } from '@/utilities';
+import { CoreBindings, Getter, inject, LifeCycleObserver } from '@loopback/core';
 import {
   CrashReportKeys,
   CrashReportProviderKeys,
-  ICrashReportProvider,
   ICrashReportOptions,
+  ICrashReportProvider,
   TCrashReportProviders,
 } from './common';
 import { CrashReportProvider, TGetCrashReportProviderFn } from './providers';

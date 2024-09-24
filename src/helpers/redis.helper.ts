@@ -1,4 +1,4 @@
-import { BaseHelper } from '@/base';
+import { BaseHelper } from '@/base/base.helper';
 import { getError } from '@/utilities';
 import Redis from 'ioredis';
 import isEmpty from 'lodash/isEmpty';

@@ -1,8 +1,8 @@
+import { BaseApplication } from '@/base/applications';
+import { getError } from '@/utilities';
 import { CoreBindings, inject, Provider, ValueOrPromise } from '@loopback/core';
 import { CrashReportProviderKeys, ICrashReportProvider, TCrashReportProviders } from '../common';
-import { BaseApplication } from '@/base';
 import { MTCrashReportService } from '../services';
-import { getError } from '@/utilities';
 
 export type TGetCrashReportProviderFn = (opts: { identifier: TCrashReportProviders }) => ICrashReportProvider | null;
 

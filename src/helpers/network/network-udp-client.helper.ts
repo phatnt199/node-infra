@@ -14,11 +14,18 @@ interface INetworkUdpClientProps {
     interface?: string;
   };
 
-  onConnected?: (opts: { identifier: string }) => void;
+  onConnected?: (opts: { identifier: string; host?: string; port: number }) => void;
   onData?: (opts: { identifier: string; message: string | Buffer; remoteInfo: dgram.RemoteInfo }) => void;
-  onClosed?: (opts: { identifier: string }) => void;
-  onError?: (opts: { identifier: string; error: Error }) => void;
-  onBind?: (opts: { identifier: string; socket: dgram.Socket }) => ValueOrPromise<void>;
+  onClosed?: (opts: { identifier: string; host?: string; port: number }) => void;
+  onError?: (opts: { identifier: string; host?: string; port: number; error: Error }) => void;
+  onBind?: (opts: {
+    identifier: string;
+    socket: dgram.Socket;
+    host?: string;
+    port: number;
+    reuseAddr?: boolean;
+    multicastAddress?: { groups?: Array<string>; interface?: string };
+  }) => ValueOrPromise<void>;
 }
 
 export class NetworkUdpClient extends BaseHelper {
@@ -31,11 +38,18 @@ export class NetworkUdpClient extends BaseHelper {
     interface?: string;
   };
 
-  private onConnected: (opts: { identifier: string }) => void;
+  private onConnected: (opts: { identifier: string; host?: string; port: number }) => void;
   private onData: (opts: { identifier: string; message: string | Buffer; remoteInfo: dgram.RemoteInfo }) => void;
-  private onClosed?: (opts: { identifier: string }) => void;
-  private onError?: (opts: { identifier: string; error: Error }) => void;
-  private onBind?: (opts: { identifier: string; socket: dgram.Socket }) => ValueOrPromise<void>;
+  private onClosed?: (opts: { identifier: string; host?: string; port: number }) => void;
+  private onError?: (opts: { identifier: string; host?: string; port: number; error: Error }) => void;
+  private onBind?: (opts: {
+    identifier: string;
+    socket: dgram.Socket;
+    host?: string;
+    port: number;
+    reuseAddr?: boolean;
+    multicastAddress?: { groups?: Array<string>; interface?: string };
+  }) => ValueOrPromise<void>;
 
   private client?: dgram.Socket | null;
 
@@ -104,23 +118,25 @@ export class NetworkUdpClient extends BaseHelper {
       return;
     }
 
-    this.logger.info('[connect][%s] New network udp client | Options: %s', this.identifier, {
-      host: this.host,
-      port: this.port,
-      multicastAddress: this.multicastAddress,
-    });
+    this.logger.info(
+      '[connect][%s] New network udp client | Host: %s | Port: %s | multicastAddress: %j',
+      this.identifier,
+      this.host,
+      this.port,
+      this.multicastAddress,
+    );
 
     this.client = dgram.createSocket({ type: 'udp4', reuseAddr: this.reuseAddr });
     this.client.on('close', () => {
-      this.onClosed?.({ identifier: this.identifier });
+      this.onClosed?.({ identifier: this.identifier, host: this.host, port: this.port });
     });
 
     this.client.on('error', error => {
-      this.onError?.({ identifier: this.identifier, error });
+      this.onError?.({ identifier: this.identifier, host: this.host, port: this.port, error });
     });
 
     this.client.on('listening', () => {
-      this.onConnected?.({ identifier: this.identifier });
+      this.onConnected?.({ identifier: this.identifier, host: this.host, port: this.port });
     });
 
     this.client.on('message', (message: string | Buffer, remoteInfo: dgram.RemoteInfo) => {
@@ -128,7 +144,14 @@ export class NetworkUdpClient extends BaseHelper {
     });
 
     this.client.bind({ port: this.port, address: this.host }, () => {
-      this.onBind?.({ identifier: this.identifier, socket: this.client! });
+      this.onBind?.({
+        identifier: this.identifier,
+        socket: this.client!,
+        host: this.host,
+        port: this.port,
+        reuseAddr: this.reuseAddr,
+        multicastAddress: this.multicastAddress,
+      });
     });
   }
 

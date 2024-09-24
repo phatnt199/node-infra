@@ -1,4 +1,4 @@
-import { BaseDataSource } from '@/base';
+import { BaseDataSource } from '@/base/base.datasource';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { FilteredAdapter, Model } from 'casbin';
 import { EnforcerDefinitions } from '../common';

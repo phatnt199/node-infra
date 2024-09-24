@@ -1,4 +1,4 @@
-import { BaseIdEntity, BaseTzEntity } from '@/base';
+import { BaseIdEntity, BaseTzEntity } from '@/base/base.model';
 import { BindingKey } from '@loopback/core';
 import { Count, DataObject, Entity, Filter, Options, Where } from '@loopback/repository';
 
