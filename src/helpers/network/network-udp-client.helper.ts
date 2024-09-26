@@ -72,6 +72,10 @@ export class NetworkUdpClient extends BaseHelper {
     return new NetworkUdpClient(opts);
   }
 
+  getClient() {
+    return this.client;
+  }
+
   handleConnected() {
     this.logger.info('[handleConnected][%s] Successfully bind connection | Options: %j', this.identifier, {
       host: this.host,
