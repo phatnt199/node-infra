@@ -207,4 +207,54 @@ export class StaticAssetController implements IController {
       });
     });
   }
+
+  /**
+   * This method fetches the whole file from minio and streams it to the client.
+   * It's meant to be used for using file caching on browser.
+   * For other use cases, use `getStaticObject` instead.
+   */
+  @get('/{bucket_name}/{object_name}/file`')
+  async fetchWholeFile(
+    @param.path.string('bucket_name') bucketName: string,
+    @param.path.string('object_name') objectName: string,
+    @param.query.object('filter') filter?: { cacheTime?: number },
+  ) {
+    const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
+
+    try {
+      const { size, metaData } = await minioInstance.getStat({
+        bucket: bucketName,
+        name: objectName,
+      });
+
+      const fileStream = await minioInstance.getFile({
+        bucket: bucketName,
+        name: objectName,
+      });
+
+      const buffers: Buffer[] = [];
+
+      for await (const buffer of fileStream) {
+        buffers.push(buffer);
+      }
+
+      const file = Buffer.concat(buffers);
+
+      this.response.set({
+        ...metaData,
+        'Content-Length': size,
+        'Content-Type': metaData['mimetype'],
+        'Cache-Control': `public, max-age=${filter?.cacheTime ?? 60 * 60}`,
+      });
+
+      this.response.end(file);
+    } catch (error) {
+      this.logger.error('[getWholeFile] Error %o', error);
+
+      throw getError({
+        statusCode: 500,
+        message: 'Error while fetching file',
+      });
+    }
+  }
 }
