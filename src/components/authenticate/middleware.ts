@@ -13,7 +13,7 @@ import { AuthenticateKeys } from './common';
   asMiddleware({
     chain: RestTags.REST_MIDDLEWARE_CHAIN,
     group: RestMiddlewareGroups.AUTHENTICATION,
-    upstreamGroups: [RestMiddlewareGroups.CORS, RestMiddlewareGroups.FIND_ROUTE],
+    upstreamGroups: [RestMiddlewareGroups.CORS],
   }),
 )
 export class AuthenticationMiddleware extends BaseProvider implements Provider<Middleware> {

@@ -4,7 +4,7 @@ export const hash = (
   text: string,
   options: {
     algorithm: 'SHA256' | 'MD5';
-    secret: string;
+    secret?: string;
     outputType: C.BinaryToTextEncoding;
   },
 ): string => {
