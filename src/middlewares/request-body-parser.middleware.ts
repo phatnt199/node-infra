@@ -15,7 +15,7 @@ import set from 'lodash/set';
 @injectable(
   asMiddleware({
     chain: RestTags.REST_MIDDLEWARE_CHAIN,
-    group: RestMiddlewareGroups.PARSE_PARAMS,
+    group: RestMiddlewareGroups.FIND_ROUTE,
   }),
 )
 export class RequestBodyParserMiddleware extends BaseProvider implements Provider<Middleware> {
