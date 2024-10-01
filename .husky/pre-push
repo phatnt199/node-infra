@@ -9,6 +9,6 @@ case $current_branch in
   *)
     echo
     echo "[hooks][pre-commit] Linting application"
-    yarn lint
+    pnpm lint
     ;;
 esac

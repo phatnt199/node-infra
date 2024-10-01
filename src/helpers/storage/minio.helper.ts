@@ -179,6 +179,12 @@ export class MinioHelper extends BaseHelper {
   }
 
   // ---------------------------------------------------------------------
+  async removeObjects(opts: { bucket: string; names: Array<string> }) {
+    const { bucket, names } = opts;
+    await this.client.removeObjects(bucket, names);
+  }
+
+  // ---------------------------------------------------------------------
   getListObjects(opts: { bucket: string; prefix?: string; useRecursive?: boolean }) {
     const { bucket, prefix = '', useRecursive = false } = opts;
     const listObjects = this.client.listObjects(bucket, prefix, useRecursive);
