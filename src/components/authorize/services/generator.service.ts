@@ -65,12 +65,12 @@ export class GeneratePermissionService {
     }) as IPermission[];
   }
 
-  generatePermissionBaseInherit = (opts: {
+  generatePermissionBaseInherit(opts: {
     methodsParentsMethods: string[];
     methodsChildClass: string[];
     parentPermission: Permission;
     allPermissionDecoratorData: MetadataMap<{ idx: number }>;
-  }) => {
+  }) {
     const { methodsChildClass, methodsParentsMethods, parentPermission, allPermissionDecoratorData } = opts ?? {};
 
     const defaultPermissions = [
@@ -102,7 +102,7 @@ export class GeneratePermissionService {
       parentId: parentPermission.id,
       allPermissionDecoratorData,
     });
-  };
+  }
 
   generatePermissionRecords(opts: {
     controller: Constructor<IController>;
@@ -127,6 +127,8 @@ export class GeneratePermissionService {
       }),
     );
 
+    console.log('------------------------------------------------');
+    applicationLogger.info('permissionRecords %o', permissionRecords);
     return permissionRecords;
   }
 
