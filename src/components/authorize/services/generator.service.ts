@@ -127,8 +127,6 @@ export class GeneratePermissionService {
       }),
     );
 
-    console.log('------------------------------------------------');
-    applicationLogger.info('permissionRecords %o', permissionRecords);
     return permissionRecords;
   }
 
