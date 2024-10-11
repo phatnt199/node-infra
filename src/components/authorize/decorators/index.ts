@@ -6,9 +6,22 @@ export class MetadataDecoratorKeys {
 
 export interface IPermissionDecorator {
   idx: number;
+  allowedRoles?: string[];
+  deniedRoles?: string[];
 }
 
 // Read more: https://loopback.io/doc/en/lb4/Creating-decorators.html#inspect-metadata-of-a-property
+/**
+ * @example
+ * ```typescript
+ * class MyController {
+ *   @permission({ idx: 1, allowedRoles: ['admin'], deniedRoles: ['guest'] })
+ *   myMethod() {
+ *     // method implementation
+ *   }
+ * }
+ * ```
+ */
 export function permission(spec: IPermissionDecorator): MethodDecorator {
   return MethodDecoratorFactory.createDecorator<IPermissionDecorator>(MetadataDecoratorKeys.PERMISSION, spec);
 }
