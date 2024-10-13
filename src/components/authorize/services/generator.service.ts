@@ -7,7 +7,7 @@ import { resolve } from 'path';
 import { EnforcerDefinitions } from '../common';
 import { getDecoratorData, IPermissionDecorator, MetadataDecoratorKeys } from '../decorators';
 import { Permission } from '../models';
-import { PermissionMappingRepository, PermissionRepository } from '../repositories';
+import { PermissionRepository } from '../repositories';
 
 //---------------------------------------------------------------------------
 export interface IPermission {
@@ -100,7 +100,7 @@ export class GeneratePermissionService {
     ];
 
     const permissions = this.generatePermissions({
-      methods: union(methodsParentsClass, methodsChildClass, defaultPermissions),
+      methods: union(defaultPermissions, methodsParentsClass, methodsChildClass),
       permissionSubject: parentPermission.subject,
       parentId: parentPermission.id,
       allPermissionDecoratorData,
@@ -254,18 +254,18 @@ export class GeneratePermissionService {
    *
    * generatePermissionService.getPermissionCodesAndWriteToFile({
    *    controllers: [XboxController, PSController, NintendoController],
-   *    outputPath: './src/migrations/permissions.ts',
+   *    outputPath: './src/migrations/',
    *    fileName: 'permissionCodes',
    *    fileType: 'ts',
    * });
    */
   getPermissionCodesAndWriteToFile(opts: {
     controllers: Array<Constructor<IController>>;
-    outputPath: string;
+    outputPath?: string;
     fileName?: string;
     fileType?: 'ts' | 'txt';
   }) {
-    const { controllers, outputPath, fileName = 'permissionCodes', fileType = 'ts' } = opts;
+    const { controllers, outputPath = './src/', fileName = 'permission-codes', fileType = 'ts' } = opts;
 
     const permissionCodes = this.getPermissionCodes({ controllers });
 
@@ -290,9 +290,9 @@ export class GeneratePermissionService {
     writeFileSync(resolve(filePath), fileContent.join('\n'), 'utf8');
   }
 
-  async generatePermissionMapping(opts: {
-    controllers: Array<Constructor<IController>>;
-    permissionRepository: PermissionRepository;
-    permissionMappingRepository: PermissionMappingRepository;
-  }) {}
+  // async generatePermissionMapping(opts: {
+  //   controllers: Array<Constructor<IController>>;
+  //   permissionRepository: PermissionRepository;
+  //   permissionMappingRepository: PermissionMappingRepository;
+  // }) {}
 }
