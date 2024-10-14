@@ -6,8 +6,6 @@ export class MetadataDecoratorKeys {
 
 export interface IPermissionDecorator {
   idx: number;
-  allowedRoles?: string[];
-  deniedRoles?: string[];
 }
 
 // Read more: https://loopback.io/doc/en/lb4/Creating-decorators.html#inspect-metadata-of-a-property
