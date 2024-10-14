@@ -237,8 +237,10 @@ export abstract class SearchableTzCrudRepository<
 
   // ----------------------------------------------------------------------------------------------------
   create(data: DataObject<E>, options?: Options): Promise<E> {
+    const tmp = this.mixUserAudit(data, { newInstance: true, authorId: options?.authorId });
+
     return new Promise((resolve, reject) => {
-      this.mixSearchFields(data, options)
+      this.mixSearchFields(tmp, options)
         .then(enriched => {
           resolve(super.create(enriched, options));
         })
@@ -251,7 +253,9 @@ export abstract class SearchableTzCrudRepository<
     return new Promise((resolve, reject) => {
       Promise.all(
         data.map(el => {
-          return this.mixSearchFields(el, options);
+          const tmp = this.mixUserAudit(el, { newInstance: true, authorId: options?.authorId });
+
+          return this.mixSearchFields(tmp, options);
         }),
       )
         .then(enriched => {
@@ -263,8 +267,10 @@ export abstract class SearchableTzCrudRepository<
 
   // ----------------------------------------------------------------------------------------------------
   updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+    const tmp = this.mixUserAudit(data, { newInstance: false, authorId: options?.authorId });
+
     return new Promise((resolve, reject) => {
-      this.mixSearchFields(data, { ...options, where: { id } })
+      this.mixSearchFields(tmp, { ...options, where: { id } })
         .then(enriched => {
           resolve(super.updateById(id, enriched, options));
         })
@@ -274,8 +280,10 @@ export abstract class SearchableTzCrudRepository<
 
   // ----------------------------------------------------------------------------------------------------
   replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+    const tmp = this.mixUserAudit(data, { newInstance: false, authorId: options?.authorId });
+
     return new Promise((resolve, reject) => {
-      this.mixSearchFields(data, options)
+      this.mixSearchFields(tmp, options)
         .then(enriched => {
           resolve(super.replaceById(id, enriched, options));
         })
