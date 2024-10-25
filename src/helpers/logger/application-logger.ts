@@ -1,15 +1,24 @@
 import isEmpty from 'lodash/isEmpty';
 import { applicationLogger } from './default-logger';
 import { getError } from '@/utilities';
+import winston from 'winston';
 
 const LOG_ENVIRONMENTS = new Set(['development', 'alpha', 'beta', 'staging']);
 
-class Logger {
-  private scopes: string[] = [];
+export class Logger {
   readonly _environment: string | undefined;
 
-  constructor() {
+  private scopes: string[] = [];
+  private customLogger?: winston.Logger;
+
+  constructor(opts?: { customLogger?: winston.Logger }) {
     this._environment = process.env.NODE_ENV;
+    this.customLogger = opts?.customLogger;
+  }
+
+  // ---------------------------------------------------------------------
+  private _getLogger() {
+    return this.customLogger ?? applicationLogger;
   }
 
   // ---------------------------------------------------------------------
@@ -42,12 +51,13 @@ class Logger {
 
   // ---------------------------------------------------------------------
   private _doLog(level: string, message: string, ...args: any[]) {
-    if (!applicationLogger) {
+    const logger = this._getLogger();
+    if (!logger) {
       throw getError({ message: `[doLog] Level: ${level} | Invalid logger instance!` });
     }
 
     const enhanced = this._enhanceMessage(this.scopes, message);
-    applicationLogger.log(level, enhanced, ...args);
+    logger.log(level, enhanced, ...args);
   }
 
   // ---------------------------------------------------------------------
