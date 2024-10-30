@@ -3,7 +3,8 @@ import { applicationLogger } from './default-logger';
 import { getError } from '@/utilities';
 import winston from 'winston';
 
-const LOG_ENVIRONMENTS = new Set(['development', 'alpha', 'beta', 'staging']);
+const extraLogEnvs = (process.env.APP_ENV_EXTRA_LOG_ENVS ?? '').split(',').map(el => el.trim()) ?? [];
+const LOG_ENVIRONMENTS = new Set(['local', 'development', 'alpha', 'beta', 'staging', ...extraLogEnvs]);
 
 export class Logger {
   readonly _environment: string | undefined;
