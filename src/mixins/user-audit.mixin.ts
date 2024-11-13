@@ -2,7 +2,10 @@ import { IdType } from '@/common/types';
 import { MixinTarget } from '@loopback/core';
 import { Entity, property } from '@loopback/repository';
 
-export const UserAuditMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
+/**
+ * @deprecated The method will soon deleted
+ */
+export const UserAuditMixinDeprecated = <E extends MixinTarget<Entity>>(superClass: E) => {
   class Mixed extends superClass {
     @property({
       type: 'number',
@@ -10,7 +13,7 @@ export const UserAuditMixin = <E extends MixinTarget<Entity>>(superClass: E) => 
         columnName: 'created_by',
         dataType: 'integer',
       },
-      hidden: true,
+      // hidden: true,
     })
     createdBy: IdType;
 
@@ -20,7 +23,7 @@ export const UserAuditMixin = <E extends MixinTarget<Entity>>(superClass: E) => 
         columnName: 'modified_by',
         dataType: 'integer',
       },
-      hidden: true,
+      // hidden: true,
     })
     modifiedBy: IdType;
   }
