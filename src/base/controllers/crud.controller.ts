@@ -40,7 +40,7 @@ export interface ICrudControllerOptions<E extends BaseIdEntity> {
     replaceById?: SchemaRef;
     deleteById?: SchemaRef;
   };
-  injectCurrentUser?: boolean;
+  doInjectCurrentUser?: boolean;
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
     repository: repositoryOptions,
     controller: controllerOptions,
     schema: schemaOptions,
-    injectCurrentUser,
+    doInjectCurrentUser,
   } = opts;
 
   const idPathParam: ParameterObject = {
@@ -334,7 +334,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
     inject(`repositories.${repositoryOptions.name}`)(CRUDController, undefined, 0);
   }
 
-  if (injectCurrentUser) {
+  if (doInjectCurrentUser) {
     inject.getter(SecurityBindings.USER)(CRUDController, undefined, 1);
   }
 
