@@ -1,4 +1,4 @@
-import { inject } from '@loopback/core';
+import { Getter, inject } from '@loopback/core';
 import { CrudRestControllerOptions } from '@loopback/rest-crud';
 import { Count, CountSchema, DataObject, Filter, FilterExcludingWhere, Where } from '@loopback/repository';
 import {
@@ -19,6 +19,8 @@ import { BaseIdEntity, BaseTzEntity, AbstractTzRepository } from './../';
 import { EntityRelationType, IController, IdType } from '@/common/types';
 import { App } from '@/common';
 import { applyLimit, getIdSchema } from './common';
+import { SecurityBindings } from '@loopback/security';
+import { IJWTTokenPayload } from '@/components/authenticate/common/types';
 
 // --------------------------------------------------------------------------------------------------------------
 export interface ICrudControllerOptions<E extends BaseIdEntity> {
@@ -38,6 +40,7 @@ export interface ICrudControllerOptions<E extends BaseIdEntity> {
     replaceById?: SchemaRef;
     deleteById?: SchemaRef;
   };
+  injectCurrentUser?: boolean;
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -47,6 +50,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
     repository: repositoryOptions,
     controller: controllerOptions,
     schema: schemaOptions,
+    injectCurrentUser,
   } = opts;
 
   const idPathParam: ParameterObject = {
@@ -148,8 +152,11 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
   }
 
   class CRUDController extends ReadController {
-    constructor(repository: AbstractTzRepository<E, EntityRelationType>) {
+    getCurrentUser?: Getter<IJWTTokenPayload>;
+
+    constructor(repository: AbstractTzRepository<E, EntityRelationType>, getCurrentUser?: Getter<IJWTTokenPayload>) {
       super(repository);
+      this.getCurrentUser = getCurrentUser;
     }
 
     @post('/', {
@@ -164,7 +171,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
         },
       },
     })
-    create(
+    async create(
       @requestBody({
         content: {
           'application/json': {
@@ -179,7 +186,12 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       })
       data: Omit<E, 'id'>,
     ): Promise<E> {
-      return this.repository.create(data as DataObject<E>);
+      if (!this.getCurrentUser) {
+        return this.repository.create(data as DataObject<E>);
+      }
+
+      const currentUser = await this.getCurrentUser();
+      return this.repository.create(data as DataObject<E>, { authorId: currentUser.userId });
     }
 
     @patch('/', {
@@ -194,7 +206,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
         },
       },
     })
-    updateAll(
+    async updateAll(
       @requestBody({
         content: {
           'application/json': {
@@ -211,7 +223,12 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       @param.where(entityOptions)
       where?: Where<E>,
     ): Promise<Count> {
-      return this.repository.updateAll(data as DataObject<E>, where);
+      if (!this.getCurrentUser) {
+        return this.repository.updateAll(data as DataObject<E>, where);
+      }
+
+      const currentUser = await this.getCurrentUser();
+      return this.repository.updateAll(data as DataObject<E>, where, { authorId: currentUser.userId });
     }
 
     @patch('/{id}', {
@@ -230,7 +247,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
         },
       },
     })
-    updateById(
+    async updateById(
       @param(idPathParam) id: IdType,
       @requestBody({
         content: {
@@ -246,7 +263,12 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       })
       data: Partial<E>,
     ): Promise<E> {
-      return this.repository.updateWithReturn(id, data as DataObject<E>);
+      if (!this.getCurrentUser) {
+        return this.repository.updateWithReturn(id, data as DataObject<E>);
+      }
+
+      const currentUser = await this.getCurrentUser();
+      return this.repository.updateWithReturn(id, data as DataObject<E>, { authorId: currentUser.userId });
     }
 
     @put('/{id}', {
@@ -254,7 +276,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
         '204': { description: `${entityOptions.name} was replaced` },
       },
     })
-    replaceById(
+    async replaceById(
       @param(idPathParam) id: IdType,
       @requestBody({
         content: {
@@ -269,14 +291,14 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       })
       data: E,
     ): Promise<E> {
-      return new Promise((resolve, reject) => {
-        this.repository
-          .replaceById(id, data)
-          .then(() => {
-            resolve({ ...data, id });
-          })
-          .catch(reject);
-      });
+      if (!this.getCurrentUser) {
+        await this.repository.replaceById(id, data);
+        return { ...data, id };
+      }
+
+      const currentUser = await this.getCurrentUser();
+      await this.repository.replaceById(id, data, { authorId: currentUser.userId });
+      return { ...data, id };
     }
 
     @del('/{id}', {
@@ -310,6 +332,10 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
 
   if (repositoryOptions?.name) {
     inject(`repositories.${repositoryOptions.name}`)(CRUDController, undefined, 0);
+  }
+
+  if (injectCurrentUser) {
+    inject.getter(SecurityBindings.USER)(CRUDController, undefined, 1);
   }
 
   return CRUDController;
