@@ -1,5 +1,4 @@
 import { BaseApplication } from '@/base/applications';
-import { BaseService } from '@/base/base.service';
 import { EnvironmentKeys } from '@/common';
 import { AES, applicationEnvironment } from '@/helpers';
 import { getError } from '@/utilities';
@@ -7,6 +6,7 @@ import { CoreBindings, inject } from '@loopback/core';
 import { RequestContext } from '@loopback/rest';
 import { Request, Response, Token } from '@node-oauth/oauth2-server';
 
+import { BaseService } from '@/base/services';
 import { AuthenticateKeys, IAuthService, SignInRequest } from '../common';
 import { OAuth2Handler } from '../oauth2-handlers';
 import { OAuth2ClientRepository } from '../repositories';

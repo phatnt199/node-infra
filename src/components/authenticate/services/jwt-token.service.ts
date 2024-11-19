@@ -1,4 +1,4 @@
-import { BaseService } from '@/base/base.service';
+import { BaseService } from '@/base/services';
 import { AES } from '@/helpers';
 import { getError } from '@/utilities';
 import { TokenServiceBindings } from '@loopback/authentication-jwt';
