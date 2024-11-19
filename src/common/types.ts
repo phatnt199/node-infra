@@ -1,3 +1,4 @@
+import { AbstractTzRepository } from '@/base';
 import { BaseIdEntity, BaseTzEntity } from '@/base/base.model';
 import { BindingKey } from '@loopback/core';
 import { Count, DataObject, Entity, Filter, Options, Where } from '@loopback/repository';
@@ -80,10 +81,35 @@ export interface IDangerFilter extends Omit<Filter, 'order'> {
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IService {}
 
+export interface ICrudMethodOptions {
+  currentUser: {
+    userId: IdType;
+    roles: Array<{ id: IdType; identifier: string; priority: number }>;
+    [extra: string | symbol]: any;
+  } | null;
+}
+
+export interface ICrudService<E extends BaseTzEntity> extends IService {
+  repository: AbstractTzRepository<E, EntityRelationType>;
+
+  // R
+  find(filter: Filter<E>, options: ICrudMethodOptions): Promise<Array<E & EntityRelationType>>;
+  findById(id: IdType, filter: Filter<E>, options: ICrudMethodOptions): Promise<E & EntityRelationType>;
+  findOne(filter: Filter<E>, options: ICrudMethodOptions): Promise<(E & EntityRelationType) | null>;
+  count(where: Where<E>, options: ICrudMethodOptions): Promise<Count>;
+
+  // CUD
+  create(data: Omit<E, 'id'>, options: ICrudMethodOptions): Promise<E>;
+  updateAll(data: Partial<E>, where: Where<E>, options: ICrudMethodOptions): Promise<Count>;
+  updateWithReturn(id: IdType, data: Partial<E>, options: ICrudMethodOptions): Promise<E>;
+  replaceById(id: IdType, data: E, options: ICrudMethodOptions): Promise<E>;
+  deleteById(id: IdType, options: ICrudMethodOptions): Promise<{ id: IdType }>;
+}
+
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IController {}
 
-export interface ICRUDController extends IController {
+export interface ICrudController extends IController {
   defaultLimit: number;
   relation?: { name: string; type: string };
   repository?: IRepository;

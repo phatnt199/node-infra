@@ -1,5 +1,5 @@
 import { BaseIdEntity } from '@/base/base.model';
-import { App, EntityRelations, IController, ICRUDController } from '@/common';
+import { App, EntityRelations, IController, ICrudController } from '@/common';
 import {
   inject,
   injectable,
@@ -28,7 +28,7 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
 
   // -------------------------------------------------------------------------------------
   identifyControllerType(opts: { target: IController }): 'single-entity' | 'relation-entity' | undefined {
-    const controller = opts.target as ICRUDController;
+    const controller = opts.target as ICrudController;
 
     if (controller?.repository) {
       return 'single-entity';
@@ -45,7 +45,7 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
   async handleSingleEntity(opts: { context: InvocationContext; result: Array<BaseIdEntity> }) {
     const { context } = opts;
     const { args, target } = context;
-    const controller = target as ICRUDController;
+    const controller = target as ICrudController;
 
     let filter: Filter<BaseIdEntity> | null = {};
     filter = args?.[0];
@@ -75,7 +75,7 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
   async handleRelationalEntity(opts: { context: InvocationContext; result: Array<BaseIdEntity> }) {
     const { context } = opts;
     const { args, target } = context;
-    const controller = target as ICRUDController;
+    const controller = target as ICrudController;
     const relation = controller.relation;
     if (!relation) {
       return;

@@ -1,4 +1,4 @@
-import { BaseService } from '@/base/base.service';
+import { BaseService } from '@/base/services';
 import { HttpErrors } from '@loopback/rest';
 
 export class BasicTokenService extends BaseService {
