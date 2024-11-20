@@ -44,8 +44,10 @@ export interface IRelationCrudControllerOptions {
       target: string;
     };
 
-    relationName: string;
-    relationType: TRelationType;
+    relation: {
+      name: string;
+      type: TRelationType;
+    };
   };
   schema: {
     source?: SchemaObject;
@@ -75,8 +77,10 @@ export const defineRelationViewController = <
     target: string;
   };
 
-  relationType: TRelationType;
-  relationName: string;
+  relation: {
+    name: string;
+    type: TRelationType;
+  };
 
   // ------------------------------------------------
   defaultLimit?: number;
@@ -86,21 +90,16 @@ export const defineRelationViewController = <
   const {
     baseClass,
     entities,
-    relationType,
-    relationName,
+    relation,
     defaultLimit = App.DEFAULT_QUERY_LIMIT,
     endPoint = '',
     schema,
   } = opts;
 
-  const restPath = `/{id}/${endPoint ? endPoint : relationName}`;
+  const restPath = `/{id}/${endPoint ? endPoint : relation.name}`;
   const BaseClass = baseClass ?? BaseController;
 
   class ViewController extends BaseClass implements ICrudController {
-    relation: { name: string; type: string } = {
-      name: relationName,
-      type: relationType,
-    };
     sourceRepository: AbstractTzRepository<S, EntityRelationType>;
     targetRepository: AbstractTzRepository<T, EntityRelationType>;
     getCurrentUser?: Getter<IJWTTokenPayload>;
@@ -111,7 +110,7 @@ export const defineRelationViewController = <
       targetRepository: AbstractTzRepository<T, EntityRelationType>,
       getCurrentUser?: Getter<IJWTTokenPayload>,
     ) {
-      super({ scope: `ViewController.${relationName}` });
+      super({ scope: `ViewController.${relation.name}` });
       this.defaultLimit = defaultLimit;
 
       if (!sourceRepository) {
@@ -142,22 +141,22 @@ export const defineRelationViewController = <
 
     // -----------------------------------------------------------------------------------------------
     _getBelongsToRepository(sourceId: IdType) {
-      const ref = getProp(this.sourceRepository, relationName)(sourceId);
+      const ref = getProp(this.sourceRepository, relation.name)(sourceId);
       return ref as DefaultBelongsToRepository<T, IdType, typeof this.targetRepository>;
     }
 
     _getHasOneRepository(sourceId: IdType) {
-      const ref = getProp(this.sourceRepository, relationName)(sourceId);
+      const ref = getProp(this.sourceRepository, relation.name)(sourceId);
       return ref as DefaultHasOneRepository<T, IdType, typeof this.targetRepository>;
     }
 
     _getHasManyRepository(sourceId: IdType) {
-      const ref = getProp(this.sourceRepository, relationName)(sourceId);
+      const ref = getProp(this.sourceRepository, relation.name)(sourceId);
       return ref as DefaultHasManyRepository<T, IdType, typeof this.targetRepository>;
     }
 
     _getHasManyThroughRepository(sourceId: IdType) {
-      const ref = getProp(this.sourceRepository, relationName)(sourceId);
+      const ref = getProp(this.sourceRepository, relation.name)(sourceId);
       return ref as DefaultHasManyThroughRepository<
         T,
         IdType,
@@ -195,7 +194,7 @@ export const defineRelationViewController = <
     @get(restPath, {
       responses: {
         '200': {
-          description: `Array of target model in relation ${relationName}`,
+          description: `Array of target model in relation ${relation.name}`,
           content: {
             'application/json': { schema },
           },
@@ -206,7 +205,7 @@ export const defineRelationViewController = <
       @param.path.number('id') id: IdType,
       @param.query.object('filter') filter?: Filter<T>,
     ): Promise<T | T[]> {
-      switch (relationType) {
+      switch (relation.type) {
         case EntityRelations.BELONGS_TO: {
           return this._getBelongsToRepository(id).get();
         }
@@ -238,7 +237,7 @@ export const defineRelationViewController = <
       },
     })
     count(@param.path.number('id') id: IdType, @param.query.object('where') where?: Where<T>) {
-      switch (relationType) {
+      switch (relation.type) {
         case EntityRelations.BELONGS_TO: {
           return new Promise(resolve => {
             this._getBelongsToRepository(id)
@@ -330,19 +329,19 @@ export const defineAssociateController = <
   R extends BaseTzEntity | NullableType,
 >(opts: {
   baseClass: ReturnType<typeof defineRelationViewController>;
-  relationName: string;
+  relation: { name: string; type: TRelationType };
   defaultLimit?: number;
   endPoint?: string;
   schema?: SchemaObject;
 }): ControllerClass => {
   const {
     baseClass,
-    relationName,
+    relation,
     defaultLimit = App.DEFAULT_QUERY_LIMIT,
     endPoint = '',
     schema,
   } = opts;
-  const restPath = `/{id}/${endPoint ? endPoint : relationName}`;
+  const restPath = `/{id}/${endPoint ? endPoint : relation.name}`;
 
   class AssociationController extends baseClass implements IController {
     constructor(
@@ -358,7 +357,7 @@ export const defineAssociateController = <
     @post(`${restPath}/{link_id}`, {
       responses: {
         '200': {
-          description: `Create association between source and target for ${relationName} relation`,
+          description: `Create association between source and target for ${relation.name} relation`,
           content: {
             'application/json': {
               schema,
@@ -387,7 +386,7 @@ export const defineAssociateController = <
         });
       }
 
-      const ref = getProp(this.sourceRepository, relationName)(id);
+      const ref = getProp(this.sourceRepository, relation.name)(id);
       return ref.link(linkId);
     }
 
@@ -395,7 +394,7 @@ export const defineAssociateController = <
     @del(`${restPath}/{link_id}`, {
       responses: {
         '200': {
-          description: `Remove association between source and target for ${relationName} relation`,
+          description: `Remove association between source and target for ${relation.name} relation`,
           content: { 'application/json': {} },
         },
       },
@@ -404,7 +403,7 @@ export const defineAssociateController = <
       @param.path.number('id') id: number,
       @param.path.number('link_id') linkId: number,
     ): Promise<R | null> {
-      const ref = getProp(this.sourceRepository, relationName)(id);
+      const ref = getProp(this.sourceRepository, relation.name)(id);
       return ref.unlink(linkId);
     }
   }
@@ -429,10 +428,10 @@ export const defineRelationCrudController = <
       endPoint: '',
     },
   } = controllerOptions;
-  const { entities, repositories, relationName, relationType } = association;
+  const { entities, repositories, relation } = association;
   const { target } = schema;
 
-  if (!EntityRelations.isValid(relationType)) {
+  if (!EntityRelations.isValid(relation.type)) {
     throw getError({
       statusCode: 500,
       message: `[defineRelationCrudController] Invalid relationType! Valids: ${[...EntityRelations.TYPE_SET]}`,
@@ -443,22 +442,21 @@ export const defineRelationCrudController = <
   const {
     useControlTarget = true,
     defaultLimit = App.DEFAULT_QUERY_LIMIT,
-    endPoint = relationName,
+    endPoint = relation.name,
   } = options;
   const restPath = `{id}/${endPoint}`;
 
   const ViewController = defineRelationViewController<S, T>({
     baseClass: BaseController,
     entities,
-    relationType,
-    relationName,
+    relation,
     defaultLimit,
     endPoint,
     schema: target,
   });
   const AssociationController = defineAssociateController<S, T, R>({
     baseClass: ViewController,
-    relationName,
+    relation,
     defaultLimit,
     endPoint,
     schema: target,
@@ -467,7 +465,7 @@ export const defineRelationCrudController = <
   // -----------------------------------------------------------------------------------------------
 
   const ExtendsableClass =
-    relationType === EntityRelations.HAS_MANY_THROUGH ? AssociationController : ViewController;
+    relation.type === EntityRelations.HAS_MANY_THROUGH ? AssociationController : ViewController;
 
   if (!useControlTarget) {
     return ExtendsableClass;
@@ -487,7 +485,7 @@ export const defineRelationCrudController = <
     @post(restPath, {
       responses: {
         '200': {
-          description: `Create target model for ${relationName} relation`,
+          description: `Create target model for ${relation.name} relation`,
           content: {
             'application/json': {
               schema,
@@ -509,7 +507,7 @@ export const defineRelationCrudController = <
       return new Promise<T>((resolve, reject) => {
         this._getContextUser()
           .then((currentUser?: { userId: IdType }) => {
-            const ref = getProp(this.sourceRepository, relationName)(id);
+            const ref = getProp(this.sourceRepository, relation.name)(id);
             ref
               .create(mapping, {
                 authorId: currentUser?.userId,
@@ -525,7 +523,7 @@ export const defineRelationCrudController = <
     @patch(restPath, {
       responses: {
         '200': {
-          description: `Patch target model for ${relationName} relation`,
+          description: `Patch target model for ${relation.name} relation`,
           content: { 'application/json': { schema: CountSchema } },
         },
       },
@@ -544,7 +542,7 @@ export const defineRelationCrudController = <
       return new Promise<Count>((resolve, reject) => {
         this._getContextUser()
           .then((currentUser?: { userId: IdType }) => {
-            const ref = getProp(this.sourceRepository, relationName)(id);
+            const ref = getProp(this.sourceRepository, relation.name)(id);
             ref
               .patch(mapping, where, {
                 authorId: currentUser?.userId,
@@ -560,7 +558,7 @@ export const defineRelationCrudController = <
     @del(restPath, {
       responses: {
         '200': {
-          description: `Delete target model for ${relationName} relation`,
+          description: `Delete target model for ${relation.name} relation`,
           content: { 'application/json': { schema: CountSchema } },
         },
       },
@@ -572,7 +570,7 @@ export const defineRelationCrudController = <
       return new Promise<Count>((resolve, reject) => {
         this._getContextUser()
           .then((currentUser?: { userId: IdType }) => {
-            const ref = getProp(this.sourceRepository, relationName)(id);
+            const ref = getProp(this.sourceRepository, relation.name)(id);
             ref
               .delete(where, {
                 authorId: currentUser?.userId,
