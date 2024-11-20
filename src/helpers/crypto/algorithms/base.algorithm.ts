@@ -12,9 +12,15 @@ export abstract class AbstractCryptoAlgorithm<AL extends string, IO>
   abstract decrypt(message: string, secret: string, opts?: IO | undefined): string;
 }
 
-export abstract class BaseCryptoAlgorithm<AL extends string, IO> extends AbstractCryptoAlgorithm<AL, IO> {
+export abstract class BaseCryptoAlgorithm<AL extends string, IO> extends AbstractCryptoAlgorithm<
+  AL,
+  IO
+> {
   constructor(opts: { scope: string; algorithm: AL }) {
-    super({ scope: opts.scope ?? opts.algorithm ?? BaseCryptoAlgorithm.name, identifier: opts.algorithm });
+    super({
+      scope: opts.scope ?? opts.algorithm ?? BaseCryptoAlgorithm.name,
+      identifier: opts.algorithm,
+    });
     this.validateAlgorithmName({ algorithm: opts.algorithm });
 
     this.algorithm = opts.algorithm;

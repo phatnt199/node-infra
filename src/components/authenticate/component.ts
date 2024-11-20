@@ -19,10 +19,18 @@ import {
   SignInRequest,
   SignUpRequest,
 } from './common';
-import { DefaultOAuth2ExpressServer, defineAuthController, defineOAuth2Controller } from './controllers';
+import {
+  DefaultOAuth2ExpressServer,
+  defineAuthController,
+  defineOAuth2Controller,
+} from './controllers';
 import { AuthenticationMiddleware } from './middleware';
 import { OAuth2Handler } from './oauth2-handlers';
-import { OAuth2ClientRepository, OAuth2ScopeRepository, OAuth2TokenRepository } from './repositories';
+import {
+  OAuth2ClientRepository,
+  OAuth2ScopeRepository,
+  OAuth2TokenRepository,
+} from './repositories';
 import {
   BasicAuthenticationStrategy,
   BasicTokenService,
@@ -72,7 +80,9 @@ export class AuthenticateComponent extends BaseComponent {
   }
 
   defineControllers() {
-    const authenticationControllerRestOptions = this.application.isBound(AuthenticateKeys.REST_OPTIONS)
+    const authenticationControllerRestOptions = this.application.isBound(
+      AuthenticateKeys.REST_OPTIONS,
+    )
       ? this.application.getSync<IAuthenticateRestOptions>(AuthenticateKeys.REST_OPTIONS)
       : {};
     const authenticationController = defineAuthController(authenticationControllerRestOptions);
@@ -84,7 +94,9 @@ export class AuthenticateComponent extends BaseComponent {
       return;
     }
 
-    const oauth2Options = this.application.getSync<IAuthenticateOAuth2Options>(AuthenticateKeys.OAUTH2_OPTIONS);
+    const oauth2Options = this.application.getSync<IAuthenticateOAuth2Options>(
+      AuthenticateKeys.OAUTH2_OPTIONS,
+    );
     const { enable = false, handler, viewFolder } = oauth2Options;
     if (!enable) {
       return;
@@ -100,7 +112,8 @@ export class AuthenticateComponent extends BaseComponent {
           allowEmptyState: true,
           allowBearerTokensInQueryString: true,
           accessTokenLifetime: int(
-            this.application.getSync<string>(TokenServiceBindings.TOKEN_EXPIRES_IN) || `${1 * 24 * 60 * 60}`,
+            this.application.getSync<string>(TokenServiceBindings.TOKEN_EXPIRES_IN) ||
+              `${1 * 24 * 60 * 60}`,
           ),
         },
       }),
@@ -140,7 +153,9 @@ export class AuthenticateComponent extends BaseComponent {
     registerAuthenticationStrategy(this.application, JWTAuthenticationStrategy);
     registerAuthenticationStrategy(this.application, BasicAuthenticationStrategy);
 
-    const tokenOptions = this.application.getSync<IAuthenticateTokenOptions>(AuthenticateKeys.TOKEN_OPTIONS);
+    const tokenOptions = this.application.getSync<IAuthenticateTokenOptions>(
+      AuthenticateKeys.TOKEN_OPTIONS,
+    );
 
     const {
       tokenSecret = Authentication.ACCESS_TOKEN_SECRET,
@@ -151,7 +166,9 @@ export class AuthenticateComponent extends BaseComponent {
     this.application.bind(TokenServiceBindings.TOKEN_SECRET).to(tokenSecret);
     this.application.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(tokenExpiresIn.toString());
     this.application.bind(RefreshTokenServiceBindings.REFRESH_SECRET).to(refreshSecret);
-    this.application.bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN).to(refreshExpiresIn?.toString());
+    this.application
+      .bind(RefreshTokenServiceBindings.REFRESH_EXPIRES_IN)
+      .to(refreshExpiresIn?.toString());
 
     this.defineOAuth2();
   }

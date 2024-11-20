@@ -1,6 +1,7 @@
 import { AbstractTzRepository } from '@/base';
 import { BaseIdEntity, BaseTzEntity } from '@/base/base.model';
 import { BindingKey } from '@loopback/core';
+import { RequestContext } from '@loopback/rest';
 import { Count, DataObject, Entity, Filter, Options, Where } from '@loopback/repository';
 
 export interface IApplication {
@@ -69,7 +70,10 @@ export interface IPersistableRepository<E extends BaseIdEntity> extends IReposit
 
 export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepository<E> {
   mixTimestamp(entity: DataObject<E>, options?: { newInstance: boolean }): DataObject<E>;
-  mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean; authorId: IdType }): DataObject<E>;
+  mixUserAudit(
+    entity: DataObject<E>,
+    options?: { newInstance: boolean; authorId: IdType },
+  ): DataObject<E>;
   // mixTextSearch(entity: DataObject<E>, options?: { moreData: any; ignoreUpdate: boolean }): DataObject<E>;
 }
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -87,6 +91,10 @@ export interface ICrudMethodOptions {
     roles: Array<{ id: IdType; identifier: string; priority: number }>;
     [extra: string | symbol]: any;
   } | null;
+
+  requestContext: RequestContext;
+
+  [extra: symbol | string]: any;
 }
 
 export interface ICrudService<E extends BaseTzEntity> extends IService {
@@ -94,7 +102,11 @@ export interface ICrudService<E extends BaseTzEntity> extends IService {
 
   // R
   find(filter: Filter<E>, options: ICrudMethodOptions): Promise<Array<E & EntityRelationType>>;
-  findById(id: IdType, filter: Filter<E>, options: ICrudMethodOptions): Promise<E & EntityRelationType>;
+  findById(
+    id: IdType,
+    filter: Filter<E>,
+    options: ICrudMethodOptions,
+  ): Promise<E & EntityRelationType>;
   findOne(filter: Filter<E>, options: ICrudMethodOptions): Promise<(E & EntityRelationType) | null>;
   count(where: Where<E>, options: ICrudMethodOptions): Promise<Count>;
 

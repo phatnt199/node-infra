@@ -44,7 +44,11 @@ export class QueryBuilderHelper extends BaseHelper {
     return queryClient.queryBuilder();
   }
 
-  getUpdateBuilder(opts: { clientType: TQueryBuilderClientType; tableName: string; schema: string }) {
+  getUpdateBuilder(opts: {
+    clientType: TQueryBuilderClientType;
+    tableName: string;
+    schema: string;
+  }) {
     const { clientType, tableName, schema } = opts;
 
     if (!this.clients.has(clientType)) {

@@ -15,7 +15,11 @@ interface INetworkUdpClientProps {
   };
 
   onConnected?: (opts: { identifier: string; host?: string; port: number }) => void;
-  onData?: (opts: { identifier: string; message: string | Buffer; remoteInfo: dgram.RemoteInfo }) => void;
+  onData?: (opts: {
+    identifier: string;
+    message: string | Buffer;
+    remoteInfo: dgram.RemoteInfo;
+  }) => void;
   onClosed?: (opts: { identifier: string; host?: string; port: number }) => void;
   onError?: (opts: { identifier: string; host?: string; port: number; error: Error }) => void;
   onBind?: (opts: {
@@ -39,9 +43,18 @@ export class NetworkUdpClient extends BaseHelper {
   };
 
   private onConnected: (opts: { identifier: string; host?: string; port: number }) => void;
-  private onData: (opts: { identifier: string; message: string | Buffer; remoteInfo: dgram.RemoteInfo }) => void;
+  private onData: (opts: {
+    identifier: string;
+    message: string | Buffer;
+    remoteInfo: dgram.RemoteInfo;
+  }) => void;
   private onClosed?: (opts: { identifier: string; host?: string; port: number }) => void;
-  private onError?: (opts: { identifier: string; host?: string; port: number; error: Error }) => void;
+  private onError?: (opts: {
+    identifier: string;
+    host?: string;
+    port: number;
+    error: Error;
+  }) => void;
   private onBind?: (opts: {
     identifier: string;
     socket: dgram.Socket;
@@ -77,26 +90,40 @@ export class NetworkUdpClient extends BaseHelper {
   }
 
   handleConnected() {
-    this.logger.info('[handleConnected][%s] Successfully bind connection | Options: %j', this.identifier, {
-      host: this.host,
-      port: this.port,
-      multicastAddress: this.multicastAddress,
-    });
+    this.logger.info(
+      '[handleConnected][%s] Successfully bind connection | Options: %j',
+      this.identifier,
+      {
+        host: this.host,
+        port: this.port,
+        multicastAddress: this.multicastAddress,
+      },
+    );
   }
 
   handleData(opts: { identifier: string; message: string | Buffer; remoteInfo: dgram.RemoteInfo }) {
-    this.logger.info('[handleData][%s][%s:%d][<==] Raw: %s', this.identifier, this.host, this.port, {
-      message: opts.message,
-      remoteInfo: opts.remoteInfo,
-    });
+    this.logger.info(
+      '[handleData][%s][%s:%d][<==] Raw: %s',
+      this.identifier,
+      this.host,
+      this.port,
+      {
+        message: opts.message,
+        remoteInfo: opts.remoteInfo,
+      },
+    );
   }
 
   handleClosed() {
-    this.logger.info('[handleClosed][%s] Closed connection TCP Server | Options: %j', this.identifier, {
-      host: this.host,
-      port: this.port,
-      multicastAddress: this.multicastAddress,
-    });
+    this.logger.info(
+      '[handleClosed][%s] Closed connection TCP Server | Options: %j',
+      this.identifier,
+      {
+        host: this.host,
+        port: this.port,
+        multicastAddress: this.multicastAddress,
+      },
+    );
   }
 
   handleError(opts: { identifier: string; error: Error }) {

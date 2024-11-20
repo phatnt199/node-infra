@@ -53,7 +53,9 @@ export class TestCase<R extends object = {}, I extends object = {}> implements I
     this.handler = opts.handler;
   }
 
-  static withOptions<R extends object = AnyObject, I extends object = {}>(opts: ITestCaseOptions<R, I>) {
+  static withOptions<R extends object = AnyObject, I extends object = {}>(
+    opts: ITestCaseOptions<R, I>,
+  ) {
     return new TestCase(opts);
   }
 

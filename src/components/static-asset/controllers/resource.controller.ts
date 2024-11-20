@@ -36,54 +36,62 @@ export class StaticResourceController implements IController {
   })
   uploadObject() {
     return new Promise((resolve, reject) => {
-      multer({ storage: this.temporaryStorage }).array('files')(this.request, this.response, error => {
-        if (error) {
-          this.logger.error('[uploadObject] Fail to upload files! Error: %s', error);
-          reject(error);
-        }
+      multer({ storage: this.temporaryStorage }).array('files')(
+        this.request,
+        this.response,
+        error => {
+          if (error) {
+            this.logger.error('[uploadObject] Fail to upload files! Error: %s', error);
+            reject(error);
+          }
 
-        const files = (this.request?.files ?? []) as Array<IUploadFile>;
-        const basePath = this.application.getSync<string>(ResourceAssetKeys.RESOURCE_BASE_PATH);
+          const files = (this.request?.files ?? []) as Array<IUploadFile>;
+          const basePath = this.application.getSync<string>(ResourceAssetKeys.RESOURCE_BASE_PATH);
 
-        Promise.all(
-          files?.map(file => {
-            const {
-              originalname: originalName,
-              // mimetype: mimeType,
-              buffer,
-              // size,
-              // encoding
-            } = file;
+          Promise.all(
+            files?.map(file => {
+              const {
+                originalname: originalName,
+                // mimetype: mimeType,
+                buffer,
+                // size,
+                // encoding
+              } = file;
 
-            if (!originalName || isEmpty(originalName)) {
-              this.logger.error('[uploadObject] Invalid original name!');
-              return;
-            }
-
-            const normalizeName = originalName.toLowerCase().replace(/ /g, '_');
-
-            return new Promise((innerResolve, innerReject) => {
-              const t = new Date().getTime();
-
-              try {
-                const savedName = `${dayjs().format(Formatters.DATE_TIME_2)}_${normalizeName}`;
-                const path = join(basePath, savedName);
-
-                fs.writeFileSync(path, buffer);
-
-                this.logger.info('[upload] Uploaded: %s | Took: %s (ms)', originalName, new Date().getTime() - t);
-                innerResolve({ fileName: savedName });
-              } catch (e) {
-                innerReject(e);
+              if (!originalName || isEmpty(originalName)) {
+                this.logger.error('[uploadObject] Invalid original name!');
+                return;
               }
-            });
-          }),
-        )
-          .then(rs => {
-            resolve(rs);
-          })
-          .catch(reject);
-      });
+
+              const normalizeName = originalName.toLowerCase().replace(/ /g, '_');
+
+              return new Promise((innerResolve, innerReject) => {
+                const t = new Date().getTime();
+
+                try {
+                  const savedName = `${dayjs().format(Formatters.DATE_TIME_2)}_${normalizeName}`;
+                  const path = join(basePath, savedName);
+
+                  fs.writeFileSync(path, buffer);
+
+                  this.logger.info(
+                    '[upload] Uploaded: %s | Took: %s (ms)',
+                    originalName,
+                    new Date().getTime() - t,
+                  );
+                  innerResolve({ fileName: savedName });
+                } catch (e) {
+                  innerReject(e);
+                }
+              });
+            }),
+          )
+            .then(rs => {
+              resolve(rs);
+            })
+            .catch(reject);
+        },
+      );
     });
   }
 

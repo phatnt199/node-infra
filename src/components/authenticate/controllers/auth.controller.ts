@@ -21,7 +21,11 @@ export const defineAuthController = <
 >(
   opts: IAuthenticateRestOptions,
 ) => {
-  const { restPath = '/auth', requireAuthenticatedSignUp = false, serviceKey = 'services.UserService' } = opts;
+  const {
+    restPath = '/auth',
+    requireAuthenticatedSignUp = false,
+    serviceKey = 'services.UserService',
+  } = opts;
 
   @api({ basePath: restPath })
   class BaseAuthController extends BaseController {

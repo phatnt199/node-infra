@@ -56,7 +56,9 @@ export class StaticAssetComponent extends BaseComponent {
     const { useMinioAsset, useStaticResource, resourceBasePath } = componentOptions;
 
     if (useMinioAsset) {
-      const connectionOptions = this.application.getSync<ClientOptions>(ResourceAssetKeys.CONNECTION_OPTIONS);
+      const connectionOptions = this.application.getSync<ClientOptions>(
+        ResourceAssetKeys.CONNECTION_OPTIONS,
+      );
       const minioHelper = new MinioHelper(connectionOptions);
       this.application.bind(ResourceAssetKeys.MINIO_INSTANCE).to(minioHelper);
     }

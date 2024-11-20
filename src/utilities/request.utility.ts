@@ -4,7 +4,11 @@ import get from 'lodash/get';
 import multer from 'multer';
 
 // -------------------------------------------------------------------------
-export const parseMultipartBody = (opts: { storage?: multer.StorageEngine; request: Request; response: Response }) => {
+export const parseMultipartBody = (opts: {
+  storage?: multer.StorageEngine;
+  request: Request;
+  response: Response;
+}) => {
   const { storage: cStorage, request, response } = opts;
   const storage = cStorage ?? multer.memoryStorage();
   const upload = multer({ storage });

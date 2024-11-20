@@ -30,7 +30,12 @@ export class GrpcServerComponent extends BaseComponent {
     const grpcOptions = this.application.getSync<IGrpcServerOptions>(GrpcServerKeys.GRPC_OPTIONS);
     this.logger.info('[defineServer] Grpc Options: %j', grpcOptions);
 
-    const { identifier, serverOptions, address, credentials = ServerCredentials.createInsecure() } = grpcOptions;
+    const {
+      identifier,
+      serverOptions,
+      address,
+      credentials = ServerCredentials.createInsecure(),
+    } = grpcOptions;
 
     const server = new GrpcServer({
       identifier,

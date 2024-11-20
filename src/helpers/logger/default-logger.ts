@@ -17,7 +17,9 @@ export const applicationLogFormatter: ReturnType<typeof format.combine> = format
   format.timestamp(),
   format.simple(),
   format.colorize(),
-  format.printf(({ level, message, label, timestamp }) => `${timestamp} [${label}] ${level}: ${message}`),
+  format.printf(
+    ({ level, message, label, timestamp }) => `${timestamp} [${label}] ${level}: ${message}`,
+  ),
   format.errors({ stack: true }),
 );
 

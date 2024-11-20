@@ -3,7 +3,14 @@ import { AnyObject, ITzRepository, OAuth2TokenStatuses, TInjectionGetter } from 
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError, int } from '@/utilities';
 import { securityId } from '@loopback/security';
-import { BaseModel, Client, Falsey, RequestAuthenticationModel, Token, User } from '@node-oauth/oauth2-server';
+import {
+  BaseModel,
+  Client,
+  Falsey,
+  RequestAuthenticationModel,
+  Token,
+  User,
+} from '@node-oauth/oauth2-server';
 
 import { OAuth2Client, OAuth2Token } from '../models';
 import { OAuth2ClientRepository, OAuth2TokenRepository } from '../repositories';
@@ -20,7 +27,9 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
   protected injectionGetter: TInjectionGetter;
 
   constructor(opts: { scope?: string; authServiceKey: string; injectionGetter: TInjectionGetter }) {
-    this.logger = LoggerFactory.getLogger([opts?.scope ?? AbstractOAuth2AuthenticationHandler.name]);
+    this.logger = LoggerFactory.getLogger([
+      opts?.scope ?? AbstractOAuth2AuthenticationHandler.name,
+    ]);
     this.injectionGetter = opts.injectionGetter;
     this.authServiceKey = opts.authServiceKey;
   }
@@ -33,11 +42,22 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
         clientSecret,
       );
 
-      const clientRepository = this.injectionGetter<OAuth2ClientRepository>('repositories.OAuth2ClientRepository');
+      const clientRepository = this.injectionGetter<OAuth2ClientRepository>(
+        'repositories.OAuth2ClientRepository',
+      );
       clientRepository
         .findOne({
           where: { or: [{ clientId }, { clientId, clientSecret }] },
-          fields: ['id', 'identifier', 'clientId', 'name', 'description', 'grants', 'userId', 'endpoints'],
+          fields: [
+            'id',
+            'identifier',
+            'clientId',
+            'name',
+            'description',
+            'grants',
+            'userId',
+            'endpoints',
+          ],
         })
         .then((oauth2Client: OAuth2Client) => {
           resolve({
@@ -63,7 +83,8 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
 
     if (!userId) {
       throw getError({
-        message: '[generateAccessToken] Invalid userId | Please verify getUserInformation response!',
+        message:
+          '[generateAccessToken] Invalid userId | Please verify getUserInformation response!',
       });
     }
 
@@ -89,7 +110,9 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
     details?: AnyObject;
   }): Promise<OAuth2Token | null> {
     const { type, token, client, user, details } = opts;
-    const oauth2TokenRepository = this.injectionGetter<OAuth2TokenRepository>('repositories.OAuth2TokenRepository');
+    const oauth2TokenRepository = this.injectionGetter<OAuth2TokenRepository>(
+      'repositories.OAuth2TokenRepository',
+    );
 
     return oauth2TokenRepository.create({
       token,
@@ -120,7 +143,9 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
   async _getToken(opts: { type: string; token: string }) {
     const { type, token } = opts;
 
-    const oauth2TokenRepository = this.injectionGetter<OAuth2TokenRepository>('repositories.OAuth2TokenRepository');
+    const oauth2TokenRepository = this.injectionGetter<OAuth2TokenRepository>(
+      'repositories.OAuth2TokenRepository',
+    );
     const oauth2Token: OAuth2Token | null = await oauth2TokenRepository.findOne({
       where: { type, token },
     });
@@ -138,7 +163,9 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
       });
     }
 
-    const userRepository = this.injectionGetter<ITzRepository<BaseTzEntity>>('repositories.UserRepository');
+    const userRepository = this.injectionGetter<ITzRepository<BaseTzEntity>>(
+      'repositories.UserRepository',
+    );
     const user = await userRepository.findOne({
       where: { id: int(oauth2Token.userId) },
       fields: ['id'],
@@ -155,7 +182,9 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
       });
     }
 
-    const oauth2ClientRepository = this.injectionGetter<OAuth2ClientRepository>('repositories.OAuth2ClientRepository');
+    const oauth2ClientRepository = this.injectionGetter<OAuth2ClientRepository>(
+      'repositories.OAuth2ClientRepository',
+    );
     const oauth2Client = await oauth2ClientRepository.findOne({
       where: { id: int(oauth2Token.clientId) },
       fields: ['id', 'identifier', 'name', 'description', 'userId'],
@@ -188,13 +217,18 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
     const clientId = tokenPayload['clientId'];
 
     if (!clientId || clientId === 'NA') {
-      this.logger.error('[getAccessToken] Invalid clientId in tokenPayload | tokenPayload: %j', tokenPayload);
+      this.logger.error(
+        '[getAccessToken] Invalid clientId in tokenPayload | tokenPayload: %j',
+        tokenPayload,
+      );
       throw getError({
         message: '[getAccessToken] Invalid clientId in token payload!',
       });
     }
 
-    const oauth2ClientRepository = this.injectionGetter<OAuth2ClientRepository>('repositories.OAuth2ClientRepository');
+    const oauth2ClientRepository = this.injectionGetter<OAuth2ClientRepository>(
+      'repositories.OAuth2ClientRepository',
+    );
     const oauth2Client = await oauth2ClientRepository.findOne({
       where: { identifier: clientId },
       fields: ['id', 'identifier', 'name', 'description', 'userId'],

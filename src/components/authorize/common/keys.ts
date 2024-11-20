@@ -8,7 +8,8 @@ export class AuthorizerKeys {
 
   static readonly ROLE_REPOSITORY = '@app/authorize/component/repositories/user';
   static readonly PERMISSION_REPOSITORY = '@app/authorize/component/repositories/permission';
-  static readonly PERMISSION_MAPPING_REPOSITORY = '@app/authorize/component/repositories/permission_mapping';
+  static readonly PERMISSION_MAPPING_REPOSITORY =
+    '@app/authorize/component/repositories/permission_mapping';
   static readonly USER_ROLE_REPOSITORY = '@app/authorize/component/repositories/user_role';
 
   static readonly PROVIDER = '@app/authorize/provider';

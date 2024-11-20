@@ -18,7 +18,13 @@ export const UserAuditMixin = <
     modifierKeyTo?: string;
   },
 ) => {
-  const { useRelation = false, creatorResolver, creatorKeyTo, modifierResolver, modifierKeyTo } = opts ?? {};
+  const {
+    useRelation = false,
+    creatorResolver,
+    creatorKeyTo,
+    modifierResolver,
+    modifierKeyTo,
+  } = opts ?? {};
 
   if (!useRelation) {
     @model()

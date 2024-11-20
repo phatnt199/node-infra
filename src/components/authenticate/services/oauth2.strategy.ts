@@ -8,7 +8,11 @@ import isEmpty from 'lodash/isEmpty';
 
 class AuthProviderNetworkRequest extends BaseNetworkRequest {}
 
-export const defineOAuth2Strategy = (opts: { name: string; baseURL: string; authPath?: string }) => {
+export const defineOAuth2Strategy = (opts: {
+  name: string;
+  baseURL: string;
+  authPath?: string;
+}) => {
   class Strategy implements AuthenticationStrategy {
     name = opts.name;
 

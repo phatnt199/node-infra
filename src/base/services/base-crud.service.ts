@@ -5,7 +5,10 @@ import { BaseService } from './base.service';
 import { applyLimit } from '../controllers/common';
 import { AbstractTzRepository } from '../repositories';
 
-export abstract class BaseCrudService<E extends BaseTzEntity> extends BaseService implements ICrudService<E> {
+export abstract class BaseCrudService<E extends BaseTzEntity>
+  extends BaseService
+  implements ICrudService<E>
+{
   repository: AbstractTzRepository<E, EntityRelationType>;
 
   constructor(opts: { scope: string; repository: AbstractTzRepository<E, EntityRelationType> }) {
@@ -18,11 +21,18 @@ export abstract class BaseCrudService<E extends BaseTzEntity> extends BaseServic
     return this.repository.find(applyLimit(filter));
   }
 
-  findById(id: IdType, filter: Filter<E>, _options: ICrudMethodOptions): Promise<E & EntityRelationType> {
+  findById(
+    id: IdType,
+    filter: Filter<E>,
+    _options: ICrudMethodOptions,
+  ): Promise<E & EntityRelationType> {
     return this.repository.findById(id, applyLimit(filter));
   }
 
-  findOne(filter: Filter<E>, _options: ICrudMethodOptions): Promise<(E & EntityRelationType) | null> {
+  findOne(
+    filter: Filter<E>,
+    _options: ICrudMethodOptions,
+  ): Promise<(E & EntityRelationType) | null> {
     return this.repository.findOne(filter);
   }
 

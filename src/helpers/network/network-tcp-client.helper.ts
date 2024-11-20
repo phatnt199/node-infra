@@ -58,7 +58,11 @@ export class NetworkTcpClient extends BaseHelper {
   }
 
   handleConnected() {
-    this.logger.info('[handleConnected][%s] Connected to TCP Server | Options: %j', this.identifier, this.options);
+    this.logger.info(
+      '[handleConnected][%s] Connected to TCP Server | Options: %j',
+      this.identifier,
+      this.options,
+    );
     this.retry.currentReconnect = 0;
   }
 
@@ -68,7 +72,11 @@ export class NetworkTcpClient extends BaseHelper {
   }
 
   handleClosed() {
-    this.logger.info('[handleClosed][%s] Closed connection TCP Server | Options: %j', this.identifier, this.options);
+    this.logger.info(
+      '[handleClosed][%s] Closed connection TCP Server | Options: %j',
+      this.identifier,
+      this.options,
+    );
   }
 
   handleError(error: any) {
@@ -119,7 +127,11 @@ export class NetworkTcpClient extends BaseHelper {
       return;
     }
 
-    this.logger.info('[connect][%s] New network tcp client | Options: %s', this.identifier, this.options);
+    this.logger.info(
+      '[connect][%s] New network tcp client | Options: %s',
+      this.identifier,
+      this.options,
+    );
 
     if (opts?.resetReconnectCounter) {
       this.retry.currentReconnect = 0;
@@ -155,7 +167,10 @@ export class NetworkTcpClient extends BaseHelper {
 
   disconnect() {
     if (!this.client) {
-      this.logger.info('[disconnect][%s] NetworkTcpClient is not initialized yet!', this.identifier);
+      this.logger.info(
+        '[disconnect][%s] NetworkTcpClient is not initialized yet!',
+        this.identifier,
+      );
       return;
     }
 

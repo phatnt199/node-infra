@@ -17,7 +17,11 @@ export interface IKVControllerOptions<E extends BaseKVEntity> {
 
 // --------------------------------------------------------------------------------------------------------------
 export const defineKVController = <E extends BaseKVEntity>(opts: IKVControllerOptions<E>) => {
-  const { entity: entityOptions, repository: repositoryOptions, controller: controllerOptions } = opts;
+  const {
+    entity: entityOptions,
+    repository: repositoryOptions,
+    controller: controllerOptions,
+  } = opts;
 
   class ReadController implements IController {
     repository: AbstractKVRepository<E>;
