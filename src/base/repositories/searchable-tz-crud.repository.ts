@@ -1,8 +1,19 @@
-import { AnyType, EntityClassType, EntityRelationType, IdType, TRelationType } from '@/common/types';
+import {
+  AnyType,
+  EntityClassType,
+  EntityRelationType,
+  IdType,
+  TRelationType,
+} from '@/common/types';
 import { BindingScope, injectable } from '@loopback/core';
 import { DataObject, Getter, Inclusion, juggler, Options, Where } from '@loopback/repository';
 
-import { BaseObjectSearchTzEntity, BaseSearchableTzEntity, BaseTextSearchTzEntity, BaseTzEntity } from '../base.model';
+import {
+  BaseObjectSearchTzEntity,
+  BaseSearchableTzEntity,
+  BaseTextSearchTzEntity,
+  BaseTzEntity,
+} from '../base.model';
 import { TzCrudRepository } from './tz-crud.repository';
 
 import get from 'lodash/get';
@@ -172,7 +183,11 @@ export abstract class SearchableTzCrudRepository<
 
     let resolved = [data] as (E & R)[];
     if (this.isInclusionRelations && this.searchableInclusions.length) {
-      resolved = await this.includeRelatedModels([data as AnyType], this.searchableInclusions, options);
+      resolved = await this.includeRelatedModels(
+        [data as AnyType],
+        this.searchableInclusions,
+        options,
+      );
     }
 
     switch (field) {
@@ -208,7 +223,10 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  async mixSearchFields(data: DataObject<E>, options?: Options & { where?: Where }): Promise<DataObject<E>> {
+  async mixSearchFields(
+    data: DataObject<E>,
+    options?: Options & { where?: Where },
+  ): Promise<DataObject<E>> {
     return new Promise((resolve, reject) => {
       const ignoreMixSearchFields = get(options, 'ignoreMixSearchFields');
 

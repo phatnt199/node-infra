@@ -2,7 +2,13 @@ import { AnyObject, TInjectionGetter } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import { Binding, ControllerClass, CoreBindings, MetadataInspector } from '@loopback/core';
-import { GrpcServerKeys, GrpcTags, IGrpcMethodOptions, IGrpcServerOptions, METADATA_GRPC_METHOD } from '../common';
+import {
+  GrpcServerKeys,
+  GrpcTags,
+  IGrpcMethodOptions,
+  IGrpcServerOptions,
+  METADATA_GRPC_METHOD,
+} from '../common';
 
 import * as grpc from '@grpc/grpc-js';
 import * as grpcLoader from '@grpc/proto-loader';
@@ -60,13 +66,16 @@ export class GrpcServer extends grpc.Server {
   }
 
   // ---------------------------------------------------------------------
-  private setupHandler<T>(opts: { controller: Readonly<Binding<ControllerClass>>; method: string }) {
+  private setupHandler<T>(opts: {
+    controller: Readonly<Binding<ControllerClass>>;
+    method: string;
+  }) {
     const { controller, method } = opts;
 
     return (call: { request: AnyObject }, next: (error: Error | null, rs?: T) => void) => {
-      const instance = this.injectionGetter<ControllerClass & { [method: string | symbol]: Function }>(
-        `controllers.${controller.valueConstructor?.name}`,
-      );
+      const instance = this.injectionGetter<
+        ControllerClass & { [method: string | symbol]: Function }
+      >(`controllers.${controller.valueConstructor?.name}`);
 
       if (!instance?.[method]) {
         throw getError({

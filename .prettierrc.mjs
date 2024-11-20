@@ -1,7 +1,7 @@
 const config = {
   bracketSpacing: true,
   singleQuote: true,
-  printWidth: 120,
+  printWidth: 100,
   trailingComma: 'all',
   arrowParens: 'avoid',
   semi: true,

@@ -103,7 +103,12 @@ export const float = (input: any, digit = 2) => {
 // -------------------------------------------------------------------------
 export const toBoolean = (input: any) => {
   return (
-    (input !== 'false' && input !== '0' && input !== false && input !== 0 && input !== null && input !== undefined) ??
+    (input !== 'false' &&
+      input !== '0' &&
+      input !== false &&
+      input !== 0 &&
+      input !== null &&
+      input !== undefined) ??
     Boolean(input)
   );
 };
@@ -179,7 +184,10 @@ export const getNumberValue = (input: string, method: 'int' | 'float' = 'int') =
  *
  * Note: In case of duplicate keys, the last element will be used.
  */
-export const parseArrayToRecordWithKey = <T extends Record<K, PropertyKey>, K extends keyof T>(opts: {
+export const parseArrayToRecordWithKey = <
+  T extends Record<K, PropertyKey>,
+  K extends keyof T,
+>(opts: {
   arr: T[];
   keyMap: K;
 }): Record<T[K], T> => {

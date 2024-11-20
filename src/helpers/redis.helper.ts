@@ -256,7 +256,11 @@ export class RedisHelper extends BaseHelper {
         });
       }
 
-      this.logger.info('[subscribe] Subscribed to %s channel(s). Listening to channel: %s', count, topic);
+      this.logger.info(
+        '[subscribe] Subscribed to %s channel(s). Listening to channel: %s',
+        count,
+        topic,
+      );
     });
   }
 }

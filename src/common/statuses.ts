@@ -23,7 +23,13 @@ export class CommonStatuses {
   static readonly BLOCKED = Statuses.BLOCKED;
   static readonly ARCHIVE = Statuses.ARCHIVE;
 
-  static readonly SCHEME_SET = new Set([this.UNKNOWN, this.ACTIVATED, this.DEACTIVATED, this.BLOCKED, this.ARCHIVE]);
+  static readonly SCHEME_SET = new Set([
+    this.UNKNOWN,
+    this.ACTIVATED,
+    this.DEACTIVATED,
+    this.BLOCKED,
+    this.ARCHIVE,
+  ]);
 
   static isValid(scheme: string): boolean {
     return this.SCHEME_SET.has(scheme);

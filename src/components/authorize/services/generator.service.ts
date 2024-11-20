@@ -54,7 +54,10 @@ export class GeneratePermissionService {
       pType: 'p',
     };
 
-    await permissionRepository.upsertWith({ ...parentPermissions }, { code: parentPermissions.code });
+    await permissionRepository.upsertWith(
+      { ...parentPermissions },
+      { code: parentPermissions.code },
+    );
   }
 
   generatePermissions(opts: {
@@ -71,7 +74,9 @@ export class GeneratePermissionService {
         code: `${permissionSubject}.${m}`,
         subject: permissionSubject,
         action: EnforcerDefinitions.ACTION_EXECUTE,
-        scope: m.match(/get|find|search|count/gim) ? EnforcerDefinitions.ACTION_READ : EnforcerDefinitions.ACTION_WRITE,
+        scope: m.match(/get|find|search|count/gim)
+          ? EnforcerDefinitions.ACTION_READ
+          : EnforcerDefinitions.ACTION_WRITE,
         pType: 'p',
         parentId,
         details: allPermissionDecoratorData?.[m],
@@ -85,7 +90,8 @@ export class GeneratePermissionService {
     parentPermission: Permission;
     allPermissionDecoratorData: MetadataMap<IPermissionDecorator>;
   }) {
-    const { methodsChildClass, methodsParentsClass, parentPermission, allPermissionDecoratorData } = opts ?? {};
+    const { methodsChildClass, methodsParentsClass, parentPermission, allPermissionDecoratorData } =
+      opts ?? {};
 
     const defaultPermissions = [
       'count',
@@ -181,7 +187,10 @@ export class GeneratePermissionService {
       const permissionSubject = controller.name.replace(/Controller/g, '').toLowerCase();
       const controllerPrototype = controller.prototype;
 
-      applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', controller.name);
+      applicationLogger.info(
+        '[Migrate Permissions] Migration permissions for: %s',
+        controller.name,
+      );
 
       await this.generateParentPermissions({ controller, permissionRepository });
 
@@ -265,7 +274,12 @@ export class GeneratePermissionService {
     fileName?: string;
     fileType?: 'ts' | 'txt';
   }) {
-    const { controllers, outputPath = './src/', fileName = 'permission-codes', fileType = 'ts' } = opts;
+    const {
+      controllers,
+      outputPath = './src/',
+      fileName = 'permission-codes',
+      fileType = 'ts',
+    } = opts;
 
     const permissionCodes = this.getPermissionCodes({ controllers });
 

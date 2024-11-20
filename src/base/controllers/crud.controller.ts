@@ -1,6 +1,13 @@
 import { Getter, inject } from '@loopback/core';
 import { CrudRestControllerOptions } from '@loopback/rest-crud';
-import { Count, CountSchema, DataObject, Filter, FilterExcludingWhere, Where } from '@loopback/repository';
+import {
+  Count,
+  CountSchema,
+  DataObject,
+  Filter,
+  FilterExcludingWhere,
+  Where,
+} from '@loopback/repository';
 import {
   del,
   get,
@@ -77,7 +84,9 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
             'application/json': {
               schema: {
                 type: 'array',
-                items: schemaOptions?.find ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
+                items:
+                  schemaOptions?.find ??
+                  getModelSchemaRef(entityOptions, { includeRelations: true }),
               },
             },
           },
@@ -95,7 +104,9 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
           description: `Find ${entityOptions.name} model instance`,
           content: {
             'application/json': {
-              schema: schemaOptions?.findById ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
+              schema:
+                schemaOptions?.findById ??
+                getModelSchemaRef(entityOptions, { includeRelations: true }),
             },
           },
         },
@@ -116,7 +127,9 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
           description: `Find one ${entityOptions.name} model instance`,
           content: {
             'application/json': {
-              schema: schemaOptions?.findOne ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
+              schema:
+                schemaOptions?.findOne ??
+                getModelSchemaRef(entityOptions, { includeRelations: true }),
             },
           },
         },
@@ -158,7 +171,10 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
   class CrudController extends ReadController {
     getCurrentUser?: Getter<IJWTTokenPayload>;
 
-    constructor(repository: AbstractTzRepository<E, EntityRelationType>, getCurrentUser?: Getter<IJWTTokenPayload>) {
+    constructor(
+      repository: AbstractTzRepository<E, EntityRelationType>,
+      getCurrentUser?: Getter<IJWTTokenPayload>,
+    ) {
       super(repository);
       this.getCurrentUser = getCurrentUser;
     }
@@ -377,7 +393,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
   }
 
   if (doInjectCurrentUser) {
-    inject.getter(SecurityBindings.USER)(CrudController, undefined, 1);
+    inject.getter(SecurityBindings.USER, { optional: true })(CrudController, undefined, 1);
   }
 
   return CrudController;

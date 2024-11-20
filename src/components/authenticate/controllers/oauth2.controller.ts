@@ -76,7 +76,8 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
     this.expressApp.set('views', oauth2ViewFolder);
     this.logger.info('[binding] View folder: %s', oauth2ViewFolder);
 
-    const basePath = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_SERVER_BASE_PATH) ?? '';
+    const basePath =
+      applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_SERVER_BASE_PATH) ?? '';
     const authAction = `${basePath}/oauth2/auth`;
     this.logger.info('[binding] Auth action path: %s', authAction);
 
@@ -120,7 +121,12 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
           continue;
         }
 
-        this.logger.error('[oauth2][post] Missing prop: %s | key: %s | value: %s', prop.key, prop.key, prop.value);
+        this.logger.error(
+          '[oauth2][post] Missing prop: %s | key: %s | value: %s',
+          prop.key,
+          prop.key,
+          prop.value,
+        );
         response.render('pages/error', {
           message: `Missing prop ${prop.key} | Please check again authentication form | Make sure username, password, token and redirectUrl parameters are all available in form!`,
         });
@@ -190,7 +196,11 @@ export const defineOAuth2Controller = (opts?: IAuthenticateOAuth2RestOptions) =>
     getCurrentUser: Getter<{ userId: IdType }>;
     httpContext: RequestContext;
 
-    constructor(authService: OAuth2Service, getCurrentUser: Getter<{ userId: IdType }>, httpContext: RequestContext) {
+    constructor(
+      authService: OAuth2Service,
+      getCurrentUser: Getter<{ userId: IdType }>,
+      httpContext: RequestContext,
+    ) {
       super({ scope: BaseOAuth2Controller.name });
       this.service = authService;
       this.getCurrentUser = getCurrentUser;

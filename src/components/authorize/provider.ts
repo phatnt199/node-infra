@@ -39,7 +39,8 @@ export class AuthorizeProvider implements Provider<Authorizer> {
     return {
       subject: subject?.toLowerCase() || '',
       object:
-        scope?.toLowerCase() ?? (object?.toLowerCase() || '')?.replace(/controller/g, '')?.replace(/.prototype/g, ''),
+        scope?.toLowerCase() ??
+        (object?.toLowerCase() || '')?.replace(/controller/g, '')?.replace(/.prototype/g, ''),
       action: EnforcerDefinitions.ACTION_EXECUTE,
     };
   }
@@ -60,8 +61,16 @@ export class AuthorizeProvider implements Provider<Authorizer> {
       const enforcePayload =
         this.normalizePayloadFn?.({ subject, object, scope }) ??
         this.normalizeEnforcePayload({ subject, object, scope });
-      isScopeAuthRs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
-      this.logger.debug('[authorizePermission] Payload: %j | scopeAuthRs: %s', enforcePayload, isScopeAuthRs);
+      isScopeAuthRs = await enforcer.enforce(
+        enforcePayload.subject,
+        enforcePayload.object,
+        enforcePayload.action,
+      );
+      this.logger.debug(
+        '[authorizePermission] Payload: %j | scopeAuthRs: %s',
+        enforcePayload,
+        isScopeAuthRs,
+      );
 
       if (!isScopeAuthRs) {
         this.logger.debug('[authorizePermission] Permission denied | Payload: %j', enforcePayload);
@@ -75,15 +84,27 @@ export class AuthorizeProvider implements Provider<Authorizer> {
 
     if (object) {
       const enforcePayload =
-        this.normalizePayloadFn?.({ subject, object }) ?? this.normalizeEnforcePayload({ subject, object });
-      isSingleAuthRs = await enforcer.enforce(enforcePayload.subject, enforcePayload.object, enforcePayload.action);
-      this.logger.debug('[authorizePermission] Payload: %j | singleAuthRs: %s', enforcePayload, isSingleAuthRs);
+        this.normalizePayloadFn?.({ subject, object }) ??
+        this.normalizeEnforcePayload({ subject, object });
+      isSingleAuthRs = await enforcer.enforce(
+        enforcePayload.subject,
+        enforcePayload.object,
+        enforcePayload.action,
+      );
+      this.logger.debug(
+        '[authorizePermission] Payload: %j | singleAuthRs: %s',
+        enforcePayload,
+        isSingleAuthRs,
+      );
     }
     return isScopeAuthRs && isSingleAuthRs;
   }
 
   // -------------------------------------------------------------------------------------------------------------------
-  async authorize(context: AuthorizationContext, metadata: AuthorizationMetadata): Promise<AuthorizationDecision> {
+  async authorize(
+    context: AuthorizationContext,
+    metadata: AuthorizationMetadata,
+  ): Promise<AuthorizationDecision> {
     const t = new Date().getTime();
     if (context?.principals.length <= 0) {
       return AuthorizationDecision.DENY;

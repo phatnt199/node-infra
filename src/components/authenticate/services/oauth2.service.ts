@@ -27,14 +27,18 @@ export class OAuth2Service extends BaseService {
   // --------------------------------------------------------------------------------
   encryptClientToken(opts: { clientId: string; clientSecret: string }) {
     const { clientId, clientSecret } = opts;
-    const applicationSecret = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
+    const applicationSecret = applicationEnvironment.get<string>(
+      EnvironmentKeys.APP_ENV_APPLICATION_SECRET,
+    );
     return this.aes.encrypt([clientId, clientSecret].join('_'), applicationSecret);
   }
 
   // --------------------------------------------------------------------------------
   decryptClientToken(opts: { token: string }) {
     const { token } = opts;
-    const applicationSecret = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
+    const applicationSecret = applicationEnvironment.get<string>(
+      EnvironmentKeys.APP_ENV_APPLICATION_SECRET,
+    );
 
     const decrypted = this.aes.decrypt(token, applicationSecret, { doThrow: false });
     const [clientId, clientSecret] = decrypted.split('_');
@@ -72,8 +76,11 @@ export class OAuth2Service extends BaseService {
             });
           }
 
-          const basePath = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_SERVER_BASE_PATH) ?? '';
-          const applicationSecret = applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_APPLICATION_SECRET);
+          const basePath =
+            applicationEnvironment.get<string>(EnvironmentKeys.APP_ENV_SERVER_BASE_PATH) ?? '';
+          const applicationSecret = applicationEnvironment.get<string>(
+            EnvironmentKeys.APP_ENV_APPLICATION_SECRET,
+          );
 
           if (!applicationSecret) {
             throw getError({
@@ -83,7 +90,10 @@ export class OAuth2Service extends BaseService {
 
           const urlParam = new URLSearchParams();
 
-          const requestToken = this.aes.encrypt([clientId, clientSecret].join('_'), applicationSecret);
+          const requestToken = this.aes.encrypt(
+            [clientId, clientSecret].join('_'),
+            applicationSecret,
+          );
           urlParam.set('c', encodeURIComponent(requestToken));
 
           if (redirectUrl) {
@@ -172,7 +182,8 @@ export class OAuth2Service extends BaseService {
 
   // --------------------------------------------------------------------------------
   async doClientCallback(opts: { c: string; oauth2Token: Token }) {
-    const { c, accessToken, authorizationCode, accessTokenExpiresAt, client, user } = opts.oauth2Token;
+    const { c, accessToken, authorizationCode, accessTokenExpiresAt, client, user } =
+      opts.oauth2Token;
 
     if (!client) {
       this.logger.error('[doClientCallback] Invalid client | Client: %j', client);
@@ -206,7 +217,11 @@ export class OAuth2Service extends BaseService {
               resolve(rs);
             })
             .catch(error => {
-              this.logger.error('[doClientCallback] Failed to callback | Url: %s | Error: %s', callbackUrl, error);
+              this.logger.error(
+                '[doClientCallback] Failed to callback | Url: %s | Error: %s',
+                callbackUrl,
+                error,
+              );
               reject(error);
             });
         });

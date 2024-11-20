@@ -60,12 +60,24 @@ export abstract class BaseApplication
     this.component(CrudRestComponent);
 
     this.logger.info('------------------------------------------------------------------------');
-    this.logger.info(' Starting application... | Name: %s | Env: %s', APP_ENV_APPLICATION_NAME, NODE_ENV);
-    this.logger.info(' AllowEmptyEnv: %s | Prefix: %s', ALLOW_EMPTY_ENV_VALUE, APPLICATION_ENV_PREFIX);
+    this.logger.info(
+      ' Starting application... | Name: %s | Env: %s',
+      APP_ENV_APPLICATION_NAME,
+      NODE_ENV,
+    );
+    this.logger.info(
+      ' AllowEmptyEnv: %s | Prefix: %s',
+      ALLOW_EMPTY_ENV_VALUE,
+      APPLICATION_ENV_PREFIX,
+    );
     this.logger.info(' RunMode: %s', RUN_MODE);
     this.logger.info(' Timezone: %s', APP_ENV_APPLICATION_TIMEZONE);
     this.logger.info(' LogPath: %s', APP_ENV_LOGGER_FOLDER_PATH);
-    this.logger.info(' Datasource | Migration: %s | Authorize: %s', APP_ENV_DS_MIGRATION, APP_ENV_DS_AUTHORIZE);
+    this.logger.info(
+      ' Datasource | Migration: %s | Authorize: %s',
+      APP_ENV_DS_MIGRATION,
+      APP_ENV_DS_AUTHORIZE,
+    );
     this.logger.info('------------------------------------------------------------------------');
 
     // Validate whole application environment args.
@@ -163,7 +175,11 @@ export abstract class BaseApplication
     return modelByDs;
   }
 
-  async migrateModels(opts: { existingSchema: string; ignoreModels?: string[]; migrateModels?: string[] }) {
+  async migrateModels(opts: {
+    existingSchema: string;
+    ignoreModels?: string[];
+    migrateModels?: string[];
+  }) {
     const { existingSchema, ignoreModels = [], migrateModels } = opts;
 
     this.logger.info('[migrateModels] Loading legacy migratable models...!');
@@ -201,7 +217,12 @@ export abstract class BaseApplication
     }
   }
 
-  grpcController<T>(ctor: ControllerClass<T>, nameOrOptions?: string | BindingFromClassOptions): Binding<T> {
-    return this.controller(ctor, nameOrOptions).tag(GrpcTags.CONTROLLERS).inScope(BindingScope.SINGLETON);
+  grpcController<T>(
+    ctor: ControllerClass<T>,
+    nameOrOptions?: string | BindingFromClassOptions,
+  ): Binding<T> {
+    return this.controller(ctor, nameOrOptions)
+      .tag(GrpcTags.CONTROLLERS)
+      .inScope(BindingScope.SINGLETON);
   }
 }

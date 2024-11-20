@@ -11,7 +11,9 @@ import {
   post,
   put,
   requestBody,
+  RestBindings,
   SchemaRef,
+  RequestContext,
 } from '@loopback/rest';
 import { CrudRestControllerOptions } from '@loopback/rest-crud';
 
@@ -40,17 +42,21 @@ export interface IServiceCrudControllerOptions<E extends BaseIdEntity> {
     replaceById?: SchemaRef;
     deleteById?: SchemaRef;
   };
-  doInjectCurrentUser?: boolean;
+  options?: {
+    doInjectCurrentUser?: boolean;
+  };
 }
 
 // --------------------------------------------------------------------------------------------------------------
-export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServiceCrudControllerOptions<E>) => {
+export const defineServiceCrudController = <E extends BaseTzEntity>(
+  opts: IServiceCrudControllerOptions<E>,
+) => {
   const {
     entity: entityOptions,
     service: serviceOptions,
     controller: controllerOptions,
     schema: schemaOptions,
-    doInjectCurrentUser = true,
+    options,
   } = opts;
 
   const idPathParam: ParameterObject = {
@@ -60,14 +66,20 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
   };
 
   class ReadController implements IController {
+    requestContext: RequestContext;
     service: ICrudService<E>;
     getCurrentUser?: Getter<IJWTTokenPayload>;
 
     defaultLimit: number;
 
-    constructor(service: ICrudService<E>, getCurrentUser?: Getter<IJWTTokenPayload>) {
+    constructor(
+      requestContext: RequestContext,
+      service: ICrudService<E>,
+      getCurrentUser?: Getter<IJWTTokenPayload>,
+    ) {
       this.service = service;
       this.getCurrentUser = getCurrentUser;
+      this.requestContext = requestContext;
       this.defaultLimit = controllerOptions?.defaultLimit ?? App.DEFAULT_QUERY_LIMIT;
     }
 
@@ -95,7 +107,9 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
             'application/json': {
               schema: {
                 type: 'array',
-                items: schemaOptions?.find ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
+                items:
+                  schemaOptions?.find ??
+                  getModelSchemaRef(entityOptions, { includeRelations: true }),
               },
             },
           },
@@ -108,6 +122,7 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
           this.service
             .find(applyLimit(filter), {
               currentUser,
+              requestContext: this.requestContext,
             })
             .then(resolve)
             .catch(reject);
@@ -122,7 +137,9 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
           description: `Find ${entityOptions.name} model instance`,
           content: {
             'application/json': {
-              schema: schemaOptions?.findById ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
+              schema:
+                schemaOptions?.findById ??
+                getModelSchemaRef(entityOptions, { includeRelations: true }),
             },
           },
         },
@@ -138,6 +155,7 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
           this.service
             .findById(id, applyLimit(filter), {
               currentUser,
+              requestContext: this.requestContext,
             })
             .then(resolve)
             .catch(reject);
@@ -152,7 +170,9 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
           description: `Find one ${entityOptions.name} model instance`,
           content: {
             'application/json': {
-              schema: schemaOptions?.findOne ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
+              schema:
+                schemaOptions?.findOne ??
+                getModelSchemaRef(entityOptions, { includeRelations: true }),
             },
           },
         },
@@ -167,6 +187,7 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
           this.service
             .findOne(applyLimit(filter), {
               currentUser,
+              requestContext: this.requestContext,
             })
             .then(resolve)
             .catch(reject);
@@ -193,6 +214,7 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
           this.service
             .count(where ?? {}, {
               currentUser,
+              requestContext: this.requestContext,
             })
             .then(resolve)
             .catch(reject);
@@ -202,23 +224,26 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
   }
 
   if (controllerOptions.readonly) {
+    inject(RestBindings.Http.CONTEXT)(ReadController, undefined, 0);
+
     if (serviceOptions?.name) {
-      inject(`services.${serviceOptions.name}`)(ReadController, undefined, 0);
+      inject(`services.${serviceOptions.name}`)(ReadController, undefined, 1);
     }
 
-    if (doInjectCurrentUser) {
-      inject.getter(SecurityBindings.USER)(ReadController, undefined, 1);
+    if (options?.doInjectCurrentUser) {
+      inject.getter(SecurityBindings.USER)(ReadController, undefined, 2);
     }
 
     return ReadController;
   }
 
   class CrudController extends ReadController {
-    getCurrentUser?: Getter<IJWTTokenPayload>;
-
-    constructor(service: ICrudService<E>, getCurrentUser?: Getter<IJWTTokenPayload>) {
-      super(service, getCurrentUser);
-      this.getCurrentUser = getCurrentUser;
+    constructor(
+      requestContext: RequestContext,
+      service: ICrudService<E>,
+      getCurrentUser?: Getter<IJWTTokenPayload>,
+    ) {
+      super(requestContext, service, getCurrentUser);
     }
 
     // ----------------------------------------------------------------------------------------------------------
@@ -255,6 +280,7 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
             this.service
               .create(data, {
                 currentUser,
+                requestContext: this.requestContext,
               })
               .then(resolve)
               .catch(reject);
@@ -299,6 +325,7 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
             this.service
               .updateAll(data, where ?? {}, {
                 currentUser,
+                requestContext: this.requestContext,
               })
               .then(resolve)
               .catch(reject);
@@ -324,7 +351,7 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
         },
       },
     })
-    async updateById(
+    updateById(
       @param(idPathParam) id: IdType,
       @requestBody({
         content: {
@@ -346,6 +373,7 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
             this.service
               .updateWithReturn(id, data, {
                 currentUser,
+                requestContext: this.requestContext,
               })
               .then(resolve)
               .catch(reject);
@@ -360,7 +388,7 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
         '204': { description: `${entityOptions.name} was replaced` },
       },
     })
-    async replaceById(
+    replaceById(
       @param(idPathParam) id: IdType,
       @requestBody({
         content: {
@@ -381,6 +409,7 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
             this.service
               .replaceById(id, data, {
                 currentUser,
+                requestContext: this.requestContext,
               })
               .then(resolve)
               .catch(reject);
@@ -414,6 +443,7 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
             this.service
               .deleteById(id, {
                 currentUser,
+                requestContext: this.requestContext,
               })
               .then(resolve)
               .catch(reject);
@@ -423,12 +453,14 @@ export const defineServiceCrudController = <E extends BaseTzEntity>(opts: IServi
     }
   }
 
+  inject(RestBindings.Http.CONTEXT)(CrudController, undefined, 0);
+
   if (serviceOptions?.name) {
-    inject(`services.${serviceOptions.name}`)(CrudController, undefined, 0);
+    inject(`services.${serviceOptions.name}`)(CrudController, undefined, 1);
   }
 
-  if (doInjectCurrentUser) {
-    inject.getter(SecurityBindings.USER)(CrudController, undefined, 1);
+  if (options?.doInjectCurrentUser) {
+    inject.getter(SecurityBindings.USER)(CrudController, undefined, 2);
   }
 
   return CrudController;

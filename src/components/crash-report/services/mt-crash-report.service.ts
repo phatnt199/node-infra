@@ -23,7 +23,13 @@ export class MTCrashReportService extends BaseCrashReportProvider {
 
   sendReport(opts: ISendReport) {
     const {
-      options: { projectId, eventName, publicKey, environment = process.env.NODE_ENV, generateBodyFn },
+      options: {
+        projectId,
+        eventName,
+        publicKey,
+        environment = process.env.NODE_ENV,
+        generateBodyFn,
+      },
       error,
     } = opts;
 

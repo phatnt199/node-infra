@@ -132,7 +132,11 @@ export class MinioHelper extends BaseHelper {
               mimeType,
             })
             .then(uploadInfo => {
-              this.logger.info('[upload] Uploaded: %j | Took: %s (ms)', uploadInfo, new Date().getTime() - t);
+              this.logger.info(
+                '[upload] Uploaded: %j | Took: %s (ms)',
+                uploadInfo,
+                new Date().getTime() - t,
+              );
 
               resolve({
                 bucket,

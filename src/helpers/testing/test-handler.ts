@@ -45,10 +45,10 @@ export abstract class BaseTestCaseHandler<R extends object = {}, I extends ITest
   abstract validate(opts: any): ValueOrPromise<TTestCaseDecision>;
 }
 
-export abstract class TestCaseHandler<R extends object = {}, I extends ITestCaseInput = {}> extends BaseTestCaseHandler<
-  R,
-  I
-> {
+export abstract class TestCaseHandler<
+  R extends object = {},
+  I extends ITestCaseInput = {},
+> extends BaseTestCaseHandler<R, I> {
   constructor(opts: ITestCaseHandlerOptions<R, I>) {
     super({
       ...opts,

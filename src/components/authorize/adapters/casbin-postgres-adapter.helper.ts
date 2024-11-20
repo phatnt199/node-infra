@@ -41,13 +41,15 @@ export class CasbinPostgresAdapter extends AbstractCasbinAdapter {
     ];
 
     // Load role permission policies
-    const userRoles = await this.datasource.execute(`SELECT * FROM public."UserRole" WHERE user_id=$1`, [
-      filter.principalValue,
-    ]);
+    const userRoles = await this.datasource.execute(
+      `SELECT * FROM public."UserRole" WHERE user_id=$1`,
+      [filter.principalValue],
+    );
     for (const userRole of userRoles) {
-      const execution = this.datasource.execute(`SELECT * FROM public."ViewAuthorizePolicy" WHERE subject=$1`, [
-        `role_${userRole.principal_id}`,
-      ]);
+      const execution = this.datasource.execute(
+        `SELECT * FROM public."ViewAuthorizePolicy" WHERE subject=$1`,
+        [`role_${userRole.principal_id}`],
+      );
       aclQueries.push(execution);
     }
 

@@ -43,7 +43,12 @@ export const getNextWeekday = () => {
   return date;
 };
 
-export const getDateTz = (opts: { date: string; timezone: string; useClientTz?: boolean; timeOffset?: number }) => {
+export const getDateTz = (opts: {
+  date: string;
+  timezone: string;
+  useClientTz?: boolean;
+  timeOffset?: number;
+}) => {
   const { date, timezone, useClientTz = false, timeOffset = 0 } = opts;
   return dayjs(date).tz(timezone, useClientTz).add(timeOffset, 'hour');
 };

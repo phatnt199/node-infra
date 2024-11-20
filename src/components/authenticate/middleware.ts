@@ -6,7 +6,14 @@ import {
   USER_PROFILE_NOT_FOUND,
 } from '@loopback/authentication';
 import { Getter, inject, injectable, Next, Provider, ValueOrPromise } from '@loopback/core';
-import { asMiddleware, Middleware, MiddlewareContext, Request, RestMiddlewareGroups, RestTags } from '@loopback/rest';
+import {
+  asMiddleware,
+  Middleware,
+  MiddlewareContext,
+  Request,
+  RestMiddlewareGroups,
+  RestTags,
+} from '@loopback/rest';
 import { AuthenticateKeys } from './common';
 
 @injectable(
@@ -66,7 +73,10 @@ export class AuthenticationMiddleware extends BaseProvider implements Provider<M
         await this.authenticate(request);
       }
 
-      this.logger.debug('[handle] Authenticated request... | Took: %d(ms)', new Date().getTime() - t);
+      this.logger.debug(
+        '[handle] Authenticated request... | Took: %d(ms)',
+        new Date().getTime() - t,
+      );
       return next();
     };
   }

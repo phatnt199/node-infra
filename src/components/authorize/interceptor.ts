@@ -95,14 +95,20 @@ export class AuthorizateInterceptor implements Provider<Interceptor> {
         finalDecision = decision;
       }
 
-      if (decision === AuthorizationDecision.DENY && this.options.precedence === AuthorizationDecision.DENY) {
+      if (
+        decision === AuthorizationDecision.DENY &&
+        this.options.precedence === AuthorizationDecision.DENY
+      ) {
         this.logger.debug('[intercept] Access denied');
         const error = new AuthorizationError('Access denied');
         error.statusCode = this.options.defaultStatusCodeForDeny;
         throw error;
       }
 
-      if (decision === AuthorizationDecision.ALLOW && this.options.precedence === AuthorizationDecision.ALLOW) {
+      if (
+        decision === AuthorizationDecision.ALLOW &&
+        this.options.precedence === AuthorizationDecision.ALLOW
+      ) {
         this.logger.debug('[intercept] Access allowed');
         break;
       }

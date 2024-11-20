@@ -32,11 +32,13 @@ export class SocketIOComponent extends BaseComponent {
     this.logger.info('[binding] Binding authenticate for application...');
 
     const identifier = this.application.getSync<string>(SocketIOKeys.IDENTIFIER);
-    const serverOptions = this.application.getSync<Partial<ServerOptions>>(SocketIOKeys.SERVER_OPTIONS);
-    const redisConnection = this.application.getSync<Redis>(SocketIOKeys.REDIS_CONNECTION);
-    const authenticateFn = this.application.getSync<(handshake: { headers: any }) => Promise<boolean>>(
-      SocketIOKeys.AUTHENTICATE_HANDLER,
+    const serverOptions = this.application.getSync<Partial<ServerOptions>>(
+      SocketIOKeys.SERVER_OPTIONS,
     );
+    const redisConnection = this.application.getSync<Redis>(SocketIOKeys.REDIS_CONNECTION);
+    const authenticateFn = this.application.getSync<
+      (handshake: { headers: any }) => Promise<boolean>
+    >(SocketIOKeys.AUTHENTICATE_HANDLER);
 
     let clientConnectedFn: any = null;
     if (this.application.isBound(SocketIOKeys.CLIENT_CONNECTED_HANDLER)) {

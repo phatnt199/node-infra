@@ -21,7 +21,10 @@ export interface IPermissionDecorator {
  * ```
  */
 export function permission(spec: IPermissionDecorator): MethodDecorator {
-  return MethodDecoratorFactory.createDecorator<IPermissionDecorator>(MetadataDecoratorKeys.PERMISSION, spec);
+  return MethodDecoratorFactory.createDecorator<IPermissionDecorator>(
+    MetadataDecoratorKeys.PERMISSION,
+    spec,
+  );
 }
 
 // Read more: https://loopback.io/doc/en/lb4/Creating-decorators.html#to-create-a-decorator-that-can-be-used-multiple-times-on-a-single-method

@@ -13,7 +13,9 @@ import isEmpty from 'lodash/isEmpty';
 const DS_AUTHORIZE = process.env.APP_ENV_APPLICATION_DS_AUTHORIZE;
 
 // ----------------------------------------------------------------------------
-export abstract class AbstractAuthorizeRepository<T extends BaseTzEntity> extends TzCrudRepository<T> {
+export abstract class AbstractAuthorizeRepository<
+  T extends BaseTzEntity,
+> extends TzCrudRepository<T> {
   constructor(entityClass: EntityClassType<T>, dataSource: BaseDataSource) {
     if (!DS_AUTHORIZE || isEmpty(DS_AUTHORIZE)) {
       throw getError({
@@ -30,7 +32,12 @@ export abstract class AbstractAuthorizeRepository<T extends BaseTzEntity> extend
 
 // ----------------------------------------------------------------------------
 export class RoleRepository extends AbstractAuthorizeRepository<Role> {
-  public readonly permissions: HasManyThroughRepositoryFactory<Permission, IdType, PermissionMapping, IdType>;
+  public readonly permissions: HasManyThroughRepositoryFactory<
+    Permission,
+    IdType,
+    PermissionMapping,
+    IdType
+  >;
 
   constructor(
     @inject(`datasources.${DS_AUTHORIZE}`) dataSource: BaseDataSource,

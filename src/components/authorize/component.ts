@@ -2,7 +2,11 @@ import { BaseApplication } from '@/base/applications';
 import { BaseComponent } from '@/base/base.component';
 import { BaseDataSource } from '@/base/base.datasource';
 import { getError } from '@/utilities';
-import { AuthorizationBindings, AuthorizationDecision, AuthorizationTags } from '@loopback/authorization';
+import {
+  AuthorizationBindings,
+  AuthorizationDecision,
+  AuthorizationTags,
+} from '@loopback/authorization';
 import { Binding, CoreBindings, inject } from '@loopback/core';
 
 import { AuthorizerKeys, IAuthorizeConfigureOptions } from './common';
@@ -80,7 +84,9 @@ export class AuthorizeComponent extends BaseComponent {
   }
 
   async verify() {
-    const datasource = this.application.getSync<BaseDataSource>(AuthorizerKeys.AUTHORIZE_DATASOURCE);
+    const datasource = this.application.getSync<BaseDataSource>(
+      AuthorizerKeys.AUTHORIZE_DATASOURCE,
+    );
 
     if (!datasource) {
       throw getError({
@@ -89,14 +95,16 @@ export class AuthorizeComponent extends BaseComponent {
       });
     }
 
-    const checkTableExecutions = ['Role', 'Permission', 'UserRole', 'PermissionMapping'].map(tableName => {
-      return datasource.execute(`
+    const checkTableExecutions = ['Role', 'Permission', 'UserRole', 'PermissionMapping'].map(
+      tableName => {
+        return datasource.execute(`
         SELECT EXISTS (
           SELECT FROM information_schema.tables
           WHERE table_schema='public'
             AND table_name='${tableName}'
         ) as "isTableExisted"`);
-    });
+      },
+    );
 
     const tableRs = await Promise.all(checkTableExecutions);
     const checkTableExistRs = flatten(tableRs);
@@ -120,7 +128,8 @@ export class AuthorizeComponent extends BaseComponent {
       if (!rs.isViewExisted) {
         throw getError({
           statusCode: 500,
-          message: '[verify] Essential view IS NOT EXISTS | Please check again (ViewAuthorizePolicy)',
+          message:
+            '[verify] Essential view IS NOT EXISTS | Please check again (ViewAuthorizePolicy)',
         });
       }
     }
@@ -145,7 +154,10 @@ export class AuthorizeComponent extends BaseComponent {
           defaultDecision: AuthorizationDecision.DENY,
         });
 
-        this.application.bind(AuthorizerKeys.PROVIDER).toProvider(AuthorizeProvider).tag(AuthorizationTags.AUTHORIZER);
+        this.application
+          .bind(AuthorizerKeys.PROVIDER)
+          .toProvider(AuthorizeProvider)
+          .tag(AuthorizationTags.AUTHORIZER);
       })
       .catch(error => {
         throw error;

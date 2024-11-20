@@ -3,7 +3,10 @@ import { MigrationStatuses } from '@/common';
 import { Migration, TMigrationProcess, MigrationRepository } from '@/components/migration';
 import { applicationLogger as logger } from '@/helpers';
 
-export const cleanUpMigration = async (application: BaseApplication, migrationProcesses: Array<TMigrationProcess>) => {
+export const cleanUpMigration = async (
+  application: BaseApplication,
+  migrationProcesses: Array<TMigrationProcess>,
+) => {
   logger.info('START | Clean up migrate database');
 
   for (const migrationProcess of migrationProcesses) {
@@ -24,7 +27,9 @@ export const cleanUpMigration = async (application: BaseApplication, migrationPr
 
 const m = async (application: BaseApplication, migrationProcesses: Array<TMigrationProcess>) => {
   logger.info('[migration] START Migrating database');
-  const migrationRepository = application.getSync<MigrationRepository>('repositories.MigrationRepository');
+  const migrationRepository = application.getSync<MigrationRepository>(
+    'repositories.MigrationRepository',
+  );
 
   for (const migrationProcess of migrationProcesses) {
     const { name, fn, options } = migrationProcess;

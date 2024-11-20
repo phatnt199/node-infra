@@ -87,7 +87,10 @@ export class NetworkHelper {
   // -------------------------------------------------------------
   async put(opts: IRequestOptions, logger?: any) {
     const { url, body, configs, ...rest } = opts;
-    const response = await this.send({ ...rest, url, method: 'put', body, configs, ...rest }, logger);
+    const response = await this.send(
+      { ...rest, url, method: 'put', body, configs, ...rest },
+      logger,
+    );
     return response;
   }
 
