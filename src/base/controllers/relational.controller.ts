@@ -90,7 +90,7 @@ export const defineRelationViewController = <S extends BaseTzEntity, T extends B
         },
       },
     })
-    async find(@param.path.number('id') id: IdType, @param.query.object('filter') filter?: Filter<T>): Promise<T[]> {
+    find(@param.path.number('id') id: IdType, @param.query.object('filter') filter?: Filter<T>): Promise<T[]> {
       const ref = getProp(this.sourceRepository, relationName)(id);
 
       switch (relationType) {
