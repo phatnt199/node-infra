@@ -1,9 +1,9 @@
 import { ValueOrPromise } from '@/common';
 
-type Task<T> = () => Promise<T>;
+type TTask<T> = () => Promise<T>;
 
 export const executePromiseWithLimit = async <T>(opts: {
-  tasks: Array<Task<T>>;
+  tasks: Array<TTask<T>>;
   limit: number;
   onTaskDone?: <R>(opts: { result: R }) => ValueOrPromise<void>;
 }) => {
