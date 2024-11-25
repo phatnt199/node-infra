@@ -8,7 +8,10 @@ interface IBullMQOptions {
   identifier: string;
   role: TBullQueueRole;
   connection: Redis;
+
   numberOfWorker?: number;
+  lockDuration?: number;
+
   onWorkerData?: (job: Job) => Promise<any>;
   onWorkerDataCompleted?: (job: Job, result: any) => Promise<void>;
   onWorkerDataFail?: (job: Job | undefined, error: Error) => Promise<void>;
@@ -23,6 +26,8 @@ export class BullMQHelper extends BaseHelper {
   worker: Worker;
 
   private numberOfWorker = 1;
+  private lockDuration = 90 * 60 * 1000;
+
   private onWorkerData?: (job: Job) => Promise<any>;
   private onWorkerDataCompleted?: (job: Job, result: any) => Promise<void>;
   private onWorkerDataFail?: (job: Job | undefined, error: Error) => Promise<void>;
@@ -34,6 +39,7 @@ export class BullMQHelper extends BaseHelper {
       connection,
       role,
       numberOfWorker = 1,
+      lockDuration = 90 * 60 * 1000,
       onWorkerData,
       onWorkerDataCompleted,
       onWorkerDataFail,
@@ -42,7 +48,10 @@ export class BullMQHelper extends BaseHelper {
     this.queueName = queueName;
     this.role = role;
     this.connection = connection;
+
     this.numberOfWorker = numberOfWorker;
+    this.lockDuration = lockDuration;
+
     this.onWorkerData = onWorkerData;
     this.onWorkerDataCompleted = onWorkerDataCompleted;
     this.onWorkerDataFail = onWorkerDataFail;
@@ -93,7 +102,11 @@ export class BullMQHelper extends BaseHelper {
           data,
         );
       },
-      { connection: this.connection, concurrency: this.numberOfWorker },
+      {
+        connection: this.connection,
+        concurrency: this.numberOfWorker,
+        lockDuration: this.lockDuration,
+      },
     );
 
     this.worker.on('completed', (job, result) => {
