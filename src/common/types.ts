@@ -34,6 +34,7 @@ export type IdType = string | number;
 export type AnyType = any;
 export type AnyObject = Record<string | symbol | number, any>;
 export type ValueOrPromise<T> = T | Promise<T>;
+export type ValueOf<T> = T[keyof T];
 
 export type NullableType = undefined | null | void;
 

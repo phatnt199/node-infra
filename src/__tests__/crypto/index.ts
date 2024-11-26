@@ -11,7 +11,7 @@ TestDescribe.withTestPlan({
         TestCase.withOptions({
           code: getUID(),
           description: 'Check AES message successfully encrypt and decrypt',
-          expectation: '',
+          expectation: 'AES en-decryption',
           handler: new TestCases.TestAES001Handler({
             context,
             args: { secretKey: 'abc123qwe', message: 'hello world' },
@@ -20,7 +20,7 @@ TestDescribe.withTestPlan({
         TestCase.withOptions({
           code: getUID(),
           description: 'Check RSA message successfully encrypt and decrypt',
-          expectation: '',
+          expectation: 'RSA en-decryption',
           handler: new TestCases.TestRSA001Handler({
             context,
             args: {
