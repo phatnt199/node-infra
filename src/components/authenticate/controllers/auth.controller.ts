@@ -1,10 +1,9 @@
+import { BaseController } from '@/base/controllers';
+import { IdType } from '@/common';
+import { getError, getSchemaObject } from '@/utilities';
 import { authenticate } from '@loopback/authentication';
 import { Getter, inject } from '@loopback/core';
 import { api, get, post, requestBody } from '@loopback/rest';
-
-import { BaseController } from '@/base';
-import { IdType } from '@/common';
-import { getError, getSchemaObject } from '@/utilities';
 import { SecurityBindings } from '@loopback/security';
 import {
   Authentication,
@@ -22,7 +21,11 @@ export const defineAuthController = <
 >(
   opts: IAuthenticateRestOptions,
 ) => {
-  const { restPath = '/auth', requireAuthenticatedSignUp = false, serviceKey = 'services.UserService' } = opts;
+  const {
+    restPath = '/auth',
+    requireAuthenticatedSignUp = false,
+    serviceKey = 'services.UserService',
+  } = opts;
 
   @api({ basePath: restPath })
   class BaseAuthController extends BaseController {

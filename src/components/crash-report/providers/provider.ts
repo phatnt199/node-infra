@@ -1,10 +1,12 @@
+import { BaseApplication } from '@/base/applications';
+import { getError } from '@/utilities';
 import { CoreBindings, inject, Provider, ValueOrPromise } from '@loopback/core';
 import { CrashReportProviderKeys, ICrashReportProvider, TCrashReportProviders } from '../common';
-import { BaseApplication } from '@/base';
 import { MTCrashReportService } from '../services';
-import { getError } from '@/utilities';
 
-export type TGetCrashReportProviderFn = (opts: { identifier: TCrashReportProviders }) => ICrashReportProvider | null;
+export type TGetCrashReportProviderFn = (opts: {
+  identifier: TCrashReportProviders;
+}) => ICrashReportProvider | null;
 
 export class CrashReportProvider implements Provider<TGetCrashReportProviderFn> {
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) private application: BaseApplication) {}
@@ -13,7 +15,9 @@ export class CrashReportProvider implements Provider<TGetCrashReportProviderFn> 
     return (opts: { identifier: TCrashReportProviders }) => {
       switch (opts.identifier) {
         case CrashReportProviderKeys.MT_PROVIDER: {
-          const service = this.application.getSync<MTCrashReportService>('services.MTCrashReportService');
+          const service = this.application.getSync<MTCrashReportService>(
+            'services.MTCrashReportService',
+          );
           return service;
         }
         case CrashReportProviderKeys.SENTRY_PROVIDER: {

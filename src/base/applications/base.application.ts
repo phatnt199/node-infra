@@ -1,10 +1,10 @@
 import { BindingKeys, EnvironmentKeys } from '@/common';
-import { IEnvironmentValidationResult, IApplication } from '@/common/types';
+import { IApplication, IEnvironmentValidationResult } from '@/common/types';
 import { GrpcTags } from '@/components';
 import { AuthenticateKeys } from '@/components/authenticate/common';
 import { applicationEnvironment, ApplicationLogger, LoggerFactory } from '@/helpers';
 import { RequestBodyParserMiddleware, RequestSpyMiddleware } from '@/middlewares';
-import { int } from '@/utilities';
+import { getError, int } from '@/utilities';
 import { BootMixin } from '@loopback/boot';
 import {
   ApplicationConfig,
@@ -26,6 +26,19 @@ import { BaseApplicationSequence } from '../base.sequence';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
+const {
+  NODE_ENV,
+  RUN_MODE,
+  ALLOW_EMPTY_ENV_VALUE = false,
+  APPLICATION_ENV_PREFIX = 'APP_ENV',
+
+  APP_ENV_APPLICATION_NAME = 'PNT',
+  APP_ENV_APPLICATION_TIMEZONE = 'Asia/Ho_Chi_Minh',
+  APP_ENV_DS_MIGRATION = 'postgres',
+  APP_ENV_DS_AUTHORIZE = 'postgres',
+  APP_ENV_LOGGER_FOLDER_PATH = './',
+} = process.env;
+
 export abstract class BaseApplication
   extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication)))
   implements IApplication
@@ -46,31 +59,50 @@ export abstract class BaseApplication
     this.projectRoot = this.getProjectRoot();
     this.component(CrudRestComponent);
 
-    const applicationEnv = process.env.NODE_ENV ?? 'unknown';
-    this.logger.info('[Application] Starting application with ENV "%s"...', applicationEnv);
+    this.logger.info('------------------------------------------------------------------------');
+    this.logger.info(
+      ' Starting application... | Name: %s | Env: %s',
+      APP_ENV_APPLICATION_NAME,
+      NODE_ENV,
+    );
+    this.logger.info(
+      ' AllowEmptyEnv: %s | Prefix: %s',
+      ALLOW_EMPTY_ENV_VALUE,
+      APPLICATION_ENV_PREFIX,
+    );
+    this.logger.info(' RunMode: %s', RUN_MODE);
+    this.logger.info(' Timezone: %s', APP_ENV_APPLICATION_TIMEZONE);
+    this.logger.info(' LogPath: %s', APP_ENV_LOGGER_FOLDER_PATH);
+    this.logger.info(
+      ' Datasource | Migration: %s | Authorize: %s',
+      APP_ENV_DS_MIGRATION,
+      APP_ENV_DS_AUTHORIZE,
+    );
+    this.logger.info('------------------------------------------------------------------------');
 
     // Validate whole application environment args.
-    this.logger.info('[Application] Validating application environments...');
+    this.logger.info('[environments] Validating application environments...');
     const envValidation = this.validateEnv();
     if (!envValidation.result) {
-      throw new Error(envValidation?.message ?? 'Invalid application environment!');
+      throw getError({ message: envValidation?.message ?? 'Invalid application environment!' });
     } else {
-      this.logger.info('[Application] All application environments are valid...');
+      this.logger.info('[environments] All application environments are valid...');
     }
 
-    this.logger.info('[Application] Declare application models...');
+    this.logger.info('[models] Declare application models...');
     this.models = new Set([]);
     this.models = this.declareModels();
 
     // Middlewares
+    this.logger.info('[middlewares] Declare application middlewares...');
     this.middleware(RequestBodyParserMiddleware);
     this.middleware(RequestSpyMiddleware);
 
     // Do configure while modules for application.
-    this.logger.info('[Application] Executing Pre-Configure...');
+    this.logger.info('[preConfigure] Executing Pre-Configuration...');
     this.preConfigure();
 
-    this.logger.info('[Application] Executing Post-Configure...');
+    this.logger.info('[postConfigure] Executing Post-Configuration...');
     this.postConfigure();
   }
 
@@ -143,7 +175,11 @@ export abstract class BaseApplication
     return modelByDs;
   }
 
-  async migrateModels(opts: { existingSchema: string; ignoreModels?: string[]; migrateModels?: string[] }) {
+  async migrateModels(opts: {
+    existingSchema: string;
+    ignoreModels?: string[];
+    migrateModels?: string[];
+  }) {
     const { existingSchema, ignoreModels = [], migrateModels } = opts;
 
     this.logger.info('[migrateModels] Loading legacy migratable models...!');
@@ -181,7 +217,12 @@ export abstract class BaseApplication
     }
   }
 
-  grpcController<T>(ctor: ControllerClass<T>, nameOrOptions?: string | BindingFromClassOptions): Binding<T> {
-    return this.controller(ctor, nameOrOptions).tag(GrpcTags.CONTROLLERS).inScope(BindingScope.SINGLETON);
+  grpcController<T>(
+    ctor: ControllerClass<T>,
+    nameOrOptions?: string | BindingFromClassOptions,
+  ): Binding<T> {
+    return this.controller(ctor, nameOrOptions)
+      .tag(GrpcTags.CONTROLLERS)
+      .inScope(BindingScope.SINGLETON);
   }
 }

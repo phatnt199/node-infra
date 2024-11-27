@@ -1,6 +1,13 @@
-import { inject } from '@loopback/core';
+import { Getter, inject } from '@loopback/core';
 import { CrudRestControllerOptions } from '@loopback/rest-crud';
-import { Count, CountSchema, DataObject, Filter, FilterExcludingWhere, Where } from '@loopback/repository';
+import {
+  Count,
+  CountSchema,
+  DataObject,
+  Filter,
+  FilterExcludingWhere,
+  Where,
+} from '@loopback/repository';
 import {
   del,
   get,
@@ -19,6 +26,8 @@ import { BaseIdEntity, BaseTzEntity, AbstractTzRepository } from './../';
 import { EntityRelationType, IController, IdType } from '@/common/types';
 import { App } from '@/common';
 import { applyLimit, getIdSchema } from './common';
+import { SecurityBindings } from '@loopback/security';
+import { IJWTTokenPayload } from '@/components/authenticate/common/types';
 
 // --------------------------------------------------------------------------------------------------------------
 export interface ICrudControllerOptions<E extends BaseIdEntity> {
@@ -38,6 +47,7 @@ export interface ICrudControllerOptions<E extends BaseIdEntity> {
     replaceById?: SchemaRef;
     deleteById?: SchemaRef;
   };
+  doInjectCurrentUser?: boolean;
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -47,6 +57,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
     repository: repositoryOptions,
     controller: controllerOptions,
     schema: schemaOptions,
+    doInjectCurrentUser,
   } = opts;
 
   const idPathParam: ParameterObject = {
@@ -64,6 +75,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       this.defaultLimit = controllerOptions?.defaultLimit ?? App.DEFAULT_QUERY_LIMIT;
     }
 
+    // ----------------------------------------------------------------------------------------------------------
     @get('/', {
       responses: {
         '200': {
@@ -72,7 +84,9 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
             'application/json': {
               schema: {
                 type: 'array',
-                items: schemaOptions?.find ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
+                items:
+                  schemaOptions?.find ??
+                  getModelSchemaRef(entityOptions, { includeRelations: true }),
               },
             },
           },
@@ -83,13 +97,16 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       return this.repository.find(applyLimit(filter));
     }
 
+    // ----------------------------------------------------------------------------------------------------------
     @get('/{id}', {
       responses: {
         '200': {
           description: `Find ${entityOptions.name} model instance`,
           content: {
             'application/json': {
-              schema: schemaOptions?.findById ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
+              schema:
+                schemaOptions?.findById ??
+                getModelSchemaRef(entityOptions, { includeRelations: true }),
             },
           },
         },
@@ -103,13 +120,16 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       return this.repository.findById(id, applyLimit(filter));
     }
 
+    // ----------------------------------------------------------------------------------------------------------
     @get('/find-one', {
       responses: {
         '200': {
           description: `Find one ${entityOptions.name} model instance`,
           content: {
             'application/json': {
-              schema: schemaOptions?.findOne ?? getModelSchemaRef(entityOptions, { includeRelations: true }),
+              schema:
+                schemaOptions?.findOne ??
+                getModelSchemaRef(entityOptions, { includeRelations: true }),
             },
           },
         },
@@ -122,6 +142,7 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       return this.repository.findOne(filter);
     }
 
+    // ----------------------------------------------------------------------------------------------------------
     @get('/count', {
       responses: {
         '200': {
@@ -147,11 +168,33 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
     return ReadController;
   }
 
-  class CRUDController extends ReadController {
-    constructor(repository: AbstractTzRepository<E, EntityRelationType>) {
+  class CrudController extends ReadController {
+    getCurrentUser?: Getter<IJWTTokenPayload>;
+
+    constructor(
+      repository: AbstractTzRepository<E, EntityRelationType>,
+      getCurrentUser?: Getter<IJWTTokenPayload>,
+    ) {
       super(repository);
+      this.getCurrentUser = getCurrentUser;
     }
 
+    // ----------------------------------------------------------------------------------------------------------
+    _getContextUser() {
+      return new Promise<{
+        userId: IdType;
+        roles: Array<{ id: IdType; identifier: string; priority: number }>;
+      } | null>((resolve, reject) => {
+        if (!this.getCurrentUser) {
+          resolve(null);
+          return;
+        }
+
+        this.getCurrentUser().then(resolve).catch(reject);
+      });
+    }
+
+    // ----------------------------------------------------------------------------------------------------------
     @post('/', {
       responses: {
         '200': {
@@ -179,9 +222,21 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       })
       data: Omit<E, 'id'>,
     ): Promise<E> {
-      return this.repository.create(data as DataObject<E>);
+      return new Promise<E>((resolve, reject) => {
+        this._getContextUser()
+          .then(currentUser => {
+            this.repository
+              .create(data as DataObject<E>, {
+                authorId: currentUser?.userId,
+              })
+              .then(resolve)
+              .catch(reject);
+          })
+          .catch(reject);
+      });
     }
 
+    // ----------------------------------------------------------------------------------------------------------
     @patch('/', {
       responses: {
         '200': {
@@ -211,9 +266,19 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       @param.where(entityOptions)
       where?: Where<E>,
     ): Promise<Count> {
-      return this.repository.updateAll(data as DataObject<E>, where);
+      return new Promise<Count>((resolve, reject) => {
+        this._getContextUser().then(currentUser => {
+          this.repository
+            .updateAll(data as DataObject<E>, where, {
+              authorId: currentUser?.userId,
+            })
+            .then(resolve)
+            .catch(reject);
+        });
+      });
     }
 
+    // ----------------------------------------------------------------------------------------------------------
     @patch('/{id}', {
       responses: {
         '200': {
@@ -246,15 +311,25 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       })
       data: Partial<E>,
     ): Promise<E> {
-      return this.repository.updateWithReturn(id, data as DataObject<E>);
+      return new Promise<E>((resolve, reject) => {
+        this._getContextUser().then(currentUser => {
+          this.repository
+            .updateWithReturn(id, data as DataObject<E>, {
+              authorId: currentUser?.userId,
+            })
+            .then(resolve)
+            .catch(reject);
+        });
+      });
     }
 
+    // ----------------------------------------------------------------------------------------------------------
     @put('/{id}', {
       responses: {
         '204': { description: `${entityOptions.name} was replaced` },
       },
     })
-    replaceById(
+    async replaceById(
       @param(idPathParam) id: IdType,
       @requestBody({
         content: {
@@ -269,16 +344,21 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
       })
       data: E,
     ): Promise<E> {
-      return new Promise((resolve, reject) => {
-        this.repository
-          .replaceById(id, data)
-          .then(() => {
-            resolve({ ...data, id });
-          })
-          .catch(reject);
+      return new Promise<E>((resolve, reject) => {
+        this._getContextUser().then(currentUser => {
+          this.repository
+            .replaceById(id, data, {
+              authorId: currentUser?.userId,
+            })
+            .then(() => {
+              resolve({ ...data, id });
+            })
+            .catch(reject);
+        });
       });
     }
 
+    // ----------------------------------------------------------------------------------------------------------
     @del('/{id}', {
       responses: {
         '200': {
@@ -309,8 +389,12 @@ export const defineCrudController = <E extends BaseTzEntity>(opts: ICrudControll
   }
 
   if (repositoryOptions?.name) {
-    inject(`repositories.${repositoryOptions.name}`)(CRUDController, undefined, 0);
+    inject(`repositories.${repositoryOptions.name}`)(CrudController, undefined, 0);
   }
 
-  return CRUDController;
+  if (doInjectCurrentUser) {
+    inject.getter(SecurityBindings.USER, { optional: true })(CrudController, undefined, 1);
+  }
+
+  return CrudController;
 };

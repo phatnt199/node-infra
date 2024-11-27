@@ -1,16 +1,36 @@
 import isEmpty from 'lodash/isEmpty';
 import { applicationLogger } from './default-logger';
+import { getError } from '@/utilities';
+import winston from 'winston';
 
-const LOG_ENVIRONMENTS = new Set(['development', 'alpha', 'beta', 'staging']);
+const extraLogEnvs =
+  (process.env.APP_ENV_EXTRA_LOG_ENVS ?? '').split(',').map(el => el.trim()) ?? [];
+const LOG_ENVIRONMENTS = new Set([
+  'local',
+  'development',
+  'alpha',
+  'beta',
+  'staging',
+  ...extraLogEnvs,
+]);
 
-class Logger {
-  private scopes: string[] = [];
+export class Logger {
   readonly _environment: string | undefined;
 
-  constructor() {
+  private scopes: string[] = [];
+  private customLogger?: winston.Logger;
+
+  constructor(opts?: { customLogger?: winston.Logger }) {
     this._environment = process.env.NODE_ENV;
+    this.customLogger = opts?.customLogger;
   }
 
+  // ---------------------------------------------------------------------
+  private _getLogger() {
+    return this.customLogger ?? applicationLogger;
+  }
+
+  // ---------------------------------------------------------------------
   withScope(scope: string) {
     if (this.scopes.length < 2) {
       this.scopes.push(scope);
@@ -25,6 +45,7 @@ class Logger {
     return this;
   }
 
+  // ---------------------------------------------------------------------
   private _enhanceMessage(parts: string[], message: string) {
     const enhanced = parts?.reduce((prevState = '', current: string) => {
       if (isEmpty(prevState)) {
@@ -37,39 +58,43 @@ class Logger {
     return `[${enhanced}]${message}`;
   }
 
+  // ---------------------------------------------------------------------
+  private _doLog(level: string, message: string, ...args: any[]) {
+    const logger = this._getLogger();
+    if (!logger) {
+      throw getError({ message: `[doLog] Level: ${level} | Invalid logger instance!` });
+    }
+
+    const enhanced = this._enhanceMessage(this.scopes, message);
+    logger.log(level, enhanced, ...args);
+  }
+
+  // ---------------------------------------------------------------------
   debug(message: string, ...args: any[]) {
     if (this._environment && !LOG_ENVIRONMENTS.has(this._environment)) {
       return;
-    }
-
-    if (!applicationLogger) {
-      throw new Error('Invalid logger instance!');
     }
 
     if (!process.env.DEBUG) {
       return;
     }
 
-    const enhanced = this._enhanceMessage(this.scopes, message);
-    applicationLogger.log('debug', enhanced, ...args);
+    this._doLog('debug', message, ...args);
   }
 
+  // ---------------------------------------------------------------------
   info(message: string, ...args: any[]) {
-    if (!applicationLogger) {
-      throw new Error('Invalid logger instance!');
-    }
-
-    const enhanced = this._enhanceMessage(this.scopes, message);
-    applicationLogger.log('info', enhanced, ...args);
+    this._doLog('info', message, ...args);
   }
 
-  error(message: string, ...args: any[]) {
-    if (!applicationLogger) {
-      throw new Error('Invalid logger instance!');
-    }
+  // ---------------------------------------------------------------------
+  warn(message: string, ...args: any[]) {
+    this._doLog('warn', message, ...args);
+  }
 
-    const enhanced = this._enhanceMessage(this.scopes, message);
-    applicationLogger.log('error', enhanced, ...args);
+  // ---------------------------------------------------------------------
+  error(message: string, ...args: any[]) {
+    this._doLog('error', message, ...args);
   }
 }
 

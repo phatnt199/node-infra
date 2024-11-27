@@ -23,22 +23,22 @@ const sqls = [
       SELECT
           pm.id as id,
           (CASE
-              WHEN user_id IS NOT NULL THEN '${EnforcerDefinitions.PREFIX_USER}'
-              WHEN role_id IS NOT NULL THEN '${EnforcerDefinitions.PREFIX_ROLE}'
+              WHEN pm.user_id IS NOT NULL THEN '${EnforcerDefinitions.PREFIX_USER}'
+              WHEN pm.role_id IS NOT NULL THEN '${EnforcerDefinitions.PREFIX_ROLE}'
               ELSE NULL
           END) AS subject_type,
           (CASE
-              WHEN user_id IS NOT NULL THEN user_id
-              WHEN role_id IS NOT NULL THEN role_id
+              WHEN pm.user_id IS NOT NULL THEN pm.user_id
+              WHEN pm.role_id IS NOT NULL THEN pm.role_id
               ELSE NULL
           END) AS subject_id,
           p.id AS permision_id,
           p.code AS permision_code,
           (CASE
-              WHEN user_id IS NOT NULL THEN
-                  'p,${EnforcerDefinitions.PREFIX_USER}_' || user_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE},' || effect
-              WHEN role_id IS NOT NULL THEN
-                  'p,${EnforcerDefinitions.PREFIX_ROLE}_' || role_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE},' || effect
+              WHEN pm.user_id IS NOT NULL THEN
+                  'p,${EnforcerDefinitions.PREFIX_USER}_' || pm.user_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE},' || effect
+              WHEN pm.role_id IS NOT NULL THEN
+                  'p,${EnforcerDefinitions.PREFIX_ROLE}_' || pm.role_id || ',' || LOWER(p.code) || ',${EnforcerDefinitions.ACTION_EXECUTE},' || effect
               ELSE NULL
           END) AS policy
       FROM "PermissionMapping" AS pm INNER JOIN "Permission" AS p ON pm.permission_id = p.id

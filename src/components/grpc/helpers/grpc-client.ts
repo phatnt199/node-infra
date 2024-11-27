@@ -16,7 +16,14 @@ export class GrpcClient<S extends TGrpcServiceClient> {
   private onClientReady?: (opts: { client: S }) => ValueOrPromise<void>;
 
   constructor(opts: IGrpcClientOptions<S>) {
-    const { identifier, serviceClass, address, credentials, autoConnect = false, onClientReady } = opts;
+    const {
+      identifier,
+      serviceClass,
+      address,
+      credentials,
+      autoConnect = false,
+      onClientReady,
+    } = opts;
 
     this.identifier = identifier;
     this.logger = LoggerFactory.getLogger([this.identifier]);
@@ -31,7 +38,9 @@ export class GrpcClient<S extends TGrpcServiceClient> {
     }
   }
 
-  static fromServiceClient<C extends TGrpcServiceClient>(opts: Omit<IGrpcClientOptions<C>, 'identifier'>) {
+  static fromServiceClient<C extends TGrpcServiceClient>(
+    opts: Omit<IGrpcClientOptions<C>, 'identifier'>,
+  ) {
     return new GrpcClient<C>({ ...opts, identifier: opts.serviceClass.name });
   }
 
@@ -53,7 +62,10 @@ export class GrpcClient<S extends TGrpcServiceClient> {
     const deadline = dayjs().add(10, 'seconds').toDate();
     this.client.waitForReady(deadline, error => {
       if (error) {
-        this.logger.error('[bindingClient][waitForReady] Client cannot be ready | Error: %s', error);
+        this.logger.error(
+          '[bindingClient][waitForReady] Client cannot be ready | Error: %s',
+          error,
+        );
         return;
       }
 
@@ -72,6 +84,8 @@ export class GrpcClient<S extends TGrpcServiceClient> {
   }
 }
 
-export const initializeGrpcClient = <C extends TGrpcServiceClient>(opts: Omit<IGrpcClientOptions<C>, 'identifier'>) => {
+export const initializeGrpcClient = <C extends TGrpcServiceClient>(
+  opts: Omit<IGrpcClientOptions<C>, 'identifier'>,
+) => {
   return GrpcClient.fromServiceClient(opts);
 };

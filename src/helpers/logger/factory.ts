@@ -1,8 +1,8 @@
-import { ApplicationLogger } from './application-logger';
+import { ApplicationLogger, Logger } from './application-logger';
 
 export class LoggerFactory {
-  static getLogger(scopes: string[]): ApplicationLogger {
-    const logger = new ApplicationLogger();
+  static getLogger(scopes: string[], customLogger?: Logger): Logger {
+    const logger = customLogger ?? new ApplicationLogger();
     logger.withScope(scopes.join('-'));
     return logger;
   }

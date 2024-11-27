@@ -11,9 +11,9 @@
     },
     "module": "nodenext",
     "moduleResolution": "nodenext",
+    "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "esModuleInterop": true,
     "importHelpers": false,
     "removeComments": false
   },

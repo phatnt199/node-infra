@@ -1,7 +1,7 @@
+import { BaseHelper } from '@/base/base.helper';
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
 import mqtt from 'mqtt';
-import { ApplicationLogger, LoggerFactory } from '../logger';
 
 export interface IMQTTClientOptions {
   identifier: string;
@@ -14,10 +14,7 @@ export interface IMQTTClientOptions {
   onMessage: (opts: { topic: string; message: Buffer }) => void;
 }
 
-export class MQTTClientHelper {
-  private logger: ApplicationLogger;
-
-  private identifier: string;
+export class MQTTClientHelper extends BaseHelper {
   private url: string;
   private options: mqtt.IClientOptions;
   private client: mqtt.MqttClient;
@@ -29,9 +26,8 @@ export class MQTTClientHelper {
   private onMessage: (opts: { topic: string; message: Buffer }) => void;
 
   constructor(opts: IMQTTClientOptions) {
-    this.logger = LoggerFactory.getLogger([MQTTClientHelper.name]);
+    super({ scope: MQTTClientHelper.name, identifier: opts.identifier });
 
-    this.identifier = opts.identifier;
     this.url = opts.url;
     this.options = opts.options;
 
@@ -47,7 +43,11 @@ export class MQTTClientHelper {
   // -------------------------------------------------------------------------------
   configure() {
     if (this.client) {
-      this.logger.info('[configure][%s] MQTT Client already established! Client: %j', this.identifier, this.client);
+      this.logger.info(
+        '[configure][%s] MQTT Client already established! Client: %j',
+        this.identifier,
+        this.client,
+      );
       return;
     }
 

@@ -1,9 +1,11 @@
 import { IController } from '@/common';
 import { applicationLogger } from '@/helpers';
 import { Constructor, MetadataMap } from '@loopback/core';
+import { writeFileSync } from 'fs';
 import union from 'lodash/union';
+import { resolve } from 'path';
 import { EnforcerDefinitions } from '../common';
-import { getDecoratorData, MetadataDecoratorKeys } from '../decorators';
+import { getDecoratorData, IPermissionDecorator, MetadataDecoratorKeys } from '../decorators';
 import { Permission } from '../models';
 import { PermissionRepository } from '../repositories';
 
@@ -16,12 +18,24 @@ export interface IPermission {
   name: string;
   parentId: number;
   pType: string;
-  details?: { idx: number };
+  details?: IPermissionDecorator;
 }
 
 export class GeneratePermissionService {
   getMethodsClass(controllerPrototype: object) {
     return Reflect.ownKeys(controllerPrototype).slice(1) as string[];
+  }
+
+  getAllMethodsClass(controllerPrototype: object): string[] {
+    let methods: string[] = [];
+    let currentPrototype: object | null = controllerPrototype;
+
+    while (currentPrototype && currentPrototype !== Object.prototype) {
+      methods = [...methods, ...this.getMethodsClass(currentPrototype)];
+      currentPrototype = Reflect.getPrototypeOf(currentPrototype);
+    }
+
+    return methods;
   }
 
   async generateParentPermissions(opts: {
@@ -40,14 +54,17 @@ export class GeneratePermissionService {
       pType: 'p',
     };
 
-    await permissionRepository.upsertWith({ ...parentPermissions }, { code: parentPermissions.code });
+    await permissionRepository.upsertWith(
+      { ...parentPermissions },
+      { code: parentPermissions.code },
+    );
   }
 
   generatePermissions(opts: {
     methods: string[];
     permissionSubject: string;
     parentId: number;
-    allPermissionDecoratorData: MetadataMap<{ idx: number }>;
+    allPermissionDecoratorData: MetadataMap<IPermissionDecorator>;
   }) {
     const { methods, permissionSubject, parentId, allPermissionDecoratorData } = opts ?? {};
 
@@ -57,7 +74,9 @@ export class GeneratePermissionService {
         code: `${permissionSubject}.${m}`,
         subject: permissionSubject,
         action: EnforcerDefinitions.ACTION_EXECUTE,
-        scope: m.match(/get|find|search|count/gim) ? EnforcerDefinitions.ACTION_READ : EnforcerDefinitions.ACTION_WRITE,
+        scope: m.match(/get|find|search|count/gim)
+          ? EnforcerDefinitions.ACTION_READ
+          : EnforcerDefinitions.ACTION_WRITE,
         pType: 'p',
         parentId,
         details: allPermissionDecoratorData?.[m],
@@ -65,13 +84,14 @@ export class GeneratePermissionService {
     }) as IPermission[];
   }
 
-  generatePermissionBaseInherit = (opts: {
-    methodsParentsMethods: string[];
+  generatePermissionBaseInherit(opts: {
+    methodsParentsClass: string[];
     methodsChildClass: string[];
     parentPermission: Permission;
-    allPermissionDecoratorData: MetadataMap<{ idx: number }>;
-  }) => {
-    const { methodsChildClass, methodsParentsMethods, parentPermission, allPermissionDecoratorData } = opts ?? {};
+    allPermissionDecoratorData: MetadataMap<IPermissionDecorator>;
+  }) {
+    const { methodsChildClass, methodsParentsClass, parentPermission, allPermissionDecoratorData } =
+      opts ?? {};
 
     const defaultPermissions = [
       'count',
@@ -85,30 +105,21 @@ export class GeneratePermissionService {
       'updateAll',
     ];
 
-    // Controller not extended from any class
-    if (methodsParentsMethods.includes('__proto__')) {
-      return this.generatePermissions({
-        methods: methodsChildClass,
-        permissionSubject: parentPermission.subject,
-        parentId: parentPermission.id,
-        allPermissionDecoratorData,
-      });
-    }
-
-    // Controller is extended from CrudController
-    return this.generatePermissions({
-      methods: union(defaultPermissions, methodsChildClass),
+    const permissions = this.generatePermissions({
+      methods: union(defaultPermissions, methodsParentsClass, methodsChildClass),
       permissionSubject: parentPermission.subject,
       parentId: parentPermission.id,
       allPermissionDecoratorData,
     });
-  };
+
+    return permissions;
+  }
 
   generatePermissionRecords(opts: {
     controller: Constructor<IController>;
     parentPermission: Permission;
     permissionRepository: PermissionRepository;
-    allPermissionDecoratorData: MetadataMap<{ idx: number }>;
+    allPermissionDecoratorData: MetadataMap<IPermissionDecorator>;
   }) {
     const { controller, parentPermission, allPermissionDecoratorData } = opts;
     const permissionRecords: IPermission[] = [];
@@ -116,11 +127,11 @@ export class GeneratePermissionService {
     const methodsChildClass = this.getMethodsClass(controllerPrototype);
 
     const parentClass = Reflect.getPrototypeOf(controllerPrototype) as object;
-    const methodsParentsMethods = this.getMethodsClass(parentClass);
+    const methodsParentsClass = this.getAllMethodsClass(parentClass);
 
     permissionRecords.push(
       ...this.generatePermissionBaseInherit({
-        methodsParentsMethods,
+        methodsParentsClass,
         methodsChildClass,
         parentPermission,
         allPermissionDecoratorData,
@@ -132,7 +143,7 @@ export class GeneratePermissionService {
 
   async updatePermissionByChangeMethodName(
     permissionSubject: string,
-    allPermissionDecoratorData: MetadataMap<{ idx: number }>,
+    allPermissionDecoratorData: MetadataMap<IPermissionDecorator>,
     permissionRepository: PermissionRepository,
   ) {
     if (!Object.values(allPermissionDecoratorData).length) {
@@ -173,23 +184,25 @@ export class GeneratePermissionService {
     const permissions: IPermission[] = [];
 
     for (const controller of controllers) {
-      const permissionSubject = controller.name.replace(/Controller/g, '');
+      const permissionSubject = controller.name.replace(/Controller/g, '').toLowerCase();
       const controllerPrototype = controller.prototype;
-      const permissionSubjectLowerCase = permissionSubject?.toLowerCase();
 
-      applicationLogger.info('[Migrate Permissions] Migration permissions for: %s', controller.name);
+      applicationLogger.info(
+        '[Migrate Permissions] Migration permissions for: %s',
+        controller.name,
+      );
 
       await this.generateParentPermissions({ controller, permissionRepository });
 
       const parentPermission = await permissionRepository.findOne({
-        where: { subject: permissionSubjectLowerCase },
+        where: { subject: permissionSubject },
       });
 
       if (!parentPermission) {
         continue;
       }
 
-      const allPermissionDecoratorData: MetadataMap<{ idx: number }> =
+      const allPermissionDecoratorData: MetadataMap<IPermissionDecorator> =
         getDecoratorData(controllerPrototype, MetadataDecoratorKeys.PERMISSION) ?? {};
 
       const permissionList = this.generatePermissionRecords({
@@ -200,7 +213,7 @@ export class GeneratePermissionService {
       });
 
       await this.updatePermissionByChangeMethodName(
-        permissionSubjectLowerCase,
+        permissionSubject,
         allPermissionDecoratorData,
         permissionRepository,
       );
@@ -212,4 +225,88 @@ export class GeneratePermissionService {
       await permissionRepository.upsertWith(p, { code: p.code });
     }
   }
+
+  /**
+   * Obtain all permission codes for a controller
+   *
+   * @returns {string[]} List of permission codes
+   */
+  getPermissionCodes(opts: { controllers: Array<Constructor<IController>> }): string[] {
+    const { controllers } = opts;
+
+    const permissionCodes: string[] = [];
+
+    for (const controller of controllers) {
+      const permissionSubject = controller.name.replace(/Controller/g, '').toLowerCase();
+
+      permissionCodes.push(`${permissionSubject}.*`);
+
+      const methods = this.getAllMethodsClass(controller.prototype);
+
+      for (const method of methods) {
+        permissionCodes.push(`${permissionSubject}.${method}`);
+      }
+    }
+
+    applicationLogger.info('[getPermissionCodes] Permission codes: %o', permissionCodes);
+
+    return permissionCodes;
+  }
+
+  /**
+   * Write all permission codes for a list of controllers to a file
+   *
+   * @param outputPath - Path to write
+   *
+   * @example
+   * const generatePermissionService = new GeneratePermissionService();
+   *
+   * generatePermissionService.getPermissionCodesAndWriteToFile({
+   *    controllers: [XboxController, PSController, NintendoController],
+   *    outputPath: './src/migrations/',
+   *    fileName: 'permissionCodes',
+   *    fileType: 'ts',
+   * });
+   */
+  getPermissionCodesAndWriteToFile(opts: {
+    controllers: Array<Constructor<IController>>;
+    outputPath?: string;
+    fileName?: string;
+    fileType?: 'ts' | 'txt';
+  }) {
+    const {
+      controllers,
+      outputPath = './src/',
+      fileName = 'permission-codes',
+      fileType = 'ts',
+    } = opts;
+
+    const permissionCodes = this.getPermissionCodes({ controllers });
+
+    if (permissionCodes.length === 0) {
+      return;
+    }
+
+    const fileContent: string[] = [];
+
+    if (fileType === 'ts') {
+      fileContent.push('const permissionCodes: string[] = [');
+    }
+
+    fileContent.push(...permissionCodes.map(code => ` '${code}',`));
+
+    if (fileType === 'ts') {
+      fileContent.push(' ];');
+    }
+
+    const filePath = `${outputPath}/${fileName}.${fileType}`;
+
+    writeFileSync(resolve(filePath), fileContent.join('\n'), 'utf8');
+  }
+
+  // async generatePermissionMapping(opts: {
+  //   controllers: Array<Constructor<IController>>;
+  //   permissionRepository: PermissionRepository;
+  //   permissionMappingRepository: PermissionMappingRepository;
+  // }) {}
 }

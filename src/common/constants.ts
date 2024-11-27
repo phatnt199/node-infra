@@ -1,6 +1,7 @@
 export class App {
   static readonly APPLICATION_NAME = process.env.APP_ENV_APPLICATION_NAME ?? 'APP';
-  static readonly APPLICATION_SECRET = process.env.APP_ENV_APPLICATION_SECRET ?? 'application.secret';
+  static readonly APPLICATION_SECRET =
+    process.env.APP_ENV_APPLICATION_SECRET ?? 'application.secret';
 
   static readonly DEFAULT_LOCALE = 'en.UTF-8';
   static readonly DEFAULT_EXPLORER_PATH = '/explorer';
@@ -47,7 +48,12 @@ export class EntityRelations {
   static readonly HAS_ONE = 'hasOne';
   static readonly HAS_MANY = 'hasMany';
   static readonly HAS_MANY_THROUGH = 'hasManyThrough';
-  static readonly TYPE_SET = new Set([this.BELONGS_TO, this.HAS_ONE, this.HAS_MANY, this.HAS_MANY_THROUGH]);
+  static readonly TYPE_SET = new Set([
+    this.BELONGS_TO,
+    this.HAS_ONE,
+    this.HAS_MANY,
+    this.HAS_MANY_THROUGH,
+  ]);
 
   static isValid(type: string) {
     return this.TYPE_SET.has(type);

@@ -1,5 +1,5 @@
-import { BaseIdEntity } from '@/base';
-import { App, EntityRelations, IController, ICRUDController } from '@/common';
+import { BaseIdEntity } from '@/base/base.model';
+import { App, EntityRelations, IController, ICrudController } from '@/common';
 import {
   inject,
   injectable,
@@ -27,8 +27,10 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
   }
 
   // -------------------------------------------------------------------------------------
-  identifyControllerType(opts: { target: IController }): 'single-entity' | 'relation-entity' | undefined {
-    const controller = opts.target as ICRUDController;
+  identifyControllerType(opts: {
+    target: IController;
+  }): 'single-entity' | 'relation-entity' | undefined {
+    const controller = opts.target as ICrudController;
 
     if (controller?.repository) {
       return 'single-entity';
@@ -45,7 +47,7 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
   async handleSingleEntity(opts: { context: InvocationContext; result: Array<BaseIdEntity> }) {
     const { context } = opts;
     const { args, target } = context;
-    const controller = target as ICRUDController;
+    const controller = target as ICrudController;
 
     let filter: Filter<BaseIdEntity> | null = {};
     filter = args?.[0];
@@ -63,19 +65,26 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
       };
     }
 
-    const { where = {}, skip = 0, limit = controller?.defaultLimit ?? App.DEFAULT_QUERY_LIMIT } = filter;
+    const {
+      where = {},
+      skip = 0,
+      limit = controller?.defaultLimit ?? App.DEFAULT_QUERY_LIMIT,
+    } = filter;
     const countRs = await repository.count(where);
 
     const start = 0 + skip;
     const end = Math.min(start + limit, countRs.count);
-    this.response.set('Content-Range', `records ${start}-${end > 0 ? end - 1 : end}/${countRs.count}`);
+    this.response.set(
+      'Content-Range',
+      `records ${start}-${end > 0 ? end - 1 : end}/${countRs.count}`,
+    );
   }
 
   // -------------------------------------------------------------------------------------
   async handleRelationalEntity(opts: { context: InvocationContext; result: Array<BaseIdEntity> }) {
     const { context } = opts;
     const { args, target } = context;
-    const controller = target as ICRUDController;
+    const controller = target as ICrudController;
     const relation = controller.relation;
     if (!relation) {
       return;
@@ -116,7 +125,10 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
 
         const start = 0 + skip;
         const end = Math.min(start + limit, countRs.count);
-        this.response.set('Content-Range', `records ${start}-${end > 0 ? end - 1 : end}/${countRs.count}`);
+        this.response.set(
+          'Content-Range',
+          `records ${start}-${end > 0 ? end - 1 : end}/${countRs.count}`,
+        );
 
         break;
       }
@@ -130,7 +142,10 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
 
         const start = 0 + skip;
         const end = Math.min(start + limit, countRs.count);
-        this.response.set('Content-Range', `records ${start}-${end > 0 ? end - 1 : end}/${countRs.count}`);
+        this.response.set(
+          'Content-Range',
+          `records ${start}-${end > 0 ? end - 1 : end}/${countRs.count}`,
+        );
         break;
       }
       default: {
@@ -140,7 +155,10 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
   }
 
   // -------------------------------------------------------------------------------------
-  async enrichResponseContentRange(opts: { context: InvocationContext; result: Array<BaseIdEntity> }) {
+  async enrichResponseContentRange(opts: {
+    context: InvocationContext;
+    result: Array<BaseIdEntity>;
+  }) {
     const { context } = opts;
     const { target } = context;
 
@@ -168,7 +186,10 @@ export class ContentRangeInterceptor implements Provider<Interceptor> {
       return result;
     }
 
-    this.response.set('Access-Control-Expose-Headers', 'Content-Length, Content-Type, Content-Range');
+    this.response.set(
+      'Access-Control-Expose-Headers',
+      'Content-Length, Content-Type, Content-Range',
+    );
 
     if (!context?.methodName) {
       return result;

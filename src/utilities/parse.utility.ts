@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import round from 'lodash/round';
+import { getError } from './error.utility';
 
 // -------------------------------------------------------------------------
 const INTL_0_DIGITS_FORMATER = new Intl.NumberFormat('en-US', {
@@ -102,7 +103,12 @@ export const float = (input: any, digit = 2) => {
 // -------------------------------------------------------------------------
 export const toBoolean = (input: any) => {
   return (
-    (input !== 'false' && input !== '0' && input !== false && input !== 0 && input !== null && input !== undefined) ??
+    (input !== 'false' &&
+      input !== '0' &&
+      input !== false &&
+      input !== 0 &&
+      input !== null &&
+      input !== undefined) ??
     Boolean(input)
   );
 };
@@ -167,4 +173,71 @@ export const getNumberValue = (input: string, method: 'int' | 'float' = 'int') =
       return float(raw);
     }
   }
+};
+
+// ---------------------------------------------------------
+/**
+ * Returns an object with the key as the value of the `keyMap` and the value as the object itself.
+ *
+ * @param arr - The input array
+ * @param keyMap - The property key to use as the key in the resulting object
+ *
+ * Note: In case of duplicate keys, the last element will be used.
+ */
+export const parseArrayToRecordWithKey = <
+  T extends Record<K, PropertyKey>,
+  K extends keyof T,
+>(opts: {
+  arr: T[];
+  keyMap: K;
+}): Record<T[K], T> => {
+  const { arr, keyMap } = opts;
+
+  const resultRecord: Record<T[K], T> = {} as Record<T[K], T>;
+
+  if (!arr.length) {
+    return resultRecord;
+  }
+
+  arr.forEach(element => {
+    if (!(keyMap in element)) {
+      throw getError({
+        message: 'Invalid keyMap',
+      });
+    }
+    resultRecord[element[keyMap]] = element;
+  });
+
+  return resultRecord;
+};
+
+// ---------------------------------------------------------
+/**
+ * Return a map with the key as the value of the `keyMap` and the value as the object itself.
+ *
+ * @param arr - The input array
+ * @param keyMap - The property key to use as the key in the resulting object
+ *
+ * Note: In case of duplicate keys, the last element will be used.
+ */
+export const parseArrayToMapWithKey = <T extends Record<K, PropertyKey>, K extends keyof T>(
+  arr: T[],
+  keyMap: K,
+): Map<T[K], T> => {
+  const resultMap = new Map<T[K], T>();
+
+  if (!arr.length) {
+    return resultMap;
+  }
+
+  arr.forEach(element => {
+    if (!(keyMap in element)) {
+      throw getError({
+        message: 'Invalid keyMap',
+      });
+    }
+    resultMap.set(element[keyMap], element);
+  });
+
+  return resultMap;
 };

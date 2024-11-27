@@ -81,7 +81,9 @@ export class AES extends BaseCryptoAlgorithm<AESAlgorithmType, IO> {
 
     try {
       const iv =
-        opts?.iv ?? Buffer.from(message, inputEncoding).subarray(0, DEFAULT_LENGTH) ?? Buffer.alloc(DEFAULT_LENGTH, 0);
+        opts?.iv ??
+        Buffer.from(message, inputEncoding).subarray(0, DEFAULT_LENGTH) ??
+        Buffer.alloc(DEFAULT_LENGTH, 0);
       let messageIndex = iv.length;
 
       const secretKey = this.normalizeSecretKey({
@@ -95,7 +97,10 @@ export class AES extends BaseCryptoAlgorithm<AESAlgorithmType, IO> {
           break;
         }
         case 'aes-256-gcm': {
-          const authTag = Buffer.from(message, inputEncoding).subarray(iv.length, iv.length + DEFAULT_LENGTH);
+          const authTag = Buffer.from(message, inputEncoding).subarray(
+            iv.length,
+            iv.length + DEFAULT_LENGTH,
+          );
           messageIndex += authTag.length;
           (decipher as C.DecipherGCM).setAuthTag(authTag);
           break;
@@ -103,7 +108,9 @@ export class AES extends BaseCryptoAlgorithm<AESAlgorithmType, IO> {
       }
 
       const cipherText = Buffer.from(message, inputEncoding).subarray(messageIndex);
-      return Buffer.concat([decipher.update(cipherText), decipher.final()]).toString(outputEncoding);
+      return Buffer.concat([decipher.update(cipherText), decipher.final()]).toString(
+        outputEncoding,
+      );
     } catch (error) {
       if (doThrow) {
         throw error;

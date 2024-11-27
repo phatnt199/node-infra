@@ -1,5 +1,7 @@
-import { BaseIdEntity, BaseTzEntity } from '@/base';
+import { AbstractTzRepository } from '@/base';
+import { BaseIdEntity, BaseTzEntity } from '@/base/base.model';
 import { BindingKey } from '@loopback/core';
+import { RequestContext } from '@loopback/rest';
 import { Count, DataObject, Entity, Filter, Options, Where } from '@loopback/repository';
 
 export interface IApplication {
@@ -32,6 +34,7 @@ export type IdType = string | number;
 export type AnyType = any;
 export type AnyObject = Record<string | symbol | number, any>;
 export type ValueOrPromise<T> = T | Promise<T>;
+export type ValueOf<T> = T[keyof T];
 
 export type NullableType = undefined | null | void;
 
@@ -68,7 +71,10 @@ export interface IPersistableRepository<E extends BaseIdEntity> extends IReposit
 
 export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepository<E> {
   mixTimestamp(entity: DataObject<E>, options?: { newInstance: boolean }): DataObject<E>;
-  mixUserAudit(entity: DataObject<E>, options?: { newInstance: boolean; authorId: IdType }): DataObject<E>;
+  mixUserAudit(
+    entity: DataObject<E>,
+    options?: { newInstance: boolean; authorId: IdType },
+  ): DataObject<E>;
   // mixTextSearch(entity: DataObject<E>, options?: { moreData: any; ignoreUpdate: boolean }): DataObject<E>;
 }
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -80,10 +86,43 @@ export interface IDangerFilter extends Omit<Filter, 'order'> {
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IService {}
 
+export interface ICrudMethodOptions {
+  currentUser: {
+    userId: IdType;
+    roles: Array<{ id: IdType; identifier: string; priority: number }>;
+    [extra: string | symbol]: any;
+  } | null;
+
+  requestContext: RequestContext;
+
+  [extra: symbol | string]: any;
+}
+
+export interface ICrudService<E extends BaseTzEntity> extends IService {
+  repository: AbstractTzRepository<E, EntityRelationType>;
+
+  // R
+  find(filter: Filter<E>, options: ICrudMethodOptions): Promise<Array<E & EntityRelationType>>;
+  findById(
+    id: IdType,
+    filter: Filter<E>,
+    options: ICrudMethodOptions,
+  ): Promise<E & EntityRelationType>;
+  findOne(filter: Filter<E>, options: ICrudMethodOptions): Promise<(E & EntityRelationType) | null>;
+  count(where: Where<E>, options: ICrudMethodOptions): Promise<Count>;
+
+  // CUD
+  create(data: Omit<E, 'id'>, options: ICrudMethodOptions): Promise<E>;
+  updateAll(data: Partial<E>, where: Where<E>, options: ICrudMethodOptions): Promise<Count>;
+  updateWithReturn(id: IdType, data: Partial<E>, options: ICrudMethodOptions): Promise<E>;
+  replaceById(id: IdType, data: E, options: ICrudMethodOptions): Promise<E>;
+  deleteById(id: IdType, options: ICrudMethodOptions): Promise<{ id: IdType }>;
+}
+
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IController {}
 
-export interface ICRUDController extends IController {
+export interface ICrudController extends IController {
   defaultLimit: number;
   relation?: { name: string; type: string };
   repository?: IRepository;

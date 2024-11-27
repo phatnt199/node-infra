@@ -1,5 +1,5 @@
+import { BaseHelper } from '@/base/base.helper';
 import { MimeTypes } from '@/common';
-import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
 import { Client, ClientOptions } from 'minio';
@@ -16,12 +16,11 @@ export interface IUploadFile {
 }
 
 // ---------------------------------------------------------------------
-export class MinioHelper {
+export class MinioHelper extends BaseHelper {
   client: Client;
-  private logger: ApplicationLogger;
 
   constructor(options: ClientOptions) {
-    this.logger = LoggerFactory.getLogger([MinioHelper.name]);
+    super({ scope: MinioHelper.name, identifier: MinioHelper.name });
     this.client = new Client(options);
   }
 
@@ -133,7 +132,11 @@ export class MinioHelper {
               mimeType,
             })
             .then(uploadInfo => {
-              this.logger.info('[upload] Uploaded: %j | Took: %s (ms)', uploadInfo, new Date().getTime() - t);
+              this.logger.info(
+                '[upload] Uploaded: %j | Took: %s (ms)',
+                uploadInfo,
+                new Date().getTime() - t,
+              );
 
               resolve({
                 bucket,
@@ -177,6 +180,12 @@ export class MinioHelper {
   async removeObject(opts: { bucket: string; name: string }) {
     const { bucket, name } = opts;
     await this.client.removeObject(bucket, name);
+  }
+
+  // ---------------------------------------------------------------------
+  async removeObjects(opts: { bucket: string; names: Array<string> }) {
+    const { bucket, names } = opts;
+    await this.client.removeObjects(bucket, names);
   }
 
   // ---------------------------------------------------------------------

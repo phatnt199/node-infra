@@ -1,12 +1,11 @@
-import { ApplicationLogger, LoggerFactory } from '@/helpers';
+import { BaseHelper } from '@/base/base.helper';
 import { getError } from '@/utilities';
 import Redis from 'ioredis';
 import isEmpty from 'lodash/isEmpty';
 import zlib from 'zlib';
 
-export class RedisHelper {
+export class RedisHelper extends BaseHelper {
   client: Redis;
-  private logger: ApplicationLogger;
 
   // ---------------------------------------------------------------------------------
   constructor(options: {
@@ -18,7 +17,7 @@ export class RedisHelper {
     onReady?: (opts: { name: string; helper: RedisHelper }) => void;
     onError?: (opts: { name: string; helper: RedisHelper; error: any }) => void;
   }) {
-    this.logger = LoggerFactory.getLogger([RedisHelper.name]);
+    super({ scope: RedisHelper.name, identifier: options.name });
 
     const { name, host, port, password, onConnected, onReady, onError } = options;
     this.client = new Redis({
@@ -257,7 +256,11 @@ export class RedisHelper {
         });
       }
 
-      this.logger.info('[subscribe] Subscribed to %s channel(s). Listening to channel: %s', count, topic);
+      this.logger.info(
+        '[subscribe] Subscribed to %s channel(s). Listening to channel: %s',
+        count,
+        topic,
+      );
     });
   }
 }

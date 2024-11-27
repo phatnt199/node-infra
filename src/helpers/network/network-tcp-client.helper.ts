@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 import { Socket as SocketClient } from 'net';
-import { ApplicationLogger, LoggerFactory } from '../logger';
+import { BaseHelper } from '@/base/base.helper';
 
 const DEFAULT_MAX_RETRY = 5;
 
@@ -14,16 +14,14 @@ interface INetworkTcpClientProps {
 
   // handlers
   onConnected?: () => void;
-  onData?: (raw: any) => void;
+  onData?: (opts: { identifier: string; message: string | Buffer }) => void;
   onClosed?: () => void;
   onError?: (error: any) => void;
 }
 
-export class NetworkTcpClient {
-  private logger: ApplicationLogger;
+export class NetworkTcpClient extends BaseHelper {
   private client?: SocketClient | null;
 
-  private identifier: string;
   private options: any;
   private reconnect?: boolean;
   private retry: { maxReconnect: number; currentReconnect: number } = {
@@ -34,14 +32,12 @@ export class NetworkTcpClient {
   private encoding?: BufferEncoding;
 
   private onConnected: () => void;
-  private onData: (opts: { identifier: string; message: any }) => void;
+  private onData: (opts: { identifier: string; message: string | Buffer }) => void;
   private onClosed?: () => void;
   private onError?: (error: any) => void;
 
   constructor(opts: INetworkTcpClientProps) {
-    this.logger = LoggerFactory.getLogger([NetworkTcpClient.name]);
-
-    this.identifier = opts.identifier;
+    super({ scope: NetworkTcpClient.name, identifier: opts.identifier });
     this.options = opts.options;
 
     this.retry = {
@@ -62,7 +58,11 @@ export class NetworkTcpClient {
   }
 
   handleConnected() {
-    this.logger.info('[handleConnected][%s] Connected to TCP Server | Options: %j', this.identifier, this.options);
+    this.logger.info(
+      '[handleConnected][%s] Connected to TCP Server | Options: %j',
+      this.identifier,
+      this.options,
+    );
     this.retry.currentReconnect = 0;
   }
 
@@ -72,7 +72,11 @@ export class NetworkTcpClient {
   }
 
   handleClosed() {
-    this.logger.info('[handleClosed][%s] Closed connection TCP Server | Options: %j', this.identifier, this.options);
+    this.logger.info(
+      '[handleClosed][%s] Closed connection TCP Server | Options: %j',
+      this.identifier,
+      this.options,
+    );
   }
 
   handleError(error: any) {
@@ -123,7 +127,11 @@ export class NetworkTcpClient {
       return;
     }
 
-    this.logger.info('[connect][%s] New network tcp client | Options: %s', this.identifier, this.options);
+    this.logger.info(
+      '[connect][%s] New network tcp client | Options: %s',
+      this.identifier,
+      this.options,
+    );
 
     if (opts?.resetReconnectCounter) {
       this.retry.currentReconnect = 0;
@@ -144,7 +152,7 @@ export class NetworkTcpClient {
       this.onConnected?.();
     });
 
-    this.client.on('data', (message: any) => {
+    this.client.on('data', (message: string | Buffer) => {
       this.onData({ identifier: this.identifier, message });
     });
 
@@ -159,7 +167,10 @@ export class NetworkTcpClient {
 
   disconnect() {
     if (!this.client) {
-      this.logger.info('[disconnect][%s] NetworkTcpClient is not initialized yet!', this.identifier);
+      this.logger.info(
+        '[disconnect][%s] NetworkTcpClient is not initialized yet!',
+        this.identifier,
+      );
       return;
     }
 

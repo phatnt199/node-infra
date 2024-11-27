@@ -2,6 +2,7 @@ import { BaseNetworkRequest, RSA } from '@/helpers';
 import { BaseCrashReportProvider } from '../providers';
 import { ISendReport, MTEndpoints } from '../common';
 import isEmpty from 'lodash/isEmpty';
+import get from 'lodash/get';
 
 class CrashReportNetworkRequest extends BaseNetworkRequest {}
 
@@ -22,7 +23,13 @@ export class MTCrashReportService extends BaseCrashReportProvider {
 
   sendReport(opts: ISendReport) {
     const {
-      options: { projectId, eventName, publicKey, environment = process.env.NODE_ENV, generateBodyFn },
+      options: {
+        projectId,
+        eventName,
+        publicKey,
+        environment = process.env.NODE_ENV,
+        generateBodyFn,
+      },
       error,
     } = opts;
 
@@ -31,11 +38,15 @@ export class MTCrashReportService extends BaseCrashReportProvider {
       return;
     }
 
+    const trace = Object.getOwnPropertyNames(error).reduce((prev, el) => {
+      return { ...prev, [el]: get(error, el, null) };
+    }, {});
+
     const body = generateBodyFn?.() ?? {
       appVersion: process.env.npm_package_version,
       appType: eventName,
       eventType: error.name,
-      trace: error,
+      trace,
       projectId,
       environment,
     };

@@ -1,7 +1,7 @@
+import { BaseHelper } from '@/base/base.helper';
+import { getError } from '@/utilities';
 import { CronJob, CronOnCompleteCommand } from 'cron';
 import isEmpty from 'lodash/isEmpty';
-import { ApplicationLogger, LoggerFactory } from '@/helpers';
-import { getError } from '@/utilities';
 
 export interface ICronHelperOptions {
   cronTime: string;
@@ -12,9 +12,7 @@ export interface ICronHelperOptions {
 }
 
 // --------------------------------------------------------
-export class CronHelper {
-  private logger: ApplicationLogger;
-
+export class CronHelper extends BaseHelper {
   private cronTime: string;
   private onTick: () => void | Promise<void>;
   private onCompleted?: CronOnCompleteCommand | null;
@@ -24,7 +22,7 @@ export class CronHelper {
   public instance: CronJob;
 
   constructor(opts: ICronHelperOptions) {
-    this.logger = LoggerFactory.getLogger([CronHelper.name]);
+    super({ scope: CronHelper.name, identifier: opts.cronTime ?? CronHelper.name });
 
     const { cronTime, onTick, onCompleted, autoStart = false, tz } = opts;
     this.cronTime = cronTime;

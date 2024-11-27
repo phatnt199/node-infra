@@ -1,5 +1,11 @@
 import { TInjectionGetter } from '@/common';
-import { AuthorizationCode, AuthorizationCodeModel, Client, Falsey, User } from '@node-oauth/oauth2-server';
+import {
+  AuthorizationCode,
+  AuthorizationCodeModel,
+  Client,
+  Falsey,
+  User,
+} from '@node-oauth/oauth2-server';
 import { AuthenticationTokenTypes } from '../common';
 import { AbstractOAuth2AuthenticationHandler } from './base';
 
@@ -39,7 +45,12 @@ export class OAuth2AuthorizationCodeHandler
   saveAuthorizationCode(
     code: Pick<
       AuthorizationCode,
-      'authorizationCode' | 'expiresAt' | 'redirectUri' | 'scope' | 'codeChallenge' | 'codeChallengeMethod'
+      | 'authorizationCode'
+      | 'expiresAt'
+      | 'redirectUri'
+      | 'scope'
+      | 'codeChallenge'
+      | 'codeChallengeMethod'
     >,
     client: Client,
     user: User,

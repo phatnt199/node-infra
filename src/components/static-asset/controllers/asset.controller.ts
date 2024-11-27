@@ -1,9 +1,19 @@
-import { BaseApplication } from '@/base';
+import { BaseApplication } from '@/base/applications';
 import { IController } from '@/common';
 import { ApplicationLogger, IUploadFile, LoggerFactory, MinioHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import { CoreBindings, inject } from '@loopback/core';
-import { api, del, get, param, post, Request, requestBody, Response, RestBindings } from '@loopback/rest';
+import {
+  api,
+  del,
+  get,
+  param,
+  post,
+  Request,
+  requestBody,
+  Response,
+  RestBindings,
+} from '@loopback/rest';
 import multer from 'multer';
 import { ResourceAssetKeys } from '../common';
 
@@ -206,5 +216,130 @@ export class StaticAssetController implements IController {
           });
       });
     });
+  }
+
+  /**
+   * This method fetches the whole file from minio and streams it to the client.
+   * It's meant to be used for using file caching on browser.
+   * For other use cases, use `getStaticObject` instead.
+   *
+   * NOTE: By the time this method was written, Google Chrome cannot cache content
+   * if the response status code is 206 (Partial Content). So, we use 200 instead.
+   */
+  @get('/{bucket_name}/{object_name}/file')
+  async fetchWholeFile(
+    @param.path.string('bucket_name') bucketName: string,
+    @param.path.string('object_name') objectName: string,
+    @param.query.number('cache_time', { required: false }) cacheTime?: number,
+  ) {
+    const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
+
+    try {
+      const fileStat = await minioInstance.getStat({
+        bucket: bucketName,
+        name: objectName,
+      });
+      const { size, metaData, lastModified } = fileStat;
+
+      const fileStream = await minioInstance.getFile({
+        bucket: bucketName,
+        name: objectName,
+      });
+
+      const buffers: Buffer[] = [];
+
+      for await (const buffer of fileStream) {
+        buffers.push(buffer);
+      }
+
+      const file = Buffer.concat(buffers);
+
+      this.response.writeHead(200, {
+        ...metaData,
+        'Content-Length': size,
+        'Content-Type': metaData['content-type'] ?? metaData['mimetype'],
+        'Cache-Control': `private, max-age=${cacheTime ?? 60 * 60}`,
+        'Last-Modified': lastModified.toUTCString(),
+      });
+
+      this.response.end(file);
+    } catch (error) {
+      this.logger.error('[getWholeFile] Error %o', error);
+
+      throw getError({
+        statusCode: 500,
+        message: 'Error while fetching file',
+      });
+    }
+  }
+
+  @del('/{bucket_name}/', {
+    description: 'Delete multiple objects from bucket',
+    responses: {
+      '200': {
+        description: 'Delete object',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                message: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+  async deleteObjects(
+    @param.path.string('bucket_name', { required: true }) bucketName: string,
+    @requestBody({
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              objectNames: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+    payload: {
+      objectNames: string[];
+    },
+    @param.query.string('folder_path', { required: false }) folderPath?: string,
+  ) {
+    const { objectNames } = payload;
+    const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
+
+    let deletingObjects: string[] = objectNames;
+    if (folderPath) {
+      folderPath = folderPath.replace(/^\/|\/$/g, '');
+
+      deletingObjects = objectNames.map(objectName => `${folderPath}/${objectName}`);
+    }
+
+    try {
+      await minioInstance.client.removeObjects(bucketName, deletingObjects);
+
+      this.response.status(200).send({
+        message: 'Object deleted successfully',
+      });
+    } catch (error) {
+      this.logger.error('[deleteObject] Error %o', error);
+      throw getError({
+        statusCode: 500,
+        message: 'Error while deleting object',
+      });
+    }
   }
 }

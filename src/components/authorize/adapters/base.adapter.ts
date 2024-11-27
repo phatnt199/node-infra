@@ -1,4 +1,4 @@
-import { BaseDataSource } from '@/base';
+import { BaseDataSource } from '@/base/base.datasource';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { FilteredAdapter, Model } from 'casbin';
 import { EnforcerDefinitions } from '../common';
@@ -47,12 +47,21 @@ export abstract class AbstractCasbinAdapter implements FilteredAdapter {
 
   // -----------------------------------------------------------------------------------------
   removePolicy(sec: string, ptype: string, rule: string[]): Promise<void> {
-    this.logger.info('[removePolicy] Ignore remove policy method with options: ', { sec, ptype, rule });
+    this.logger.info('[removePolicy] Ignore remove policy method with options: ', {
+      sec,
+      ptype,
+      rule,
+    });
     return Promise.resolve();
   }
 
   // -----------------------------------------------------------------------------------------
-  removeFilteredPolicy(sec: string, ptype: string, fieldIndex: number, ...fieldValues: string[]): Promise<void> {
+  removeFilteredPolicy(
+    sec: string,
+    ptype: string,
+    fieldIndex: number,
+    ...fieldValues: string[]
+  ): Promise<void> {
     switch (ptype) {
       case EnforcerDefinitions.PREFIX_USER: {
         // Remove user policy

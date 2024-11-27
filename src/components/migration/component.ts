@@ -1,9 +1,9 @@
-import { BaseApplication } from '@/base';
+import { BaseApplication } from '@/base/applications';
 import { BaseComponent } from '@/base/base.component';
 import { Binding, CoreBindings, inject } from '@loopback/core';
+import { MigrationKeys } from './common';
 import { Migration } from './models';
 import { MigrationRepository } from './repositories';
-import { MigrationKeys } from './common';
 
 export class MigrationComponent extends BaseComponent {
   bindings: Binding[] = [

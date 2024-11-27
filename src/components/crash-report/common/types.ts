@@ -22,7 +22,9 @@ export interface ICreateEventRequest {
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export type TCrashReportProviders = '@app/crash-report/mt-provider' | '@app/crash-report/sentry-provider';
+export type TCrashReportProviders =
+  | '@app/crash-report/mt-provider'
+  | '@app/crash-report/sentry-provider';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface ICrashReportOptions {

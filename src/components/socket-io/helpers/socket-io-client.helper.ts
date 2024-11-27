@@ -34,7 +34,11 @@ export class SocketIOClientHelper {
   // -----------------------------------------------------------------
   configure() {
     if (this.client) {
-      this.logger.info('[configure][%s] SocketIO Client already established! Client: %j', this.identifier, this.client);
+      this.logger.info(
+        '[configure][%s] SocketIO Client already established! Client: %j',
+        this.identifier,
+        this.client,
+      );
       return;
     }
 
@@ -55,7 +59,11 @@ export class SocketIOClientHelper {
     for (const eventName of eventNames) {
       const handler = eventHandlers[eventName];
       if (!handler) {
-        this.logger.info('[subscribe][%s] Ignore handling event %s because of no handler!', this.identifier, eventName);
+        this.logger.info(
+          '[subscribe][%s] Ignore handling event %s because of no handler!',
+          this.identifier,
+          eventName,
+        );
         continue;
       }
 
