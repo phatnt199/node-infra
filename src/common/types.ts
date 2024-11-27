@@ -44,6 +44,8 @@ export type TBullQueueRole = 'queue' | 'worker';
 
 export type TPermissionEffect = 'allow' | 'deny';
 
+export type TStatusFromClass<T> = ValueOf<Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET'>>;
+
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IEntity {
   id: IdType;
