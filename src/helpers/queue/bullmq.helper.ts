@@ -41,7 +41,7 @@ export class BullMQHelper<TQueueElement = any, TQueueResult = any> extends BaseH
     error: Error,
   ) => Promise<void>;
 
-  constructor(options: IBullMQOptions) {
+  constructor(options: IBullMQOptions<TQueueElement, TQueueResult>) {
     super({ scope: BullMQHelper.name, identifier: options.identifier });
     const {
       queueName,
@@ -68,7 +68,7 @@ export class BullMQHelper<TQueueElement = any, TQueueResult = any> extends BaseH
     this.configure();
   }
 
-  static newInstance<T = any, R = any>(opts: IBullMQOptions) {
+  static newInstance<T = any, R = any>(opts: IBullMQOptions<T, R>) {
     return new BullMQHelper<T, R>(opts);
   }
 
