@@ -4,6 +4,35 @@ import { BindingKey } from '@loopback/core';
 import { RequestContext } from '@loopback/rest';
 import { Count, DataObject, Entity, Filter, Options, Where } from '@loopback/repository';
 
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export type NumberIdType = number;
+export type StringIdType = string;
+export type IdType = string | number;
+export type NullableType = undefined | null | void;
+
+export type AnyType = any;
+export type AnyObject = Record<string | symbol | number, any>;
+
+export type ValueOrPromise<T> = T | Promise<T>;
+export type ValueOf<T> = T[keyof T];
+
+/**
+ * Alias for {@link ValueOf<T>}
+ */
+export type ClassProps<T> = ValueOf<T>;
+export type ClassType<T> = Function & { prototype: T };
+
+export type TStatusFromClass<T extends ClassType<AnyObject>> = ValueOf<
+  Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET'>
+>;
+
+export type TRelationType = 'belongsTo' | 'hasOne' | 'hasMany' | 'hasManyThrough';
+
+export type TBullQueueRole = 'queue' | 'worker';
+
+export type TPermissionEffect = 'allow' | 'deny';
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IApplication {
   models: Set<string>;
   staticConfigure(): void;
@@ -13,13 +42,15 @@ export interface IApplication {
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IDataSource {
+export interface IDataSource<T extends object = object> {
   name: string;
-  config: object;
+  config: T;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export type ClassType<T> = Function & { prototype: T };
+export interface IEntity {
+  id: IdType;
+}
 
 export type EntityClassType<T extends Entity> = typeof Entity & {
   prototype: T & { id?: IdType };
@@ -27,33 +58,12 @@ export type EntityClassType<T extends Entity> = typeof Entity & {
 
 export type EntityRelationType = {};
 
-export type NumberIdType = number;
-export type StringIdType = string;
-export type IdType = string | number;
-
-export type AnyType = any;
-export type AnyObject = Record<string | symbol | number, any>;
-export type ValueOrPromise<T> = T | Promise<T>;
-export type ValueOf<T> = T[keyof T];
-
-export type NullableType = undefined | null | void;
-
-export type TRelationType = 'belongsTo' | 'hasOne' | 'hasMany' | 'hasManyThrough';
-
-export type TBullQueueRole = 'queue' | 'worker';
-
-export type TPermissionEffect = 'allow' | 'deny';
-
-export type TStatusFromClass<T extends ClassType<AnyObject>> = ValueOf<
-  Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET'>
->;
-
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IEntity {
-  id: IdType;
+export interface IDangerFilter extends Omit<Filter, 'order'> {
+  // !DANGER this will not compatible with LB3
+  order: string | string[];
 }
 
-// ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IRepository {}
 
 export interface IPersistableRepository<E extends BaseIdEntity> extends IRepository {
@@ -80,11 +90,6 @@ export interface ITzRepository<E extends BaseTzEntity> extends IPersistableRepos
     options?: { newInstance: boolean; authorId: IdType },
   ): DataObject<E>;
   // mixTextSearch(entity: DataObject<E>, options?: { moreData: any; ignoreUpdate: boolean }): DataObject<E>;
-}
-// ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IDangerFilter extends Omit<Filter, 'order'> {
-  // !DANGER this will not compatible with LB3
-  order: string | string[];
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -146,8 +151,8 @@ export interface IEnvironmentValidationResult {
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
-export interface IError<N extends number = number> extends Error {
-  statusCode: N;
+export interface IError<StatusCode extends number = number> extends Error {
+  statusCode: StatusCode;
   message: string;
   [key: string]: any;
 }

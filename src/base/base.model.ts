@@ -40,6 +40,13 @@ export class BaseKVEntity extends BaseEntity {
 export class BaseTzEntity extends TzMixin(BaseIdEntity) {}
 
 // ---------------------------------------------------------------------
+/**
+ * Basic UserAuditMixed class with createdBy and modifiedBy
+ *
+ * NOTICE: This method have no userResolver
+ *
+ * In case you need to include User, directly extends {@link UserAuditMixin}
+ */
 export class BaseUserAuditTzEntity extends UserAuditMixin(BaseTzEntity) {}
 
 // ---------------------------------------------------------------------

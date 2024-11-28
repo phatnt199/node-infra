@@ -1,7 +1,7 @@
+import { BaseHelper } from '@/base/base.helper';
+import { TBullQueueRole } from '@/common/types';
 import { Job, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
-import { TBullQueueRole } from '@/common/types';
-import { BaseHelper } from '@/base/base.helper';
 
 interface IBullMQOptions<TQueueElement = any, TQueueResult = any> {
   queueName: string;
@@ -22,7 +22,7 @@ interface IBullMQOptions<TQueueElement = any, TQueueResult = any> {
 
 export class BullMQHelper<TQueueElement = any, TQueueResult = any> extends BaseHelper {
   private queueName: string;
-  private role: 'queue' | 'worker';
+  private role: TBullQueueRole;
   private connection: Redis;
 
   queue: Queue<TQueueElement, TQueueResult>;
