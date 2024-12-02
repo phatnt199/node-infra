@@ -36,6 +36,11 @@ export const getRequestId = (opts: { request: Request }) => {
 };
 
 // -------------------------------------------------------------------------
+export const getRequestIp = (opts: { request: Request }) => {
+  return get(opts.request, 'requestForwardedIp') ?? 'N/A';
+};
+
+// -------------------------------------------------------------------------
 export const getRequestRemark = (opts: { request: Request }): IRequestedRemark | undefined => {
   return get(opts.request, 'requestedRemark');
 };
