@@ -16,6 +16,9 @@ export type AnyObject = Record<string | symbol | number, any>;
 export type ValueOrPromise<T> = T | Promise<T>;
 export type ValueOf<T> = T[keyof T];
 
+export type ValueOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+export type ValueOptionalExcept<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>;
+
 /**
  * Alias for {@link ValueOf<T>}
  */

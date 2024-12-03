@@ -48,11 +48,13 @@ export class EntityRelations {
   static readonly HAS_ONE = 'hasOne';
   static readonly HAS_MANY = 'hasMany';
   static readonly HAS_MANY_THROUGH = 'hasManyThrough';
+  static readonly HAS_MANY_POLYMORPHIC = 'hasManyPolymorphic';
   static readonly TYPE_SET = new Set([
     this.BELONGS_TO,
     this.HAS_ONE,
     this.HAS_MANY,
     this.HAS_MANY_THROUGH,
+    this.HAS_MANY_POLYMORPHIC,
   ]);
 
   static isValid(type: string) {
