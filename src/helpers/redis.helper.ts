@@ -9,22 +9,37 @@ export class RedisHelper extends BaseHelper {
 
   // ---------------------------------------------------------------------------------
   constructor(options: {
+    // Props
     name: string;
     host: string;
     port: number;
     password: string;
+    autoConnect?: boolean;
+
+    // Callbacks
     onConnected?: (opts: { name: string; helper: RedisHelper }) => void;
     onReady?: (opts: { name: string; helper: RedisHelper }) => void;
     onError?: (opts: { name: string; helper: RedisHelper; error: any }) => void;
   }) {
     super({ scope: RedisHelper.name, identifier: options.name });
 
-    const { name, host, port, password, onConnected, onReady, onError } = options;
+    const {
+      name,
+      host,
+      port,
+      password,
+      autoConnect = true,
+      onConnected,
+      onReady,
+      onError,
+    } = options;
+
     this.client = new Redis({
       name,
       host,
       port,
       password,
+      lazyConnect: !autoConnect,
       retryStrategy: (times: number) => {
         return Math.max(Math.min(Math.exp(times), 20000), 1000);
       },
@@ -49,6 +64,55 @@ export class RedisHelper extends BaseHelper {
 
     this.client.on('reconnecting', () => {
       this.logger.error(` ${name} RECONNECTING...`);
+    });
+  }
+
+  // ---------------------------------------------------------------------------------
+  connect() {
+    return new Promise<boolean>((resolve, reject) => {
+      const invalidStatuses: (typeof this.client.status)[] = [
+        'ready',
+        'reconnecting',
+        'connecting',
+      ];
+      if (!this.client || invalidStatuses.includes(this.client.status)) {
+        this.logger.info(
+          '[connect] status: %s | Invalid redis status to invoke connect',
+          this.client.status,
+        );
+
+        resolve(false);
+        return;
+      }
+
+      this.client
+        .connect()
+        .then(() => {
+          resolve(this.client.status === 'ready');
+        })
+        .catch(reject);
+    });
+  }
+
+  // ---------------------------------------------------------------------------------
+  disconnect() {
+    return new Promise<boolean>((resolve, reject) => {
+      const invalidStatuses: (typeof this.client.status)[] = ['end', 'close'];
+      if (!this.client || invalidStatuses.includes(this.client.status)) {
+        this.logger.info(
+          '[disconnect] status: %s | Invalid redis status to invoke connect',
+          this.client.status,
+        );
+        resolve(false);
+        return;
+      }
+
+      this.client
+        .quit()
+        .then(rs => {
+          resolve(rs === 'OK');
+        })
+        .catch(reject);
     });
   }
 

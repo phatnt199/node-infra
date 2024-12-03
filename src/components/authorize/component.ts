@@ -1,6 +1,6 @@
 import { BaseApplication } from '@/base/applications';
 import { BaseComponent } from '@/base/base.component';
-import { BaseDataSource } from '@/base/base.datasource';
+import { BaseDataSource } from '@/base/datasources';
 import { getError } from '@/utilities';
 import {
   AuthorizationBindings,

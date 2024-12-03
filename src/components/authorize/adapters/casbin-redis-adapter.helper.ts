@@ -1,4 +1,4 @@
-import { BaseDataSource } from '@/base/base.datasource';
+import { BaseDataSource } from '@/base/datasources';
 import { Model } from 'casbin';
 
 import { AbstractCasbinAdapter } from './base.adapter';

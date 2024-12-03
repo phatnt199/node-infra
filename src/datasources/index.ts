@@ -1,2 +1,3 @@
-export * from './postgres.datasource';
-export * from './kvmem.datasource';
+export * from './kvmem';
+export * from './postgres';
+export * from './redis';

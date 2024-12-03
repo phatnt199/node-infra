@@ -1,4 +1,4 @@
-import { BaseDataSource } from '@/base/base.datasource';
+import { BaseDataSource } from '@/base/datasources';
 import { TzCrudRepository } from '@/base/repositories';
 import { EntityClassType } from '@/common';
 import { getError } from '@/utilities';

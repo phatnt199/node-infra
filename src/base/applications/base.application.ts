@@ -19,7 +19,7 @@ import { MiddlewareSequence, RestApplication, SequenceHandler } from '@loopback/
 import { CrudRestComponent } from '@loopback/rest-crud';
 import { ServiceMixin } from '@loopback/service-proxy';
 
-import { BaseDataSource } from '../base.datasource';
+import { BaseDataSource } from '../datasources';
 import { BaseEntity } from '../base.model';
 import { BaseApplicationSequence } from '../base.sequence';
 

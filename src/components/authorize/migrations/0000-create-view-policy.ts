@@ -1,9 +1,9 @@
 import { BaseApplication } from '@/base/applications';
-import { BaseDataSource } from '@/base/base.datasource';
-import { EnforcerDefinitions } from '@/components/authorize/common/constants';
+import { BaseDataSource } from '@/base/datasources';
 import { applicationLogger } from '@/helpers';
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
+import { EnforcerDefinitions } from '../common';
 
 const sqls = [
   // UUID

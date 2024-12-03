@@ -3,7 +3,7 @@ import { IHasManyPolymorphicDefinition } from './types';
 import { ValueOptionalExcept } from '@/common';
 
 /**
- * Custom decorator to define a polymorphic `@hasMany` relationship
+ * Custom decorator to define a polymorphic `@hasManyPolymorphic` relationship
  *
  * @param targetModelGetter - A function to return the target model constructor
  * @param definition - Additional relation metadata
