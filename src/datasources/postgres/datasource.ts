@@ -5,23 +5,23 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import { IPostgresOptions } from './types';
 
-const postgresOptions: IPostgresOptions = {
+const options: IPostgresOptions = {
   connector: 'postgresql',
-  name: process.env.APP_ENV_DATASOURCE_NAME!,
-  host: process.env.APP_ENV_POSTGRES_HOST!,
-  port: process.env.APP_ENV_POSTGRES_PORT!,
-  user: process.env.APP_ENV_POSTGRES_USERNAME!,
-  password: process.env.APP_ENV_POSTGRES_PASSWORD!,
-  database: process.env.APP_ENV_POSTGRES_DATABASE!,
+  name: process.env.APP_ENV_DATASOURCE_NAME ?? 'postgres',
+  host: process.env.APP_ENV_POSTGRES_HOST ?? '0.0.0.0',
+  port: process.env.APP_ENV_POSTGRES_PORT ?? '5432',
+  user: process.env.APP_ENV_POSTGRES_USERNAME ?? 'postgres',
+  password: process.env.APP_ENV_POSTGRES_PASSWORD ?? 'password',
+  database: process.env.APP_ENV_POSTGRES_DATABASE ?? 'postgres',
 };
 
 export class PostgresDataSource extends BaseDataSource<IPostgresOptions> {
-  static dataSourceName = postgresOptions.name;
-  // static readonly defaultConfig: object = postgresOptions;
+  static dataSourceName = options.name;
+  // static readonly defaultConfig: IPostgresOptions = options;
 
   constructor(
-    @inject(`datasources.config.${postgresOptions.name}`, { optional: true })
-    settings: IPostgresOptions = postgresOptions,
+    @inject(`datasources.config.${options.name}`, { optional: true })
+    settings: IPostgresOptions = options,
   ) {
     for (const key in settings) {
       const value = get(settings, key);
@@ -49,6 +49,6 @@ export class PostgresDataSource extends BaseDataSource<IPostgresOptions> {
     }
 
     super({ settings, scope: PostgresDataSource.name });
-    this.logger.info('[Datasource] PG_DataSource Settings: %j', this.settings);
+    this.logger.info('Postgres DataSource Settings: %j', this.settings);
   }
 }

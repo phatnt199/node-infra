@@ -1,14 +1,22 @@
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
-import { juggler } from '@loopback/repository';
+import { Connector, JugglerDataSource } from '@loopback/repository';
 import { IDataSourceOptions } from './types';
 
 export class BaseDataSource<
-  C extends IDataSourceOptions = IDataSourceOptions,
-> extends juggler.DataSource {
+  S extends IDataSourceOptions = IDataSourceOptions,
+  C extends Connector = Connector,
+> extends JugglerDataSource {
   protected logger: ApplicationLogger;
 
-  constructor(opts: { scope: string; settings: C }) {
-    super(opts.settings);
-    this.logger = LoggerFactory.getLogger([opts.scope]);
+  constructor(opts: { scope: string; settings: S; connector?: C }) {
+    const { scope, settings, connector } = opts;
+
+    if (!connector) {
+      super(settings);
+    } else {
+      super(connector, settings);
+    }
+
+    this.logger = LoggerFactory.getLogger([scope]);
   }
 }

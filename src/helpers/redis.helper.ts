@@ -4,23 +4,25 @@ import Redis from 'ioredis';
 import isEmpty from 'lodash/isEmpty';
 import zlib from 'zlib';
 
+export interface IRedisHelperOptions {
+  // Props
+  name: string;
+  host: string;
+  port: number;
+  password: string;
+  autoConnect?: boolean;
+
+  // Callbacks
+  onConnected?: (opts: { name: string; helper: RedisHelper }) => void;
+  onReady?: (opts: { name: string; helper: RedisHelper }) => void;
+  onError?: (opts: { name: string; helper: RedisHelper; error: any }) => void;
+}
+
 export class RedisHelper extends BaseHelper {
   client: Redis;
 
   // ---------------------------------------------------------------------------------
-  constructor(options: {
-    // Props
-    name: string;
-    host: string;
-    port: number;
-    password: string;
-    autoConnect?: boolean;
-
-    // Callbacks
-    onConnected?: (opts: { name: string; helper: RedisHelper }) => void;
-    onReady?: (opts: { name: string; helper: RedisHelper }) => void;
-    onError?: (opts: { name: string; helper: RedisHelper; error: any }) => void;
-  }) {
+  constructor(options: IRedisHelperOptions) {
     super({ scope: RedisHelper.name, identifier: options.name });
 
     const {
