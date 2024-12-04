@@ -17,6 +17,7 @@ export class RedisConnector implements IRedisConnector {
 
   constructor(opts: { settings: IRedisOptions }) {
     this.settings = opts.settings;
+    this.initialize();
   }
 
   initialize(): ValueOrPromise<void> {
