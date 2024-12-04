@@ -13,6 +13,7 @@ export interface IRedisHelperOptions {
   autoConnect?: boolean;
 
   // Callbacks
+  onInitialized?: (opts: { name: string; helper: RedisHelper }) => void;
   onConnected?: (opts: { name: string; helper: RedisHelper }) => void;
   onReady?: (opts: { name: string; helper: RedisHelper }) => void;
   onError?: (opts: { name: string; helper: RedisHelper; error: any }) => void;
@@ -20,6 +21,7 @@ export interface IRedisHelperOptions {
 
 export class RedisHelper extends BaseHelper {
   client: Redis;
+  name: string;
 
   // ---------------------------------------------------------------------------------
   constructor(options: IRedisHelperOptions) {
@@ -31,6 +33,7 @@ export class RedisHelper extends BaseHelper {
       port,
       password,
       autoConnect = true,
+      onInitialized,
       onConnected,
       onReady,
       onError,
@@ -67,9 +70,14 @@ export class RedisHelper extends BaseHelper {
     this.client.on('reconnecting', () => {
       this.logger.error(` ${name} RECONNECTING...`);
     });
+
+    onInitialized?.({ name, helper: this });
   }
 
-  // ---------------------------------------------------------------------------------
+  ping() {
+    return this.client.ping();
+  }
+
   connect() {
     return new Promise<boolean>((resolve, reject) => {
       const invalidStatuses: (typeof this.client.status)[] = [
@@ -266,6 +274,12 @@ export class RedisHelper extends BaseHelper {
 
     const existedKeys = await this.client.keys(key);
     return existedKeys;
+  }
+
+  // ---------------------------------------------------------------------------------
+  async execute<R extends object = any>(command: string, parameters: (string | Buffer | number)[]) {
+    const rs = await this.client.call(command, parameters);
+    return rs as R;
   }
 
   // ---------------------------------------------------------------------------------

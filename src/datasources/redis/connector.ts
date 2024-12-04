@@ -1,10 +1,8 @@
-import { ValueOrPromise } from '@/common';
 import { RedisHelper } from '@/helpers';
 import { int } from '@/utilities';
 import { Class, Command, Entity, EntityData, Filter, Model, Options } from '@loopback/repository';
-import Redis from 'ioredis';
-import { ArgumentType } from 'ioredis/built/Command';
 import { IRedisConnector, IRedisOptions } from './types';
+import EventEmitter from 'events';
 
 export class RedisConnector implements IRedisConnector {
   name: string;
@@ -17,13 +15,34 @@ export class RedisConnector implements IRedisConnector {
 
   constructor(opts: { settings: IRedisOptions }) {
     this.settings = opts.settings;
-    this.initialize();
   }
 
-  initialize(): ValueOrPromise<void> {
+  initialize<
+    C extends EventEmitter & {
+      initialized: boolean;
+      connected: boolean;
+      connecting: boolean;
+      ready: boolean;
+    },
+  >(opts: { context: C }) {
     this.redisHelper = new RedisHelper({
       ...this.settings,
       port: int(this.settings.port),
+      onInitialized: () => {
+        opts.context.initialized = true;
+        opts.context.emit('initialized');
+      },
+      onConnected: () => {
+        opts.context.connected = true;
+        opts.context.emit('connected');
+      },
+      onReady: () => {
+        opts.context.ready = true;
+        opts.context.emit('ready');
+      },
+      onError: ({ error }) => {
+        opts.context.emit('error', error);
+      },
     });
   }
 
@@ -89,12 +108,22 @@ export class RedisConnector implements IRedisConnector {
     throw new Error('Method not implemented.');
   }
 
-  ttl(_modelClass: Class<Entity>, _key: string, _ttl: number, _options?: Options): Promise<number> {
-    throw new Error('Method not implemented.');
+  ttl(_modelClass: Class<Entity>, key: string, _ttl: number, _options?: Options): Promise<number> {
+    return new Promise((resolve, reject) => {
+      this.redisHelper.client
+        .ttl(key)
+        .then(rs => resolve(rs))
+        .catch(reject);
+    });
   }
 
   keys(_modelClass: Class<Entity>, _options?: Options): Promise<string[]> {
-    throw new Error('Method not implemented.');
+    return new Promise((resolve, reject) => {
+      this.redisHelper.client
+        .keys('*')
+        .then(rs => resolve(rs))
+        .catch(reject);
+    });
   }
 
   iterateKeys?(
@@ -137,20 +166,9 @@ export class RedisConnector implements IRedisConnector {
 
   execute<R extends object = any>(
     command: Command,
-    parameters: Array<ArgumentType>,
-    options?: Options,
-  ): Promise<R> {
-    return new Promise<R>((resolve, reject) => {
-      const cmd = new Redis.Command(command.toLowerCase(), parameters, options, (error, result) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        resolve(result);
-      });
-
-      this.redisHelper.client.sendCommand(cmd);
-    });
+    parameters: Array<string | number | Buffer>,
+    _options?: Options,
+  ) {
+    return this.redisHelper.execute<R>(command.toLowerCase(), parameters);
   }
 }

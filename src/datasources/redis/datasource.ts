@@ -1,7 +1,7 @@
 import { BaseDataSource } from '@/base/datasources';
 import { inject } from '@loopback/core';
 import { RedisConnector } from './connector';
-import { IRedisOptions } from './types';
+import { IRedisConnector, IRedisOptions } from './types';
 
 const options: IRedisOptions = {
   connector: 'redis',
@@ -11,15 +11,22 @@ const options: IRedisOptions = {
   password: process.env.APP_ENV_REDIS_DATASOURCE_PASSWORD ?? 'password',
 };
 
-export class RedisDataSouce extends BaseDataSource<IRedisOptions> {
+export class RedisDataSource extends BaseDataSource<IRedisOptions> {
   static dataSourceName = options.name;
 
   constructor(
     @inject(`datasources.config.${options.name}`, { optional: true })
     settings: IRedisOptions = options,
   ) {
-    const connector = new RedisConnector({ settings });
-    super({ settings, scope: RedisDataSouce.name, connector });
+    super({ settings, scope: RedisDataSource.name });
+
+    this.connector = new RedisConnector({ settings });
+    this.connector.initialize({ context: this });
+
     this.logger.info('Redis DataSource Settings: %j', this.settings);
+  }
+
+  getConnector() {
+    return this.connector as IRedisConnector;
   }
 }

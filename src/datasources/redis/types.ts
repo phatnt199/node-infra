@@ -1,6 +1,5 @@
 import { IDataSourceOptions } from '@/base/datasources';
-import { ValueOrPromise } from '@/common';
-import { RedisHelper } from '@/helpers';
+import { AnyObject } from '@/common';
 import { Entity, KVConnector } from '@loopback/repository';
 
 export interface IRedisOptions extends IDataSourceOptions {
@@ -12,7 +11,9 @@ export interface IRedisOptions extends IDataSourceOptions {
 }
 
 export interface IRedisConnector<E extends Entity = any> extends KVConnector<E> {
-  redisHelper: RedisHelper;
-
-  initialize(): ValueOrPromise<void>;
+  execute<R extends object = any>(
+    command: string,
+    parameters: Array<string | number | Buffer>,
+    options?: AnyObject,
+  ): Promise<R>;
 }
