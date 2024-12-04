@@ -22,7 +22,6 @@ export class RedisConnector implements IRedisConnector {
   initialize(): ValueOrPromise<void> {
     this.redisHelper = new RedisHelper({
       ...this.settings,
-      autoConnect: false,
       port: int(this.settings.port),
     });
   }

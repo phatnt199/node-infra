@@ -4,10 +4,11 @@ import { RedisHelper } from '@/helpers';
 import { Entity, KVConnector } from '@loopback/repository';
 
 export interface IRedisOptions extends IDataSourceOptions {
-  connector: 'redis';
+  // connector: 'redis';
   host: string;
   port: string | number;
   password: string;
+  autoConnect?: boolean;
 }
 
 export interface IRedisConnector<E extends Entity = any> extends KVConnector<E> {
