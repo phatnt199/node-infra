@@ -1,7 +1,7 @@
-import { BaseDataSource } from '@/base';
-import { IRedisOptions } from './types';
+import { BaseDataSource } from '@/base/datasources';
 import { inject } from '@loopback/core';
 import { RedisConnector } from './connector';
+import { IRedisOptions } from './types';
 
 const options: IRedisOptions = {
   connector: 'redis',
