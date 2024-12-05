@@ -34,8 +34,8 @@ export class RedisDataSource extends BaseDataSource<IRedisOptions> {
   execute<R extends object = any>(
     command: string,
     parameters?: Array<string | number> | string | number | object,
-    options?: Options,
+    extra?: Options,
   ): Promise<any> {
-    return this.getConnector().execute<R>(command, parameters, options);
+    return this.getConnector().execute<R>(command, parameters, extra);
   }
 }
