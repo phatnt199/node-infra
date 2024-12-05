@@ -57,7 +57,7 @@ export class RedisHelper extends BaseHelper {
       lazyConnect: !autoConnect,
       showFriendlyErrorStack: true,
       retryStrategy: (attemptCounter: number) => {
-        if (attemptCounter >= maxRetry) {
+        if (attemptCounter > maxRetry) {
           return undefined;
         }
 
