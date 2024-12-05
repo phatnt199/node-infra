@@ -172,13 +172,6 @@ export class RedisConnector implements IRedisConnector {
     return this.redisHelper.client;
   }
 
-  execute<R extends object = any>(command: string): Promise<R>;
-
-  execute<R extends object = any>(
-    command: string,
-    parameters?: Array<string | number> | string | number | object,
-  ): Promise<R>;
-
   execute<R extends object = any>(
     command: string,
     parameters?: Array<string | number> | string | number | object,
