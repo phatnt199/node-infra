@@ -11,4 +11,6 @@ export interface IRedisConnector<E extends Entity = any> extends KVConnector<E> 
     parameters: Array<string | number | Buffer>,
     options?: AnyObject,
   ): Promise<R>;
+
+  execute<R extends object = any>(...args: any[]): Promise<R>;
 }

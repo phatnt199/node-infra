@@ -1,8 +1,9 @@
 import { RedisHelper } from '@/helpers';
-import { int } from '@/utilities';
-import { Class, Command, Entity, EntityData, Filter, Model, Options } from '@loopback/repository';
+import { getError, int } from '@/utilities';
+import { Class, Entity, EntityData, Filter, Model, Options } from '@loopback/repository';
 import { IRedisConnector, IRedisOptions } from './types';
 import EventEmitter from 'events';
+import { AnyObject } from '@/common';
 
 export class RedisConnector implements IRedisConnector {
   name: string;
@@ -164,11 +165,23 @@ export class RedisConnector implements IRedisConnector {
     });
   }
 
-  execute<R extends object = any>(
-    command: Command,
-    parameters: Array<string | number | Buffer>,
-    _options?: Options,
-  ) {
+  private _execute<R extends object = any>(...args: any[]) {
+    if (!args.length || args.length > 3) {
+      throw getError({
+        message:
+          '[execute] Invalid method signature | args: [0] command name [1] array of parameters [2] extra options',
+      });
+    }
+
+    const [command, parameters] = args;
     return this.redisHelper.execute<R>(command.toLowerCase(), parameters);
+  }
+
+  execute<R extends object = any>(
+    command: string,
+    parameters?: Array<string | number> | string | number | object,
+    _options?: Options,
+  ): Promise<R> {
+    return this._execute(command, parameters, _options);
   }
 }
