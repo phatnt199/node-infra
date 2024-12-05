@@ -1,23 +1,27 @@
 import { BaseHelper } from '@/base/base.helper';
-import { getError } from '@/utilities';
+import { getError, int } from '@/utilities';
 import Redis from 'ioredis';
 import isEmpty from 'lodash/isEmpty';
 import zlib from 'zlib';
 
-export interface IRedisHelperOptions {
-  // Props
+export interface IRedisHelperProps {
   name: string;
   host: string;
-  port: number;
+  port: string | number;
   password: string;
+  database?: number;
   autoConnect?: boolean;
+  maxRetry?: number;
+}
 
-  // Callbacks
+export interface IRedisHelperCallbacks {
   onInitialized?: (opts: { name: string; helper: RedisHelper }) => void;
   onConnected?: (opts: { name: string; helper: RedisHelper }) => void;
   onReady?: (opts: { name: string; helper: RedisHelper }) => void;
   onError?: (opts: { name: string; helper: RedisHelper; error: any }) => void;
 }
+
+export interface IRedisHelperOptions extends IRedisHelperProps, IRedisHelperCallbacks {}
 
 export class RedisHelper extends BaseHelper {
   client: Redis;
@@ -32,7 +36,12 @@ export class RedisHelper extends BaseHelper {
       host,
       port,
       password,
+
+      // Optional
+      database = 0,
       autoConnect = true,
+      maxRetry = 0,
+
       onInitialized,
       onConnected,
       onReady,
@@ -42,11 +51,18 @@ export class RedisHelper extends BaseHelper {
     this.client = new Redis({
       name,
       host,
-      port,
+      port: int(port),
       password,
+      db: database,
       lazyConnect: !autoConnect,
-      retryStrategy: (times: number) => {
-        return Math.max(Math.min(Math.exp(times), 20000), 1000);
+      showFriendlyErrorStack: true,
+      retryStrategy: (attemptCounter: number) => {
+        if (attemptCounter >= maxRetry) {
+          return undefined;
+        }
+
+        const strategy = Math.max(Math.min(attemptCounter * 2000, 5000), 1000);
+        return strategy;
       },
       maxRetriesPerRequest: null,
     });

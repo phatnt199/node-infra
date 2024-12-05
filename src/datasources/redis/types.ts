@@ -1,14 +1,9 @@
 import { IDataSourceOptions } from '@/base/datasources';
 import { AnyObject } from '@/common';
+import { IRedisHelperProps } from '@/helpers';
 import { Entity, KVConnector } from '@loopback/repository';
 
-export interface IRedisOptions extends IDataSourceOptions {
-  // connector: 'redis';
-  host: string;
-  port: string | number;
-  password: string;
-  autoConnect?: boolean;
-}
+export interface IRedisOptions extends IDataSourceOptions, IRedisHelperProps {}
 
 export interface IRedisConnector<E extends Entity = any> extends KVConnector<E> {
   execute<R extends object = any>(
