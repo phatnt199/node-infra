@@ -3,7 +3,6 @@ import { getError, int } from '@/utilities';
 import { Class, Entity, EntityData, Filter, Model, Options } from '@loopback/repository';
 import { IRedisConnector, IRedisOptions } from './types';
 import EventEmitter from 'events';
-import { AnyObject } from '@/common';
 
 export class RedisConnector implements IRedisConnector {
   name: string;

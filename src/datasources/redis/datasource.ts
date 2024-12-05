@@ -3,7 +3,6 @@ import { inject } from '@loopback/core';
 import { RedisConnector } from './connector';
 import { IRedisConnector, IRedisOptions } from './types';
 import { Options } from '@loopback/repository';
-import { getError } from '@/utilities';
 
 const options: IRedisOptions = {
   connector: 'redis',
