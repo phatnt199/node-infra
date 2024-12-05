@@ -172,7 +172,20 @@ export class RedisConnector implements IRedisConnector {
     return this.redisHelper.client;
   }
 
-  private _execute<R extends object = any>(...args: any[]) {
+  execute<R extends object = any>(command: string): Promise<R>;
+
+  execute<R extends object = any>(
+    command: string,
+    parameters?: Array<string | number> | string | number | object,
+  ): Promise<R>;
+
+  execute<R extends object = any>(
+    command: string,
+    parameters?: Array<string | number> | string | number | object,
+    options?: Options,
+  ): Promise<R>;
+
+  execute<R extends object = any>(...args: any[]) {
     if (!args.length || args.length > 3) {
       throw getError({
         message:
@@ -182,13 +195,5 @@ export class RedisConnector implements IRedisConnector {
 
     const [command, parameters] = args;
     return this.redisHelper.execute<R>(command.toLowerCase(), parameters);
-  }
-
-  execute<R extends object = any>(
-    command: string,
-    parameters?: Array<string | number> | string | number | object,
-    _options?: Options,
-  ): Promise<R> {
-    return this._execute(command, parameters, _options);
   }
 }
