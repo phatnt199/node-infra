@@ -295,19 +295,13 @@ export class RedisHelper extends BaseHelper {
   // ---------------------------------------------------------------------------------
   execute<R extends object = any>(
     command: string,
-    parameters: Array<string | number | Buffer>,
+    parameters?: Array<string | number | Buffer>,
   ): Promise<R> {
-    return this.client.call(command, parameters) as Promise<R>;
-    /* return new Promise<R>((resolve, reject) => {
-      this.client.call(command, parameters, (error, result) => {
-        if (error) {
-          reject(error);
-          return;
-        }
+    if (!parameters?.length) {
+      return this.client.call(command) as Promise<R>;
+    }
 
-        resolve(result as R);
-      });
-    }); */
+    return this.client.call(command, parameters) as Promise<R>;
   }
 
   // ---------------------------------------------------------------------------------
