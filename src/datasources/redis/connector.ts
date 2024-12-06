@@ -164,14 +164,6 @@ export class RedisConnector implements IRedisConnector {
     });
   }
 
-  getRedisHelper() {
-    return this.redisHelper;
-  }
-
-  getRedisClient() {
-    return this.redisHelper.client;
-  }
-
   execute<R extends object = any>(
     command: string,
     parameters?: Array<string | number> | string | number | object,

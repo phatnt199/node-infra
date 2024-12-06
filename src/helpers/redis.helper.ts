@@ -57,7 +57,7 @@ export class RedisHelper extends BaseHelper {
       lazyConnect: !autoConnect,
       showFriendlyErrorStack: true,
       retryStrategy: (attemptCounter: number) => {
-        if (attemptCounter > maxRetry) {
+        if (maxRetry > -1 && attemptCounter > maxRetry) {
           return undefined;
         }
 
@@ -69,22 +69,22 @@ export class RedisHelper extends BaseHelper {
 
     this.logger.info('[configure] Redis client options: %j', options);
     this.client.on('connect', () => {
-      this.logger.info(` ${name} CONNECTED`);
+      this.logger.info('[event][connect] Redis client %s CONNECTED', name);
       onConnected?.({ name, helper: this });
     });
 
     this.client.on('ready', () => {
-      this.logger.info(` ${name} READY`);
+      this.logger.info('[event][ready] Redis client %s READY', name);
       onReady?.({ name, helper: this });
     });
 
     this.client.on('error', error => {
-      this.logger.error(` ${name} ERROR: %j`, error);
+      this.logger.info('[event][error] Redis client %s READY | Error: %s', name, error);
       onError?.({ name, helper: this, error });
     });
 
     this.client.on('reconnecting', () => {
-      this.logger.error(` ${name} RECONNECTING...`);
+      this.logger.warn('[event][reconnecting] Redis client %s RECONNECTING', name);
     });
 
     onInitialized?.({ name, helper: this });
@@ -101,6 +101,7 @@ export class RedisHelper extends BaseHelper {
         'reconnecting',
         'connecting',
       ];
+
       if (!this.client || invalidStatuses.includes(this.client.status)) {
         this.logger.info(
           '[connect] status: %s | Invalid redis status to invoke connect',
@@ -162,45 +163,6 @@ export class RedisHelper extends BaseHelper {
   }
 
   // ---------------------------------------------------------------------------------
-  async mset(opts: { payload: Array<{ key: string; value: any }>; options?: { log: boolean } }) {
-    if (!this.client) {
-      this.logger.info('[set] No valid Redis connection!');
-      return;
-    }
-
-    const { payload, options } = opts;
-    const serialized = payload?.reduce((current, el) => {
-      const { key, value } = el;
-      return { ...current, [key]: JSON.stringify(value) };
-    }, {});
-    await this.client.mset(serialized);
-
-    if (!options?.log) {
-      return;
-    }
-
-    this.logger.info('[mset] Payload: %j', serialized);
-  }
-
-  // ---------------------------------------------------------------------------------
-  async hset(opts: { key: string; value: any; options?: { log: boolean } }) {
-    if (!this.client) {
-      this.logger.info('[hset] No valid Redis connection!');
-      return;
-    }
-
-    const { key, value, options } = opts;
-    const rs = await this.client.hset(key, value);
-
-    if (!options?.log) {
-      return rs;
-    }
-
-    this.logger.info('[hset] Result: %j', rs);
-    return rs;
-  }
-
-  // ---------------------------------------------------------------------------------
   async get(opts: { key: string; transform?: (input: string) => any }) {
     const { key, transform } = opts;
     if (!this.client) {
@@ -217,35 +179,9 @@ export class RedisHelper extends BaseHelper {
   }
 
   // ---------------------------------------------------------------------------------
-  async mget(opts: { keys: Array<string>; transform?: (input: string) => any }) {
-    const { keys, transform } = opts;
-    if (!this.client) {
-      this.logger.info('[get] No valid Redis connection!');
-      return null;
-    }
-
-    const values = await this.client.mget(keys);
-    if (!transform || !values?.length) {
-      return null;
-    }
-
-    return values?.map(el => (el ? transform(el) : el));
-  }
-
-  // ---------------------------------------------------------------------------------
-  async hgetall(opts: { key: string; transform?: <T, R>(input: T) => R }) {
-    const { key, transform } = opts;
-    if (!this.client) {
-      this.logger.info('[get] No valid Redis connection!');
-      return null;
-    }
-
-    const value = await this.client.hgetall(key);
-    if (!transform || !value) {
-      return value;
-    }
-
-    return transform(value);
+  del(opts: { keys: Array<string> }) {
+    const { keys } = opts;
+    return this.client.del(keys);
   }
 
   // ---------------------------------------------------------------------------------
@@ -281,6 +217,97 @@ export class RedisHelper extends BaseHelper {
   }
 
   // ---------------------------------------------------------------------------------
+  async hset(opts: { key: string; value: any; options?: { log: boolean } }) {
+    if (!this.client) {
+      this.logger.info('[hset] No valid Redis connection!');
+      return;
+    }
+
+    const { key, value, options } = opts;
+    const rs = await this.client.hset(key, value);
+
+    if (!options?.log) {
+      return rs;
+    }
+
+    this.logger.info('[hset] Result: %j', rs);
+    return rs;
+  }
+
+  // ---------------------------------------------------------------------------------
+  async hSet(opts: { key: string; value: any; options?: { log: boolean } }) {
+    return this.hset(opts);
+  }
+
+  // ---------------------------------------------------------------------------------
+  async hgetall(opts: { key: string; transform?: <T, R>(input: T) => R }) {
+    const { key, transform } = opts;
+    if (!this.client) {
+      this.logger.info('[get] No valid Redis connection!');
+      return null;
+    }
+
+    const value = await this.client.hgetall(key);
+    if (!transform || !value) {
+      return value;
+    }
+
+    return transform(value);
+  }
+
+  // ---------------------------------------------------------------------------------
+  async hGetAll(opts: { key: string; transform?: <T, R>(input: T) => R }) {
+    return this.hgetall(opts);
+  }
+
+  // ---------------------------------------------------------------------------------
+  async mset(opts: { payload: Array<{ key: string; value: any }>; options?: { log: boolean } }) {
+    if (!this.client) {
+      this.logger.info('[set] No valid Redis connection!');
+      return;
+    }
+
+    const { payload, options } = opts;
+    const serialized = payload?.reduce((current, el) => {
+      const { key, value } = el;
+      return { ...current, [key]: JSON.stringify(value) };
+    }, {});
+    await this.client.mset(serialized);
+
+    if (!options?.log) {
+      return;
+    }
+
+    this.logger.info('[mset] Payload: %j', serialized);
+  }
+
+  // ---------------------------------------------------------------------------------
+  async mSet(opts: { payload: Array<{ key: string; value: any }>; options?: { log: boolean } }) {
+    return this.mset(opts);
+  }
+
+  // ---------------------------------------------------------------------------------
+  async mget(opts: { keys: Array<string>; transform?: (input: string) => any }) {
+    const { keys, transform } = opts;
+    if (!this.client) {
+      this.logger.info('[get] No valid Redis connection!');
+      return null;
+    }
+
+    const values = await this.client.mget(keys);
+    if (!transform || !values?.length) {
+      return null;
+    }
+
+    return values?.map(el => (el ? transform(el) : el));
+  }
+
+  // ---------------------------------------------------------------------------------
+  async mGet(opts: { keys: Array<string>; transform?: (input: string) => any }) {
+    return this.mget(opts);
+  }
+
+  // ---------------------------------------------------------------------------------
   async keys(opts: { key: string }) {
     const { key } = opts;
     if (!this.client) {
@@ -293,10 +320,49 @@ export class RedisHelper extends BaseHelper {
   }
 
   // ---------------------------------------------------------------------------------
-  execute<R extends object = any>(
-    command: string,
-    parameters?: Array<string | number | Buffer>,
-  ): Promise<R> {
+  jSet<T = any>(opts: { key: string; path: string; value: T }) {
+    const { key, path, value } = opts;
+    return this.execute('JSON.SET', [key, path, JSON.stringify(value)]);
+  }
+
+  // ---------------------------------------------------------------------------------
+  jGet<T = any>(opts: { key: string; path?: string }) {
+    const { key, path = '$' } = opts;
+    return this.execute<T>('JSON.GET', [key, path]);
+  }
+
+  // ---------------------------------------------------------------------------------
+  jDelete(opts: { key: string; path?: string }) {
+    const { key, path = '$' } = opts;
+    return this.execute<number>('JSON.DEL', [key, path]);
+  }
+
+  // ---------------------------------------------------------------------------------
+  jNumberIncreaseBy(opts: { key: string; path: string; value: number }) {
+    const { key, path, value } = opts;
+    return this.execute('JSON.NUMINCRBY', [key, path, value]);
+  }
+
+  // ---------------------------------------------------------------------------------
+  jStringAppend(opts: { key: string; path: string; value: string }) {
+    const { key, path, value } = opts;
+    return this.execute('JSON.STRAPPEND', [key, path, value]);
+  }
+
+  // ---------------------------------------------------------------------------------
+  jPush<T = any>(opts: { key: string; path: string; value: T }) {
+    const { key, path, value } = opts;
+    return this.execute('JSON.ARRAPPEND', [key, path, JSON.stringify(value)]);
+  }
+
+  // ---------------------------------------------------------------------------------
+  jPop<T = any>(opts: { key: string; path: string }) {
+    const { key, path } = opts;
+    return this.execute<T>('JSON.ARRPOP', [key, path]);
+  }
+
+  // ---------------------------------------------------------------------------------
+  execute<R = any>(command: string, parameters?: Array<string | number | Buffer>): Promise<R> {
     if (!parameters?.length) {
       return this.client.call(command) as Promise<R>;
     }
