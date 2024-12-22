@@ -10,12 +10,12 @@ export class CrashReportProviderKeys {
   static readonly MT_PROVIDER: TCrashReportProviders = '@app/crash-report/mt-provider';
   static readonly SENTRY_PROVIDER: TCrashReportProviders = '@app/crash-report/sentry-provider';
 
-  static readonly TYPE_SET = new Set<TCrashReportProviders>([
+  static readonly SCHEME_SET = new Set<TCrashReportProviders>([
     this.MT_PROVIDER,
     this.SENTRY_PROVIDER,
   ]);
 
   static isValid(opts: { identifier: string }) {
-    return this.TYPE_SET.has(opts.identifier as TCrashReportProviders);
+    return this.SCHEME_SET.has(opts.identifier as TCrashReportProviders);
   }
 }

@@ -1,8 +1,16 @@
 import { AbstractTzRepository } from '@/base';
-import { BaseIdEntity, BaseTzEntity } from '@/base/base.model';
-import { BindingKey } from '@loopback/core';
+import { BaseEntity, BaseIdEntity, BaseTzEntity } from '@/base/base.model';
+import { Binding, BindingFromClassOptions, BindingKey, ControllerClass } from '@loopback/core';
+import {
+  Count,
+  DataObject,
+  Entity,
+  Filter,
+  Options,
+  Repository,
+  Where,
+} from '@loopback/repository';
 import { RequestContext } from '@loopback/rest';
-import { Count, DataObject, Entity, Filter, Options, Where } from '@loopback/repository';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export type NumberIdType = number;
@@ -38,10 +46,34 @@ export type TPermissionEffect = 'allow' | 'deny';
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IApplication {
   models: Set<string>;
+
   staticConfigure(): void;
   getProjectRoot(): string;
   preConfigure(): void;
   postConfigure(): void;
+
+  grpcController<T>(
+    ctor: ControllerClass<T>,
+    nameOrOptions?: string | BindingFromClassOptions,
+  ): Binding<T>;
+
+  getServerHost(): string;
+  getServerPort(): number;
+  getServerAddress(): string;
+
+  getRepositorySync<T extends IRepository>(c: ClassType<T>): T;
+  getServiceSync<T extends IService>(c: ClassType<T>): T;
+
+  getMigrateModels(opts: {
+    ignoreModels?: string[];
+    migrateModels?: string[];
+  }): ValueOrPromise<Array<Repository<BaseEntity>>>;
+
+  migrateModels(opts: {
+    existingSchema: string;
+    ignoreModels?: string[];
+    migrateModels?: string[];
+  }): ValueOrPromise<void>;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------

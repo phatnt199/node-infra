@@ -34,10 +34,10 @@ export const isWeekday = (date: string | dayjs.Dayjs) => {
   return date;
 }; */
 
-export const getPreviousWeekday = (opts: { date: dayjs.Dayjs }) => {
-  const { date } = opts;
+export const getPreviousWeekday = (opts?: { date?: string | dayjs.Dayjs }) => {
+  const { date } = opts ?? { date: dayjs() };
 
-  let rs = date.clone().subtract(1, 'day');
+  let rs = dayjs(date).clone().subtract(1, 'day');
   while (!isWeekday(rs.toISOString())) {
     rs = rs.subtract(1, 'day');
   }
@@ -54,9 +54,10 @@ export const getPreviousWeekday = (opts: { date: dayjs.Dayjs }) => {
   return date;
 }; */
 
-export const getNextWeekday = (opts: { date: dayjs.Dayjs }) => {
-  const { date } = opts;
-  let rs = date.clone().add(1, 'day');
+export const getNextWeekday = (opts?: { date?: string | dayjs.Dayjs }) => {
+  const { date } = opts ?? { date: dayjs() };
+
+  let rs = dayjs(date).clone().add(1, 'day');
   while (!isWeekday(rs.toISOString())) {
     rs = rs.add(1, 'day');
   }

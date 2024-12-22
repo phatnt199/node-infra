@@ -1,5 +1,11 @@
 import { BindingKeys, EnvironmentKeys } from '@/common';
-import { IApplication, IEnvironmentValidationResult, IRepository, IService } from '@/common/types';
+import {
+  ClassType,
+  IApplication,
+  IEnvironmentValidationResult,
+  IRepository,
+  IService,
+} from '@/common/types';
 import { GrpcTags } from '@/components';
 import { AuthenticateKeys } from '@/components/authenticate/common';
 import { applicationEnvironment, ApplicationLogger, LoggerFactory } from '@/helpers';
@@ -14,7 +20,7 @@ import {
   Constructor,
   ControllerClass,
 } from '@loopback/core';
-import { Class, Repository, RepositoryMixin, RepositoryTags } from '@loopback/repository';
+import { Repository, RepositoryMixin, RepositoryTags } from '@loopback/repository';
 import { MiddlewareSequence, RestApplication, SequenceHandler } from '@loopback/rest';
 import { CrudRestComponent } from '@loopback/rest-crud';
 import { ServiceMixin } from '@loopback/service-proxy';
@@ -126,11 +132,11 @@ export abstract class BaseApplication
     return `${this.getServerHost()}:${this.getServerPort()}`;
   }
 
-  getRepositorySync<R extends IRepository>(c: Class<R>): R {
+  getRepositorySync<R extends IRepository>(c: ClassType<R>): R {
     return this.getSync<R>(`repositories.${c.name}`);
   }
 
-  getServiceSync<S extends IService>(c: Class<S>): S {
+  getServiceSync<S extends IService>(c: ClassType<S>): S {
     return this.getSync<S>(`services.${c.name}`);
   }
 
@@ -154,7 +160,7 @@ export abstract class BaseApplication
     });
 
     // Load models
-    return Promise.all(valids.map(b => this.get(b.key)));
+    return Promise.all(valids.map(b => this.get<Repository<BaseEntity>>(b.key)));
   }
 
   classifyModelsByDs(opts: { reps: Array<Repository<BaseEntity>> }) {
@@ -191,10 +197,10 @@ export abstract class BaseApplication
     const { existingSchema, ignoreModels = [], migrateModels } = opts;
 
     this.logger.info('[migrateModels] Loading legacy migratable models...!');
-    const reps = (await this.getMigrateModels({
+    const reps = await this.getMigrateModels({
       ignoreModels,
       migrateModels,
-    })) as Array<Repository<BaseEntity>>;
+    });
     const classified = this.classifyModelsByDs({ reps });
 
     const operation = existingSchema === 'drop' ? 'automigrate' : 'autoupdate';

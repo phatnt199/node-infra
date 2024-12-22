@@ -5,7 +5,7 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import { IPostgresOptions } from './types';
 
-const options: IPostgresOptions = {
+const databaseConfigs: IPostgresOptions = {
   connector: 'postgresql',
   name: process.env.APP_ENV_DATASOURCE_NAME ?? 'postgres',
   host: process.env.APP_ENV_POSTGRES_HOST ?? '0.0.0.0',
@@ -15,16 +15,16 @@ const options: IPostgresOptions = {
   database: process.env.APP_ENV_POSTGRES_DATABASE ?? 'postgres',
 };
 
-export class PostgresDataSource extends BaseDataSource<IPostgresOptions> {
-  static dataSourceName = options.name;
-  // static readonly defaultConfig: IPostgresOptions = options;
+export class PostgresDataSource extends BaseDataSource {
+  static dataSourceName = databaseConfigs.name;
+  static readonly defaultConfig = databaseConfigs;
 
   constructor(
-    @inject(`datasources.config.${options.name}`, { optional: true })
-    settings: IPostgresOptions = options,
+    @inject(`datasources.config.${databaseConfigs.name}`, { optional: true })
+    dsConfig = databaseConfigs,
   ) {
-    for (const key in settings) {
-      const value = get(settings, key);
+    for (const key in dsConfig) {
+      const value = get(dsConfig, key);
       switch (typeof value) {
         case 'number': {
           if (!value || value < 0) {
@@ -48,7 +48,7 @@ export class PostgresDataSource extends BaseDataSource<IPostgresOptions> {
       }
     }
 
-    super({ settings, scope: PostgresDataSource.name });
-    this.logger.info('Postgres DataSource Settings: %j', this.settings);
+    super({ settings: dsConfig, scope: PostgresDataSource.name });
+    this.logger.info('Postgres DataSource Settings: %j', dsConfig);
   }
 }
