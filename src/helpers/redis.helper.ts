@@ -185,35 +185,29 @@ export class RedisHelper extends BaseHelper {
   }
 
   // ---------------------------------------------------------------------------------
-  async getString(opts: { key: string }) {
-    const rs = await this.get(opts);
-    return rs;
+  getString(opts: { key: string }) {
+    return this.get(opts);
   }
 
   // ---------------------------------------------------------------------------------
-  async getStrings(opts: { keys: Array<string> }) {
-    const rs = await this.mget(opts);
-    return rs;
+  getStrings(opts: { keys: Array<string> }) {
+    return this.mget(opts);
   }
 
   // ---------------------------------------------------------------------------------
-  async getObject(opts: { key: string }) {
-    const rs = await this.get({
+  getObject(opts: { key: string }) {
+    return this.get({
       ...opts,
       transform: (cached: string) => JSON.parse(cached),
     });
-
-    return rs;
   }
 
   // ---------------------------------------------------------------------------------
-  async getObjects(opts: { keys: Array<string> }) {
-    const rs = await this.mget({
+  getObjects(opts: { keys: Array<string> }) {
+    return this.mget({
       ...opts,
       transform: (cached: string) => JSON.parse(cached),
     });
-
-    return rs;
   }
 
   // ---------------------------------------------------------------------------------
@@ -235,7 +229,7 @@ export class RedisHelper extends BaseHelper {
   }
 
   // ---------------------------------------------------------------------------------
-  async hSet(opts: { key: string; value: any; options?: { log: boolean } }) {
+  hSet(opts: { key: string; value: any; options?: { log: boolean } }) {
     return this.hset(opts);
   }
 
@@ -256,7 +250,7 @@ export class RedisHelper extends BaseHelper {
   }
 
   // ---------------------------------------------------------------------------------
-  async hGetAll(opts: { key: string; transform?: <T, R>(input: T) => R }) {
+  hGetAll(opts: { key: string; transform?: <T, R>(input: T) => R }) {
     return this.hgetall(opts);
   }
 
@@ -282,7 +276,7 @@ export class RedisHelper extends BaseHelper {
   }
 
   // ---------------------------------------------------------------------------------
-  async mSet(opts: { payload: Array<{ key: string; value: any }>; options?: { log: boolean } }) {
+  mSet(opts: { payload: Array<{ key: string; value: any }>; options?: { log: boolean } }) {
     return this.mset(opts);
   }
 
@@ -303,7 +297,7 @@ export class RedisHelper extends BaseHelper {
   }
 
   // ---------------------------------------------------------------------------------
-  async mGet(opts: { keys: Array<string>; transform?: (input: string) => any }) {
+  mGet(opts: { keys: Array<string>; transform?: (input: string) => any }) {
     return this.mget(opts);
   }
 
@@ -371,7 +365,7 @@ export class RedisHelper extends BaseHelper {
   }
 
   // ---------------------------------------------------------------------------------
-  async publish(opts: { topics: Array<string>; payload: any; useCompress?: boolean }) {
+  async publish<T = any>(opts: { topics: Array<string>; payload: T; useCompress?: boolean }) {
     const { topics, payload, useCompress = false } = opts;
 
     const validTopics = topics?.filter(topic => !isEmpty(topic));

@@ -1,5 +1,5 @@
 import { BindingKeys, EnvironmentKeys } from '@/common';
-import { IApplication, IEnvironmentValidationResult } from '@/common/types';
+import { IApplication, IEnvironmentValidationResult, IRepository, IService } from '@/common/types';
 import { GrpcTags } from '@/components';
 import { AuthenticateKeys } from '@/components/authenticate/common';
 import { applicationEnvironment, ApplicationLogger, LoggerFactory } from '@/helpers';
@@ -14,7 +14,7 @@ import {
   Constructor,
   ControllerClass,
 } from '@loopback/core';
-import { Repository, RepositoryMixin, RepositoryTags } from '@loopback/repository';
+import { Class, Repository, RepositoryMixin, RepositoryTags } from '@loopback/repository';
 import { MiddlewareSequence, RestApplication, SequenceHandler } from '@loopback/rest';
 import { CrudRestComponent } from '@loopback/rest-crud';
 import { ServiceMixin } from '@loopback/service-proxy';
@@ -124,6 +124,14 @@ export abstract class BaseApplication
 
   getServerAddress() {
     return `${this.getServerHost()}:${this.getServerPort()}`;
+  }
+
+  getRepositorySync<R extends IRepository>(c: Class<R>): R {
+    return this.getSync<R>(`repositories.${c.name}`);
+  }
+
+  getServiceSync<S extends IService>(c: Class<S>): S {
+    return this.getSync<S>(`services.${c.name}`);
   }
 
   getMigrateModels(opts: { ignoreModels?: string[]; migrateModels?: string[] }) {

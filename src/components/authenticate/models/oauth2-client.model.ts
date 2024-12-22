@@ -46,9 +46,12 @@ export class OAuth2Client extends BaseTzEntity {
     type: 'array',
     itemType: 'string',
     default: [],
+    /* jsonSchema: {
+      enum: ['authorization_code'],
+    }, */
     postgresql: { columnName: 'grants', dataType: 'jsonb' },
   })
-  grants: Array<string>;
+  grants: Array<string>; // ['authorization_code']
 
   @property({
     type: 'object',
