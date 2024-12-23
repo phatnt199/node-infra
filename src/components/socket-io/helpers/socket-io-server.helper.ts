@@ -1,8 +1,6 @@
 import { createAdapter } from '@socket.io/redis-adapter';
 import { Emitter } from '@socket.io/redis-emitter';
 import Redis from 'ioredis';
-import { of } from 'rxjs';
-import { delay } from 'rxjs/operators';
 import { Server as IOServer, Socket as IOSocket, ServerOptions } from 'socket.io';
 
 import { SocketIOConstants } from '@/components/socket-io/common/constants';
@@ -469,11 +467,7 @@ export class SocketIOServerHelper {
       sender.emit(topic, data);
     }
 
-    of('action_callback')
-      .pipe(delay(200))
-      .subscribe(() => {
-        cb?.();
-      });
+    cb?.();
 
     if (!doLog) {
       return;

@@ -29,7 +29,7 @@ export class RequestSpyMiddleware extends BaseProvider implements Provider<Middl
       const requestId = getUID();
       set(request, 'requestId', requestId);
 
-      const { url = '', method, body, query, path } = request;
+      const { url = '', method, body, query, path, headers } = request;
       const requestUrl = decodeURIComponent(url)?.replace(/(?:\r\n|\r|\n| )/g, '');
       const requestedRemark = {
         id: requestId,
@@ -41,7 +41,15 @@ export class RequestSpyMiddleware extends BaseProvider implements Provider<Middl
       };
       set(request, 'requestedRemark', requestedRemark);
 
-      this.logger.info('[spy][%s] Requested remark: %j', requestId, requestedRemark);
+      const requestForwardedIp = headers['x-real-ip'] ?? headers['x-forwarded-for'] ?? 'N/A';
+      set(request, 'requestForwardedIp', requestForwardedIp);
+
+      this.logger.info(
+        '[spy][%s] Request Information | forwardedIp: %s | remark: %j',
+        requestId,
+        requestForwardedIp,
+        requestedRemark,
+      );
     } catch (error) {
       this.logger.error('[spy] Failed to spy request information | Error: %s', error);
     }

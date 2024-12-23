@@ -1,4 +1,4 @@
-import { BaseDataSource } from '@/base/base.datasource';
+import { BaseDataSource } from '@/base/datasources';
 import { getError } from '@/utilities';
 import { Helper, Model } from 'casbin';
 

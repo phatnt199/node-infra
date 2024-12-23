@@ -1,4 +1,4 @@
-import { BaseDataSource } from '@/base/base.datasource';
+import { BaseDataSource } from '@/base/datasources';
 import { TzCrudRepository } from '@/base/repositories';
 import { Getter, inject } from '@loopback/core';
 import { OAuth2Client, OAuth2Scope, OAuth2Token } from '../models';

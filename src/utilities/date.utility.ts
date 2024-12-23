@@ -20,27 +20,49 @@ export const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
 
-export const isWeekday = (date: dayjs.Dayjs) => {
+export const isWeekday = (date: string | dayjs.Dayjs) => {
   const isoWeekday = dayjs(date)?.isoWeekday();
   return isoWeekday > 0 && isoWeekday < 6;
 };
 
-export const getPreviousWeekday = () => {
+/* export const getPreviousWeekday = () => {
   let date = dayjs();
   while (!isWeekday(date)) {
     date = date.subtract(1, 'day');
   }
 
   return date;
+}; */
+
+export const getPreviousWeekday = (opts?: { date?: string | dayjs.Dayjs }) => {
+  const { date } = opts ?? { date: dayjs() };
+
+  let rs = dayjs(date).clone().subtract(1, 'day');
+  while (!isWeekday(rs.toISOString())) {
+    rs = rs.subtract(1, 'day');
+  }
+
+  return rs;
 };
 
-export const getNextWeekday = () => {
+/* export const getNextWeekday = () => {
   let date = dayjs();
   while (!isWeekday(date)) {
     date = date.add(1, 'day');
   }
 
   return date;
+}; */
+
+export const getNextWeekday = (opts?: { date?: string | dayjs.Dayjs }) => {
+  const { date } = opts ?? { date: dayjs() };
+
+  let rs = dayjs(date).clone().add(1, 'day');
+  while (!isWeekday(rs.toISOString())) {
+    rs = rs.add(1, 'day');
+  }
+
+  return rs;
 };
 
 export const getDateTz = (opts: {

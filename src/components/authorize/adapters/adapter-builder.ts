@@ -1,4 +1,4 @@
-import { BaseDataSource } from '@/base/base.datasource';
+import { BaseDataSource } from '@/base/datasources';
 import { getError } from '@/utilities';
 import { FilteredAdapter } from 'casbin';
 import { CasbinAdapterTypes, TCasbinAdapter } from '../common';

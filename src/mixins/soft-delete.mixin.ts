@@ -1,7 +1,8 @@
 import { MixinTarget } from '@loopback/core';
-import { Entity, property } from '@loopback/repository';
+import { Entity, model, property } from '@loopback/repository';
 
 export const SoftDeleteModelMixin = <E extends MixinTarget<Entity>>(superClass: E) => {
+  @model()
   class Mixed extends superClass {
     @property({
       type: 'boolean',

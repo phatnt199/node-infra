@@ -1,5 +1,5 @@
-import { BaseDataSource } from '@/base/base.datasource';
 import { BaseTzEntity } from '@/base/base.model';
+import { BaseDataSource } from '@/base/datasources';
 import { TzCrudRepository, ViewRepository } from '@/base/repositories';
 import { EntityClassType, IdType } from '@/common';
 import { getError } from '@/utilities';

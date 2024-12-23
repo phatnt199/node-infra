@@ -1,4 +1,4 @@
-import { BaseDataSource } from '@/base/base.datasource';
+import { BaseDataSource } from '@/base/datasources';
 import { IdType } from '@/common';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
@@ -12,8 +12,8 @@ import { CasbinAdapterBuilder } from '../adapters';
 import {
   AuthorizerKeys,
   CasbinAdapterTypes,
-  IEnforcerFilterValue,
   IAuthorizeConfigureOptions,
+  IEnforcerFilterValue,
 } from '../common';
 
 @injectable({ scope: BindingScope.SINGLETON })

@@ -434,7 +434,7 @@ export const defineRelationCrudController = <
   if (!EntityRelations.isValid(relation.type)) {
     throw getError({
       statusCode: 500,
-      message: `[defineRelationCrudController] Invalid relationType! Valids: ${[...EntityRelations.TYPE_SET]}`,
+      message: `[defineRelationCrudController] Invalid relationType! Valids: ${[...EntityRelations.SCHEME_SET]}`,
     });
   }
 

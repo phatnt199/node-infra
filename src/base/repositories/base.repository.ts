@@ -13,7 +13,7 @@ import {
   Command,
   Count,
   DataObject,
-  DefaultCrudRepository,
+  DefaultCrudRepository as _DefaultCrudRepository,
   DefaultKeyValueRepository,
   IsolationLevel,
   juggler,
@@ -23,11 +23,16 @@ import {
   Transaction,
   TransactionalEntityRepository,
   Where,
+  HasManyRepositoryFactory,
+  Getter,
+  EntityCrudRepository,
 } from '@loopback/repository';
 import { BaseEntity, BaseKVEntity, BaseTzEntity } from '../base.model';
 
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import { createHasManyPolymorphicRepositoryFactoryFor } from './relations/has-many-polymorphic/factory';
+import { IHasManyPolymorphicDefinition } from './relations/has-many-polymorphic/types';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export class WhereBuilder<E extends object = AnyObject> extends BaseWhereBuilder {
@@ -41,6 +46,44 @@ export class WhereBuilder<E extends object = AnyObject> extends BaseWhereBuilder
 
   clone(): WhereBuilder {
     return new WhereBuilder(cloneDeep(this.build()));
+  }
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export class DefaultCrudRepository<
+  E extends BaseEntity,
+  ID,
+  Relations extends object = {},
+> extends _DefaultCrudRepository<E, ID, Relations> {
+  /**
+   * @experimental
+   */
+  createHasManyPolymorphicRepositoryFactoryFor<
+    Target extends BaseEntity,
+    TargetId extends IdType,
+    ForeignKeyType extends IdType,
+  >(opts: {
+    relationName: string;
+    principalType: string;
+    targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetId>>;
+  }): HasManyRepositoryFactory<Target, ForeignKeyType> {
+    const { relationName, principalType, targetRepositoryGetter } = opts;
+    const relationMetadata = this.entityClass.definition.relations[
+      relationName
+    ] as IHasManyPolymorphicDefinition;
+
+    if (!relationMetadata.polymorphic) {
+      throw getError({
+        message:
+          '[createHasManyPolymorphicRepositoryFactoryFor] polymorphic missing in relation definition!',
+      });
+    }
+
+    return createHasManyPolymorphicRepositoryFactoryFor<Target, TargetId, ForeignKeyType>({
+      relationMetadata,
+      principalType,
+      targetRepositoryGetter,
+    });
   }
 }
 

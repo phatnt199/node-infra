@@ -47,7 +47,7 @@ export class CrashReportComponent extends BaseComponent implements LifeCycleObse
       const { identifier, options } = reportProvider;
       if (!CrashReportProviderKeys.isValid({ identifier })) {
         this.logger.error('[binding] Invalid provider identifier: %s | Valid: %j', identifier, [
-          ...CrashReportProviderKeys.TYPE_SET,
+          ...CrashReportProviderKeys.SCHEME_SET,
         ]);
         continue;
       }
