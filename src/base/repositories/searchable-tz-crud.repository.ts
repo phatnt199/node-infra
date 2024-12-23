@@ -18,6 +18,7 @@ import { TzCrudRepository } from './tz-crud.repository';
 
 import get from 'lodash/get';
 import set from 'lodash/set';
+import { executePromiseWithLimit, getTableDefinition } from '@/utilities';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export abstract class SearchableTzCrudRepository<
@@ -173,7 +174,7 @@ export abstract class SearchableTzCrudRepository<
   private async renderSearchable(
     field: 'textSearch' | 'objectSearch',
     data: DataObject<E>,
-    options?: Options & { where?: Where },
+    options?: Options & { where?: Where; ignoreMixSearchFields?: boolean },
   ) {
     const where = get(options, 'where');
     const isSearchable = get(this.modelClass.definition.properties, field, null) !== null;
@@ -225,7 +226,7 @@ export abstract class SearchableTzCrudRepository<
   // ----------------------------------------------------------------------------------------------------
   async mixSearchFields(
     data: DataObject<E>,
-    options?: Options & { where?: Where },
+    options?: Options & { where?: Where; ignoreMixSearchFields?: boolean },
   ): Promise<DataObject<E>> {
     return new Promise((resolve, reject) => {
       const ignoreMixSearchFields = get(options, 'ignoreMixSearchFields');
@@ -254,7 +255,7 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  create(data: DataObject<E>, options?: Options): Promise<E> {
+  create(data: DataObject<E>, options?: Options & { ignoreMixSearchFields?: boolean }): Promise<E> {
     const tmp = this.mixUserAudit(data, { newInstance: true, authorId: options?.authorId });
 
     return new Promise((resolve, reject) => {
@@ -267,7 +268,10 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  createAll(data: DataObject<E>[], options?: Options): Promise<E[]> {
+  createAll(
+    data: DataObject<E>[],
+    options?: Options & { ignoreMixSearchFields?: boolean },
+  ): Promise<E[]> {
     return new Promise((resolve, reject) => {
       Promise.all(
         data.map(el => {
@@ -284,7 +288,13 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+  updateById(
+    id: IdType,
+    data: DataObject<E>,
+    options?: Options & {
+      ignoreMixSearchFields?: boolean;
+    },
+  ): Promise<void> {
     const tmp = this.mixUserAudit(data, { newInstance: false, authorId: options?.authorId });
 
     return new Promise((resolve, reject) => {
@@ -297,7 +307,13 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+  replaceById(
+    id: IdType,
+    data: DataObject<E>,
+    options?: Options & {
+      ignoreMixSearchFields?: boolean;
+    },
+  ): Promise<void> {
     const tmp = this.mixUserAudit(data, { newInstance: false, authorId: options?.authorId });
 
     return new Promise((resolve, reject) => {
@@ -307,5 +323,63 @@ export abstract class SearchableTzCrudRepository<
         })
         .catch(reject);
     });
+  }
+
+  // ----------------------------------------------------------------------------------------------------
+  async syncSearchFields(
+    where?: Where<E>,
+    options?: Options & { pagingLimit?: number },
+  ): Promise<void> {
+    const { columns } = getTableDefinition<E>({ model: this.entityClass });
+
+    const pagingLimit = get(options, 'pagingLimit', 50);
+    let pagingOffset = 0;
+    while (true) {
+      const t = performance.now();
+      const entities = await this.find(
+        { where, limit: pagingLimit, offset: pagingOffset },
+        options,
+      );
+      this.logger.info(
+        '[syncSearchFields] Start sync searchable fields | Where: %j | Found: %d',
+        where,
+        entities.length,
+      );
+
+      const tasks: (() => Promise<void>)[] = entities.map(e => {
+        return () =>
+          new Promise<void>((resolve, reject) => {
+            this.mixSearchFields(e, { ...options, where: { id: e.id } })
+              .then(mixed => {
+                const objectSearch = get(mixed, 'objectSearch');
+                const textSearch = get(mixed, 'textSearch');
+
+                const payload = {};
+                if (get(columns, 'objectSearch')) {
+                  set(payload, 'objectSearch', objectSearch);
+                }
+                if (get(columns, 'textSearch')) {
+                  set(payload, 'textSearch', textSearch);
+                }
+
+                this.updateById(e.id, payload, options).then(resolve).catch(reject);
+              })
+              .catch(reject);
+          });
+      });
+
+      await executePromiseWithLimit({ tasks, limit: 5 });
+
+      this.logger.info(
+        '[syncSearchFields] End sync searchable fields | Took: %d (ms)',
+        performance.now() - t,
+      );
+      pagingOffset += pagingLimit;
+      if (entities.length < pagingLimit) {
+        break;
+      }
+    }
+
+    return;
   }
 }
