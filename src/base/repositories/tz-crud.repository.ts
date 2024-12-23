@@ -17,6 +17,7 @@ export abstract class TzCrudRepository<
     super(entityClass, dataSource, scope);
   }
 
+  // ----------------------------------------------------------------------------------------------------
   existsWith(where?: Where<E>, options?: Options): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.findOne({ where }, options)
@@ -27,6 +28,7 @@ export abstract class TzCrudRepository<
     });
   }
 
+  // ----------------------------------------------------------------------------------------------------
   create(
     data: DataObject<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
@@ -43,6 +45,7 @@ export abstract class TzCrudRepository<
     return super.create(enriched, options);
   }
 
+  // ----------------------------------------------------------------------------------------------------
   createAll(
     datum: DataObject<E>[],
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
@@ -71,6 +74,7 @@ export abstract class TzCrudRepository<
     return this.create(data, options);
   }
 
+  // ----------------------------------------------------------------------------------------------------
   updateById(
     id: IdType,
     data: DataObject<E>,
@@ -88,6 +92,7 @@ export abstract class TzCrudRepository<
     return super.updateById(id, enriched, options);
   }
 
+  // ----------------------------------------------------------------------------------------------------
   updateWithReturn(
     id: IdType,
     data: DataObject<E>,
@@ -106,6 +111,7 @@ export abstract class TzCrudRepository<
     });
   }
 
+  // ----------------------------------------------------------------------------------------------------
   updateAll(
     data: DataObject<E>,
     where?: Where<E>,
@@ -123,6 +129,7 @@ export abstract class TzCrudRepository<
     return super.updateAll(enriched, where, options);
   }
 
+  // ----------------------------------------------------------------------------------------------------
   async upsertWith(
     data: DataObject<E>,
     where: Where<E>,
@@ -139,6 +146,7 @@ export abstract class TzCrudRepository<
     return rs;
   }
 
+  // ----------------------------------------------------------------------------------------------------
   replaceById(
     id: IdType,
     data: DataObject<E>,
@@ -156,6 +164,7 @@ export abstract class TzCrudRepository<
     return super.replaceById(id, enriched, options);
   }
 
+  // ----------------------------------------------------------------------------------------------------
   private _softDelete(
     where: Where<E>,
     options?: Options & {
@@ -264,6 +273,7 @@ export abstract class TzCrudRepository<
     });
   }
 
+  // ----------------------------------------------------------------------------------------------------
   mixTimestamp(
     entity: DataObject<E>,
     options: Options & { newInstance?: boolean; ignoreModified?: boolean } = {
@@ -298,6 +308,7 @@ export abstract class TzCrudRepository<
     return entity;
   }
 
+  // ----------------------------------------------------------------------------------------------------
   _deleteWithReturn(
     where: Where<E>,
     options?: Options,
