@@ -224,7 +224,7 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  async mixSearchFields(
+  mixSearchFields(
     data: DataObject<E>,
     options?: Options & { where?: Where; ignoreMixSearchFields?: boolean },
   ): Promise<DataObject<E>> {
@@ -333,9 +333,11 @@ export abstract class SearchableTzCrudRepository<
     const { columns } = getTableDefinition<E>({ model: this.entityClass });
 
     const pagingLimit = get(options, 'pagingLimit', 50);
+
     let pagingOffset = 0;
     while (true) {
       const t = performance.now();
+
       const entities = await this.find(
         { where, limit: pagingLimit, offset: pagingOffset },
         options,
@@ -374,6 +376,7 @@ export abstract class SearchableTzCrudRepository<
         '[syncSearchFields] End sync searchable fields | Took: %d (ms)',
         performance.now() - t,
       );
+
       pagingOffset += pagingLimit;
       if (entities.length < pagingLimit) {
         break;
