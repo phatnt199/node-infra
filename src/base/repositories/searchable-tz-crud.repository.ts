@@ -18,7 +18,7 @@ import { TzCrudRepository } from './tz-crud.repository';
 
 import get from 'lodash/get';
 import set from 'lodash/set';
-import { executePromiseWithLimit, getTableDefinition } from '@/utilities';
+import { bulkUpdateKnex, getTableDefinition } from '@/utilities';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export abstract class SearchableTzCrudRepository<
@@ -330,7 +330,7 @@ export abstract class SearchableTzCrudRepository<
     where?: Where<E>,
     options?: Options & { pagingLimit?: number },
   ): Promise<void> {
-    const { columns } = getTableDefinition<E>({ model: this.entityClass });
+    const { table, columns } = getTableDefinition<E>({ model: this.entityClass });
 
     const pagingLimit = get(options, 'pagingLimit', 50);
 
@@ -339,7 +339,7 @@ export abstract class SearchableTzCrudRepository<
       const t = performance.now();
 
       const entities = await this.find(
-        { where, limit: pagingLimit, offset: pagingOffset },
+        { where, include: this.searchableInclusions, limit: pagingLimit, offset: pagingOffset },
         options,
       );
       this.logger.info(
@@ -348,29 +348,30 @@ export abstract class SearchableTzCrudRepository<
         entities.length,
       );
 
-      const tasks: (() => Promise<void>)[] = entities.map(e => {
-        return () =>
-          new Promise<void>((resolve, reject) => {
-            this.mixSearchFields(e, { ...options, where: { id: e.id } })
-              .then(mixed => {
-                const objectSearch = get(mixed, 'objectSearch');
-                const textSearch = get(mixed, 'textSearch');
-
-                const payload = {};
-                if (get(columns, 'objectSearch')) {
-                  set(payload, 'objectSearch', objectSearch);
-                }
-                if (get(columns, 'textSearch')) {
-                  set(payload, 'textSearch', textSearch);
-                }
-
-                this.updateById(e.id, payload, options).then(resolve).catch(reject);
-              })
-              .catch(reject);
-          });
+      const data = entities.map(e => {
+        return {
+          id: e.id,
+          objectSearch: JSON.stringify(this.renderObjectSearch({ data: e, entity: e })),
+          textSearch: this.renderTextSearch({ data: e, entity: e }),
+        };
       });
 
-      await executePromiseWithLimit({ tasks, limit: 5 });
+      const setKeys: (string | { resourceKey: string; targetKey: string })[] = [];
+      if (get(columns, 'objectSearch')) {
+        setKeys.push({ resourceKey: 'object_search', targetKey: 'object_search' });
+      }
+      if (get(columns, 'textSearch')) {
+        setKeys.push({ resourceKey: 'text_search', targetKey: 'text_search' });
+      }
+
+      const query = bulkUpdateKnex({
+        data,
+        tableName: table.name,
+        setKeys,
+        whereKeys: ['id'],
+      });
+
+      this.execute(query, undefined, options);
 
       this.logger.info(
         '[syncSearchFields] End sync searchable fields | Took: %d (ms)',
