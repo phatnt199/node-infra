@@ -326,10 +326,7 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  private async _syncSearchFields(
-    entities: (E & R)[],
-    options?: Options & { pagingLimit?: number },
-  ) {
+  private _syncSearchFields(entities: (E & R)[], options?: Options & { pagingLimit?: number }) {
     const { table, columns } = getTableDefinition<E>({ model: this.entityClass });
 
     const data = entities.map(e => {
