@@ -366,8 +366,9 @@ export abstract class SearchableTzCrudRepository<
         setKeys.push({ sourceKey: 'objectSearch', targetKey: 'objectSearch' });
         keys.push('objectSearch');
       }
+
       if (get(columns, 'textSearch')) {
-        setKeys.push({ sourceKey: 'textSearch', targetKey: 'textSearch' });
+        setKeys.push('textSearch');
         keys.push('textSearch');
       }
 
