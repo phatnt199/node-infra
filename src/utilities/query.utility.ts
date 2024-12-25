@@ -114,7 +114,7 @@ export const buildBatchUpdateQuery = <E>(opts: {
   const withKeys = keys.map(key => snakeCase(String(key))).sort();
 
   // ----------------------------------------
-  let updateSets: string[] = [];
+  const updateSets: string[] = [];
   for (const key of setKeys) {
     switch (typeof key) {
       case 'string': {
@@ -134,7 +134,7 @@ export const buildBatchUpdateQuery = <E>(opts: {
   }
 
   // ----------------------------------------
-  let updateWheres: string[] = [];
+  const updateWheres: string[] = [];
   for (const key of whereKeys) {
     switch (typeof key) {
       case 'string': {
