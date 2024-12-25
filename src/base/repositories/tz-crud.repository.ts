@@ -356,7 +356,7 @@ export abstract class TzCrudRepository<
     whereKeys: (keyof E | { sourceKey: keyof E; targetKey: keyof E })[];
     options?: Options;
   }) {
-    const { data, keys, setKeys, whereKeys, options } = opts;
+    const { data, keys, setKeys, whereKeys } = opts;
 
     const query = buildBatchUpdateQuery<E>({
       tableName: this.entityClass.name,

@@ -1,8 +1,10 @@
 import { BaseTzEntity } from '@/base';
 import { AnyType, EntityClassType } from '@/common';
 import { applicationLogger } from '@/helpers';
+import get from 'lodash/get';
+import pick from 'lodash/pick';
+import snakeCase from 'lodash/snakeCase';
 import { getError } from './error.utility';
-import { snakeCase, get, pick } from 'lodash';
 
 export const getTableDefinition = <T extends BaseTzEntity>(opts: {
   model: EntityClassType<T>;
