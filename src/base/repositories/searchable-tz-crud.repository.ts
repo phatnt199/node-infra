@@ -351,7 +351,7 @@ export abstract class SearchableTzCrudRepository<
       const data = entities.map(e => {
         return {
           id: e.id,
-          objectSearch: JSON.stringify(this.renderObjectSearch({ data: e, entity: e })),
+          objectSearch: this.renderObjectSearch({ data: e, entity: e }),
           textSearch: this.renderTextSearch({ data: e, entity: e }),
         };
       });
