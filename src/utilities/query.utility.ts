@@ -105,7 +105,18 @@ export const buildBatchUpdateQuery = <E>(opts: {
   const withValues = formattedData.map(obj => {
     const values: string[] = [];
     for (const k of Object.keys(obj).sort()) {
-      values.push(getValue(get(obj, k, null)));
+      const value = get(obj, k, null);
+
+      switch (typeof value) {
+        case 'object': {
+          values.push(getValue(JSON.stringify(value)));
+          break;
+        }
+        default: {
+          values.push(getValue(value));
+          break;
+        }
+      }
     }
 
     return `(${values.toString()})`;
