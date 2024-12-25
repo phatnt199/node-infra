@@ -18,7 +18,7 @@ import { TzCrudRepository } from './tz-crud.repository';
 
 import get from 'lodash/get';
 import set from 'lodash/set';
-import { bulkUpdateKnex, getTableDefinition } from '@/utilities';
+import { buildBatchUpdateQuery, getTableDefinition } from '@/utilities';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export abstract class SearchableTzCrudRepository<
@@ -356,16 +356,24 @@ export abstract class SearchableTzCrudRepository<
         };
       });
 
-      const setKeys: (string | { resourceKey: string; targetKey: string })[] = [];
+      const setKeys: (
+        | keyof BaseSearchableTzEntity
+        | { sourceKey: keyof BaseSearchableTzEntity; targetKey: keyof BaseSearchableTzEntity }
+      )[] = [];
+      const keys: (keyof BaseSearchableTzEntity)[] = [];
+
       if (get(columns, 'objectSearch')) {
-        setKeys.push({ resourceKey: 'object_search', targetKey: 'object_search' });
+        setKeys.push({ sourceKey: 'objectSearch', targetKey: 'objectSearch' });
+        keys.push('objectSearch');
       }
       if (get(columns, 'textSearch')) {
-        setKeys.push({ resourceKey: 'text_search', targetKey: 'text_search' });
+        setKeys.push({ sourceKey: 'textSearch', targetKey: 'textSearch' });
+        keys.push('textSearch');
       }
 
-      const query = bulkUpdateKnex({
+      const query = buildBatchUpdateQuery<BaseSearchableTzEntity>({
         data,
+        keys: ['id', ...keys],
         tableName: table.name,
         setKeys,
         whereKeys: ['id'],

@@ -2,7 +2,7 @@ import { BaseTzEntity } from '@/base';
 import { AnyType, EntityClassType } from '@/common';
 import { applicationLogger } from '@/helpers';
 import { getError } from './error.utility';
-import { snakeCase, get } from 'lodash';
+import { snakeCase, get, pick } from 'lodash';
 
 export const getTableDefinition = <T extends BaseTzEntity>(opts: {
   model: EntityClassType<T>;
@@ -49,7 +49,8 @@ export const getTableDefinition = <T extends BaseTzEntity>(opts: {
   };
 };
 
-export const getValue = <T>(value: T) => {
+// --------------------------------------------------------------------------------
+export const getValue = (value: AnyType) => {
   switch (typeof value) {
     case null: {
       return 'null';
@@ -73,43 +74,55 @@ export const getValue = <T>(value: T) => {
 };
 
 // --------------------------------------------------------------------------------
-export const bulkUpdateKnex = (opts: {
+export const buildBatchUpdateQuery = <E>(opts: {
   tableName: string;
+  keys: (keyof E)[];
   data: AnyType[];
-  setKeys: (string | { resourceKey: string; targetKey: string })[];
-  whereKeys: (string | { resourceKey: string; targetKey: string })[];
+  setKeys: (keyof E | { sourceKey: keyof E; targetKey: keyof E })[];
+  whereKeys: (keyof E | { sourceKey: keyof E; targetKey: keyof E })[];
   whereRaws?: string[];
-}) => {
-  const { data, tableName, setKeys, whereKeys, whereRaws = [] } = opts;
+}): string => {
+  const { data, tableName, keys, setKeys, whereKeys, whereRaws = [] } = opts;
   const withAlias = 't';
 
-  if (!data.length) {
-    applicationLogger.error('[bulkUpdateKnex] No data to update');
+  if (!data.length || !keys.length || !setKeys.length || !whereKeys.length) {
+    applicationLogger.error(
+      '[batchUpdate] Missing required fields | Data: %d | Keys: %d | Set Keys: %d | Where Keys: %d',
+      data.length,
+      keys.length,
+      setKeys.length,
+      whereKeys.length,
+    );
     throw getError({
-      message: '[bulkUpdateKnex] No data to update',
+      message: '[batchUpdate] Missing required fields',
     });
   }
 
   // ----------------------------------------
-  const keys = Object.keys(data[0]).map(key => snakeCase(key));
-  const values = data.map(obj => {
+  const formattedData = data.map(obj => pick(obj, ...keys));
+  const withValues = formattedData.map(obj => {
     const values: string[] = [];
-    for (const k in obj) {
+    for (const k of Object.keys(obj).sort()) {
       values.push(getValue(get(obj, k, null)));
     }
-    return `(${values})`;
+
+    return `(${values.toString()})`;
   });
+
+  const withKeys = keys.map(key => snakeCase(String(key))).sort();
 
   // ----------------------------------------
   let updateSets: string[] = [];
   for (const key of setKeys) {
     switch (typeof key) {
       case 'string': {
-        updateSets.push(`"${key}" = ${withAlias}."${key}"`);
+        updateSets.push(`"${snakeCase(key)}" = ${withAlias}."${snakeCase(key)}"`);
         break;
       }
       case 'object': {
-        updateSets.push(`"${key.targetKey}" = ${withAlias}."${key.resourceKey}"::JSONB`);
+        updateSets.push(
+          `"${snakeCase(String(key.targetKey))}" = ${withAlias}."${snakeCase(String(key.sourceKey))}"::JSONB`,
+        );
         break;
       }
       default: {
@@ -123,11 +136,13 @@ export const bulkUpdateKnex = (opts: {
   for (const key of whereKeys) {
     switch (typeof key) {
       case 'string': {
-        updateWheres.push(`"${tableName}"."${key}" = ${withAlias}."${key}"`);
+        updateWheres.push(`"${tableName}"."${snakeCase(key)}" = ${withAlias}."${snakeCase(key)}"`);
         break;
       }
       case 'object': {
-        updateWheres.push(`${key.targetKey} = ${withAlias}."${key.resourceKey}"`);
+        updateWheres.push(
+          `${snakeCase(String(key.targetKey))} = ${withAlias}."${snakeCase(String(key.sourceKey))}"`,
+        );
         break;
       }
       default: {
@@ -136,11 +151,11 @@ export const bulkUpdateKnex = (opts: {
     }
   }
 
-  const query = `WITH ${withAlias} (${keys}) AS (VALUES ${values})
+  // ----------------------------------------
+  return `WITH ${withAlias} (${withKeys}) AS (VALUES ${withValues})
 UPDATE "${tableName}"
 SET ${updateSets.join(', ')}
 FROM ${withAlias}
-WHERE ${updateWheres.join(', AND')} ${whereRaws.length ? `AND ${whereRaws.join(', AND')}` : ''};`;
-
-  return query;
+WHERE ${updateWheres.join(' AND ')}
+${whereRaws.length ? `AND ${whereRaws.join(', AND')}` : ''};`;
 };

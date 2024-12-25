@@ -1,6 +1,6 @@
 import { AnyType, EntityClassType, EntityRelationType, IdType } from '@/common/types';
 import { QueryBuilderHelper } from '@/helpers';
-import { getError } from '@/utilities';
+import { buildBatchUpdateQuery, getError } from '@/utilities';
 import { Count, DataObject, juggler, Options, Where } from '@loopback/repository';
 
 import { BaseTzEntity, BaseUserAuditTzEntity } from '../base.model';
@@ -346,5 +346,26 @@ export abstract class TzCrudRepository<
           });
         });
     });
+  }
+
+  // ----------------------------------------------------------------------------------------------------
+  batchUpdate(opts: {
+    data: DataObject<E>[];
+    keys: (keyof E)[];
+    setKeys: (keyof E | { sourceKey: keyof E; targetKey: keyof E })[];
+    whereKeys: (keyof E | { sourceKey: keyof E; targetKey: keyof E })[];
+    options?: Options;
+  }) {
+    const { data, keys, setKeys, whereKeys, options } = opts;
+
+    const query = buildBatchUpdateQuery<E>({
+      tableName: this.entityClass.name,
+      data,
+      keys,
+      setKeys,
+      whereKeys,
+    });
+
+    console.log(query);
   }
 }
