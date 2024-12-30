@@ -18,7 +18,7 @@ import { TzCrudRepository } from './tz-crud.repository';
 
 import get from 'lodash/get';
 import set from 'lodash/set';
-import { executePromiseWithLimit, getTableDefinition } from '@/utilities';
+import { buildBatchUpdateQuery, executePromiseWithLimit, getTableDefinition } from '@/utilities';
 
 @injectable({ scope: BindingScope.SINGLETON })
 export abstract class SearchableTzCrudRepository<
@@ -329,55 +329,71 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
+  private _syncSearchFields(entities: (E & R)[], options?: Options & { pagingLimit?: number }) {
+    const { table, columns } = getTableDefinition<E>({ model: this.entityClass });
+
+    const data = entities.map(e => {
+      return {
+        id: e.id,
+        objectSearch: this.renderObjectSearch({ data: e, entity: e }),
+        textSearch: this.renderTextSearch({ data: e, entity: e }),
+      };
+    });
+
+    const setKeys: (
+      | keyof BaseSearchableTzEntity
+      | { sourceKey: keyof BaseSearchableTzEntity; targetKey: keyof BaseSearchableTzEntity }
+    )[] = [];
+    const keys: (keyof BaseSearchableTzEntity)[] = [];
+
+    if (get(columns, 'objectSearch')) {
+      setKeys.push({ sourceKey: 'objectSearch', targetKey: 'objectSearch' });
+      keys.push('objectSearch');
+    }
+
+    if (get(columns, 'textSearch')) {
+      setKeys.push('textSearch');
+      keys.push('textSearch');
+    }
+
+    const query = buildBatchUpdateQuery<BaseSearchableTzEntity>({
+      data,
+      keys: ['id', ...keys],
+      tableName: table.name,
+      setKeys,
+      whereKeys: ['id'],
+    });
+
+    return this.execute(query, undefined, options);
+  }
+
+  // ----------------------------------------------------------------------------------------------------
   async syncSearchFields(
     where?: Where<E>,
     options?: Options & { pagingLimit?: number },
   ): Promise<void> {
-    const { columns } = getTableDefinition<E>({ model: this.entityClass });
+    const t = performance.now();
 
     const pagingLimit = get(options, 'pagingLimit', 50);
-
     let pagingOffset = 0;
-    while (true) {
-      const t = performance.now();
 
+    this.logger.info('[syncSearchFields] Start sync searchable fields');
+    const tasks: (() => Promise<void>)[] = [];
+    while (true) {
       const entities = await this.find(
-        { where, limit: pagingLimit, offset: pagingOffset },
+        { where, include: this.searchableInclusions, limit: pagingLimit, offset: pagingOffset },
         options,
       );
-      this.logger.info(
-        '[syncSearchFields] Start sync searchable fields | Where: %j | Found: %d',
-        where,
-        entities.length,
-      );
+      this.logger.info('[syncSearchFields] Where: %j | Found: %d', where, entities.length);
 
-      const tasks: (() => Promise<void>)[] = entities.map(e => {
-        return () =>
-          new Promise<void>((resolve, reject) => {
-            this.mixSearchFields(e, { ...options, where: { id: e.id } })
-              .then(mixed => {
-                const objectSearch = get(mixed, 'objectSearch');
-                const textSearch = get(mixed, 'textSearch');
-
-                const payload = {};
-                if (get(columns, 'objectSearch')) {
-                  set(payload, 'objectSearch', objectSearch);
-                }
-                if (get(columns, 'textSearch')) {
-                  set(payload, 'textSearch', textSearch);
-                }
-
-                this.updateById(e.id, payload, options).then(resolve).catch(reject);
-              })
-              .catch(reject);
-          });
-      });
-
-      await executePromiseWithLimit({ tasks, limit: 5 });
-
-      this.logger.info(
-        '[syncSearchFields] End sync searchable fields | Took: %d (ms)',
-        performance.now() - t,
+      tasks.push(() =>
+        this._syncSearchFields(entities, options)
+          .then(() => {
+            this.logger.info(`[syncSearchFields] Sucess sync %d rows`, entities.length);
+          })
+          .catch(e => {
+            this.logger.error(`[syncSearchFields] Error: %j`, e);
+          }),
       );
 
       pagingOffset += pagingLimit;
@@ -385,6 +401,12 @@ export abstract class SearchableTzCrudRepository<
         break;
       }
     }
+
+    await executePromiseWithLimit({ tasks, limit: 5 });
+    this.logger.info(
+      '[syncSearchFields] End sync searchable fields | Took: %d (ms)',
+      performance.now() - t,
+    );
 
     return;
   }
