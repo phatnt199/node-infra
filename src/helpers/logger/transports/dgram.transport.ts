@@ -1,7 +1,7 @@
-import Transport from 'winston-transport';
-import dgram from 'dgram';
-import { getError } from '@/utilities';
 import { ResultCodes } from '@/common';
+import { getError } from '@/utilities';
+import dgram from 'dgram';
+import Transport from 'winston-transport';
 
 export interface IDgramTransportOptions extends Transport.TransportStreamOptions {
   label: string;
@@ -39,8 +39,7 @@ export class DgramTransport extends Transport {
       !opts?.label ||
       !opts?.host ||
       !opts?.port ||
-      !opts?.triggerLevels ||
-      !opts?.triggerLevels.length ||
+      !opts?.triggerLevels?.length ||
       !opts?.socketOptions
     ) {
       return null;
