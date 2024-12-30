@@ -122,6 +122,9 @@ importers:
       winston-daily-rotate-file:
         specifier: ^5.0.0
         version: 5.0.0(winston@3.17.0)
+      winston-transport:
+        specifier: ^4.9.0
+        version: 4.9.0
     devDependencies:
       '@loopback/build':
         specifier: ^11.0.7
@@ -503,8 +506,8 @@ packages:
     resolution: {integrity: sha512-8QhGJdXyZizKoLbUyZBr7oT+ayUrarYqMXectCvtVqjN3KNz3w96DXDd5OK5Z0GBcSnkIhpcdDWgOKmokHMNuw==}
     engines: {node: 18 || 20 || 22}
 
-  '@minimaltech/eslint-common@0.0.19':
-    resolution: {integrity: sha512-jSNN4v0+59Iv6bmh/hDc9GkZlaZg5OWtXgV2mhLzg7JkTXulKLR2y7SnR7wYd5UxAqduzoCaV9vg+fNzS23gxQ==}
+  '@minimaltech/eslint-common@0.0.20':
+    resolution: {integrity: sha512-XjQ5ekMZzUen4kU6NnkjldOqqIxO7keRBK8IoFJbbJxciL9ylD7BepaUdaxR8QmY6nbExMmksPKY3kcrl+7XIw==}
 
   '@minimaltech/eslint-node@0.1.15':
     resolution: {integrity: sha512-v8Khu/0Ub5C+icFUypNDd9vafGlCsD78ZV+2SxeI+s1WK0bZ23pc7glO11acgLFR2mLyW98t45FPVZWcW5vZHA==}
@@ -3943,7 +3946,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@minimaltech/eslint-common@0.0.19':
+  '@minimaltech/eslint-common@0.0.20':
     dependencies:
       '@eslint/js': 9.16.0
       eslint: 8.57.1
@@ -3961,7 +3964,7 @@ snapshots:
       '@eslint/eslintrc': 3.2.0
       '@eslint/js': 9.16.0
       '@loopback/eslint-config': 15.0.4(eslint@8.57.1)(typescript@5.7.2)
-      '@minimaltech/eslint-common': 0.0.19
+      '@minimaltech/eslint-common': 0.0.20
     transitivePeerDependencies:
       - '@types/eslint'
       - eslint
