@@ -3,19 +3,30 @@
   "extends": "@loopback/build/config/tsconfig.common.json",
   "compilerOptions": {
     "target": "es2015",
+    "module": "nodenext",
+
+    /* Bundler mode */
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": false,
+    "esModuleInterop": true,
+    "removeComments": false,
+    "moduleResolution": "nodenext",
+    
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    
+    /* Paths */
     "outDir": "dist",
     "rootDir": "src",
     "baseUrl": "src",
     "paths": {
       "@/*": ["./*"]
-    },
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "esModuleInterop": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": false,
-    "removeComments": false
+    }
   },
   "include": ["src", "./*.config.*", ".prettierrc.*"],
   "exclude": ["node_modules", "dist"]

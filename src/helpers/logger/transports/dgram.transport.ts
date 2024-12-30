@@ -36,13 +36,12 @@ export class DgramTransport extends Transport {
   static fromPartial(opts?: Partial<IDgramTransportOptions>): DgramTransport | null {
     console.log('fromPartial: ', opts);
     if (
-      !opts ||
-      !opts.label ||
-      !opts.host ||
-      !opts.port ||
-      !opts.triggerLevels ||
-      !opts.triggerLevels.length ||
-      !opts.socketOptions
+      !opts?.label ||
+      !opts?.host ||
+      !opts?.port ||
+      !opts?.triggerLevels ||
+      !opts?.triggerLevels.length ||
+      !opts?.socketOptions
     ) {
       return null;
     }
@@ -69,7 +68,7 @@ export class DgramTransport extends Transport {
     return [timestamp, `[${this.label ?? label}]`, rest[Symbol.for('level')], message].join(' ');
   }
 
-  log(
+  override log(
     opts: {
       level: string;
       message: string;

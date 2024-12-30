@@ -254,7 +254,7 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  create(data: DataObject<E>, options?: Options): Promise<E> {
+  override create(data: DataObject<E>, options?: Options): Promise<E> {
     const tmp = this.mixUserAudit(data, { newInstance: true, authorId: options?.authorId });
 
     return new Promise((resolve, reject) => {
@@ -267,7 +267,7 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  createAll(data: DataObject<E>[], options?: Options): Promise<E[]> {
+  override createAll(data: DataObject<E>[], options?: Options): Promise<E[]> {
     return new Promise((resolve, reject) => {
       Promise.all(
         data.map(el => {
@@ -284,7 +284,7 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+  override updateById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
     const tmp = this.mixUserAudit(data, { newInstance: false, authorId: options?.authorId });
 
     return new Promise((resolve, reject) => {
@@ -297,7 +297,7 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
+  override replaceById(id: IdType, data: DataObject<E>, options?: Options): Promise<void> {
     const tmp = this.mixUserAudit(data, { newInstance: false, authorId: options?.authorId });
 
     return new Promise((resolve, reject) => {

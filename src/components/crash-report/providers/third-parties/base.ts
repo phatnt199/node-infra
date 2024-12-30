@@ -13,6 +13,4 @@ export abstract class BaseCrashReportProvider extends AbstractCrashReportProvide
     super();
     this.logger = LoggerFactory.getLogger([opts?.scope ?? BaseCrashReportProvider.name]);
   }
-
-  abstract sendReport(opts: ISendReport): ValueOrPromise<void>;
 }

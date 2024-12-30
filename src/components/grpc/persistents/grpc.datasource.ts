@@ -7,7 +7,7 @@ import { TGrpcServiceClient } from '../common';
 // ------------------------------------------------------------------------------------
 export abstract class BaseGrpcDataSource<S extends TGrpcServiceClient> extends juggler.DataSource {
   protected logger: ApplicationLogger;
-  connector: GrpcConnector<S>;
+  override connector: GrpcConnector<S>;
 
   constructor(opts: { connector: Connector; settings?: Options; scope: string }) {
     super(opts.connector, opts.settings);
