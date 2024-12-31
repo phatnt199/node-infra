@@ -6,10 +6,10 @@ import 'winston-daily-rotate-file';
 import { DgramTransport, IDgramTransportOptions } from './transports';
 import { int } from '@/utilities';
 
+const LOGGER_FOLDER_PATH = process.env.APP_ENV_LOGGER_FOLDER_PATH ?? './';
 const LOGGER_PREFIX = App.APPLICATION_NAME;
 
-const consoleLogTransport = new winston.transports.Console({ level: 'debug' });
-
+// -------------------------------------------------------------------------------------------
 export const applicationLogFormatter: ReturnType<typeof winston.format.combine> =
   winston.format.combine(
     winston.format.label({ label: LOGGER_PREFIX }),
@@ -24,6 +24,7 @@ export const applicationLogFormatter: ReturnType<typeof winston.format.combine> 
     winston.format.errors({ stack: true }),
   );
 
+// -------------------------------------------------------------------------------------------
 export const defineCustomLogger = (opts: {
   logLevels?: { [name: string | symbol]: number };
   logColors?: { [name: string | symbol]: string };
@@ -42,7 +43,7 @@ export const defineCustomLogger = (opts: {
     logLevels = {
       error: 1,
       alert: 1,
-      emergency: 1,
+      emerg: 1,
       warn: 2,
       info: 3,
       http: 4,
@@ -53,7 +54,7 @@ export const defineCustomLogger = (opts: {
     logColors = {
       error: 'red',
       alert: 'red',
-      emergency: 'red',
+      emerg: 'red',
       warn: 'yellow',
       info: 'green',
       http: 'magenta',
@@ -64,11 +65,7 @@ export const defineCustomLogger = (opts: {
     transports: { info: infoTransportOptions, error: errorTransportOptions },
   } = opts;
 
-  /* const transports: { general: Array<winston.transport>; exception: Array<winston.transport> } = {
-    general: [consoleLogTransport, infoTransport, errorTransport],
-    exception: [consoleLogTransport, errorTransport],
-  }; */
-
+  const consoleLogTransport = new winston.transports.Console({ level: 'debug' });
   const transports: { general: Array<winston.transport>; exception: Array<winston.transport> } = {
     general: [consoleLogTransport],
     exception: [consoleLogTransport],
@@ -137,32 +134,19 @@ export const defineCustomLogger = (opts: {
 };
 
 // -------------------------------------------------------------------------------------------
-const LOGGER_FOLDER_PATH = process.env.APP_ENV_LOGGER_FOLDER_PATH ?? './';
+const fileOptions = { folder: LOGGER_FOLDER_PATH, prefix: LOGGER_PREFIX };
+const dgramOptions: Partial<IDgramTransportOptions> = {
+  socketOptions: { type: 'udp4' },
+  host: process.env.APP_ENV_LOGGER_DGRAM_HOST,
+  port: int(process.env.APP_ENV_LOGGER_DGRAM_PORT),
+  label: process.env.APP_ENV_LOGGER_DGRAM_LABEL,
+  levels: process.env.APP_ENV_LOGGER_DGRAM_LEVELS?.split(',').map(el => el.trim()) ?? [],
+};
+
+// -------------------------------------------------------------------------------------------
 export const applicationLogger = defineCustomLogger({
   transports: {
-    info: {
-      file: { folder: LOGGER_FOLDER_PATH, prefix: LOGGER_PREFIX },
-      dgram: {
-        host: process.env.APP_ENV_LOGGER_DGRAM_HOST,
-        port: int(process.env.APP_ENV_LOGGER_DGRAM_PORT),
-        label: process.env.APP_ENV_LOGGER_DGRAM_LABEL,
-        triggerLevels:
-          process.env.APP_ENV_LOGGER_DGRAM_INFO_TRIGGER_LEVELS?.split(',').map(el => el.trim()) ??
-          [],
-        socketOptions: { type: 'udp4' },
-      },
-    },
-    error: {
-      file: { folder: LOGGER_FOLDER_PATH, prefix: LOGGER_PREFIX },
-      dgram: {
-        host: process.env.APP_ENV_LOGGER_DGRAM_HOST,
-        port: int(process.env.APP_ENV_LOGGER_DGRAM_PORT),
-        label: process.env.APP_ENV_LOGGER_DGRAM_LABEL,
-        triggerLevels:
-          process.env.APP_ENV_LOGGER_DGRAM_ERROR_TRIGGER_LEVELS?.split(',').map(el => el.trim()) ??
-          [],
-        socketOptions: { type: 'udp4' },
-      },
-    },
+    info: { file: fileOptions, dgram: dgramOptions },
+    error: { file: fileOptions, dgram: dgramOptions },
   },
 });

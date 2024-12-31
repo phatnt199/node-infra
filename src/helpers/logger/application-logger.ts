@@ -2,6 +2,7 @@ import isEmpty from 'lodash/isEmpty';
 import { applicationLogger } from './default-logger';
 import { getError } from '@/utilities';
 import winston from 'winston';
+import { TLogLevel } from './common';
 
 const extraLogEnvs =
   (process.env.APP_ENV_EXTRA_LOG_ENVS ?? '').split(',').map(el => el.trim()) ?? [];
@@ -15,19 +16,31 @@ const LOG_ENVIRONMENTS = new Set([
 ]);
 
 export class Logger {
-  readonly _environment: string | undefined;
+  private readonly environment: string | undefined = process.env.NODE_ENV;
 
   private scopes: string[] = [];
   private customLogger?: winston.Logger;
 
   constructor(opts?: { customLogger?: winston.Logger }) {
-    this._environment = process.env.NODE_ENV;
     this.customLogger = opts?.customLogger;
   }
 
   // ---------------------------------------------------------------------
-  private _getLogger() {
+  private getLogger() {
     return this.customLogger ?? applicationLogger;
+  }
+
+  // ---------------------------------------------------------------------
+  private _enhanceMessage(parts: string[], message: string) {
+    const enhanced = parts?.reduce((prevState = '', current: string) => {
+      if (isEmpty(prevState)) {
+        return current;
+      }
+
+      return prevState.concat(`-${current}`);
+    }, '');
+
+    return `[${enhanced}]${message}`;
   }
 
   // ---------------------------------------------------------------------
@@ -46,21 +59,8 @@ export class Logger {
   }
 
   // ---------------------------------------------------------------------
-  private _enhanceMessage(parts: string[], message: string) {
-    const enhanced = parts?.reduce((prevState = '', current: string) => {
-      if (isEmpty(prevState)) {
-        return current;
-      }
-
-      return prevState.concat(`-${current}`);
-    }, '');
-
-    return `[${enhanced}]${message}`;
-  }
-
-  // ---------------------------------------------------------------------
-  private _doLog(level: string, message: string, ...args: any[]) {
-    const logger = this._getLogger();
+  log(level: TLogLevel, message: string, ...args: any[]) {
+    const logger = this.getLogger();
     if (!logger) {
       throw getError({ message: `[doLog] Level: ${level} | Invalid logger instance!` });
     }
@@ -71,7 +71,7 @@ export class Logger {
 
   // ---------------------------------------------------------------------
   debug(message: string, ...args: any[]) {
-    if (this._environment && !LOG_ENVIRONMENTS.has(this._environment)) {
+    if (this.environment && !LOG_ENVIRONMENTS.has(this.environment)) {
       return;
     }
 
@@ -79,22 +79,27 @@ export class Logger {
       return;
     }
 
-    this._doLog('debug', message, ...args);
+    this.log('debug', message, ...args);
   }
 
   // ---------------------------------------------------------------------
   info(message: string, ...args: any[]) {
-    this._doLog('info', message, ...args);
+    this.log('info', message, ...args);
   }
 
   // ---------------------------------------------------------------------
   warn(message: string, ...args: any[]) {
-    this._doLog('warn', message, ...args);
+    this.log('warn', message, ...args);
   }
 
   // ---------------------------------------------------------------------
   error(message: string, ...args: any[]) {
-    this._doLog('error', message, ...args);
+    this.log('error', message, ...args);
+  }
+
+  // ---------------------------------------------------------------------
+  emerg(message: string, ...args: any[]) {
+    this.log('emerg', message, ...args);
   }
 }
 

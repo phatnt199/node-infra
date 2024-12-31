@@ -7,7 +7,7 @@ export interface IDgramTransportOptions extends Transport.TransportStreamOptions
   label: string;
   host: string;
   port: number;
-  triggerLevels: Array<string>;
+  levels: Array<string>;
   socketOptions: dgram.SocketOptions;
 }
 
@@ -21,25 +21,24 @@ export class DgramTransport extends Transport {
   private client: dgram.Socket | null;
 
   constructor(opts: IDgramTransportOptions) {
-    const { label, host, port, triggerLevels, socketOptions, ...defaultTransportOptions } = opts;
+    const { label, host, port, levels, socketOptions, ...defaultTransportOptions } = opts;
     super(defaultTransportOptions);
 
     this.label = label;
     this.host = host;
     this.port = port;
-    this.triggerLevels = new Set(triggerLevels);
+    this.triggerLevels = new Set(levels);
     this.socketOptions = socketOptions;
 
     this.establish({ socketOptions: this.socketOptions });
   }
 
   static fromPartial(opts?: Partial<IDgramTransportOptions>): DgramTransport | null {
-    console.log('fromPartial: ', opts);
     if (
       !opts?.label ||
       !opts?.host ||
       !opts?.port ||
-      !opts?.triggerLevels?.length ||
+      !opts?.levels?.length ||
       !opts?.socketOptions
     ) {
       return null;
@@ -84,6 +83,7 @@ export class DgramTransport extends Transport {
     const logLevel = opts[Symbol.for('level')];
     if (!this.triggerLevels.has(logLevel)) {
       callback();
+      return;
     }
 
     if (!this.client) {
