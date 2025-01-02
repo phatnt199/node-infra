@@ -29,7 +29,7 @@ export abstract class TzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  create(
+  override create(
     data: DataObject<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<E> {
@@ -46,7 +46,7 @@ export abstract class TzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  createAll(
+  override createAll(
     datum: DataObject<E>[],
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
   ): Promise<E[]> {
@@ -75,7 +75,7 @@ export abstract class TzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  updateById(
+  override updateById(
     id: IdType,
     data: DataObject<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
@@ -112,7 +112,7 @@ export abstract class TzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  updateAll(
+  override updateAll(
     data: DataObject<E>,
     where?: Where<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },
@@ -147,7 +147,7 @@ export abstract class TzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  replaceById(
+  override replaceById(
     id: IdType,
     data: DataObject<E>,
     options?: Options & { authorId?: IdType; ignoreModified?: boolean },

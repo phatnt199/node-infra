@@ -48,7 +48,7 @@ export class GrpcServer extends grpc.Server {
   }
 
   // ---------------------------------------------------------------------
-  start() {
+  override start() {
     if (!this.address) {
       throw getError({
         message: '[GrpcServer][start] Invalid start up server address!',

@@ -24,6 +24,10 @@ export class ApplicationEnvironment implements IApplicationEnvironment {
     this.arguments[key] = value;
   }
 
+  isDevelopment() {
+    return process.env.NODE_ENV === 'development';
+  }
+
   keys() {
     return Object.keys(this.arguments);
   }

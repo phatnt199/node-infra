@@ -1,8 +1,8 @@
 import { BaseDataSource } from '@/base/datasources';
 import { inject } from '@loopback/core';
+import { Options } from '@loopback/repository';
 import { RedisConnector } from './connector';
 import { IRedisConnector, IRedisOptions } from './types';
-import { Options } from '@loopback/repository';
 
 const options: IRedisOptions = {
   connector: 'redis',
@@ -31,7 +31,7 @@ export class RedisDataSource extends BaseDataSource<IRedisOptions> {
     return this.connector as IRedisConnector;
   }
 
-  execute<R extends object = any>(
+  override execute<R extends object = any>(
     command: string,
     parameters?: Array<string | number> | string | number | object,
     extra?: Options,

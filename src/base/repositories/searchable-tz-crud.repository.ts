@@ -255,7 +255,10 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  create(data: DataObject<E>, options?: Options & { ignoreMixSearchFields?: boolean }): Promise<E> {
+  override create(
+    data: DataObject<E>,
+    options?: Options & { ignoreMixSearchFields?: boolean },
+  ): Promise<E> {
     const tmp = this.mixUserAudit(data, { newInstance: true, authorId: options?.authorId });
 
     return new Promise((resolve, reject) => {
@@ -268,7 +271,7 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  createAll(
+  override createAll(
     data: DataObject<E>[],
     options?: Options & { ignoreMixSearchFields?: boolean },
   ): Promise<E[]> {
@@ -288,7 +291,7 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  updateById(
+  override updateById(
     id: IdType,
     data: DataObject<E>,
     options?: Options & {
@@ -307,7 +310,7 @@ export abstract class SearchableTzCrudRepository<
   }
 
   // ----------------------------------------------------------------------------------------------------
-  replaceById(
+  override replaceById(
     id: IdType,
     data: DataObject<E>,
     options?: Options & {

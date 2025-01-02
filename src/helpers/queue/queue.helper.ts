@@ -39,7 +39,6 @@ interface IQueueCallback<TElementPayload> {
 
 // --------------------------------------------------------
 export class QueueHelper<TElementPayload> extends BaseHelper {
-  public identifier: string;
   public storage: Array<TQueueElement<TElementPayload>>;
   private processingEvents: Set<TQueueElement<TElementPayload>>;
   private generator: Generator;

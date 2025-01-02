@@ -1,6 +1,6 @@
 {
   "name": "@minimaltech/node-infra",
-  "version": "0.3.23",
+  "version": "0.4.0",
   "description": "Minimal Technology NodeJS Infrastructure - Loopback 4 Framework",
   "keywords": [
     "web",
@@ -162,7 +162,8 @@
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "winston-transport": "^4.9.0"
   },
   "devDependencies": {
     "@loopback/build": "^11.0.7",

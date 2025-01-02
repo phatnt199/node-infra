@@ -83,8 +83,4 @@ export abstract class DefaultRestApplication extends BaseApplication {
       },
     };
   }
-
-  abstract staticConfigure(): void;
-  abstract getProjectRoot(): string;
-  abstract postConfigure(): void;
 }

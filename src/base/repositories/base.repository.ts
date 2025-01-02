@@ -185,70 +185,70 @@ export abstract class ViewRepository<
     });
   }
 
-  create(_data: DataObject<E>, _options?: Options): Promise<E> {
+  override create(_data: DataObject<E>, _options?: Options): Promise<E> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
     });
   }
 
-  createAll(_datum: DataObject<E>[], _options?: Options): Promise<E[]> {
+  override createAll(_datum: DataObject<E>[], _options?: Options): Promise<E[]> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
     });
   }
 
-  save(_entity: E, _options?: Options): Promise<E> {
+  override save(_entity: E, _options?: Options): Promise<E> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
     });
   }
 
-  update(_entity: E, _options?: Options): Promise<void> {
+  override update(_entity: E, _options?: Options): Promise<void> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
     });
   }
 
-  delete(_entity: E, _options?: Options): Promise<void> {
+  override delete(_entity: E, _options?: Options): Promise<void> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
     });
   }
 
-  updateAll(_data: DataObject<E>, _where?: Where<E>, _options?: Options): Promise<Count> {
+  override updateAll(_data: DataObject<E>, _where?: Where<E>, _options?: Options): Promise<Count> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
     });
   }
 
-  updateById(_id: IdType, _data: DataObject<E>, _options?: Options): Promise<void> {
+  override updateById(_id: IdType, _data: DataObject<E>, _options?: Options): Promise<void> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
     });
   }
 
-  replaceById(_id: IdType, _data: DataObject<E>, _options?: Options): Promise<void> {
+  override replaceById(_id: IdType, _data: DataObject<E>, _options?: Options): Promise<void> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
     });
   }
 
-  deleteAll(_where?: Where<E>, _options?: Options): Promise<Count> {
+  override deleteAll(_where?: Where<E>, _options?: Options): Promise<Count> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
     });
   }
 
-  deleteById(_id: IdType, _options?: Options): Promise<void> {
+  override deleteById(_id: IdType, _options?: Options): Promise<void> {
     throw getError({
       statusCode: 500,
       message: 'Cannot manipulate entity with view repository!',
