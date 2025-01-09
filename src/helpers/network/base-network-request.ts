@@ -34,6 +34,22 @@ export abstract class BaseNetworkRequest extends BaseHelper {
     this.networkService = new NetworkHelper({ name, requestConfigs });
   }
 
+  getRequestPath(opts: { paths: Array<string> }) {
+    const paths = opts?.paths ?? [];
+
+    const rs = paths
+      .map((path: string) => {
+        if (!path.startsWith('/')) {
+          path = `/${path}`; // Add / to the start of url path
+        }
+
+        return path;
+      })
+      .join('');
+
+    return rs;
+  }
+
   getRequestUrl(opts: { baseUrl?: string; paths: Array<string> }) {
     let baseUrl = opts?.baseUrl ?? this.baseUrl ?? '';
     const paths = opts?.paths ?? [];
@@ -49,16 +65,7 @@ export abstract class BaseNetworkRequest extends BaseHelper {
       baseUrl = baseUrl.slice(0, -1); // Remove / at the end
     }
 
-    const joined = paths
-      .map((path: string) => {
-        if (!path.startsWith('/')) {
-          path = `/${path}`; // Add / to the start of url path
-        }
-
-        return path;
-      })
-      .join('');
-
+    const joined = this.getRequestPath({ paths });
     return `${baseUrl ?? this.baseUrl}${joined}`;
   }
 
