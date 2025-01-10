@@ -6,7 +6,7 @@ import { BindingScope, inject, injectable } from '@loopback/core';
 import { HttpErrors } from '@loopback/rest';
 import { securityId } from '@loopback/security';
 import jwt from 'jsonwebtoken';
-import { AuthenticateKeys, Authentication, GetTokenExpiresFn, IJWTTokenPayload } from '../common';
+import { AuthenticateKeys, Authentication, TGetTokenExpiresFn, IJWTTokenPayload } from '../common';
 import { ResultCodes } from '@/common';
 
 @injectable({ scope: BindingScope.SINGLETON })
@@ -19,7 +19,7 @@ export class JWTTokenService extends BaseService {
     @inject(TokenServiceBindings.TOKEN_SECRET) protected jwtSecret: string,
     @inject(TokenServiceBindings.TOKEN_EXPIRES_IN) protected jwtExpiresIn: string,
     @inject(AuthenticateKeys.GET_TOKEN_EXPIRES_FN, { optional: true })
-    protected getTokenExpiresFn: GetTokenExpiresFn,
+    protected getTokenExpiresFn: TGetTokenExpiresFn,
   ) {
     super({ scope: JWTTokenService.name });
   }
@@ -141,7 +141,7 @@ export class JWTTokenService extends BaseService {
   // --------------------------------------------------------------------------------------
   async generate(opts: {
     payload: IJWTTokenPayload;
-    getTokenExpiresFn?: GetTokenExpiresFn;
+    getTokenExpiresFn?: TGetTokenExpiresFn;
   }): Promise<string> {
     const {
       payload,
