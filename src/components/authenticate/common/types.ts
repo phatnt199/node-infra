@@ -12,7 +12,7 @@ export interface IJWTTokenPayload extends UserProfile {
 
 export interface ITokenPayload extends IJWTTokenPayload {}
 
-export type GetTokenExpiresFn = () => ValueOrPromise<number>;
+export type TGetTokenExpiresFn = () => ValueOrPromise<number>;
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IAuthenticateTokenOptions {
