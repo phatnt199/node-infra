@@ -1,5 +1,6 @@
-import { AnyObject, ClassType, IdType } from '@/common';
+import { AnyObject, ClassType, IdType, ValueOrPromise } from '@/common';
 import { model, property } from '@loopback/repository';
+import { RequestContext } from '@loopback/rest';
 import { UserProfile } from '@loopback/security';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -10,6 +11,8 @@ export interface IJWTTokenPayload extends UserProfile {
 }
 
 export interface ITokenPayload extends IJWTTokenPayload {}
+
+export type GetTokenExpiresFn = () => ValueOrPromise<number>;
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IAuthenticateTokenOptions {
@@ -184,8 +187,8 @@ export interface IAuthService<
   UIRQ = AnyObject,
   UIRS = AnyObject,
 > {
-  signIn(opts: SIRQ): Promise<SIRS>;
-  signUp(opts: SURQ): Promise<SURS>;
-  changePassword(opts: CPRQ): Promise<CPRS>;
-  getUserInformation?(opts: UIRQ): Promise<UIRS>;
+  signIn(opts: SIRQ & { requestContext?: RequestContext }): Promise<SIRS>;
+  signUp(opts: SURQ & { requestContext?: RequestContext }): Promise<SURS>;
+  changePassword(opts: CPRQ & { requestContext?: RequestContext }): Promise<CPRS>;
+  getUserInformation?(opts: UIRQ & { requestContext?: RequestContext }): Promise<UIRS>;
 }
