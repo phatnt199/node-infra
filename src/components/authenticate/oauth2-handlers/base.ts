@@ -92,11 +92,13 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
     const userInformation = await authService?.getUserInformation?.({ userId });
 
     const tokenValue = service.generate({
-      [securityId]: userId.toString(),
-      userId: userInformation?.userId ?? userId.toString(),
-      roles: userInformation?.roles ?? [],
-      clientId: client.id,
-      scopes,
+      payload: {
+        [securityId]: userId.toString(),
+        userId: userInformation?.userId ?? userId.toString(),
+        roles: userInformation?.roles ?? [],
+        clientId: client.id,
+        scopes,
+      },
     });
 
     return Promise.resolve(tokenValue);

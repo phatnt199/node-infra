@@ -3,7 +3,7 @@ import { IdType } from '@/common';
 import { getError, getSchemaObject } from '@/utilities';
 import { authenticate } from '@loopback/authentication';
 import { Getter, inject } from '@loopback/core';
-import { api, get, post, requestBody } from '@loopback/rest';
+import { api, get, post, requestBody, RequestContext, RestBindings } from '@loopback/rest';
 import { SecurityBindings } from '@loopback/security';
 import {
   Authentication,
@@ -29,13 +29,19 @@ export const defineAuthController = <
 
   @api({ basePath: restPath })
   class BaseAuthController extends BaseController {
+    requestContext: RequestContext;
     service: IAuthService;
     getCurrentUser: Getter<{ userId: IdType }>;
 
-    constructor(authService: IAuthService, getCurrentUser: Getter<{ userId: IdType }>) {
+    constructor(
+      requestContext: RequestContext,
+      authService: IAuthService,
+      getCurrentUser: Getter<{ userId: IdType }>,
+    ) {
       super({ scope: BaseAuthController.name });
       this.service = authService;
       this.getCurrentUser = getCurrentUser;
+      this.requestContext = requestContext;
     }
 
     // ------------------------------------------------------------------------------
@@ -58,7 +64,7 @@ export const defineAuthController = <
       })
       payload: SI,
     ) {
-      return this.service.signIn(payload);
+      return this.service.signIn({ ...payload, requestContext: this.requestContext });
     }
 
     // ------------------------------------------------------------------------------
@@ -74,7 +80,7 @@ export const defineAuthController = <
       })
       payload: SU,
     ) {
-      return this.service.signUp(payload);
+      return this.service.signUp({ ...payload, requestContext: this.requestContext });
     }
 
     //-------------------------------------------------------------------------------
@@ -105,7 +111,11 @@ export const defineAuthController = <
             }
 
             this.service
-              .changePassword({ ...payload, userId: currentUser.userId })
+              .changePassword({
+                ...payload,
+                userId: currentUser.userId,
+                requestContext: this.requestContext,
+              })
               .then(resolve)
               .catch(reject);
           })
@@ -114,8 +124,9 @@ export const defineAuthController = <
     }
   }
 
-  inject(serviceKey)(BaseAuthController, undefined, 0);
-  inject.getter(SecurityBindings.USER, { optional: true })(BaseAuthController, undefined, 1);
+  inject(RestBindings.Http.CONTEXT)(BaseAuthController, undefined, 0);
+  inject(serviceKey)(BaseAuthController, undefined, 1);
+  inject.getter(SecurityBindings.USER, { optional: true })(BaseAuthController, undefined, 2);
 
   return BaseAuthController;
 };
