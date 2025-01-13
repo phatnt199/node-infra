@@ -37,6 +37,10 @@ export type TStatusFromClass<T extends ClassType<AnyObject>> = ValueOf<
   Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET'>
 >;
 
+export type TConstValue<T extends ClassType<AnyObject>> = ValueOf<
+  Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET'>
+>;
+
 export type TRelationType = 'belongsTo' | 'hasOne' | 'hasMany' | 'hasManyThrough';
 
 export type TBullQueueRole = 'queue' | 'worker';
