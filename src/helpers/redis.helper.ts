@@ -164,14 +164,14 @@ export class RedisHelper extends BaseHelper {
 
   // ---------------------------------------------------------------------------------
   async get(opts: { key: string; transform?: (input: string) => any }) {
-    const { key, transform } = opts;
+    const { key, transform = (input: string) => input } = opts;
     if (!this.client) {
       this.logger.info('[get] No valid Redis connection!');
       return null;
     }
 
     const value = await this.client.get(key);
-    if (!transform || !value) {
+    if (!value) {
       return null;
     }
 
@@ -282,14 +282,14 @@ export class RedisHelper extends BaseHelper {
 
   // ---------------------------------------------------------------------------------
   async mget(opts: { keys: Array<string>; transform?: (input: string) => any }) {
-    const { keys, transform } = opts;
+    const { keys, transform = (input: string) => input } = opts;
     if (!this.client) {
       this.logger.info('[get] No valid Redis connection!');
       return null;
     }
 
     const values = await this.client.mget(keys);
-    if (!transform || !values?.length) {
+    if (!values?.length) {
       return null;
     }
 
