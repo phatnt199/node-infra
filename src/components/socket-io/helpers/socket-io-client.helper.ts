@@ -74,6 +74,7 @@ export class SocketIOClientHelper {
           this.identifier,
           eventName,
         );
+        continue;
       }
 
       this.client.on(eventName, (...props) => {
