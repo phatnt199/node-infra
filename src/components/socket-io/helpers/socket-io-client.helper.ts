@@ -51,8 +51,9 @@ export class SocketIOClientHelper {
   }
 
   // -----------------------------------------------------------------
-  subscribe(opts: { events: Record<string, (...props: any) => void> }) {
-    const eventHandlers = opts.events;
+  subscribe(opts: { events: Record<string, (...props: any) => void>; ignoreDuplicate?: boolean }) {
+    const { events: eventHandlers, ignoreDuplicate = false } = opts;
+
     const eventNames = Object.keys(eventHandlers);
     this.logger.info('[subscribe][%s] Handling events: %j', this.identifier, eventNames);
 
@@ -65,6 +66,14 @@ export class SocketIOClientHelper {
           eventName,
         );
         continue;
+      }
+
+      if (ignoreDuplicate && this.client.hasListeners(eventName)) {
+        this.logger.info(
+          '[subscribe][%s] Ignore handling event %s because of duplicate handler!',
+          this.identifier,
+          eventName,
+        );
       }
 
       this.client.on(eventName, (...props) => {
