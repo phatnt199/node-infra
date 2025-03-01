@@ -10,9 +10,11 @@ const LOGGER_FOLDER_PATH = process.env.APP_ENV_LOGGER_FOLDER_PATH ?? './';
 const LOGGER_PREFIX = App.APPLICATION_NAME;
 
 // -------------------------------------------------------------------------------------------
-export const applicationLogFormatter: ReturnType<typeof winston.format.combine> =
-  winston.format.combine(
-    winston.format.label({ label: LOGGER_PREFIX }),
+export const defineCustomLoggerFormatter = (opts: {
+  label: string;
+}): ReturnType<typeof winston.format.combine> => {
+  return winston.format.combine(
+    winston.format.label({ label: opts.label }),
     winston.format.splat(),
     winston.format.align(),
     winston.format.timestamp(),
@@ -23,11 +25,16 @@ export const applicationLogFormatter: ReturnType<typeof winston.format.combine> 
     ),
     winston.format.errors({ stack: true }),
   );
+};
+
+// -------------------------------------------------------------------------------------------
+export const applicationLogFormatter = defineCustomLoggerFormatter({ label: LOGGER_PREFIX });
 
 // -------------------------------------------------------------------------------------------
 export const defineCustomLogger = (opts: {
   logLevels?: { [name: string | symbol]: number };
   logColors?: { [name: string | symbol]: string };
+  loggerFormatter?: ReturnType<typeof winston.format.combine>;
   transports: {
     info: {
       file?: { prefix: string; folder: string };
@@ -62,6 +69,7 @@ export const defineCustomLogger = (opts: {
       debug: 'blue',
       silly: 'gray',
     },
+    loggerFormatter = applicationLogFormatter,
     transports: { info: infoTransportOptions, error: errorTransportOptions },
   } = opts;
 
@@ -126,7 +134,7 @@ export const defineCustomLogger = (opts: {
   // Logger
   return winston.createLogger({
     levels: logLevels,
-    format: applicationLogFormatter,
+    format: loggerFormatter,
     exitOnError: false,
     transports: transports.general,
     exceptionHandlers: transports.exception,

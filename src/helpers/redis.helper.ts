@@ -79,7 +79,7 @@ export class RedisHelper extends BaseHelper {
     });
 
     this.client.on('error', error => {
-      this.logger.info('[event][error] Redis client %s READY | Error: %s', name, error);
+      this.logger.error('[event][error] Redis client %s ERROR | Error: %s', name, error);
       onError?.({ name, helper: this, error });
     });
 

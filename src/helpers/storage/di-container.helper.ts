@@ -20,6 +20,10 @@ export class DIContainerHelper<T extends object = AnyObject> {
     return new DIContainerHelper<T>();
   }
 
+  isBound(key: string) {
+    return key in this.container;
+  }
+
   get<R>(key: keyof T) {
     return this.container[key] as R;
   }
@@ -30,5 +34,13 @@ export class DIContainerHelper<T extends object = AnyObject> {
 
   keys() {
     return Object.keys(this.container);
+  }
+
+  clear() {
+    this.container = Object.assign({});
+  }
+
+  getContainer() {
+    return this.container;
   }
 }
