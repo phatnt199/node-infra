@@ -3,12 +3,12 @@ import { Emitter } from '@socket.io/redis-emitter';
 import Redis from 'ioredis';
 import { Server as IOServer, Socket as IOSocket, ServerOptions } from 'socket.io';
 
+import { IHandshake } from '@/common/types';
 import { SocketIOConstants } from '@/components/socket-io/common/constants';
 import { ApplicationLogger, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import { Server } from 'http';
 import isEmpty from 'lodash/isEmpty';
-import { IHandshake } from './types';
 
 const CLIENT_AUTHENTICATE_TIMEOUT = 10 * 1000;
 

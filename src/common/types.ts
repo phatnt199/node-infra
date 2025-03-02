@@ -11,6 +11,8 @@ import {
   Where,
 } from '@loopback/repository';
 import { RequestContext } from '@loopback/rest';
+import { IncomingHttpHeaders } from 'http';
+import { ParsedUrlQuery } from 'querystring';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export type NumberIdType = number;
@@ -206,3 +208,18 @@ export interface IRequestedRemark {
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export type TInjectionGetter = <T>(key: string | BindingKey<T>) => T;
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export interface IHandshake {
+  headers: IncomingHttpHeaders;
+  time: string;
+  address: string;
+  xdomain: boolean;
+  secure: boolean;
+  issued: number;
+  url: string;
+  query: ParsedUrlQuery;
+  auth: {
+    [key: string]: any;
+  };
+}

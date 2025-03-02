@@ -1,8 +1,9 @@
-import { BaseNetworkRequest, RSA } from '@/helpers';
-import { BaseCrashReportProvider } from '../providers';
-import { ISendReport, MTEndpoints } from '../common';
-import isEmpty from 'lodash/isEmpty';
+import { RSA } from '@/helpers/crypto';
+import { BaseNetworkRequest } from '@/helpers/network';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import { ISendReport, MTEndpoints } from '../common';
+import { BaseCrashReportProvider } from '../providers';
 
 class CrashReportNetworkRequest extends BaseNetworkRequest {}
 

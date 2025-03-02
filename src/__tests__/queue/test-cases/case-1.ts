@@ -16,7 +16,7 @@ export class TestQueue001Handler extends TestCaseHandler<{}, IArg> {
       identifier: 'TEST_QUEUE',
       onMessage: async opts => {
         const { queueElement } = opts;
-        await sleep(4000);
+        await sleep(5);
         console.log(
           '[onMessage] queueElement: %s | currentState: %s | totalEvent: %s | processingEvents: %s',
           queueElement,
@@ -48,7 +48,7 @@ export class TestQueue001Handler extends TestCaseHandler<{}, IArg> {
     let counter = 0;
     while (counter < 15) {
       await internalQueue.enqueue({ date: new Date().toLocaleString() });
-      await sleep(500);
+      await sleep(20);
       counter++;
     }
 

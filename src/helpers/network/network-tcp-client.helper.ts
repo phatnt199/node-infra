@@ -7,7 +7,7 @@ const DEFAULT_MAX_RETRY = 5;
 interface INetworkTcpClientProps {
   // props
   identifier: string;
-  options: { host: string; port: number; localAddress: string };
+  options: { host: string; port: number; localAddress?: string };
   reconnect?: boolean;
   maxRetry?: number;
   encoding?: BufferEncoding;
@@ -31,6 +31,7 @@ export class NetworkTcpClient extends BaseHelper {
   private reconnectTimeout: any;
   private encoding?: BufferEncoding;
 
+  // handlers
   private onConnected: () => void;
   private onData: (opts: { identifier: string; message: string | Buffer }) => void;
   private onClosed?: () => void;
@@ -55,6 +56,10 @@ export class NetworkTcpClient extends BaseHelper {
 
   static newInstance(opts: INetworkTcpClientProps) {
     return new NetworkTcpClient(opts);
+  }
+
+  getClient() {
+    return this.client;
   }
 
   handleConnected() {
@@ -191,14 +196,14 @@ export class NetworkTcpClient extends BaseHelper {
     return this.client && this.client.readyState !== 'closed';
   }
 
-  emit(opts: { payload: string }) {
+  emit(opts: { payload: Buffer | string }) {
     if (!this.client) {
       this.logger.info('[emit][%s] TPC Client is not configured yet!', this.identifier);
       return;
     }
 
     const { payload } = opts;
-    if (isEmpty(payload)) {
+    if (!payload?.length) {
       this.logger.info('[emit][%s] Invalid payload to write to TCP Socket!', this.identifier);
       return;
     }

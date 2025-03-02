@@ -31,7 +31,6 @@ export class TestRSA001Handler extends TestCaseHandler<{}, IArg> {
     | ((opts: Awaited<ReturnType<typeof this.execute>>) => ValueOrPromise<TTestCaseDecision>)
     | null {
     return opts => {
-      console.log('[getValidator] RUN HERE');
       const { message, encrypted, decrypted } = opts;
 
       if (!encrypted) {
