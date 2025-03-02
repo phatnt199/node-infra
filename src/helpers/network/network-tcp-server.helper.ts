@@ -1,6 +1,6 @@
-import { BaseHelper } from '@/base';
-import { IHandshake, ValueOrPromise } from '@/common';
-import { getUID } from '@/utilities';
+import { BaseHelper } from '@/base/base.helper';
+import { IHandshake, ValueOrPromise } from '@/common/types';
+import { getUID } from '@/utilities/parse.utility';
 import { ListenOptions, Socket as SocketClient, createServer } from 'net';
 
 interface ITcpSocketClient {
