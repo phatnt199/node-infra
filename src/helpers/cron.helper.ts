@@ -1,6 +1,6 @@
 import { BaseHelper } from '@/base/base.helper';
 import { getError } from '@/utilities';
-import { CronJob, CronOnCompleteCommand, CronTime, validateCronExpression } from 'cron';
+import { CronJob, CronOnCompleteCommand, CronTime } from 'cron';
 import isEmpty from 'lodash/isEmpty';
 
 export interface ICronHelperOptions {
@@ -124,18 +124,6 @@ export class CronHelper extends BaseHelper {
   }
 
   modifyCronTime(cronTime: string) {
-    const cronTimeValid = validateCronExpression(cronTime);
-
-    if (!cronTimeValid?.valid) {
-      this.logger.error(
-        '[CronHelper][modifyCronTime] Error %s',
-        cronTimeValid?.error ?? 'Invalid cronTime to modify cron!',
-      );
-      throw getError({
-        message: '[CronHelper][modifyCronTime] Invalid cronTime to modify cron!',
-      });
-    }
-
     try {
       this.instance.setTime(new CronTime(cronTime));
 
