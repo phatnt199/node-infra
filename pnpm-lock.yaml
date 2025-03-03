@@ -9,52 +9,52 @@ importers:
   .:
     dependencies:
       '@grpc/grpc-js':
-        specifier: ^1.12.6
+        specifier: ^1.12.3
         version: 1.12.6
       '@grpc/proto-loader':
         specifier: ^0.7.13
         version: 0.7.13
       '@loopback/authentication':
-        specifier: ^11.0.11
+        specifier: ^11.0.8
         version: 11.0.11(@loopback/core@6.1.8)(@loopback/rest@14.0.11(@loopback/core@6.1.8)(@loopback/repository@7.0.11(@loopback/core@6.1.8)))
       '@loopback/authentication-jwt':
-        specifier: ^0.15.11
+        specifier: ^0.15.8
         version: 0.15.11(@loopback/authentication@11.0.11(@loopback/core@6.1.8)(@loopback/rest@14.0.11(@loopback/core@6.1.8)(@loopback/repository@7.0.11(@loopback/core@6.1.8))))(@loopback/core@6.1.8)(@loopback/rest@14.0.11(@loopback/core@6.1.8)(@loopback/repository@7.0.11(@loopback/core@6.1.8)))
       '@loopback/authentication-passport':
-        specifier: ^7.0.11
+        specifier: ^7.0.8
         version: 7.0.11(@loopback/authentication@11.0.11(@loopback/core@6.1.8)(@loopback/rest@14.0.11(@loopback/core@6.1.8)(@loopback/repository@7.0.11(@loopback/core@6.1.8))))(@loopback/core@6.1.8)(@loopback/rest@14.0.11(@loopback/core@6.1.8)(@loopback/repository@7.0.11(@loopback/core@6.1.8)))
       '@loopback/authorization':
-        specifier: ^0.15.11
+        specifier: ^0.15.8
         version: 0.15.11(@loopback/core@6.1.8)
       '@loopback/boot':
-        specifier: ^7.0.11
+        specifier: ^7.0.8
         version: 7.0.11(@loopback/core@6.1.8)
       '@loopback/core':
-        specifier: ^6.1.8
+        specifier: ^6.1.5
         version: 6.1.8
       '@loopback/http-server':
-        specifier: ^6.0.11
+        specifier: ^6.0.8
         version: 6.0.11
       '@loopback/metadata':
-        specifier: ^7.0.11
+        specifier: ^7.0.8
         version: 7.0.11
       '@loopback/repository':
-        specifier: ^7.0.11
+        specifier: ^7.0.8
         version: 7.0.11(@loopback/core@6.1.8)
       '@loopback/rest':
-        specifier: ^14.0.11
+        specifier: ^14.0.8
         version: 14.0.11(@loopback/core@6.1.8)(@loopback/repository@7.0.11(@loopback/core@6.1.8))
       '@loopback/rest-crud':
-        specifier: ^0.18.11
+        specifier: ^0.18.8
         version: 0.18.11(@loopback/core@6.1.8)(@loopback/repository@7.0.11(@loopback/core@6.1.8))(@loopback/rest@14.0.11(@loopback/core@6.1.8)(@loopback/repository@7.0.11(@loopback/core@6.1.8)))
       '@loopback/rest-explorer':
-        specifier: ^7.0.11
+        specifier: ^7.0.8
         version: 7.0.11(@loopback/core@6.1.8)(@loopback/rest@14.0.11(@loopback/core@6.1.8)(@loopback/repository@7.0.11(@loopback/core@6.1.8)))
       '@loopback/security':
-        specifier: ^0.11.11
+        specifier: ^0.11.8
         version: 0.11.11(@loopback/core@6.1.8)
       '@loopback/service-proxy':
-        specifier: ^7.0.11
+        specifier: ^7.0.8
         version: 7.0.11(@loopback/core@6.1.8)
       '@node-oauth/oauth2-server':
         specifier: ^5.2.0
@@ -66,13 +66,13 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0
       axios:
-        specifier: ^1.8.1
+        specifier: ^1.7.8
         version: 1.8.1
       bullmq:
-        specifier: ^5.41.7
+        specifier: ^5.31.0
         version: 5.41.7
       casbin:
-        specifier: ^5.38.0
+        specifier: ^5.36.0
         version: 5.38.0
       cron:
         specifier: ^4.1.0
@@ -87,7 +87,7 @@ importers:
         specifier: ^3.1.10
         version: 3.1.10
       ioredis:
-        specifier: ^5.5.0
+        specifier: ^5.4.1
         version: 5.5.0
       jsonwebtoken:
         specifier: ^9.0.2
@@ -99,13 +99,13 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       minio:
-        specifier: ^8.0.4
+        specifier: ^8.0.2
         version: 8.0.4
       mocha:
-        specifier: ^11.1.0
+        specifier: ^11.0.1
         version: 11.1.0
       mqtt:
-        specifier: ^5.10.4
+        specifier: ^5.10.3
         version: 5.10.4
       multer:
         specifier: 1.4.5-lts.1
@@ -127,10 +127,10 @@ importers:
         version: 4.9.0
     devDependencies:
       '@loopback/build':
-        specifier: ^11.0.10
+        specifier: ^11.0.7
         version: 11.0.10
       '@loopback/testlab':
-        specifier: ^7.0.10
+        specifier: ^7.0.7
         version: 7.0.10
       '@minimaltech/eslint-node':
         specifier: ^0.1.15
@@ -139,10 +139,10 @@ importers:
         specifier: 4.17.21
         version: 4.17.21
       '@types/jsonwebtoken':
-        specifier: ^9.0.9
+        specifier: ^9.0.7
         version: 9.0.9
       '@types/lodash':
-        specifier: ^4.17.16
+        specifier: ^4.17.13
         version: 4.17.16
       '@types/mocha':
         specifier: ^10.0.10
@@ -151,7 +151,7 @@ importers:
         specifier: ^1.4.12
         version: 1.4.12
       '@types/node':
-        specifier: ^20.17.22
+        specifier: ^20.17.9
         version: 20.17.22
       eslint:
         specifier: ^8.57.1
@@ -160,7 +160,7 @@ importers:
         specifier: ^9.1.7
         version: 9.1.7
       prettier:
-        specifier: ^3.5.3
+        specifier: ^3.4.1
         version: 3.5.3
       source-map-support:
         specifier: ^0.5.21
@@ -169,13 +169,13 @@ importers:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.17.22)(typescript@5.8.2)
       tsc-alias:
-        specifier: ^1.8.11
+        specifier: ^1.8.10
         version: 1.8.11
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
       typescript:
-        specifier: ^5.8.2
+        specifier: ^5.7.2
         version: 5.8.2
 
 packages:
