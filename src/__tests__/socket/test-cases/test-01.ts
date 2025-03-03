@@ -26,10 +26,7 @@ export class TestSocket001Handler extends TestCaseHandler<{}, IArg> {
     const server = NetworkTcpServer.newInstance({
       identifier: 'TEST_SERVER_001',
       serverOptions: { host, port },
-      authenticateFn: opts => {
-        this.logger.info('[authenticateFn] Opts: %j', opts);
-        return Promise.resolve(true);
-      },
+      authenticateOptions: { required: false },
     });
 
     await sleep(2000);

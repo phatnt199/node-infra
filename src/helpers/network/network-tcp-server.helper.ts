@@ -1,6 +1,9 @@
 import { BaseHelper } from '@/base/base.helper';
-import { IHandshake, ValueOrPromise } from '@/common/types';
+import { ValueOrPromise } from '@/common/types';
+import { getError } from '@/utilities';
+import { dayjs } from '@/utilities/date.utility';
 import { getUID } from '@/utilities/parse.utility';
+import { omit } from 'lodash';
 import { ListenOptions, Socket as SocketClient, createServer } from 'net';
 
 interface ITcpSocketClient {
@@ -8,20 +11,21 @@ interface ITcpSocketClient {
   socket: SocketClient;
   state: 'unauthorized' | 'authenticating' | 'authenticated';
   subscriptions: Set<string>;
-  remoteAddress: { host?: string; port?: number; family?: string };
-  localAddress?: { host?: string; port?: number; family?: string };
+  storage: {
+    connectedAt: dayjs.Dayjs;
+    authenticatedAt: dayjs.Dayjs | null;
+    [additionField: symbol | string]: any;
+  };
 }
 
 export interface ITcpSocketServerOptions {
   identifier: string;
   serverOptions: Partial<ListenOptions>;
-
-  parser?: <T>(data: Buffer | string) => T;
-  authenticateFn: (args: IHandshake) => Promise<boolean>;
+  authenticateOptions: { required: boolean; duration?: number };
 
   extraEvents?: Record<
     string,
-    (opts: { id: string; socket: SocketClient; data: Buffer | string }) => ValueOrPromise<void>
+    (opts: { id: string; socket: SocketClient; args: any }) => ValueOrPromise<void>
   >;
 
   // handlers
@@ -34,15 +38,14 @@ export interface ITcpSocketServerOptions {
 
 export class NetworkTcpServer extends BaseHelper {
   private serverOptions: Partial<ListenOptions> = {};
+  private authenticateOptions: { required: boolean; duration?: number };
 
   private clients: Record<string, ITcpSocketClient>;
   private server: ReturnType<typeof createServer>;
 
-  private parser?: <T>(data: Buffer | string) => T;
-
   private extraEvents: Record<
     string,
-    (opts: { id: string; socket: SocketClient; data: Buffer | string }) => ValueOrPromise<void>
+    (opts: { id: string; socket: SocketClient; args: any }) => ValueOrPromise<void>
   >;
 
   // handlers
@@ -62,7 +65,17 @@ export class NetworkTcpServer extends BaseHelper {
     this.clients = Object.assign({});
 
     this.serverOptions = opts.serverOptions;
-    this.parser = opts.parser;
+    this.authenticateOptions = opts.authenticateOptions;
+
+    if (
+      this.authenticateOptions.required &&
+      (!this.authenticateOptions.duration || this.authenticateOptions.duration < 0)
+    ) {
+      throw getError({
+        message:
+          'TCP Server | Invalid authenticate duration | Required duration for authenticateOptions',
+      });
+    }
 
     this.extraEvents = opts.extraEvents ?? {};
 
@@ -99,43 +112,69 @@ export class NetworkTcpServer extends BaseHelper {
     const id = getUID();
 
     socket.on('data', (data: Buffer | string) => {
-      this.logger.info('[onClientConnect][data] ID: %s | Data: %s', id, data);
-      this.onClientData?.({ id, socket, data: this.parser ? this.parser(data) : data });
+      this.onClientData?.({ id, socket, data });
     });
 
     socket.on('error', (error: Error) => {
       this.logger.error('[onClientConnect][error] ID: %s | Error: %s', id, error);
+
       this.onClientError?.({ id, socket, error });
+      socket.end();
     });
 
     socket.on('close', (hasError: boolean) => {
       this.logger.info('[onClientConnect][close] ID: %s | hasError: %s', id, hasError);
+
       this.onClientClose?.({ id, socket });
+      this.clients = omit(this.clients, [id]);
     });
 
     for (const extraEvent in this.extraEvents) {
-      socket.on(extraEvent, (data: Buffer | string) => {
-        this.extraEvents[extraEvent]({ id, socket, data });
+      socket.on(extraEvent, args => {
+        this.extraEvents[extraEvent]({ id, socket, args });
       });
     }
 
     this.clients[id] = {
       id,
       socket,
-      state: 'unauthorized',
+      state: this.authenticateOptions.required ? 'unauthorized' : 'authenticated',
       subscriptions: new Set([]),
-      remoteAddress: {
-        host: socket.remoteAddress,
-        port: socket.remotePort,
-        family: socket.remoteFamily,
+      storage: {
+        connectedAt: dayjs(),
+        authenticatedAt: this.authenticateOptions.required ? null : dayjs(),
       },
     };
 
     this.logger.info(
-      '[onClientConnect] New TCP SocketClient | Client: %s',
+      '[onClientConnect] New TCP SocketClient | Client: %s | authenticateOptions: %s %s',
       `${id} - ${socket.remoteAddress} - ${socket.remotePort} - ${socket.remoteFamily}`,
+      this.authenticateOptions.required,
+      this.authenticateOptions.duration,
     );
+
     this.onClientConnected?.({ id, socket });
+
+    // Check client authentication
+    if (
+      this.authenticateOptions.required &&
+      this.authenticateOptions.duration &&
+      this.authenticateOptions.duration > 0
+    ) {
+      setTimeout(() => {
+        const client = this.getClient({ id });
+        if (!client) {
+          return;
+        }
+
+        if (client.state === 'authenticated') {
+          return;
+        }
+
+        this.emit({ clientId: id, payload: 'Unauthorized Client' });
+        client.socket.end();
+      }, this.authenticateOptions.duration);
+    }
   }
 
   getClients() {
@@ -148,6 +187,33 @@ export class NetworkTcpServer extends BaseHelper {
 
   getServer() {
     return this.server;
+  }
+
+  doAuthenticate(opts: { id: string; state: 'unauthorized' | 'authenticating' | 'authenticated' }) {
+    const { id, state } = opts;
+
+    const client = this.getClient({ id });
+    if (!client) {
+      this.logger.error('[authenticateClient][%s] Client %s NOT FOUND', id);
+      return;
+    }
+
+    client.state = state;
+
+    switch (state) {
+      case 'unauthorized':
+      case 'authenticating': {
+        client.storage.authenticatedAt = null;
+        break;
+      }
+      case 'authenticated': {
+        client.storage.authenticatedAt = dayjs();
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   }
 
   emit(opts: { clientId: string; payload: Buffer | string }) {
