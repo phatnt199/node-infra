@@ -3,7 +3,7 @@ import { ValueOrPromise } from '@/common/types';
 import { getError } from '@/utilities';
 import { dayjs } from '@/utilities/date.utility';
 import { getUID } from '@/utilities/parse.utility';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import { ListenOptions, Socket as SocketClient, createServer } from 'net';
 
 interface ITcpSocketClient {
