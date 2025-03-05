@@ -142,4 +142,19 @@ export class CronHelper extends BaseHelper {
       });
     }
   }
+
+  duplicate(cronTime: string) {
+    const options: ICronHelperOptions = {
+      cronTime: cronTime,
+      onTick: this.onTick,
+      onCompleted: this.onCompleted ?? undefined,
+      autoStart: this.autoStart,
+      tz: this.tz ?? undefined,
+      utcOffset: this.utcOffset ?? undefined,
+      runOnInit: this.runOnInit ?? undefined,
+      errorHandler: this.errorHandler ?? undefined,
+    };
+
+    return CronHelper.newInstance(options);
+  }
 }
