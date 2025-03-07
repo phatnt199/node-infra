@@ -6,12 +6,10 @@ import isEmpty from 'lodash/isEmpty';
 export interface ICronHelperOptions {
   cronTime: string;
   onTick: () => void | Promise<void>;
-  onCompleted?: CronOnCompleteCommand;
+  onCompleted?: CronOnCompleteCommand | null;
   autoStart?: boolean;
   tz?: string;
-  utcOffset?: number;
-  runOnInit?: boolean;
-  errorHandler?: (error: unknown) => void;
+  errorHandler?: (error: unknown) => void | null;
 }
 
 // --------------------------------------------------------
@@ -20,9 +18,7 @@ export class CronHelper extends BaseHelper {
   private onTick: () => void | Promise<void>;
   private onCompleted?: CronOnCompleteCommand | null;
   private autoStart: boolean;
-  private tz?: string | null;
-  private utcOffset?: number | null;
-  private runOnInit?: boolean | null;
+  private tz?: string;
   private errorHandler?: (error: unknown) => void | null;
 
   public instance: CronJob;
@@ -30,23 +26,12 @@ export class CronHelper extends BaseHelper {
   constructor(opts: ICronHelperOptions) {
     super({ scope: CronHelper.name, identifier: opts.cronTime ?? CronHelper.name });
 
-    const {
-      cronTime,
-      onTick,
-      onCompleted,
-      autoStart = false,
-      tz,
-      utcOffset,
-      runOnInit,
-      errorHandler,
-    } = opts;
+    const { cronTime, onTick, onCompleted, autoStart = false, tz, errorHandler } = opts;
     this.cronTime = cronTime;
     this.onTick = onTick;
     this.onCompleted = onCompleted;
     this.autoStart = autoStart ?? false;
     this.tz = tz;
-    this.utcOffset = utcOffset;
-    this.runOnInit = runOnInit;
     this.errorHandler = errorHandler;
 
     this.configure();
@@ -60,13 +45,6 @@ export class CronHelper extends BaseHelper {
     if (!this.cronTime || isEmpty(this.cronTime)) {
       throw getError({
         message: '[CronHelper][configure] Invalid cronTime to configure application cron!',
-      });
-    }
-
-    if (this.tz && this.utcOffset) {
-      throw getError({
-        message:
-          '[CronHelper][configure] Invalid timezone and utcOffset to configure application cron!',
       });
     }
 
@@ -86,32 +64,9 @@ export class CronHelper extends BaseHelper {
       onTick: this.onTick,
       onComplete: this.onCompleted,
       start: this.autoStart,
-      runOnInit: this.runOnInit,
       errorHandler: this.errorHandler,
+      timeZone: this.tz,
     });
-
-    if (this.tz) {
-      this.instance = CronJob.from({
-        cronTime: this.cronTime,
-        onTick: this.onTick,
-        onComplete: this.onCompleted,
-        start: this.autoStart,
-        timeZone: this.tz,
-        runOnInit: this.runOnInit,
-        errorHandler: this.errorHandler,
-      });
-    }
-
-    if (this.utcOffset) {
-      this.instance = CronJob.from({
-        cronTime: this.cronTime,
-        onTick: this.onTick,
-        onComplete: this.onCompleted,
-        start: this.autoStart,
-        utcOffset: this.utcOffset,
-        runOnInit: this.runOnInit,
-      });
-    }
   }
 
   start() {
@@ -123,36 +78,26 @@ export class CronHelper extends BaseHelper {
     this.instance.start();
   }
 
-  modifyCronTime(cronTime: string) {
-    try {
-      this.instance.setTime(new CronTime(cronTime));
+  modifyCronTime(opts: { cronTime: string; shouldFireOnTick?: boolean }) {
+    const { cronTime, shouldFireOnTick = false } = opts;
 
-      this.instance.start();
+    this.instance.setTime(new CronTime(cronTime));
 
-      this.logger.info('[CronHelper][modifyCronTime] Cron time modified successfully!');
-    } catch (error) {
-      this.logger.error('[CronHelper][modifyCronTime] Error %s', error);
-
-      if (!this.instance.isActive) {
-        this.instance.start();
-      }
-
-      throw getError({
-        message: '[CronHelper][modifyCronTime] Error modifying cron time!',
-      });
+    if (shouldFireOnTick) {
+      this.instance.fireOnTick();
     }
   }
 
-  duplicate(cronTime: string) {
+  duplicate(opts: { cronTime: string }) {
+    const { cronTime } = opts;
+
     const options: ICronHelperOptions = {
       cronTime: cronTime,
       onTick: this.onTick,
-      onCompleted: this.onCompleted ?? undefined,
+      onCompleted: this.onCompleted,
       autoStart: this.autoStart,
-      tz: this.tz ?? undefined,
-      utcOffset: this.utcOffset ?? undefined,
-      runOnInit: this.runOnInit ?? undefined,
-      errorHandler: this.errorHandler ?? undefined,
+      tz: this.tz,
+      errorHandler: this.errorHandler,
     };
 
     return CronHelper.newInstance(options);
