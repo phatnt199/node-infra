@@ -17,7 +17,7 @@ export interface IRedisHelperProps {
 
 export interface IRedisClusterHelperProps {
   name: string;
-  nodes: Array<Pick<IRedisHelperProps, 'host' | 'port'>>;
+  nodes: Array<Pick<IRedisHelperProps, 'host' | 'port'> & { password?: string }>;
   clusterOptions?: ClusterOptions;
 }
 
@@ -44,6 +44,7 @@ export class DefaultRedisHelper extends BaseHelper {
     super({ scope: opts.scope, identifier: opts.identifier });
 
     this.name = opts.identifier;
+    this.client = opts.client;
 
     const { onInitialized, onConnected, onReady, onError } = opts;
 
@@ -464,7 +465,11 @@ export class RedisClusterHelper extends DefaultRedisHelper {
       identifier: opts.name,
       client: new Cluster(
         opts.nodes.map(node => {
-          return { host: node.host, port: int(node.port) };
+          return {
+            host: node.host,
+            port: int(node.port),
+            password: node.password,
+          };
         }),
         opts.clusterOptions,
       ),
