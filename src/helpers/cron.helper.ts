@@ -1,14 +1,15 @@
 import { BaseHelper } from '@/base/base.helper';
 import { getError } from '@/utilities';
-import { CronJob, CronOnCompleteCommand } from 'cron';
+import { CronJob, CronOnCompleteCommand, CronTime } from 'cron';
 import isEmpty from 'lodash/isEmpty';
 
 export interface ICronHelperOptions {
   cronTime: string;
   onTick: () => void | Promise<void>;
-  onCompleted?: CronOnCompleteCommand;
+  onCompleted?: CronOnCompleteCommand | null;
   autoStart?: boolean;
   tz?: string;
+  errorHandler?: (error: unknown) => void | null;
 }
 
 // --------------------------------------------------------
@@ -17,19 +18,21 @@ export class CronHelper extends BaseHelper {
   private onTick: () => void | Promise<void>;
   private onCompleted?: CronOnCompleteCommand | null;
   private autoStart: boolean;
-  private tz?: string | null;
+  private tz?: string;
+  private errorHandler?: (error: unknown) => void | null;
 
   public instance: CronJob;
 
   constructor(opts: ICronHelperOptions) {
     super({ scope: CronHelper.name, identifier: opts.cronTime ?? CronHelper.name });
 
-    const { cronTime, onTick, onCompleted, autoStart = false, tz } = opts;
+    const { cronTime, onTick, onCompleted, autoStart = false, tz, errorHandler } = opts;
     this.cronTime = cronTime;
     this.onTick = onTick;
     this.onCompleted = onCompleted;
     this.autoStart = autoStart ?? false;
     this.tz = tz;
+    this.errorHandler = errorHandler;
 
     this.configure();
   }
@@ -55,11 +58,13 @@ export class CronHelper extends BaseHelper {
       },
       this.autoStart,
     ); */
+
     this.instance = CronJob.from({
       cronTime: this.cronTime,
       onTick: this.onTick,
       onComplete: this.onCompleted,
       start: this.autoStart,
+      errorHandler: this.errorHandler,
       timeZone: this.tz,
     });
   }
@@ -71,5 +76,30 @@ export class CronHelper extends BaseHelper {
     }
 
     this.instance.start();
+  }
+
+  modifyCronTime(opts: { cronTime: string; shouldFireOnTick?: boolean }) {
+    const { cronTime, shouldFireOnTick = false } = opts;
+
+    this.instance.setTime(new CronTime(cronTime));
+
+    if (shouldFireOnTick) {
+      this.instance.fireOnTick();
+    }
+  }
+
+  duplicate(opts: { cronTime: string }) {
+    const { cronTime } = opts;
+
+    const options: ICronHelperOptions = {
+      cronTime: cronTime,
+      onTick: this.onTick,
+      onCompleted: this.onCompleted,
+      autoStart: this.autoStart,
+      tz: this.tz,
+      errorHandler: this.errorHandler,
+    };
+
+    return CronHelper.newInstance(options);
   }
 }
