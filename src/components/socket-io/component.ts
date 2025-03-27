@@ -5,7 +5,7 @@ import { Binding, CoreBindings, inject } from '@loopback/core';
 import { ServerOptions } from 'socket.io';
 import { SocketIOKeys } from './common';
 import { SocketIOServerHelper } from './helpers';
-import { DefaultRedisHelper } from '@/helpers';
+import { DefaultRedisHelper, RedisClusterHelper } from '@/helpers';
 
 export class SocketIOComponent extends BaseComponent {
   bindings: Binding[] = [
@@ -58,22 +58,22 @@ export class SocketIOComponent extends BaseComponent {
 
     const restServer = this.application.restServer;
     const httpServer = restServer.httpServer;
-
     if (!httpServer) {
       throw getError({
         message: '[DANGER][SocketIOComponent] Invalid http server to setup io socket server!',
       });
     }
 
-    const ioServer = new SocketIOServerHelper({
-      identifier: identifier ?? `SOCKET_IO_SERVER`,
-      server: httpServer.server,
-      serverOptions,
-      redisConnection,
-      authenticateFn,
-      clientConnectedFn,
-    });
-
-    this.application.bind(SocketIOKeys.SOCKET_IO_INSTANCE).to(ioServer);
+    this.application.bind(SocketIOKeys.SOCKET_IO_INSTANCE).to(
+      new SocketIOServerHelper({
+        identifier: identifier ?? `SOCKET_IO_SERVER`,
+        server: httpServer.server,
+        useShardedAdapter: redisConnection instanceof RedisClusterHelper,
+        serverOptions,
+        redisConnection,
+        authenticateFn,
+        clientConnectedFn,
+      }),
+    );
   }
 }
