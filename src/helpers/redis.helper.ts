@@ -1,9 +1,10 @@
 import { BaseHelper } from '@/base/base.helper';
 import { getError, int } from '@/utilities';
-import Redis from 'ioredis';
+import { Cluster, ClusterOptions, Redis } from 'ioredis';
 import isEmpty from 'lodash/isEmpty';
 import zlib from 'zlib';
 
+// -----------------------------------------------------------------------------------------------
 export interface IRedisHelperProps {
   name: string;
   host: string;
@@ -14,80 +15,62 @@ export interface IRedisHelperProps {
   maxRetry?: number;
 }
 
+export interface IRedisClusterHelperProps {
+  name: string;
+  nodes: Array<Pick<IRedisHelperProps, 'host' | 'port'>>;
+  clusterOptions?: ClusterOptions;
+}
+
 export interface IRedisHelperCallbacks {
-  onInitialized?: (opts: { name: string; helper: RedisHelper }) => void;
-  onConnected?: (opts: { name: string; helper: RedisHelper }) => void;
-  onReady?: (opts: { name: string; helper: RedisHelper }) => void;
-  onError?: (opts: { name: string; helper: RedisHelper; error: any }) => void;
+  onInitialized?: (opts: { name: string; helper: DefaultRedisHelper }) => void;
+  onConnected?: (opts: { name: string; helper: DefaultRedisHelper }) => void;
+  onReady?: (opts: { name: string; helper: DefaultRedisHelper }) => void;
+  onError?: (opts: { name: string; helper: DefaultRedisHelper; error: any }) => void;
 }
 
 export interface IRedisHelperOptions extends IRedisHelperProps, IRedisHelperCallbacks {}
+export interface IRedisClusterHelperOptions
+  extends IRedisClusterHelperProps,
+    IRedisHelperCallbacks {}
 
-export class RedisHelper extends BaseHelper {
-  client: Redis;
+// -----------------------------------------------------------------------------------------------
+export class DefaultRedisHelper extends BaseHelper {
+  client: Redis | Cluster;
   name: string;
 
-  // ---------------------------------------------------------------------------------
-  constructor(options: IRedisHelperOptions) {
-    super({ scope: RedisHelper.name, identifier: options.name });
+  constructor(
+    opts: { scope: string; identifier: string; client: Redis | Cluster } & IRedisHelperCallbacks,
+  ) {
+    super({ scope: opts.scope, identifier: opts.identifier });
 
-    const {
-      name,
-      host,
-      port,
-      password,
+    this.name = opts.identifier;
 
-      // Optional
-      database = 0,
-      autoConnect = true,
-      maxRetry = 0,
+    const { onInitialized, onConnected, onReady, onError } = opts;
 
-      onInitialized,
-      onConnected,
-      onReady,
-      onError,
-    } = options;
-
-    this.client = new Redis({
-      name,
-      host,
-      port: int(port),
-      password,
-      db: database,
-      lazyConnect: !autoConnect,
-      showFriendlyErrorStack: true,
-      retryStrategy: (attemptCounter: number) => {
-        if (maxRetry > -1 && attemptCounter > maxRetry) {
-          return undefined;
-        }
-
-        const strategy = Math.max(Math.min(attemptCounter * 2000, 5000), 1000);
-        return strategy;
-      },
-      maxRetriesPerRequest: null,
-    });
-
-    this.logger.info('[configure] Redis client options: %j', options);
     this.client.on('connect', () => {
-      this.logger.info('[event][connect] Redis client %s CONNECTED', name);
-      onConnected?.({ name, helper: this });
+      this.logger.info('[%s][connect] Redis CONNECTED', this.name);
+      onConnected?.({ name: this.name, helper: this });
     });
 
     this.client.on('ready', () => {
-      this.logger.info('[event][ready] Redis client %s READY', name);
-      onReady?.({ name, helper: this });
+      this.logger.info('[%s][ready] Redis READY', this.name);
+      onReady?.({ name: this.name, helper: this });
     });
 
     this.client.on('error', error => {
-      this.logger.error('[event][error] Redis client %s ERROR | Error: %s', name, error);
-      onError?.({ name, helper: this, error });
+      this.logger.error('[%s][error] Redis ERROR | Error: %s', this.name, error);
+      onError?.({ name: this.name, helper: this, error });
     });
 
     this.client.on('reconnecting', () => {
-      this.logger.warn('[event][reconnecting] Redis client %s RECONNECTING', name);
+      this.logger.warn('[%s][reconnecting] Redis client RECONNECTING', this.name);
     });
 
-    onInitialized?.({ name, helper: this });
+    onInitialized?.({ name: this.name, helper: this });
+  }
+
+  getClient() {
+    return this.client;
   }
 
   ping() {
@@ -424,5 +407,71 @@ export class RedisHelper extends BaseHelper {
         topic,
       );
     });
+  }
+}
+
+// -----------------------------------------------------------------------------------------------
+export class RedisHelper extends DefaultRedisHelper {
+  constructor(opts: IRedisHelperOptions) {
+    const {
+      name,
+      host,
+      port,
+      password,
+
+      // Optional
+      database = 0,
+      autoConnect = true,
+      maxRetry = 0,
+    } = opts;
+
+    super({
+      ...opts,
+      scope: RedisHelper.name,
+      identifier: name,
+      client: new Redis({
+        name,
+        host,
+        port: int(port),
+        password,
+        db: database,
+        lazyConnect: !autoConnect,
+        showFriendlyErrorStack: true,
+        retryStrategy: (attemptCounter: number) => {
+          if (maxRetry > -1 && attemptCounter > maxRetry) {
+            return undefined;
+          }
+
+          const strategy = Math.max(Math.min(attemptCounter * 2000, 5000), 1000);
+          return strategy;
+        },
+        maxRetriesPerRequest: null,
+      }),
+    });
+  }
+
+  override getClient() {
+    return this.client as Redis;
+  }
+}
+
+// -----------------------------------------------------------------------------------------------
+export class RedisClusterHelper extends DefaultRedisHelper {
+  constructor(opts: IRedisClusterHelperOptions) {
+    super({
+      ...opts,
+      scope: RedisClusterHelper.name,
+      identifier: opts.name,
+      client: new Cluster(
+        opts.nodes.map(node => {
+          return { host: node.host, port: int(node.port) };
+        }),
+        opts.clusterOptions,
+      ),
+    });
+  }
+
+  override getClient() {
+    return this.client as Cluster;
   }
 }

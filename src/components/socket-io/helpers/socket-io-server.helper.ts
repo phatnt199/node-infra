@@ -1,11 +1,10 @@
-import { createAdapter } from '@socket.io/redis-adapter';
+import { createAdapter, createShardedAdapter } from '@socket.io/redis-adapter';
 import { Emitter } from '@socket.io/redis-emitter';
-import Redis from 'ioredis';
 import { Server as IOServer, Socket as IOSocket, ServerOptions } from 'socket.io';
 
 import { IHandshake } from '@/common/types';
 import { SocketIOConstants } from '@/components/socket-io/common/constants';
-import { ApplicationLogger, LoggerFactory } from '@/helpers';
+import { ApplicationLogger, DefaultRedisHelper, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
 import { Server } from 'http';
 import isEmpty from 'lodash/isEmpty';
@@ -16,7 +15,10 @@ export interface ISocketIOServerOptions {
   identifier: string;
   server: Server;
   serverOptions: Partial<ServerOptions>;
-  redisConnection: Redis;
+
+  useShardedAdapter?: boolean;
+  redisConnection: DefaultRedisHelper;
+
   authenticateFn: (args: IHandshake) => Promise<boolean>;
   clientConnectedFn: (opts: { socket: IOSocket }) => Promise<void>;
   authenticateTimeout?: number;
@@ -30,7 +32,9 @@ export class SocketIOServerHelper {
   private identifier: string;
   private server: Server;
   private serverOptions: Partial<ServerOptions> = {};
-  private redisConnection: Redis;
+
+  private useShardedAdapter: boolean;
+  private redisConnection: DefaultRedisHelper;
 
   private authenticateFn: (args: IHandshake) => Promise<boolean>;
   private onClientConnected: (opts: { socket: IOSocket }) => Promise<void>;
@@ -58,7 +62,10 @@ export class SocketIOServerHelper {
 
     this.identifier = opts.identifier;
     this.serverOptions = opts?.serverOptions ?? {};
+
+    this.useShardedAdapter = opts.useShardedAdapter ?? false;
     this.redisConnection = opts.redisConnection;
+
     this.authenticateFn = opts.authenticateFn;
     this.onClientConnected = opts.clientConnectedFn;
     this.authenticateTimeout = opts.authenticateTimeout ?? CLIENT_AUTHENTICATE_TIMEOUT;
@@ -130,13 +137,21 @@ export class SocketIOServerHelper {
     this.io = new IOServer(this.server, this.serverOptions);
 
     // Config socket.io redis adapter
-    const adapterPubClient = this.redisConnection.duplicate();
-    const adapterSubClient = this.redisConnection.duplicate();
-    this.io.adapter(createAdapter(adapterPubClient, adapterSubClient));
-    this.logger.info('[configure] SocketIO Server initialized Redis Adapter!');
+    const adapterPubClient = this.redisConnection.getClient().duplicate();
+    const adapterSubClient = this.redisConnection.getClient().duplicate();
+
+    if (this.useShardedAdapter) {
+      this.io.adapter(createShardedAdapter(adapterPubClient, adapterSubClient));
+    } else {
+      this.io.adapter(createAdapter(adapterPubClient, adapterSubClient));
+    }
+    this.logger.info(
+      '[configure] SocketIO Server initialized Redis Adapter | useShardedAdapter: %s',
+      this.useShardedAdapter,
+    );
 
     // Config socket.io redis emitter
-    const emitterClient = this.redisConnection.duplicate();
+    const emitterClient = this.redisConnection.getClient().duplicate();
     this.emitter = new Emitter(emitterClient);
     this.emitter.redisClient.on('error', (error: Error) => {
       this.logger.error('[configure][Emitter] On Error: %j', error);

@@ -41,7 +41,7 @@ export const defineCustomLogger = (opts: {
       dgram?: Partial<IDgramTransportOptions>;
     };
     error: {
-      file: { prefix: string; folder: string };
+      file?: { prefix: string; folder: string };
       dgram?: Partial<IDgramTransportOptions>;
     };
   };
