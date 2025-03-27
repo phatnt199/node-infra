@@ -134,15 +134,18 @@ export class SocketIOServerHelper {
     this.io = new IOServer(this.server, this.serverOptions);
 
     // Config socket.io redis adapter
-    const adapterPubClient = this.redisConnection.getClient().duplicate();
-    const adapterSubClient = this.redisConnection.getClient().duplicate();
-
-    this.io.adapter(createAdapter(adapterPubClient, adapterSubClient));
+    this.io.adapter(
+      createAdapter(
+        this.redisConnection.getClient().duplicate(), // Redis PUB Client
+        this.redisConnection.getClient().duplicate(), // Redis SUB Client
+      ),
+    );
     this.logger.info('[configure] SocketIO Server initialized Redis Adapter');
 
     // Config socket.io redis emitter
-    const emitterClient = this.redisConnection.getClient().duplicate();
-    this.emitter = new Emitter(emitterClient);
+    this.emitter = new Emitter(
+      this.redisConnection.getClient().duplicate(), // Redis EMITTER Client
+    );
     this.emitter.redisClient.on('error', (error: Error) => {
       this.logger.error('[configure][Emitter] On Error: %j', error);
     });
