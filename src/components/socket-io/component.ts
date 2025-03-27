@@ -39,6 +39,13 @@ export class SocketIOComponent extends BaseComponent {
     const redisConnection = this.application.getSync<DefaultRedisHelper>(
       SocketIOKeys.REDIS_CONNECTION,
     );
+
+    if (!(redisConnection instanceof DefaultRedisHelper)) {
+      throw getError({
+        message: '[SocketIOComponent][binding] Invaid instance of redisConnection | Please init connection with RedisHelper for single redis connection or RedisClusterHelper for redis cluster mode!'
+      })
+    }
+
     const authenticateFn = this.application.getSync<
       (handshake: { headers: any }) => Promise<boolean>
     >(SocketIOKeys.AUTHENTICATE_HANDLER);
