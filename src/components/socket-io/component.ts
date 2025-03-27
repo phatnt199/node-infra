@@ -5,7 +5,7 @@ import { Binding, CoreBindings, inject } from '@loopback/core';
 import { ServerOptions } from 'socket.io';
 import { SocketIOKeys } from './common';
 import { SocketIOServerHelper } from './helpers';
-import { DefaultRedisHelper, RedisClusterHelper } from '@/helpers';
+import { DefaultRedisHelper } from '@/helpers';
 
 export class SocketIOComponent extends BaseComponent {
   bindings: Binding[] = [
@@ -68,7 +68,6 @@ export class SocketIOComponent extends BaseComponent {
       new SocketIOServerHelper({
         identifier: identifier ?? `SOCKET_IO_SERVER`,
         server: httpServer.server,
-        useShardedAdapter: redisConnection instanceof RedisClusterHelper,
         serverOptions,
         redisConnection,
         authenticateFn,
