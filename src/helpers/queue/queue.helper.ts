@@ -35,30 +35,43 @@ interface IQueueCallback<TElementPayload> {
     identifier: string;
     queueElement: TQueueElement<TElementPayload>;
   }) => ValueOrPromise<void>;
+  onStateChange?: (opts: {
+    identifier: string;
+    from: TQueueStatus;
+    to: TQueueStatus;
+  }) => ValueOrPromise<void>;
 }
 
 // --------------------------------------------------------
 export class QueueHelper<TElementPayload> extends BaseHelper {
   public storage: Array<TQueueElement<TElementPayload>>;
-  private processingEvents: Set<TQueueElement<TElementPayload>>;
-  private generator: Generator;
+  protected processingEvents: Set<TQueueElement<TElementPayload>>;
+  protected generator: Generator;
 
-  private totalEvent: number;
-  private autoDispatch: boolean = true;
-  private state: TQueueStatus = QueueStatuses.WAITING;
-  private isSettleRequested: boolean;
+  protected totalEvent: number;
+  protected autoDispatch: boolean = true;
+  protected state: TQueueStatus = QueueStatuses.WAITING;
+  protected isSettleRequested: boolean;
 
   private onMessage?: (opts: {
     identifier: string;
     queueElement: TQueueElement<TElementPayload>;
   }) => ValueOrPromise<void>;
+
   private onDataEnqueue?: (opts: {
     identifier: string;
     queueElement: TQueueElement<TElementPayload>;
   }) => ValueOrPromise<void>;
+
   private onDataDequeue?: (opts: {
     identifier: string;
     queueElement: TQueueElement<TElementPayload>;
+  }) => ValueOrPromise<void>;
+
+  private onStateChange?: (opts: {
+    identifier: string;
+    from: TQueueStatus;
+    to: TQueueStatus;
   }) => ValueOrPromise<void>;
 
   constructor(opts: IQueueCallback<TElementPayload> & { identifier: string }) {
@@ -77,9 +90,10 @@ export class QueueHelper<TElementPayload> extends BaseHelper {
     this.onMessage = opts.onMessage;
     this.onDataEnqueue = opts.onDataEnqueue;
     this.onDataDequeue = opts.onDataDequeue;
+    this.onStateChange = opts.onStateChange;
   }
 
-  private async handleMessage() {
+  protected async handleMessage() {
     const current = this.getElementAt(0);
     if (!current) {
       this.logger.warn('[handleMessage] current: %j | Invalid current message to handle!', current);
@@ -93,7 +107,9 @@ export class QueueHelper<TElementPayload> extends BaseHelper {
     }
 
     if (this.state !== QueueStatuses.LOCKED && this.state !== QueueStatuses.SETTLED) {
+      const snap = this.state;
       this.state = QueueStatuses.PROCESSING;
+      await this.onStateChange?.({ identifier: this.identifier, from: snap, to: this.state });
     }
 
     this.getElementAt(0).isLocked = true;
@@ -107,12 +123,16 @@ export class QueueHelper<TElementPayload> extends BaseHelper {
     }
 
     if (this.state !== QueueStatuses.LOCKED && this.state !== QueueStatuses.SETTLED) {
+      const snap = this.state;
       this.state = QueueStatuses.WAITING;
+      await this.onStateChange?.({ identifier: this.identifier, from: snap, to: this.state });
     }
 
     if (!this.storage.length) {
       if (this.isSettleRequested) {
+        const snap = this.state;
         this.state = QueueStatuses.SETTLED;
+        await this.onStateChange?.({ identifier: this.identifier, from: snap, to: this.state });
       }
 
       return;
@@ -194,7 +214,9 @@ export class QueueHelper<TElementPayload> extends BaseHelper {
       return;
     }
 
+    const snap = this.state;
     this.state = QueueStatuses.LOCKED;
+    this.onStateChange?.({ identifier: this.identifier, from: snap, to: this.state });
   }
 
   unlock(opts: { shouldProcessNextElement?: boolean }) {
@@ -208,7 +230,10 @@ export class QueueHelper<TElementPayload> extends BaseHelper {
     }
 
     const { shouldProcessNextElement = true } = opts;
+
+    const snap = this.state;
     this.state = QueueStatuses.WAITING;
+    this.onStateChange?.({ identifier: this.identifier, from: snap, to: this.state });
 
     if (!shouldProcessNextElement) {
       return;
@@ -221,7 +246,9 @@ export class QueueHelper<TElementPayload> extends BaseHelper {
     this.isSettleRequested = true;
 
     if (this.state !== QueueStatuses.PROCESSING) {
+      const snap = this.state;
       this.state = QueueStatuses.SETTLED;
+      this.onStateChange?.({ identifier: this.identifier, from: snap, to: this.state });
     }
   }
 
