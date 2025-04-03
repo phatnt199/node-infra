@@ -156,10 +156,10 @@ export class QueueHelper<TElementPayload> extends BaseHelper {
 
   nextMessage() {
     if (this.state !== QueueStatuses.WAITING) {
-      /* this.logger.warn(
-        '[nextMessage] currentState: %s | Skip request next message | Invalid queue state to request next message!',
+      this.logger.warn(
+        '[nextMessage] SKIP request next message | Invalid queue state to request next message | currentState: %s',
         this.state,
-      ); */
+      );
       return;
     }
 
