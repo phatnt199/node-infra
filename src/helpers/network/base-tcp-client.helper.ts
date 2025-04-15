@@ -167,14 +167,13 @@ export class BaseNetworkTcpClient<
       this.client = null;
     }
 
-    if (this.encoding) {
-    }
-
     this.client = this.createClientFn(this.options, () => {
       this.onConnected?.();
     });
 
-    this.client.setEncoding(this.encoding);
+    if (this.encoding) {
+      this.client.setEncoding(this.encoding);
+    }
 
     this.client.on('data', (message: string | Buffer) => {
       this.onData({ identifier: this.identifier, message });
