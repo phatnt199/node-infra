@@ -1,9 +1,9 @@
 import { IController } from '@/common';
 import { applicationLogger } from '@/helpers';
 import { Constructor, MetadataMap } from '@loopback/core';
-import { writeFileSync } from 'fs';
 import union from 'lodash/union';
-import { resolve } from 'path';
+import { writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { EnforcerDefinitions } from '../common';
 import { getDecoratorData, IPermissionDecorator, MetadataDecoratorKeys } from '../decorators';
 import { Permission } from '../models';

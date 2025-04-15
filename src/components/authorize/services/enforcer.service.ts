@@ -5,8 +5,8 @@ import { getError } from '@/utilities';
 import { BindingScope, inject, injectable } from '@loopback/core';
 
 import { Enforcer, newCachedEnforcer, newEnforcer } from 'casbin';
-import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
+import fs from 'node:fs';
 
 import { CasbinAdapterBuilder } from '../adapters';
 import {

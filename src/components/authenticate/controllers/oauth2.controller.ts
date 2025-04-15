@@ -20,7 +20,7 @@ import { OAuth2Service } from '../services';
 
 import { BaseController } from '@/base/controllers';
 import isEmpty from 'lodash/isEmpty';
-import { join } from 'path';
+import { join } from 'node:path';
 import { Authentication, IAuthenticateOAuth2RestOptions, OAuth2Request } from '../common';
 
 interface IOAuth2ControllerOptions {

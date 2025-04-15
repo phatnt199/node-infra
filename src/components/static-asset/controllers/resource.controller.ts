@@ -5,10 +5,10 @@ import { dayjs, getError } from '@/utilities';
 import { CoreBindings, inject } from '@loopback/core';
 import { api, get, param, post, Request, Response, RestBindings } from '@loopback/rest';
 
-import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
 import multer from 'multer';
-import { join } from 'path';
+import fs from 'node:fs';
+import { join } from 'node:path';
 import { ResourceAssetKeys } from '../common';
 
 @api({ basePath: '/static-resources' })

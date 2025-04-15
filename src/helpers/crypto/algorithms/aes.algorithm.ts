@@ -1,6 +1,6 @@
-import C from 'crypto';
-import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
+import C from 'node:crypto';
+import fs from 'node:fs';
 import { BaseCryptoAlgorithm } from './base.algorithm';
 
 const DEFAULT_LENGTH = 16;

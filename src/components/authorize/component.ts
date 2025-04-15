@@ -23,7 +23,7 @@ import {
 import { EnforcerService } from './services';
 
 import flatten from 'lodash/flatten';
-import path from 'path';
+import path from 'node:path';
 
 const authorizeConfPath = path.resolve(__dirname, '../../static/security/authorize_model.conf');
 

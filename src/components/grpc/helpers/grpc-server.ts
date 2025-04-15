@@ -12,9 +12,9 @@ import {
 
 import * as grpc from '@grpc/grpc-js';
 import * as grpcLoader from '@grpc/proto-loader';
-import { existsSync } from 'fs';
 import get from 'lodash/get';
-import { join } from 'path';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 export class GrpcServer extends grpc.Server {
   private identifier: string;
