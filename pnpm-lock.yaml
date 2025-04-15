@@ -32,6 +32,9 @@ importers:
       '@loopback/core':
         specifier: ^6.1.5
         version: 6.1.8
+      '@loopback/filter':
+        specifier: ^5.0.11
+        version: 5.0.11
       '@loopback/http-server':
         specifier: ^6.0.8
         version: 6.0.11
@@ -431,8 +434,8 @@ packages:
     peerDependencies:
       '@loopback/core': ^6.0.0
 
-  '@loopback/filter@5.0.10':
-    resolution: {integrity: sha512-W0pilLuRuLqmlLtlIwdTeRYM0Ir99k3FGn7YqfLUcCewtM0OuiA2CGxlKO9aka2oV5FT3kAtCKTUR3Th8FofrA==}
+  '@loopback/filter@5.0.11':
+    resolution: {integrity: sha512-MzPyIToWslruK7Lm5BPPuQ+RxM+3N7KSzlFSo8dszYm30hf7dVXt2z2s7iw8EEhu5ccaUFCWT/X3K1p8fBkJUQ==}
     engines: {node: 18 || 20 || 22}
 
   '@loopback/http-server@6.0.11':
@@ -3831,7 +3834,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@loopback/filter@5.0.10':
+  '@loopback/filter@5.0.11':
     dependencies:
       tslib: 2.8.1
 
@@ -3885,7 +3888,7 @@ snapshots:
   '@loopback/repository@7.0.11(@loopback/core@6.1.8)':
     dependencies:
       '@loopback/core': 6.1.8
-      '@loopback/filter': 5.0.10
+      '@loopback/filter': 5.0.11
       '@types/debug': 4.1.12
       debug: 4.4.0(supports-color@8.1.1)
       lodash: 4.17.21

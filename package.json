@@ -81,6 +81,10 @@
       "default": "./dist/base/loopback/service-proxy/index.js",
       "types": "./dist/base/loopback/service-proxy/index.d.ts"
     },
+    "./@loopback/filter": {
+      "default": "./dist/base/loopback/filter/index.js",
+      "types": "./dist/base/loopback/filter/index.d.ts"
+    },
     "./package.json": "./package.json"
   },
   "engines": {
@@ -133,6 +137,7 @@
     "@loopback/authorization": "^0.15.8",
     "@loopback/boot": "^7.0.8",
     "@loopback/core": "^6.1.5",
+    "@loopback/filter": "^5.0.11",
     "@loopback/http-server": "^6.0.8",
     "@loopback/metadata": "^7.0.8",
     "@loopback/repository": "^7.0.8",

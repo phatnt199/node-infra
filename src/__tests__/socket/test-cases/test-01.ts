@@ -25,7 +25,8 @@ export class TestSocket001Handler extends TestCaseHandler<{}, IArg> {
 
     const server = NetworkTcpServer.newInstance({
       identifier: 'TEST_SERVER_001',
-      serverOptions: { host, port },
+      listenOptions: {host, port },
+      serverOptions: {},
       authenticateOptions: { required: false },
     });
 
