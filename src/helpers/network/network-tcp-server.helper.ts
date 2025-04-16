@@ -1,7 +1,7 @@
-import { createServer } from 'node:net';
+import { createServer, ServerOpts, Socket as SocketClient, Server as SocketServer } from 'node:net';
 import { BaseNetworkTcpServer, ITcpSocketServerOptions } from './base-tcp-server.helper';
 
-export class NetworkTcpServer extends BaseNetworkTcpServer {
+export class NetworkTcpServer extends BaseNetworkTcpServer<ServerOpts, SocketServer, SocketClient> {
   constructor(opts: Omit<ITcpSocketServerOptions, 'createServerFn'>) {
     super({
       ...opts,

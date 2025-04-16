@@ -2,7 +2,7 @@ import { createServer, Server, TLSSocket as SocketClient, TlsOptions } from 'nod
 import { BaseNetworkTcpServer, ITcpSocketServerOptions } from './base-tcp-server.helper';
 
 export class NetworkTlsTcpServer extends BaseNetworkTcpServer<TlsOptions, Server, SocketClient> {
-  constructor(opts: Omit<ITcpSocketServerOptions, 'createServer'>) {
+  constructor(opts: Omit<ITcpSocketServerOptions, 'createServerFn'>) {
     super({
       ...opts,
       scope: NetworkTlsTcpServer.name,
@@ -10,7 +10,7 @@ export class NetworkTlsTcpServer extends BaseNetworkTcpServer<TlsOptions, Server
     });
   }
 
-  static newInstance(opts: ITcpSocketServerOptions) {
+  static newInstance(opts: Omit<ITcpSocketServerOptions, 'createServerFn'>) {
     return new NetworkTlsTcpServer(opts);
   }
 }
