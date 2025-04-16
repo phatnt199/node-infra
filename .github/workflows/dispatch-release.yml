@@ -10,6 +10,9 @@ on:
           - patch
           - minor
           - major
+          - prepatch
+          - preminor
+          - premajor
 
 jobs:
   build-release:
