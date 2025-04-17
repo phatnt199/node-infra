@@ -1,4 +1,5 @@
 import { BaseHelper } from '@/base/base.helper';
+import { ValueOrPromise } from '@/common';
 import isEmpty from 'lodash/isEmpty';
 import {
   TcpSocketConnectOpts as PlainConnectionOptions,
@@ -27,9 +28,9 @@ export interface INetworkTcpClientProps<
   ) => SocketClientType;
 
   // handlers
-  onConnected?: () => void;
-  onData?: (opts: { identifier: string; message: string | Buffer }) => void;
-  onClosed?: () => void;
+  onConnected?: (opts: { client: SocketClientType }) => ValueOrPromise<void>;
+  onData?: (opts: { identifier: string; message: string | Buffer }) => ValueOrPromise<void>;
+  onClosed?: (opts: { client: SocketClientType }) => void;
   onError?: (error: any) => void;
 }
 
@@ -54,9 +55,9 @@ export class BaseNetworkTcpClient<
   ) => SocketClientType;
 
   // handlers
-  protected onConnected: () => void;
+  protected onConnected: (opts: { client: SocketClientType }) => void;
   protected onData: (opts: { identifier: string; message: string | Buffer }) => void;
-  protected onClosed?: () => void;
+  protected onClosed?: (opts: { client: SocketClientType }) => void;
   protected onError?: (error: any) => void;
 
   constructor(opts: INetworkTcpClientProps<SocketClientOptions, SocketClientType>) {
@@ -168,7 +169,12 @@ export class BaseNetworkTcpClient<
     }
 
     this.client = this.createClientFn(this.options, () => {
-      this.onConnected?.();
+      if (!this.client) {
+        this.logger.error('[createClientFn] Failed to initialize socket client!');
+        return;
+      }
+
+      this.onConnected?.({ client: this.client });
     });
 
     if (this.encoding) {
@@ -180,7 +186,11 @@ export class BaseNetworkTcpClient<
     });
 
     this.client.on('close', () => {
-      this.onClosed?.();
+      if (!this.client) {
+        return;
+      }
+
+      this.onClosed?.({ client: this.client });
     });
 
     this.client.on('error', error => {
