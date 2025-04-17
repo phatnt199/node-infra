@@ -11,7 +11,7 @@ import {
   Socket as SocketClient,
 } from 'node:net';
 
-interface ITcpSocketClient<SocketClientType> {
+export interface ITcpSocketClient<SocketClientType> {
   id: string;
   socket: SocketClientType;
   state: 'unauthorized' | 'authenticating' | 'authenticated';
