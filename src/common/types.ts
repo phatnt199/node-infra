@@ -33,21 +33,52 @@ export type ValueOptionalExcept<T, K extends keyof T> = Pick<T, K> & Partial<Omi
  * Alias for {@link ValueOf<T>}
  */
 export type ClassProps<T> = ValueOf<T>;
+
 export type ClassType<T> = Function & { prototype: T };
 
 export type TStatusFromClass<T extends ClassType<AnyObject>> = ValueOf<
-  Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET'>
+  Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET' | 'TYPE_SET'>
 >;
 
+/**
+ * Alternative for {@link TStatusFromClass<T>}
+ */
 export type TConstValue<T extends ClassType<AnyObject>> = ValueOf<
-  Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET'>
+  Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET' | 'TYPE_SET'>
 >;
 
+// ----------------------------------------------------------------------------------------------------------------------------------------
 export type TRelationType = 'belongsTo' | 'hasOne' | 'hasMany' | 'hasManyThrough';
 
 export type TBullQueueRole = 'queue' | 'worker';
 
 export type TPermissionEffect = 'allow' | 'deny';
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+export interface IFieldMapping {
+  name: string;
+  type?: 'string' | 'number' | 'strings' | 'numbers' | 'boolean';
+  default?: string | number | Array<string> | Array<number> | boolean;
+}
+
+export type TFieldMappingNames<T extends IFieldMapping> = Extract<
+  Array<T>[number],
+  { type: Exclude<T['type'], undefined> }
+>['name'];
+
+export type TObjectFromFieldMappings<T extends IFieldMapping> = {
+  [K in TFieldMappingNames<T>]: Extract<Array<T>[number], { name: K }> extends { type: infer T }
+    ? T extends 'number'
+      ? number
+      : T extends 'string'
+        ? string
+        : T extends 'numbers'
+          ? Array<number>
+          : T extends 'strings'
+            ? Array<string>
+            : never // For any invalid type
+    : never;
+};
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export interface IApplication {

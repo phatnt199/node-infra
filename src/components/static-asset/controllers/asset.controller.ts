@@ -120,7 +120,8 @@ export class StaticAssetController implements IController {
   ) {
     const minioInstance = this.application.getSync<MinioHelper>(ResourceAssetKeys.MINIO_INSTANCE);
     return new Promise((resolve, reject) => {
-      multer({ storage: this.temporaryStorage }).array('files')(request, this.response, error => {
+      const extractor = multer({ storage: this.temporaryStorage }).array('files');
+      extractor(request, this.response, error => {
         if (error) {
           this.logger.error('[uploadObject] Fail to upload files! Error: %s', error);
           reject(error);
