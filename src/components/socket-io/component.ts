@@ -1,17 +1,19 @@
 import { BaseApplication } from '@/base/applications';
 import { BaseComponent } from '@/base/base.component';
+import { DefaultRedisHelper } from '@/helpers';
 import { getError } from '@/utilities';
 import { Binding, CoreBindings, inject } from '@loopback/core';
 import { ServerOptions } from 'socket.io';
 import { SocketIOKeys } from './common';
 import { SocketIOServerHelper } from './helpers';
-import { DefaultRedisHelper } from '@/helpers';
 
 export class SocketIOComponent extends BaseComponent {
   bindings: Binding[] = [
     Binding.bind(SocketIOKeys.IDENTIFIER).to('SOCKET_IO_SERVER'),
-    Binding.bind(SocketIOKeys.SERVER_OPTIONS).to({ path: '/io' }),
-    Binding.bind(SocketIOKeys.REDIS_CONNECTION).to(null),
+    Binding.bind<Partial<ServerOptions>>(SocketIOKeys.SERVER_OPTIONS).to({
+      path: '/io',
+    }),
+    Binding.bind<DefaultRedisHelper | null>(SocketIOKeys.REDIS_CONNECTION).to(null),
   ];
 
   constructor(
@@ -32,9 +34,39 @@ export class SocketIOComponent extends BaseComponent {
     this.logger.info('[binding] Binding authenticate for application...');
 
     const identifier = this.application.getSync<string>(SocketIOKeys.IDENTIFIER);
-    const serverOptions = this.application.getSync<Partial<ServerOptions>>(
-      SocketIOKeys.SERVER_OPTIONS,
-    );
+
+    let serverOptions: Partial<ServerOptions> = {
+      path: '/io',
+      cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
+        credentials: true,
+      },
+      perMessageDeflate: {
+        threshold: 4096,
+        zlibDeflateOptions: {
+          chunkSize: 10 * 1024,
+        },
+        zlibInflateOptions: {
+          windowBits: 12,
+          memLevel: 8,
+        },
+        clientNoContextTakeover: true,
+        serverNoContextTakeover: true,
+        serverMaxWindowBits: 10,
+        concurrencyLimit: 20,
+      },
+    };
+
+    if (this.application.isBound(SocketIOKeys.SERVER_OPTIONS)) {
+      const extraServerOptions = this.application.getSync<Partial<ServerOptions>>(
+        SocketIOKeys.SERVER_OPTIONS,
+      );
+
+      serverOptions = Object.assign({}, serverOptions, extraServerOptions);
+    }
 
     const redisConnection = this.application.getSync<DefaultRedisHelper>(
       SocketIOKeys.REDIS_CONNECTION,
@@ -47,13 +79,15 @@ export class SocketIOComponent extends BaseComponent {
       });
     }
 
-    const authenticateFn = this.application.getSync<
-      (handshake: { headers: any }) => Promise<boolean>
-    >(SocketIOKeys.AUTHENTICATE_HANDLER);
+    const authenticateFn = this.application.getSync<SocketIOServerHelper['authenticateFn']>(
+      SocketIOKeys.AUTHENTICATE_HANDLER,
+    );
 
     let clientConnectedFn: any = null;
     if (this.application.isBound(SocketIOKeys.CLIENT_CONNECTED_HANDLER)) {
-      clientConnectedFn = this.application.getSync<any>(SocketIOKeys.CLIENT_CONNECTED_HANDLER);
+      clientConnectedFn = this.application.getSync<SocketIOServerHelper['onClientConnected']>(
+        SocketIOKeys.CLIENT_CONNECTED_HANDLER,
+      );
     }
 
     const restServer = this.application.restServer;

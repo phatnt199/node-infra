@@ -112,7 +112,7 @@ export class EntityRelations {
   }
 }
 
-export class ConfigurationDataType {
+export class ConfigurationDataTypes {
   static readonly NUMBER = 'NUMBER';
   static readonly TEXT = 'TEXT';
   static readonly BYTE = 'BYTE';

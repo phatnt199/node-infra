@@ -55,29 +55,32 @@ export type TBullQueueRole = 'queue' | 'worker';
 export type TPermissionEffect = 'allow' | 'deny';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
+export type TFieldMappingDataType = 'string' | 'number' | 'strings' | 'numbers' | 'boolean';
 export interface IFieldMapping {
   name: string;
-  type?: 'string' | 'number' | 'strings' | 'numbers' | 'boolean';
+  type: TFieldMappingDataType;
   default?: string | number | Array<string> | Array<number> | boolean;
 }
 
-export type TFieldMappingNames<T extends IFieldMapping> = Extract<
-  Array<T>[number],
-  { type: Exclude<T['type'], undefined> }
+export type TFieldMappingNames<T extends Array<IFieldMapping>> = Extract<
+  T[number],
+  { type: Exclude<T[number]['type'], undefined> }
 >['name'];
 
-export type TObjectFromFieldMappings<T extends IFieldMapping> = {
-  [K in TFieldMappingNames<T>]: Extract<Array<T>[number], { name: K }> extends { type: infer T }
-    ? T extends 'number'
+export type TObjectFromFieldMappings<
+  T extends readonly { name: string; type: string; [extra: string | symbol]: any }[],
+> = {
+  [K in T[number]['name']]: T extends { name: K; type: 'string' }
+    ? string
+    : T extends { name: K; type: 'number' }
       ? number
-      : T extends 'string'
-        ? string
-        : T extends 'numbers'
-          ? Array<number>
-          : T extends 'strings'
-            ? Array<string>
-            : never // For any invalid type
-    : never;
+      : T extends { name: K; type: 'boolean' }
+        ? boolean
+        : T extends { name: K; type: 'strings' }
+          ? string[]
+          : T extends { name: K; type: 'numbers' }
+            ? number[]
+            : never;
 };
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
