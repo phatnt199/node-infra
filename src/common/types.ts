@@ -47,6 +47,8 @@ export type TConstValue<T extends ClassType<AnyObject>> = ValueOf<
   Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET' | 'TYPE_SET'>
 >;
 
+export type TPrettify<T> = { [K in keyof T]: T[K] } & {};
+
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export type TRelationType = 'belongsTo' | 'hasOne' | 'hasMany' | 'hasManyThrough';
 
