@@ -5,7 +5,7 @@ import { Authentication } from '../common';
 import { BasicTokenService } from './basic-token.service';
 
 export class BasicAuthenticationStrategy implements AuthenticationStrategy {
-  name = Authentication.TYPE_BASIC;
+  name = Authentication.STRATEGY_BASIC;
 
   constructor(@inject('services.BasicTokenService') private service: BasicTokenService) {}
 
