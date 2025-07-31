@@ -1,7 +1,7 @@
 import { AnyObject } from '@/common';
 import { stringify } from '@/utilities';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import https from 'https';
+import https from 'node:https';
 
 const HTTP = 'http';
 const HTTPS = 'https';

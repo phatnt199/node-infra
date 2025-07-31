@@ -1,6 +1,6 @@
 import { BaseHelper } from '@/base';
 import { ValueOrPromise } from '@/common';
-import { MessagePort, Transferable } from 'worker_threads';
+import { MessagePort, Transferable } from 'node:worker_threads';
 import { IWorkerBus, IWorkerMessageBusHandler } from './types';
 
 // -------------------------------------------------------------------------------------------
@@ -33,14 +33,14 @@ export class BaseWorkerMessageBusHandlerHelper<
 
     this.onExit = opts?.onExit
       ? opts.onExit
-      : (opts: { exitCode: string | number }) => {
-          this.logger.warn('[onExit] worker EXITED | exitCode: %s', opts.exitCode);
+      : (_opts: { exitCode: string | number }) => {
+          this.logger.warn('[onExit] worker EXITED | exitCode: %s', _opts.exitCode);
         };
 
     this.onError = opts?.onError
       ? opts.onError
-      : (opts: { error: Error }) => {
-          this.logger.error('[onError] worker error: %s', opts.error);
+      : (_opts: { error: Error }) => {
+          this.logger.error('[onError] worker error: %s', _opts.error);
         };
   }
 }

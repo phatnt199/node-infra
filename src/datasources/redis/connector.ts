@@ -1,8 +1,8 @@
 import { RedisHelper } from '@/helpers';
 import { getError, int } from '@/utilities';
 import { Class, Entity, EntityData, Filter, Model, Options } from '@loopback/repository';
+import EventEmitter from 'node:events';
 import { IRedisConnector, IRedisOptions } from './types';
-import EventEmitter from 'events';
 
 export class RedisConnector implements IRedisConnector {
   name: string;

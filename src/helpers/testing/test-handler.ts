@@ -1,6 +1,6 @@
 import { ValueOrPromise } from '@/common';
 import { getError } from '@/utilities';
-import assert from 'assert';
+import assert from 'node:assert';
 import { TestCaseDecisions } from './common';
 import { ITestCaseHandler, ITestCaseInput, ITestContext, TTestCaseDecision } from './types';
 import { ApplicationLogger, LoggerFactory } from '../logger';

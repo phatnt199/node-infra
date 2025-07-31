@@ -11,8 +11,8 @@ import {
   Where,
 } from '@loopback/repository';
 import { RequestContext } from '@loopback/rest';
-import { IncomingHttpHeaders } from 'http';
-import { ParsedUrlQuery } from 'querystring';
+import { IncomingHttpHeaders } from 'node:http';
+import { ParsedUrlQuery } from 'node:querystring';
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export type NumberIdType = number;

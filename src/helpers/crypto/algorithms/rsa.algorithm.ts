@@ -1,4 +1,4 @@
-import C from 'crypto';
+import C from 'node:crypto';
 import { BaseCryptoAlgorithm } from './base.algorithm';
 
 interface IO {

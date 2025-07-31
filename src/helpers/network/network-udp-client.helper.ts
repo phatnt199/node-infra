@@ -1,6 +1,6 @@
 import { BaseHelper } from '@/base/base.helper';
 import { ValueOrPromise } from '@/common';
-import dgram from 'dgram';
+import dgram from 'node:dgram';
 
 interface INetworkUdpClientProps {
   identifier: string;

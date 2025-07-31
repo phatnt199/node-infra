@@ -1,4 +1,4 @@
-import C from 'crypto';
+import C from 'node:crypto';
 
 export const hash = (
   text: string,

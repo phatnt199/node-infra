@@ -6,8 +6,8 @@ import { IHandshake } from '@/common/types';
 import { SocketIOConstants } from '@/components/socket-io/common/constants';
 import { ApplicationLogger, DefaultRedisHelper, LoggerFactory } from '@/helpers';
 import { getError } from '@/utilities';
-import { Server } from 'http';
 import isEmpty from 'lodash/isEmpty';
+import { Server } from 'node:http';
 
 const CLIENT_AUTHENTICATE_TIMEOUT = 10 * 1000;
 

@@ -1,5 +1,5 @@
 import { AnyType, BaseHelper, ValueOrPromise, getError } from '@minimaltech/node-infra';
-import { isMainThread } from 'worker_threads';
+import { isMainThread } from 'node:worker_threads';
 import { IWorkerBus, IWorkerThread } from './types';
 
 // -------------------------------------------------------------------------------------------

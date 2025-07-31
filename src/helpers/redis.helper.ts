@@ -2,7 +2,7 @@ import { BaseHelper } from '@/base/base.helper';
 import { getError, int } from '@/utilities';
 import { Cluster, ClusterOptions, Redis } from 'ioredis';
 import isEmpty from 'lodash/isEmpty';
-import zlib from 'zlib';
+import zlib from 'node:zlib';
 
 // -----------------------------------------------------------------------------------------------
 export interface IRedisHelperProps {

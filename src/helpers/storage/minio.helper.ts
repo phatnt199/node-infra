@@ -3,7 +3,7 @@ import { MimeTypes } from '@/common';
 import { getError } from '@/utilities';
 import isEmpty from 'lodash/isEmpty';
 import { Client, ClientOptions } from 'minio';
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
 
 // ---------------------------------------------------------------------
 export interface IUploadFile {

@@ -1,6 +1,6 @@
 import { ResultCodes } from '@/common';
 import { getError } from '@/utilities';
-import dgram from 'dgram';
+import dgram from 'node:dgram';
 import Transport from 'winston-transport';
 
 export interface IDgramTransportOptions extends Transport.TransportStreamOptions {

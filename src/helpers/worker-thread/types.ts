@@ -1,5 +1,5 @@
 import { AnyType, ValueOrPromise } from '@/common';
-import { MessagePort, TransferListItem } from 'worker_threads';
+import { MessagePort, Transferable } from 'node:worker_threads';
 
 export interface IWorkerThread {
   buses: {
@@ -23,6 +23,6 @@ export interface IWorkerBus<IConsumePayload, IPublishPayload> {
   onAfterPostMessage?(opts: { message: IPublishPayload }): ValueOrPromise<void>;
   postMessage(opts: {
     message: IPublishPayload;
-    transferList: readonly TransferListItem[] | undefined;
+    transferList: readonly Transferable[] | undefined;
   }): ValueOrPromise<void>;
 }
