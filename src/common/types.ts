@@ -72,15 +72,15 @@ export type TFieldMappingNames<T extends Array<IFieldMapping>> = Extract<
 export type TObjectFromFieldMappings<
   T extends readonly { name: string; type: string; [extra: string | symbol]: any }[],
 > = {
-  [K in T[number]['name']]: T extends { name: K; type: 'string' }
+  [K in T[number]['name']]: T extends { name: K; type: 'string'; [extra: string | symbol]: any }
     ? string
-    : T extends { name: K; type: 'number' }
+    : T extends { name: K; type: 'number'; [extra: string | symbol]: any }
       ? number
-      : T extends { name: K; type: 'boolean' }
+      : T extends { name: K; type: 'boolean'; [extra: string | symbol]: any }
         ? boolean
-        : T extends { name: K; type: 'strings' }
+        : T extends { name: K; type: 'strings'; [extra: string | symbol]: any }
           ? string[]
-          : T extends { name: K; type: 'numbers' }
+          : T extends { name: K; type: 'numbers'; [extra: string | symbol]: any }
             ? number[]
             : never;
 };
