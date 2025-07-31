@@ -1,4 +1,4 @@
-import { AnyType, ValueOrPromise } from '@/common';
+import { AnyType, ValueOrPromise } from '@/common/types';
 import { MessagePort, Transferable } from 'node:worker_threads';
 
 export interface IWorkerThread {

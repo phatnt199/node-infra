@@ -1,4 +1,6 @@
-import { AnyType, BaseHelper, ValueOrPromise, getError } from '@minimaltech/node-infra';
+import { BaseHelper } from '@/base/base.helper';
+import { AnyType, ValueOrPromise } from '@/common/types';
+import { getError } from '@/utilities';
 import { isMainThread } from 'node:worker_threads';
 import { IWorkerBus, IWorkerThread } from './types';
 
