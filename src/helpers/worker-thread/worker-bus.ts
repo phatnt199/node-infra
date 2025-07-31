@@ -1,6 +1,6 @@
 import { BaseHelper } from '@/base';
 import { ValueOrPromise } from '@/common';
-import { MessagePort, TransferListItem } from 'worker_threads';
+import { MessagePort, Transferable } from 'worker_threads';
 import { IWorkerBus, IWorkerMessageBusHandler } from './types';
 
 // -------------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ export abstract class AbstractWorkerBusHelper<IConsumePayload, IPublishPayload>
   abstract onAfterPostMessage?(opts: { message: IPublishPayload }): ValueOrPromise<void>;
   abstract postMessage(opts: {
     message: IPublishPayload;
-    transferList: readonly TransferListItem[] | undefined;
+    transferList: readonly Transferable[] | undefined;
   }): ValueOrPromise<void>;
 }
 
@@ -104,7 +104,7 @@ export class BaseWorkerBusHelper<IConsumePayload, IPublishPayload> extends Abstr
 
   postMessage(opts: {
     message: IPublishPayload;
-    transferList: readonly TransferListItem[] | undefined;
+    transferList: readonly Transferable[] | undefined;
   }): ValueOrPromise<void> {
     if (!this.port) {
       this.logger.error('[postMessage] Failed to post message to main | Invalid parentPort!');

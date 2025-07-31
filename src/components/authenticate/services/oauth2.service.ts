@@ -111,13 +111,29 @@ export class OAuth2Service extends BaseService {
   // --------------------------------------------------------------------------------
   generateToken(opts: { request: Request; response: Response }) {
     const { request, response } = opts;
-    return this.handler.token(new Request(request), new Response(response));
+    return this.handler.token(
+      new Request({
+        ...request,
+        headers: request.headers ?? {},
+        method: request.method ?? 'get',
+        query: request.query ?? {},
+      }),
+      new Response(response),
+    );
   }
 
   // --------------------------------------------------------------------------------
   authorize(opts: { request: Request; response: Response }) {
     const { request, response } = opts;
-    return this.handler.authorize(new Request(request), new Response(response));
+    return this.handler.authorize(
+      new Request({
+        ...request,
+        headers: request.headers ?? {},
+        method: request.method ?? 'get',
+        query: request.query ?? {},
+      }),
+      new Response(response),
+    );
   }
 
   // --------------------------------------------------------------------------------

@@ -1,7 +1,6 @@
 import { AnyType, BaseHelper, ValueOrPromise, getError } from '@minimaltech/node-infra';
 import { isMainThread } from 'worker_threads';
-import { IWorkerBus } from './executor';
-import { IWorkerThread } from './types';
+import { IWorkerBus, IWorkerThread } from './types';
 
 // -------------------------------------------------------------------------------------------
 export abstract class AbstractWorkerThreadHelper extends BaseHelper implements IWorkerThread {

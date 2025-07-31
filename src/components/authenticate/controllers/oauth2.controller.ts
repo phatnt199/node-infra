@@ -5,6 +5,7 @@ import { authenticate } from '@loopback/authentication';
 import { Context, Getter, inject } from '@loopback/core';
 import {
   api,
+  ExpressRequestHandler,
   ExpressServer,
   ExpressServerConfig,
   get,
@@ -63,7 +64,7 @@ export class DefaultOAuth2ExpressServer extends ExpressServer {
   }
 
   getApplicationHandler() {
-    return this.expressApp;
+    return this.expressApp as ExpressRequestHandler;
   }
 
   binding() {
