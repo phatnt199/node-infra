@@ -1,6 +1,6 @@
 import { BaseHelper } from '@/base/base.helper';
 import { AnyType, ValueOrPromise } from '@/common/types';
-import { getError } from '@/utilities';
+import { getError } from '@/utilities/error.utility';
 import { isMainThread } from 'node:worker_threads';
 import { IWorkerBus, IWorkerThread } from './types';
 

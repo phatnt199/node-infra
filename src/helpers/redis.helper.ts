@@ -370,9 +370,12 @@ export class DefaultRedisHelper extends BaseHelper {
 
     await Promise.all(
       validTopics.map(topic => {
-        let packet = Buffer.from(JSON.stringify(payload));
+        let packet;
+
         if (useCompress) {
-          packet = zlib.deflateSync(Buffer.from(packet));
+          packet = zlib.deflateSync(Buffer.from(JSON.stringify(payload)));
+        } else {
+          packet = Buffer.from(JSON.stringify(payload));
         }
 
         return this.client.publish(topic, packet);
