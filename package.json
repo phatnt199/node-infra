@@ -106,6 +106,7 @@
     "rebuild:premajor": "sh ./scripts/rebuild.sh premajor",
     "rebuild:preminor": "sh ./scripts/rebuild.sh preminor",
     "rebuild:prepatch": "sh ./scripts/rebuild.sh prepatch",
+    "rebuild:prerelease": "sh ./scripts/rebuild.sh prerelease",
     "pretest:dev": "pnpm run rebuild",
     "test:dev": "NODE_ENV=development mocha -r dotenv-flow/config -r source-map-support/register --timeout 60000 --exit dist/__tests__/index.js",
     "prepare": "husky"

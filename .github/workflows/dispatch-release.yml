@@ -5,7 +5,7 @@ on:
     inputs:
       build_mode:
         type: choice
-        description: Build Mode (patch | minor | major | pre<patch | minor | major>)
+        description: Build Mode (patch | minor | major | pre<patch | minor | major | release>)
         options:
           - patch
           - minor
@@ -13,6 +13,7 @@ on:
           - prepatch
           - preminor
           - premajor
+          - prerelease
 
 jobs:
   build-release:
