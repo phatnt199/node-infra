@@ -36,7 +36,7 @@ export class NetworkHelper {
   // -------------------------------------------------------------
   // SEND REQUEST
   // -------------------------------------------------------------
-  async send(opts: IRequestOptions, logger?: any) {
+  async send(opts: IRequestOptions & AxiosRequestConfig, logger?: any) {
     const t = new Date().getTime();
 
     const { url, method = 'get', params = {}, body: data, headers, configs } = opts;
