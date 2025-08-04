@@ -67,7 +67,7 @@ export class NetworkHelper {
   // -------------------------------------------------------------
   // GET REQUEST
   // -------------------------------------------------------------
-  async get(opts: IRequestOptions, logger?: any) {
+  async get(opts: IRequestOptions & AxiosRequestConfig, logger?: any) {
     const { url, params, configs, ...rest } = opts;
     const response = await this.send({ ...rest, url, method: 'get', params, configs }, logger);
     return response;
@@ -76,7 +76,7 @@ export class NetworkHelper {
   // -------------------------------------------------------------
   // POST REQUEST
   // -------------------------------------------------------------
-  async post(opts: IRequestOptions, logger?: any) {
+  async post(opts: IRequestOptions & AxiosRequestConfig, logger?: any) {
     const { url, body, configs, ...rest } = opts;
     const response = await this.send({ ...rest, url, method: 'post', body, configs }, logger);
     return response;
@@ -85,7 +85,7 @@ export class NetworkHelper {
   // -------------------------------------------------------------
   // PUT REQUEST
   // -------------------------------------------------------------
-  async put(opts: IRequestOptions, logger?: any) {
+  async put(opts: IRequestOptions & AxiosRequestConfig, logger?: any) {
     const { url, body, configs, ...rest } = opts;
     const response = await this.send(
       { ...rest, url, method: 'put', body, configs, ...rest },
@@ -97,7 +97,7 @@ export class NetworkHelper {
   // -------------------------------------------------------------
   // PATCH REQUEST
   // -------------------------------------------------------------
-  async patch(opts: IRequestOptions, logger?: any) {
+  async patch(opts: IRequestOptions & AxiosRequestConfig, logger?: any) {
     const { url, body, configs, ...rest } = opts;
     const response = await this.send({ ...rest, url, method: 'patch', body, configs }, logger);
     return response;
@@ -106,7 +106,7 @@ export class NetworkHelper {
   // -------------------------------------------------------------
   // DELETE REQUEST
   // -------------------------------------------------------------
-  async delete(opts: IRequestOptions, logger?: any) {
+  async delete(opts: IRequestOptions & AxiosRequestConfig, logger?: any) {
     const { url, configs, ...rest } = opts;
     const response = await this.send({ ...rest, url, method: 'delete', configs }, logger);
     return response;
