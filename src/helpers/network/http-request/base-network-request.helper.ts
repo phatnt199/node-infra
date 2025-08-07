@@ -1,21 +1,33 @@
+import { BaseHelper } from '@/base/base.helper';
+import { AnyObject } from '@/common/types';
 import { getError } from '@/utilities';
-import { AxiosRequestConfig } from 'axios';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-import { NetworkHelper } from './network.helper';
-import { BaseHelper } from '@/base/base.helper';
+import { AxiosFetcher } from './fetcher/axios-fetcher';
+import { NodeFetcher } from './fetcher/node-fetcher';
+import { AbstractNetworkFetchableHelper, IRequestOptions } from './fetcher';
 
-export abstract class BaseNetworkRequest extends BaseHelper {
+export class BaseNetworkRequest extends BaseHelper {
   protected baseUrl: string;
-  protected networkService: NetworkHelper;
+  protected fetcher: AbstractNetworkFetchableHelper<IRequestOptions, any>;
 
-  constructor(opts: { name: string; scope: string; networkOptions: AxiosRequestConfig }) {
+  constructor(opts: {
+    name: string;
+    scope: string;
+    variant?: 'node-fetch' | 'axios';
+    networkOptions: {
+      baseUrl?: string;
+      headers?: AnyObject;
+    };
+  }) {
     super({ scope: opts.name, identifier: opts.name });
 
-    const { name, networkOptions } = opts;
-    const { headers = {}, ...rest } = networkOptions;
+    const { name, variant = 'axios', networkOptions } = opts;
+    const { baseUrl = '', headers = {}, ...rest } = networkOptions;
 
-    const requestConfigs = {
+    this.baseUrl = baseUrl;
+
+    const defaultConfigs = {
       ...rest,
       withCredentials: true,
       timeout: 60 * 1000,
@@ -25,13 +37,30 @@ export abstract class BaseNetworkRequest extends BaseHelper {
       headers,
     };
 
-    const defaultHeader = get(requestConfigs, "headers['Content-Type']");
+    const defaultHeader = get(defaultConfigs, "headers['Content-Type']");
     if (!defaultHeader) {
-      requestConfigs.headers['Content-Type'] = 'application/json; charset=utf-8';
+      defaultConfigs.headers['Content-Type'] = 'application/json; charset=utf-8';
     }
 
-    this.baseUrl = networkOptions?.baseURL ?? '';
-    this.networkService = new NetworkHelper({ name, requestConfigs });
+    switch (variant) {
+      case 'axios': {
+        this.fetcher = new AxiosFetcher({
+          name,
+          defaultConfigs,
+        });
+        break;
+      }
+      case 'node-fetch': {
+        this.fetcher = new NodeFetcher({
+          name,
+          defaultConfigs,
+        });
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   }
 
   getRequestPath(opts: { paths: Array<string> }) {
@@ -70,6 +99,6 @@ export abstract class BaseNetworkRequest extends BaseHelper {
   }
 
   getNetworkService() {
-    return this.networkService;
+    return this.fetcher;
   }
 }

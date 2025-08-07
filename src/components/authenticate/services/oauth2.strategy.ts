@@ -1,3 +1,4 @@
+import { ResultCodes } from '@/common';
 import { BaseNetworkRequest } from '@/helpers/network';
 import { getError } from '@/utilities';
 import { AuthenticationStrategy, registerAuthenticationStrategy } from '@loopback/authentication';
@@ -20,8 +21,8 @@ export const defineOAuth2Strategy = (opts: {
     authPath: string;
 
     constructor() {
-      const baseURL = opts.baseURL;
-      if (!baseURL || isEmpty(baseURL)) {
+      const baseUrl = opts.baseURL;
+      if (!baseUrl || isEmpty(baseUrl)) {
         throw getError({
           message: `[RemoteAuthenticationStrategy][DANGER] INVALID baseURL | Missing env: APP_ENV_REMOTE_AUTH_SERVER_URL`,
         });
@@ -32,12 +33,20 @@ export const defineOAuth2Strategy = (opts: {
       this.authProvider = new AuthProviderNetworkRequest({
         name: AuthProviderNetworkRequest.name,
         scope: `${Strategy.name}_${opts.name}`,
-        networkOptions: { baseURL },
+        networkOptions: { baseUrl },
       });
     }
 
     async authenticate(request: Request) {
       const networkService = this.authProvider.getNetworkService();
+
+      if (!request.headers['authorization']) {
+        throw getError({
+          statusCode: ResultCodes.RS_4.Unauthorized,
+          message: 'No authorization token',
+        });
+      }
+
       const rs = await networkService.send({
         url: this.authProvider.getRequestUrl({ paths: [this.authPath] }),
         headers: { Authorization: request.headers['authorization'] },

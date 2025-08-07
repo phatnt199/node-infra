@@ -17,7 +17,7 @@ export class MTCrashReportService extends BaseCrashReportProvider {
       name: CrashReportNetworkRequest.name,
       scope: MTCrashReportService.name,
       networkOptions: {
-        baseURL: MTEndpoints.BASE_URL,
+        baseUrl: MTEndpoints.BASE_URL,
       },
     });
   }
