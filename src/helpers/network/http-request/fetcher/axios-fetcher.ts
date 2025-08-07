@@ -10,7 +10,6 @@ export interface IAxiosRequestOptions extends AxiosRequestConfig {
   params?: AnyObject;
   body?: AnyObject;
   headers?: AnyObject;
-  configs?: AnyObject;
 }
 
 // -------------------------------------------------------------
@@ -32,7 +31,7 @@ export class AxiosFetcher extends AbstractNetworkFetchableHelper<
   // SEND REQUEST
   // -------------------------------------------------------------
   send<T = any>(opts: IAxiosRequestOptions & AxiosRequestConfig, logger?: any) {
-    const { url, method = 'get', params = {}, body: data, headers, configs } = opts;
+    const { url, method = 'get', params = {}, body: data, headers, ...rest } = opts;
     const props: AxiosRequestConfig = {
       url,
       method,
@@ -40,7 +39,7 @@ export class AxiosFetcher extends AbstractNetworkFetchableHelper<
       data,
       headers,
       paramsSerializer: { serialize: p => stringify(p) },
-      ...configs,
+      ...rest,
     };
 
     const protocol = this.getProtocol(url);
