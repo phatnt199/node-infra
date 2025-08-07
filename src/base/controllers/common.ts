@@ -15,7 +15,6 @@ export const applyLimit = <E extends BaseTzEntity>(filter?: Filter<E>) => {
   return rs;
 };
 
-
 // --------------------------------------------------------------------------------------------------------------
 export class BaseController implements IController {
   logger: ApplicationLogger;
