@@ -1,10 +1,9 @@
 import { BaseHelper } from '@/base/base.helper';
 import { AnyObject } from '@/common/types';
 import { getError } from '@/utilities';
-import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import { IFetchable, IRequestOptions } from './fetcher';
-import { AxiosFetcher } from './fetcher/axios-fetcher';
+import { AxiosFetcher, IAxiosRequestOptions } from './fetcher/axios-fetcher';
 import { NodeFetcher } from './fetcher/node-fetcher';
 import { TFetcherResponse, TFetcherVariant } from './types';
 
@@ -84,20 +83,17 @@ export class BaseNetworkRequest<T extends TFetcherVariant> extends BaseHelper {
 export class AxiosNetworkRequest extends BaseNetworkRequest<'axios'> {
   constructor(opts: Omit<IAxiosNetworkOptions, 'fetcher'>) {
     const { name, networkOptions } = opts;
-    const { baseUrl = '', headers = {}, ...rest } = networkOptions;
+    const { headers = {}, ...rest } = networkOptions;
 
-    const defaultConfigs = {
+    const defaultConfigs: Partial<IAxiosRequestOptions> = {
       ...rest,
       withCredentials: true,
       timeout: 60 * 1000,
       validateStatus: (status: number) => status < 500,
-      headers,
+      headers: Object.assign({}, headers, {
+        ['content-type']: headers['content-type'] ?? 'application/json; charset=utf-8',
+      }),
     };
-
-    const defaultHeader = get(defaultConfigs, "headers['Content-Type']");
-    if (!defaultHeader) {
-      defaultConfigs.headers['Content-Type'] = 'application/json; charset=utf-8';
-    }
 
     super({
       ...opts,
@@ -110,20 +106,14 @@ export class AxiosNetworkRequest extends BaseNetworkRequest<'axios'> {
 export class NodeFetchNetworkRequest extends BaseNetworkRequest<'node-fetch'> {
   constructor(opts: Omit<INodeFetchNetworkOptions, 'fetcher'>) {
     const { name, networkOptions } = opts;
-    const { baseUrl = '', headers = {}, ...rest } = networkOptions;
+    const { headers = {}, ...rest } = networkOptions;
 
-    const defaultConfigs = {
+    const defaultConfigs: Partial<RequestInit> = {
       ...rest,
-      withCredentials: true,
-      timeout: 60 * 1000,
-      validateStatus: (status: number) => status < 500,
-      headers,
+      headers: Object.assign({}, headers, {
+        ['content-type']: headers['content-type'] ?? 'application/json; charset=utf-8',
+      }),
     };
-
-    const defaultHeader = get(defaultConfigs, "headers['Content-Type']");
-    if (!defaultHeader) {
-      defaultConfigs.headers['Content-Type'] = 'application/json; charset=utf-8';
-    }
 
     super({
       ...opts,
