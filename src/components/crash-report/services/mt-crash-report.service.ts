@@ -15,8 +15,6 @@ export class MTCrashReportService extends BaseCrashReportProvider {
     super({ scope: MTCrashReportService.name });
     this.crashReportNetworkRequest = new CrashReportNetworkRequest({
       name: CrashReportNetworkRequest.name,
-      scope: MTCrashReportService.name,
-      variant: 'axios',
       networkOptions: {
         baseUrl: MTEndpoints.BASE_URL,
       },

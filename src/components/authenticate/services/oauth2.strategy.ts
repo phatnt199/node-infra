@@ -29,9 +29,7 @@ export const defineOAuth2Strategy = (opts: {
       this.authPath = opts.authPath ?? '/auth/who-am-i';
 
       this.authProvider = new AxiosNetworkRequest({
-        name: 'AuthProviderNetworkRequest',
-        scope: `${Strategy.name}_${opts.name}`,
-        variant: 'axios',
+        name: `${Strategy.name}_${opts.name}`,
         networkOptions: { baseUrl },
       });
     }

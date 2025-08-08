@@ -10,7 +10,6 @@ import { TFetcherResponse, TFetcherVariant } from './types';
 // -----------------------------------------------------------------------------
 export interface IFetcherRequestOptions<T extends TFetcherVariant> {
   name: string;
-  scope: string;
   variant: TFetcherVariant;
   networkOptions: { baseUrl?: string; headers?: AnyObject };
   fetcher: IFetchable<T, IRequestOptions, TFetcherResponse<T>>;
@@ -81,7 +80,7 @@ export class BaseNetworkRequest<T extends TFetcherVariant> extends BaseHelper {
 
 // -----------------------------------------------------------------------------
 export class AxiosNetworkRequest extends BaseNetworkRequest<'axios'> {
-  constructor(opts: Omit<IAxiosNetworkOptions, 'fetcher'>) {
+  constructor(opts: Omit<IAxiosNetworkOptions, 'fetcher' | 'variant'>) {
     const { name, networkOptions } = opts;
     const { headers = {}, ...rest } = networkOptions;
 
@@ -97,6 +96,7 @@ export class AxiosNetworkRequest extends BaseNetworkRequest<'axios'> {
 
     super({
       ...opts,
+      variant: 'axios',
       fetcher: new AxiosFetcher({ name, defaultConfigs }),
     });
   }
@@ -104,7 +104,7 @@ export class AxiosNetworkRequest extends BaseNetworkRequest<'axios'> {
 
 // -----------------------------------------------------------------------------
 export class NodeFetchNetworkRequest extends BaseNetworkRequest<'node-fetch'> {
-  constructor(opts: Omit<INodeFetchNetworkOptions, 'fetcher'>) {
+  constructor(opts: Omit<INodeFetchNetworkOptions, 'fetcher' | 'variant'>) {
     const { name, networkOptions } = opts;
     const { headers = {}, ...rest } = networkOptions;
 
@@ -117,6 +117,7 @@ export class NodeFetchNetworkRequest extends BaseNetworkRequest<'node-fetch'> {
 
     super({
       ...opts,
+      variant: 'node-fetch',
       fetcher: new NodeFetcher({ name, defaultConfigs }),
     });
   }
