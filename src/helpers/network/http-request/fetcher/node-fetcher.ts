@@ -8,13 +8,14 @@ export interface INodeFetchRequestOptions extends RequestInit {
 
 // -------------------------------------------------------------
 export class NodeFetcher extends AbstractNetworkFetchableHelper<
+  'node-fetch',
   INodeFetchRequestOptions,
-  Response
+  Awaited<ReturnType<typeof fetch>>
 > {
   private defaultConfigs: RequestInit;
 
   constructor(opts: { name: string; defaultConfigs: RequestInit; logger?: any }) {
-    super({ name: opts.name });
+    super({ name: opts.name, variant: 'node-fetch' });
     const { name, defaultConfigs } = opts;
     this.name = name;
     opts?.logger?.info('Creating new network request worker instance! Name: %s', this.name);

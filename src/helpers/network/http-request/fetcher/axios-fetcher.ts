@@ -14,13 +14,14 @@ export interface IAxiosRequestOptions extends AxiosRequestConfig {
 
 // -------------------------------------------------------------
 export class AxiosFetcher extends AbstractNetworkFetchableHelper<
+  'axios',
   IAxiosRequestOptions,
-  axios.AxiosResponse
+  axios.AxiosResponse<any, any>['data']
 > {
   private worker: AxiosInstance;
 
   constructor(opts: { name: string; defaultConfigs: AxiosRequestConfig; logger?: any }) {
-    super({ name: opts.name });
+    super({ name: opts.name, variant: 'axios' });
     const { defaultConfigs } = opts;
     opts?.logger?.info('Creating new network request worker instance! Name: %s', this.name);
 
@@ -30,7 +31,7 @@ export class AxiosFetcher extends AbstractNetworkFetchableHelper<
   // -------------------------------------------------------------
   // SEND REQUEST
   // -------------------------------------------------------------
-  send<T = any>(opts: IAxiosRequestOptions & AxiosRequestConfig, logger?: any) {
+  send<T = any>(opts: IAxiosRequestOptions, logger?: any) {
     const { url, method = 'get', params = {}, body: data, headers, ...rest } = opts;
     const props: AxiosRequestConfig = {
       url,

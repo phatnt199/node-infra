@@ -1,4 +1,4 @@
-import { AnyType } from '@/common/types';
+import { TFetcherResponse, TFetcherVariant } from '../types';
 
 const HTTP = 'http';
 const HTTPS = 'https';
@@ -10,22 +10,31 @@ export interface IRequestOptions {
   [extra: symbol | string]: any;
 }
 
-export interface IFetchable<Request extends IRequestOptions, Response extends AnyType> {
-  send(opts: Request, logger?: any): Promise<Response>;
-  get(opts: Request, logger?: any): Promise<Response>;
-  post(opts: Request, logger?: any): Promise<Response>;
-  put(opts: Request, logger?: any): Promise<Response>;
-  patch(opts: Request, logger?: any): Promise<Response>;
-  delete(opts: Request, logger?: any): Promise<Response>;
+export interface IFetchable<
+  V extends TFetcherVariant,
+  RQ extends IRequestOptions,
+  RS extends TFetcherResponse<V>,
+> {
+  send(opts: RQ, logger?: any): Promise<RS>;
+  get(opts: RQ, logger?: any): Promise<RS>;
+  post(opts: RQ, logger?: any): Promise<RS>;
+  put(opts: RQ, logger?: any): Promise<RS>;
+  patch(opts: RQ, logger?: any): Promise<RS>;
+  delete(opts: RQ, logger?: any): Promise<RS>;
 }
 
-export abstract class AbstractNetworkFetchableHelper<RQ extends IRequestOptions, RS extends AnyType>
-  implements IFetchable<RQ, RS>
+export abstract class AbstractNetworkFetchableHelper<
+  V extends TFetcherVariant,
+  RQ extends IRequestOptions,
+  RS extends TFetcherResponse<V>,
+> implements IFetchable<V, RQ, RS>
 {
   protected name: string;
+  protected variant: V;
 
-  constructor(opts: { name: string }) {
+  constructor(opts: { name: string; variant: V }) {
     this.name = opts.name;
+    this.variant = opts.variant;
   }
 
   abstract send(opts: RQ, logger?: any): Promise<RS>;

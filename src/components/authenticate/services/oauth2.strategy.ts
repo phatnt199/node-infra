@@ -1,13 +1,11 @@
 import { ResultCodes } from '@/common';
-import { BaseNetworkRequest } from '@/helpers/network';
+import { AxiosNetworkRequest } from '@/helpers/network';
 import { getError } from '@/utilities';
 import { AuthenticationStrategy, registerAuthenticationStrategy } from '@loopback/authentication';
 import { Context } from '@loopback/core';
 import { Request } from '@loopback/rest';
 import { securityId } from '@loopback/security';
 import isEmpty from 'lodash/isEmpty';
-
-class AuthProviderNetworkRequest extends BaseNetworkRequest {}
 
 export const defineOAuth2Strategy = (opts: {
   name: string;
@@ -17,7 +15,7 @@ export const defineOAuth2Strategy = (opts: {
   class Strategy implements AuthenticationStrategy {
     name = opts.name;
 
-    authProvider: AuthProviderNetworkRequest;
+    authProvider: AxiosNetworkRequest;
     authPath: string;
 
     constructor() {
@@ -30,9 +28,10 @@ export const defineOAuth2Strategy = (opts: {
 
       this.authPath = opts.authPath ?? '/auth/who-am-i';
 
-      this.authProvider = new AuthProviderNetworkRequest({
-        name: AuthProviderNetworkRequest.name,
+      this.authProvider = new AxiosNetworkRequest({
+        name: 'AuthProviderNetworkRequest',
         scope: `${Strategy.name}_${opts.name}`,
+        variant: 'axios',
         networkOptions: { baseUrl },
       });
     }

@@ -1,11 +1,11 @@
 import { RSA } from '@/helpers/crypto';
-import { BaseNetworkRequest } from '@/helpers/network';
+import { AxiosNetworkRequest } from '@/helpers/network';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import { ISendReport, MTEndpoints } from '../common';
 import { BaseCrashReportProvider } from '../providers';
 
-class CrashReportNetworkRequest extends BaseNetworkRequest {}
+class CrashReportNetworkRequest extends AxiosNetworkRequest {}
 
 export class MTCrashReportService extends BaseCrashReportProvider {
   private crashReportNetworkRequest: CrashReportNetworkRequest;
@@ -16,6 +16,7 @@ export class MTCrashReportService extends BaseCrashReportProvider {
     this.crashReportNetworkRequest = new CrashReportNetworkRequest({
       name: CrashReportNetworkRequest.name,
       scope: MTCrashReportService.name,
+      variant: 'axios',
       networkOptions: {
         baseUrl: MTEndpoints.BASE_URL,
       },

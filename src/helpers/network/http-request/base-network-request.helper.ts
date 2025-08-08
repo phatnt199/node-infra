@@ -3,64 +3,41 @@ import { AnyObject } from '@/common/types';
 import { getError } from '@/utilities';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
+import { IFetchable, IRequestOptions } from './fetcher';
 import { AxiosFetcher } from './fetcher/axios-fetcher';
 import { NodeFetcher } from './fetcher/node-fetcher';
-import { AbstractNetworkFetchableHelper, IRequestOptions } from './fetcher';
+import { TFetcherResponse, TFetcherVariant } from './types';
 
-export class BaseNetworkRequest extends BaseHelper {
+// -----------------------------------------------------------------------------
+export interface IFetcherRequestOptions<T extends TFetcherVariant> {
+  name: string;
+  scope: string;
+  variant: TFetcherVariant;
+  networkOptions: { baseUrl?: string; headers?: AnyObject };
+  fetcher: IFetchable<T, IRequestOptions, TFetcherResponse<T>>;
+}
+
+export interface IAxiosNetworkOptions extends IFetcherRequestOptions<'axios'> {
+  variant: 'axios';
+}
+
+export interface INodeFetchNetworkOptions extends IFetcherRequestOptions<'node-fetch'> {
+  variant: 'node-fetch';
+}
+
+// -----------------------------------------------------------------------------
+export class BaseNetworkRequest<T extends TFetcherVariant> extends BaseHelper {
   protected baseUrl: string;
-  protected fetcher: AbstractNetworkFetchableHelper<IRequestOptions, any>;
+  protected fetcher: IFetchable<T, IRequestOptions, TFetcherResponse<T>>;
 
-  constructor(opts: {
-    name: string;
-    scope: string;
-    variant?: 'node-fetch' | 'axios';
-    networkOptions: {
-      baseUrl?: string;
-      headers?: AnyObject;
-    };
-  }) {
+  constructor(opts: IFetcherRequestOptions<T>) {
     super({ scope: opts.name, identifier: opts.name });
 
-    const { name, variant = 'axios', networkOptions } = opts;
-    const { baseUrl = '', headers = {}, ...rest } = networkOptions;
+    const { networkOptions } = opts;
+    const { baseUrl = '' } = networkOptions;
 
     this.baseUrl = baseUrl;
-
-    const defaultConfigs = {
-      ...rest,
-      withCredentials: true,
-      timeout: 60 * 1000,
-      validateStatus: (status: number) => {
-        return status < 500;
-      },
-      headers,
-    };
-
-    const defaultHeader = get(defaultConfigs, "headers['Content-Type']");
-    if (!defaultHeader) {
-      defaultConfigs.headers['Content-Type'] = 'application/json; charset=utf-8';
-    }
-
-    switch (variant) {
-      case 'axios': {
-        this.fetcher = new AxiosFetcher({
-          name,
-          defaultConfigs,
-        });
-        break;
-      }
-      case 'node-fetch': {
-        this.fetcher = new NodeFetcher({
-          name,
-          defaultConfigs,
-        });
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+    this.fetcher = opts.fetcher;
   }
 
   getRequestPath(opts: { paths: Array<string> }) {
@@ -100,5 +77,57 @@ export class BaseNetworkRequest extends BaseHelper {
 
   getNetworkService() {
     return this.fetcher;
+  }
+}
+
+// -----------------------------------------------------------------------------
+export class AxiosNetworkRequest extends BaseNetworkRequest<'axios'> {
+  constructor(opts: Omit<IAxiosNetworkOptions, 'fetcher'>) {
+    const { name, networkOptions } = opts;
+    const { baseUrl = '', headers = {}, ...rest } = networkOptions;
+
+    const defaultConfigs = {
+      ...rest,
+      withCredentials: true,
+      timeout: 60 * 1000,
+      validateStatus: (status: number) => status < 500,
+      headers,
+    };
+
+    const defaultHeader = get(defaultConfigs, "headers['Content-Type']");
+    if (!defaultHeader) {
+      defaultConfigs.headers['Content-Type'] = 'application/json; charset=utf-8';
+    }
+
+    super({
+      ...opts,
+      fetcher: new AxiosFetcher({ name, defaultConfigs }),
+    });
+  }
+}
+
+// -----------------------------------------------------------------------------
+export class NodeFetchNetworkRequest extends BaseNetworkRequest<'node-fetch'> {
+  constructor(opts: Omit<INodeFetchNetworkOptions, 'fetcher'>) {
+    const { name, networkOptions } = opts;
+    const { baseUrl = '', headers = {}, ...rest } = networkOptions;
+
+    const defaultConfigs = {
+      ...rest,
+      withCredentials: true,
+      timeout: 60 * 1000,
+      validateStatus: (status: number) => status < 500,
+      headers,
+    };
+
+    const defaultHeader = get(defaultConfigs, "headers['Content-Type']");
+    if (!defaultHeader) {
+      defaultConfigs.headers['Content-Type'] = 'application/json; charset=utf-8';
+    }
+
+    super({
+      ...opts,
+      fetcher: new NodeFetcher({ name, defaultConfigs }),
+    });
   }
 }
