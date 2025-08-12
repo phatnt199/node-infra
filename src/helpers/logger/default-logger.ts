@@ -8,22 +8,21 @@ import { int } from '@/utilities';
 
 const LOGGER_FOLDER_PATH = process.env.APP_ENV_LOGGER_FOLDER_PATH ?? './';
 const LOGGER_PREFIX = App.APPLICATION_NAME;
+const f = winston.format;
 
 // -------------------------------------------------------------------------------------------
-export const defineCustomLoggerFormatter = (opts: {
-  label: string;
-}): ReturnType<typeof winston.format.combine> => {
-  return winston.format.combine(
-    winston.format.label({ label: opts.label }),
-    winston.format.splat(),
-    winston.format.align(),
-    winston.format.timestamp(),
-    winston.format.simple(),
-    winston.format.colorize(),
-    winston.format.printf(
-      ({ level, message, label, timestamp }) => `${timestamp} [${label}] ${level}: ${message}`,
-    ),
-    winston.format.errors({ stack: true }),
+export const defineCustomLoggerFormatter = (opts: { label: string }) => {
+  return f.combine(
+    f.simple(),
+    f.label({ label: opts.label }),
+    f.timestamp(),
+    f.splat(),
+    f.align(),
+    f.colorize(),
+    f.printf(({ level, message, label, timestamp }) => {
+      return `${timestamp} [${label}] ${level}: ${message}`;
+    }),
+    f.errors({ stack: true }),
   );
 };
 
@@ -48,15 +47,15 @@ export const defineCustomLogger = (opts: {
 }) => {
   const {
     logLevels = {
-      error: 1,
-      alert: 1,
-      emerg: 1,
-      warn: 2,
-      info: 3,
-      http: 4,
-      verbose: 5,
-      debug: 6,
-      silly: 7,
+      error: 0,
+      alert: 0,
+      emerg: 0,
+      warn: 1,
+      info: 2,
+      http: 3,
+      verbose: 4,
+      debug: 5,
+      silly: 6,
     },
     logColors = {
       error: 'red',
@@ -74,7 +73,10 @@ export const defineCustomLogger = (opts: {
   } = opts;
 
   const consoleLogTransport = new winston.transports.Console({ level: 'debug' });
-  const transports: { general: Array<winston.transport>; exception: Array<winston.transport> } = {
+  const transports: {
+    general: Array<winston.transport>;
+    exception: Array<winston.transport>;
+  } = {
     general: [consoleLogTransport],
     exception: [consoleLogTransport],
   };

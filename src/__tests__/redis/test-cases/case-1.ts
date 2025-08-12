@@ -15,7 +15,6 @@ export class TestRedis001Handler extends TestCaseHandler<{}, IArg> {
       });
     }
 
-    console.log(this.args.nodes);
     const ioCluster = new Cluster(this.args.nodes, {
       redisOptions: { password: 'xxx' },
     });
