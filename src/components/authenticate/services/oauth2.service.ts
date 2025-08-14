@@ -172,6 +172,9 @@ export class OAuth2Service extends BaseService {
       where: { clientId: signInRequest.clientId },
       fields: ['id', 'clientId', 'clientSecret'],
     });
+    if (!client) {
+      throw getError({ message: `[auth] Invalid client to create auth request!` });
+    }
 
     const oauth2TokenRequest = new Request(context.request);
     oauth2TokenRequest.body = {

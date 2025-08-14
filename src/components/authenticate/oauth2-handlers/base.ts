@@ -59,7 +59,16 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
             'endpoints',
           ],
         })
-        .then((oauth2Client: OAuth2Client) => {
+        .then(oauth2Client => {
+          if (!oauth2Client) {
+            reject(
+              getError({
+                message: `[getClient] OAuth2 client NOT FOUND | clientId: ${clientId}`,
+              }),
+            );
+            return;
+          }
+
           resolve({
             id: oauth2Client.id.toString(),
             identifier: oauth2Client.identifier,
@@ -244,7 +253,9 @@ export abstract class AbstractOAuth2AuthenticationHandler implements IOAuth2Auth
     return {
       accessToken,
       accessTokenExpiresAt: new Date(int(tokenPayload['exp']) * 1000),
-      client: oauth2Client,
+      client: Object.assign({}, oauth2Client!.toObject() as OAuth2Client, {
+        id: oauth2Client.id.toString(),
+      }),
       user: { id: tokenPayload.userId },
     };
   }
