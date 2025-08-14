@@ -23,7 +23,7 @@ import { buildBatchUpdateQuery, executePromiseWithLimit, getTableDefinition } fr
 @injectable({ scope: BindingScope.SINGLETON })
 export abstract class SearchableTzCrudRepository<
   E extends BaseTextSearchTzEntity | BaseObjectSearchTzEntity | BaseSearchableTzEntity,
-  R extends EntityRelationType = AnyType,
+  R extends EntityRelationType = EntityRelationType,
 > extends TzCrudRepository<E, R> {
   protected readonly searchableInclusions: Inclusion[];
   protected readonly isInclusionRelations: boolean;

@@ -1,4 +1,4 @@
-import { AnyType, EntityClassType, EntityRelationType, IdType } from '@/common/types';
+import { EntityClassType, EntityRelationType, IdType } from '@/common/types';
 import { QueryBuilderHelper } from '@/helpers';
 import { buildBatchUpdateQuery, getError } from '@/utilities';
 import { Count, DataObject, juggler, Options, Where } from '@loopback/repository';
@@ -11,7 +11,7 @@ import get from 'lodash/get';
 // ----------------------------------------------------------------------------------------------------------------------------------------
 export abstract class TzCrudRepository<
   E extends BaseTzEntity,
-  R extends EntityRelationType = AnyType,
+  R extends EntityRelationType = EntityRelationType,
 > extends AbstractTzRepository<E, R> {
   constructor(entityClass: EntityClassType<E>, dataSource: juggler.DataSource, scope?: string) {
     super(entityClass, dataSource, scope);
