@@ -1,4 +1,4 @@
-import { TStatusFromClass } from '@/common/types';
+import { TConstValue } from '@/common/types';
 
 export class LogLevels {
   static readonly ERROR = 'error';
@@ -28,4 +28,4 @@ export class LogLevels {
   }
 }
 
-export type TLogLevel = TStatusFromClass<typeof LogLevels>;
+export type TLogLevel = TConstValue<typeof LogLevels>;

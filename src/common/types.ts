@@ -40,12 +40,9 @@ export type TStatusFromClass<T extends ClassType<AnyObject>> = ValueOf<
   Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET' | 'TYPE_SET'>
 >;
 
-/**
- * Alternative for {@link TStatusFromClass<T>}
- */
-export type TConstValue<T extends ClassType<AnyObject>> = ValueOf<
-  Omit<T, 'prototype' | 'isValid' | 'SCHEME_SET' | 'TYPE_SET'>
->;
+export type TStringConstValue<T extends ClassType<any>> = Extract<ValueOf<T>, string>;
+export type TNumberConstValue<T extends ClassType<any>> = Extract<ValueOf<T>, number>;
+export type TConstValue<T extends ClassType<any>> = Extract<ValueOf<T>, string | number>;
 
 export type TPrettify<T> = { [K in keyof T]: T[K] } & {};
 
