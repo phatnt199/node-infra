@@ -1,4 +1,4 @@
-import { type Filter, type Where } from '@loopback/filter';
+import { type TFilter, type TWhere } from '@venizia/ignis-filter';
 
 import {
   type EntityRelationType,
@@ -30,7 +30,7 @@ export class BaseCrudService<E extends { id: IdType; [extra: string | symbol]: a
     this.serviceOptions = opts.serviceOptions;
   }
 
-  find(filter: Filter<E>): Promise<(E & EntityRelationType)[]> {
+  find(filter: TFilter<E>): Promise<(E & EntityRelationType)[]> {
     return new Promise<Array<E>>((resolve, reject) => {
       this.dataProvider
         .send({
@@ -47,7 +47,7 @@ export class BaseCrudService<E extends { id: IdType; [extra: string | symbol]: a
     });
   }
 
-  findById(id: IdType, filter: Filter<E>): Promise<E & EntityRelationType> {
+  findById(id: IdType, filter: TFilter<E>): Promise<E & EntityRelationType> {
     return new Promise<E & EntityRelationType>((resolve, reject) => {
       this.dataProvider
         .send({
@@ -64,7 +64,7 @@ export class BaseCrudService<E extends { id: IdType; [extra: string | symbol]: a
     });
   }
 
-  findOne(filter: Filter<E>): Promise<(E & EntityRelationType) | null> {
+  findOne(filter: TFilter<E>): Promise<(E & EntityRelationType) | null> {
     return new Promise<E & EntityRelationType>((resolve, reject) => {
       this.dataProvider
         .send({
@@ -81,7 +81,7 @@ export class BaseCrudService<E extends { id: IdType; [extra: string | symbol]: a
     });
   }
 
-  count(where: Where<E>): Promise<{ count: number }> {
+  count(where: TWhere<E>): Promise<{ count: number }> {
     return new Promise<{ count: number }>((resolve, reject) => {
       this.dataProvider
         .send({
@@ -115,7 +115,7 @@ export class BaseCrudService<E extends { id: IdType; [extra: string | symbol]: a
     });
   }
 
-  updateAll(data: Partial<E>, where: Where<E>): Promise<{ count: number }> {
+  updateAll(data: Partial<E>, where: TWhere<E>): Promise<{ count: number }> {
     return new Promise<{ count: number }>((resolve, reject) => {
       this.dataProvider
         .send({

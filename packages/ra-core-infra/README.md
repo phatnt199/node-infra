@@ -1,19 +1,19 @@
 # @minimaltech/ra-core-infra
 
-Minimal Technology ReactJS Core Infrastructure - A React Admin Core framework built on Venizia and LoopBack 4 for browser applications.
+Minimal Technology ReactJS Core Infrastructure - A React Admin Core framework built on Venizia for browser applications.
 
 ## 🚀 Quick Start
 
 ### Installation
 
 ```bash
-npm install @minimaltech/ra-core-infra @venizia/ignis-inversion @loopback/filter reflect-metadata
+npm install @minimaltech/ra-core-infra @venizia/ignis-inversion @venizia/ignis-filter reflect-metadata
 # or
-yarn add @minimaltech/ra-core-infra @venizia/ignis-inversion @loopback/filter reflect-metadata
+yarn add @minimaltech/ra-core-infra @venizia/ignis-inversion @venizia/ignis-filter reflect-metadata
 # or
-pnpm add @minimaltech/ra-core-infra @venizia/ignis-inversion @loopback/filter reflect-metadata
+pnpm add @minimaltech/ra-core-infra @venizia/ignis-inversion @venizia/ignis-filter reflect-metadata
 # or
-bun add @minimaltech/ra-core-infra @venizia/ignis-inversion @loopback/filter reflect-metadata
+bun add @minimaltech/ra-core-infra @venizia/ignis-inversion @venizia/ignis-filter reflect-metadata
 ```
 
 ### Setup (Required)
@@ -75,8 +75,10 @@ If you're need to `useTranslate` with key suggestion from your language files.
 
 ```typescript
 declare module '@minimaltech/ra-core-infra' {
-  interface IUseTranslateKeysOverrides
-    extends Record<TFullPaths<typeof yourEnglishMessages>, unknown> {}
+  interface IUseTranslateKeysOverrides extends Record<
+    TFullPaths<typeof yourEnglishMessages>,
+    unknown
+  > {}
 }
 ```
 
@@ -104,8 +106,7 @@ import { useTranslate } from '@minimaltech/ra-core-infra';
 
 - React 18+
 - React Admin Core 5+
-- LoopBack 4 (Context)
-- Venizia (Ignis Inversion)
+- Venizia (Ignis Inversion / Ignis Filter)
 - TypeScript
 
 ## 📦 What's Included

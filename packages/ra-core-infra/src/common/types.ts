@@ -1,4 +1,4 @@
-import { type Filter, type Where } from '@loopback/filter';
+import { type TFilter, type TWhere } from '@venizia/ignis-filter';
 import { type TClass } from '@venizia/ignis-inversion';
 import {
   type CreateParams,
@@ -240,14 +240,14 @@ export interface IService {}
 export interface ICrudService<
   E extends { id: IdType; [extra: string | symbol]: any } = any,
 > extends IService {
-  find(filter: Filter<E>): Promise<Array<E & EntityRelationType>>;
-  findById(id: IdType, filter: Filter<E>): Promise<E & EntityRelationType>;
-  findOne(filter: Filter<E>): Promise<(E & EntityRelationType) | null>;
-  count(where: Where<E>): Promise<{ count: number }>;
+  find(filter: TFilter<E>): Promise<Array<E & EntityRelationType>>;
+  findById(id: IdType, filter: TFilter<E>): Promise<E & EntityRelationType>;
+  findOne(filter: TFilter<E>): Promise<(E & EntityRelationType) | null>;
+  count(where: TWhere<E>): Promise<{ count: number }>;
 
   // CUD
   create(data: Omit<E, 'id'>): Promise<E>;
-  updateAll(data: Partial<E>, where: Where<E>): Promise<{ count: number }>;
+  updateAll(data: Partial<E>, where: TWhere<E>): Promise<{ count: number }>;
   updateById(id: IdType, data: Partial<E>): Promise<E>;
   replaceById(id: IdType, data: E): Promise<E>;
   deleteById(id: IdType): Promise<{ id: IdType }>;

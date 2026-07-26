@@ -105,8 +105,8 @@
     "vite": "^7.1.10"
   },
   "peerDependencies": {
-    "@loopback/filter": "^6.0.2",
-    "@venizia/ignis-inversion": "^0.1.1-0",
+    "@venizia/ignis-inversion": "^0.1.1-6",
+    "@venizia/ignis-filter": "^0.1.2-0",
     "axios": "^1.13.2",
     "ra-core": ">=5.15.0",
     "react": ">=18.0",
