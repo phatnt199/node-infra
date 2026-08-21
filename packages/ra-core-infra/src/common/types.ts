@@ -216,12 +216,36 @@ export interface IAuthRecoveryOptions {
 }
 
 // ----------------------------------------------------------------------
-export interface IRestDataProviderOptions {
+export type TNoAuthPathRegex = string | RegExp | Array<string | RegExp>;
+
+// ----------------------------------------------------------------------
+export interface INoAuthOptions {
+  /**
+   * Enable/disable attaching authorization header by default.
+   * Set to `false` for applications which only consume public (no auth) apis.
+   *
+   * @default true
+   */
+  useAuth?: boolean;
+
+  /**
+   * Exact resource paths which will be requested without authorization header.
+   */
+  noAuthPaths?: Array<string>;
+
+  /**
+   * Pattern(s) of resource paths which will be requested without authorization header.
+   * Accept `RegExp` or `string` (which will be compiled with `new RegExp(...)`).
+   */
+  noAuthPathRegex?: TNoAuthPathRegex;
+}
+
+// ----------------------------------------------------------------------
+export interface IRestDataProviderOptions extends INoAuthOptions {
   url: string;
   requestTracingId?: boolean | ((opts: { applicationInfo: IApplicationInfo }) => string);
   requestTracingChannel?: string;
 
-  noAuthPaths?: Array<string>;
   headers?: HeadersInit;
 
   authRecovery?: IAuthRecoveryOptions;

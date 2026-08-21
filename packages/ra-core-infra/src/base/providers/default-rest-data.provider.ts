@@ -58,7 +58,9 @@ export class DefaultRestDataProvider<TResource extends string = string> extends 
     this.networkService = new DefaultNetworkRequestService({
       name: 'default-application-network-service',
       baseUrl: this.restDataProviderOptions.url,
+      useAuth: this.restDataProviderOptions.useAuth,
       noAuthPaths: this.restDataProviderOptions.noAuthPaths,
+      noAuthPathRegex: this.restDataProviderOptions.noAuthPathRegex,
       headers: this.restDataProviderOptions.headers,
       authRecovery: this.restDataProviderOptions.authRecovery,
     });

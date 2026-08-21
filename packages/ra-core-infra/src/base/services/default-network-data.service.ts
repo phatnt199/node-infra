@@ -9,6 +9,7 @@ import {
   type IAuthRecoveryOptions,
   type IGetRequestPropsParams,
   type IGetRequestPropsResult,
+  type INoAuthOptions,
   LocalStorageKeys,
   RequestBodyTypes,
   RequestChannel,
@@ -16,6 +17,7 @@ import {
   RequestMethods,
   RequestTypes,
   type TConstValue,
+  type TNoAuthPathRegex,
   type TRequestMethod,
   type TRequestType,
 } from '@/common';
@@ -49,9 +51,42 @@ const parseFilenameFromContentDisposition = (header: string): string | undefined
   return undefined;
 };
 
+const normalizeNoAuthPathRegex = (input?: TNoAuthPathRegex): RegExp[] => {
+  if (!input) {
+    return [];
+  }
+
+  const patterns = Array.isArray(input) ? input : [input];
+  const rs: RegExp[] = [];
+
+  for (const pattern of patterns) {
+    if (!pattern) {
+      continue;
+    }
+
+    if (pattern instanceof RegExp) {
+      rs.push(pattern);
+      continue;
+    }
+
+    try {
+      rs.push(new RegExp(pattern));
+    } catch {
+      console.error(
+        '[DefaultNetworkRequestService][normalizeNoAuthPathRegex] Invalid noAuthPathRegex pattern: %s',
+        pattern,
+      );
+    }
+  }
+
+  return rs;
+};
+
 export class DefaultNetworkRequestService extends BaseService {
   protected authToken?: { type?: string; value: string };
+  protected useAuth: boolean;
   protected noAuthPaths?: string[];
+  protected noAuthPathRegexes: RegExp[];
   protected headers?: HeadersInit;
   protected networkRequest: NodeFetchNetworkRequest;
   protected baseUrl: string;
@@ -59,24 +94,82 @@ export class DefaultNetworkRequestService extends BaseService {
 
   private refreshing: Promise<boolean> | null = null;
 
-  constructor(opts: {
-    name: string;
-    baseUrl?: string;
-    headers?: HeadersInit;
-    noAuthPaths?: string[];
-    authRecovery?: IAuthRecoveryOptions;
-  }) {
+  constructor(
+    opts: INoAuthOptions & {
+      name: string;
+      baseUrl?: string;
+      headers?: HeadersInit;
+      authRecovery?: IAuthRecoveryOptions;
+    },
+  ) {
     super({ scope: DefaultNetworkRequestService.name });
-    const { name, baseUrl = '', headers = {}, noAuthPaths, authRecovery } = opts;
+    const {
+      name,
+      baseUrl = '',
+      headers = {},
+      useAuth = true,
+      noAuthPaths,
+      noAuthPathRegex,
+      authRecovery,
+    } = opts;
 
     this.headers = headers;
+    this.useAuth = useAuth;
     this.noAuthPaths = noAuthPaths;
+    this.noAuthPathRegexes = normalizeNoAuthPathRegex(noAuthPathRegex);
     this.baseUrl = baseUrl;
     this.authRecovery = authRecovery;
     this.networkRequest = new NodeFetchNetworkRequest({
       name,
       networkOptions: { baseUrl, headers },
     });
+  }
+
+  //-------------------------------------------------------------
+  isNoAuthPath(opts: { resource?: string; paths?: string[] }): boolean {
+    if (!this.useAuth) {
+      return true;
+    }
+
+    const { resource, paths } = opts;
+
+    if (resource && this.noAuthPaths?.includes(resource)) {
+      return true;
+    }
+
+    if (!this.noAuthPathRegexes.length) {
+      return false;
+    }
+
+    const candidates = [resource, paths?.join('/')].filter(
+      (el): el is string => !!el && !isEmpty(el),
+    );
+
+    if (!candidates.length) {
+      return false;
+    }
+
+    return this.noAuthPathRegexes.some((regex) => {
+      return candidates.some((candidate) => {
+        regex.lastIndex = 0;
+        return regex.test(candidate);
+      });
+    });
+  }
+
+  //-------------------------------------------------------------
+  setUseAuth(useAuth: boolean) {
+    this.useAuth = useAuth;
+  }
+
+  //-------------------------------------------------------------
+  setNoAuthPaths(noAuthPaths?: string[]) {
+    this.noAuthPaths = noAuthPaths;
+  }
+
+  //-------------------------------------------------------------
+  setNoAuthPathRegex(noAuthPathRegex?: TNoAuthPathRegex) {
+    this.noAuthPathRegexes = normalizeNoAuthPathRegex(noAuthPathRegex);
   }
 
   //-------------------------------------------------------------
@@ -113,8 +206,7 @@ export class DefaultNetworkRequestService extends BaseService {
       return false;
     }
 
-    const resource = paths?.[0];
-    if (resource && this.noAuthPaths?.includes(resource)) {
+    if (this.isNoAuthPath({ resource: paths?.[0], paths })) {
       return false;
     }
 
@@ -186,7 +278,7 @@ export class DefaultNetworkRequestService extends BaseService {
       ...this.headers,
     };
 
-    if (this.noAuthPaths?.includes(resource)) {
+    if (this.isNoAuthPath({ resource })) {
       return defaultHeaders;
     }
 
